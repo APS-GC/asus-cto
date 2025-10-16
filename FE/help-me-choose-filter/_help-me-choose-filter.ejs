@@ -1,0 +1,62 @@
+<%
+  // Static games array
+  const games = [
+    { id: "cod", name: "Call of Duty: Modern Warfare", image: "./clientlib-site/images/games/call-of-duty.webp" },
+    { id: "alanwake", name: "Alan Wake 2", image: "./clientlib-site/images/games/alan-wake.webp" },
+    { id: "cs2", name: "Counter Strike 2", image: "./clientlib-site/images/games/counter-strike.webp" },
+    { id: "baldur", name: "Baldur's Gate 3", image: "./clientlib-site/images/games/baldurs-gate.webp" },
+    { id: "civ6", name: "Fortnite", image: "./clientlib-site/images/games/fortnite.webp" },
+    { id: "fortnite", name: "Red Redemption 2", image: "./clientlib-site/images/games/red-redemption.webp" }
+  ];
+%>
+
+<div class="filter-bar container-xl  <%= isOpen ? 'open' : '' %>"> 
+    <div class="filters-container container">
+        <form class="filters">
+            <div class="selected-games">
+                <p class="selected-games-text">Selected game:</p>
+                <div class="collapsed-view">
+                </div>
+                <div class="expanded-view">
+                    <% games.forEach(game => {
+                        const isChecked = selectedGames.some(g => g.id === game.id); 
+                    %>
+                        <%- include('../game-card/_game-card.ejs', { game, isChecked}) %>
+                    <% }); %>
+                </div>
+            </div>
+            <div class="vertical-divider"></div>
+            <div class="budget">
+                <div class="your-budget">Your budget: 
+                    <div>
+                        <span class="confirmed-budget-min-value">$<%= minBudget%></span>
+                        <span>-</span>
+                        <span class="confirmed-budget-max-value">$<%= maxBudget%></span>
+                    </div>
+                </div>
+                <div class="budget-center">  
+                    <div class="budget-value" id="budget-min-value"></div>
+                    <div class="budget-separator">to</div>
+                    <div class="budget-value" id="budget-max-value"></div>
+                    <div class="budget-range-wrapper">
+                        <div id="budget-range" class="budget-range-slider" data-start="[<%= minBudget %>, <%= maxBudget %>]" data-min="500" data-max="5000" data-step="100" aria-valuemax="5000" aria-valuemin="500" aria-valuenow="500"></div>
+                        <div class="range-labels">
+                            <span>$500</span>
+                            <span>$5000</span>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="min-budget" id="min-budget" value="" />
+                <input type="hidden" name="max-budget" id="max-budget" value="" />
+                <div class="budget-actions">
+                    <button type="reset" class="reset-button btn btn-link">Reset</button>
+                    <button type="submit" class="btn btn-link">Confirm</button>
+                </div>
+            </div>
+        </form>
+        <div class="filter-button">
+            Filter 
+         <span class="icon icon--arrow-bottom" id="filter-icon"></span>
+        </div>
+    </div>
+</div>

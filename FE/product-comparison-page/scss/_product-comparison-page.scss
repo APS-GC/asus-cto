@@ -1,0 +1,226 @@
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+
+.product-comparison-page {
+  @include mix.p(16, "y");
+  .layout-grid--cols {
+    @include mix.spacer("gap", 8);
+  }
+  .product-comparison-floating-card__container-wrapper {
+    position: sticky;
+    top: 0;
+    background-color: var(--color-primary);
+    z-index: 999;
+    .product-comparison-floating-card__container {
+      overflow: auto;
+      @include mix.p(5, "y");
+    }
+  }
+  .product-comparison-component-wrapper {
+    display: flex;
+    flex-direction: column;
+    @include mix.spacer("gap", 16);
+    .header-component-wrapper {
+      .header-container {
+        @include typo.text-small();
+        .internal-container {
+          .back-button {
+            cursor: pointer;
+            @include typo.text-small();
+            &:hover {
+              color: var(--color-primary);
+            }
+          }
+          .section-heading {
+            display: none;
+          }
+        }
+        .section-heading {
+          @include mix.m(0, "b");
+          .section-heading__title {
+            color: var(--color-primary);
+          }
+        }
+        .clear-all-action-container {
+          display: flex;
+          @include mix.spacer("gap", 4);
+          .clear-all-button {
+            @include typo.text-small();
+            color: var(--color-focus-ring);
+            &:hover {
+              color: var(--color-focus-ring);
+            }
+          }
+        }
+      }
+    }
+    .scrollable-component {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      @include mix.spacer("gap", 16);
+      .product-comparison-table {
+        .page-navigation {
+          flex-direction: column;
+          @include mix.spacer("gap", 2);
+          position: fixed;
+          top: 50%;
+          right: 20px;
+          .navigation-bullet {
+            border: 1px solid var(--color-primary);
+            width: 8px;
+            height: 8px;
+            border-radius: 100%;
+          }
+          .selected {
+            background-color: var(--color-primary);
+          }
+        }
+      }
+      .btn-sm {
+        @include typo.text-small();
+        line-height: 1.125rem;
+        width: 100%;
+        outline-offset: -2px;
+      }
+      .switch-container{
+        align-items: center;
+        @include mix.spacer("gap", 2);
+        .info-container{
+          position: relative;
+          display: none;
+          .icon{
+            background-color: var(--color-primary-600);
+            cursor: pointer;
+          }
+          .info-msg{
+            display: none;
+            position: absolute;
+            top: 24px;
+            left: -134px;
+            border-radius: vars.$border-radius;
+            @include mix.p(2, y);
+            @include mix.p(3, x);
+            background-color: var(--color-primary);
+            opacity: 0.85;
+            p{
+              color: var(--color-primary-950);
+              width: 271px;
+              @include typo.text-xsmall();
+            }
+            &::before{
+              content: "";
+              position: absolute;
+              top: -5px;
+              right: 50%;
+              width: 11px;
+              height: 10px;
+              background: var(--color-primary);
+              -webkit-transform: rotate(45deg);
+            }
+          }
+        }
+      }
+      .no-differences {
+        .info-container{
+          display: flex;
+          &:hover{
+            .info-msg{
+              display: flex;
+            }
+          }
+        }
+        [role="switch"]{
+          pointer-events: none;
+          .switch{
+            background-color: transparent;
+            border: 1px solid var(--color-primary-700);
+            span{
+              top: 3px;
+              background-color: var(--color-primary-700);
+            }
+          }
+        }
+      }
+    }
+  }
+  @include mix.respond-to("lg", "max") {
+    padding-top: 0px;
+    .layout-grid--cols {
+      @include mix.spacer("gap", 2);
+      grid-template-columns: repeat(12, 96px);
+      @include mix.p(5, "r");
+    }
+    .product-comparison-floating-card__container-wrapper {
+      top: 56px;
+    }
+    .product-comparison-component-wrapper {
+      @include mix.spacer("gap", 10);
+      .header-component-wrapper {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        @include mix.p(4, "y");
+        background-color: var(--color-primary);
+        .header-container {
+          .internal-container {
+            @include mix.spacer("gap", 2);
+            .back-button {
+              color: var(--color-primary-950);
+              .icon {
+                height: 12px;
+                width: 12px;
+              }
+              .back-button-text {
+                display: none;
+              }
+            }
+            .vertical-divider {
+              width: 1px;
+              height: 24px;
+              background-color: #d9d9d9;
+              opacity: 20%;
+            }
+            .section-heading {
+              display: block;
+              .section-heading__title {
+                color: var(--color-primary-950);
+                @include typo.text-display6();
+              }
+            }
+          }
+          .section-heading {
+            display: none;
+          }
+          .clear-all-action-container {
+            span {
+              color: var(--color-primary-950);
+            }
+          }
+        }
+      }
+      .scrollable-component {
+        @include mix.spacer("gap", 10);
+        overflow: auto;
+        .product-comparison-table {
+          .page-navigation {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+  @include mix.respond-to("md", "max") {
+    .layout-grid--cols {
+      grid-template-columns: repeat(12, 47px);
+    }
+    .product-comparison-component-wrapper {
+      @include mix.spacer("gap", 8);
+    }
+  }
+}
+
+footer {
+  margin-top: 0;
+}

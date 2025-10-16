@@ -1,0 +1,19 @@
+<div class="game-item">
+  <input
+    type="checkbox"
+    id="game-you-play-<%= game.id %>"
+    name="games"
+    value="<%= game.id %>"
+    data-name="<%= game.name %>"
+    data-image="<%= game.image %>"
+    <%= typeof isChecked !== 'undefined' && isChecked ? 'checked' : '' %>
+    <%= typeof isChecked !== 'undefined' && isChecked ? 'aria-checked=true' : 'aria-checked=false' %>
+  />
+  <div class="game-details-wrapper">
+    <div class="image-wrapper" aria-hidden="true">
+      <img src="<%= game.image %>" alt="" class="game-image" loading="lazy" />
+      <div class="checkmark-overlay"></div>
+    </div>
+    <label class="game-info" for="game-you-play-<%= game.id %>"><%= game.name %></label>
+  </div>
+</div>

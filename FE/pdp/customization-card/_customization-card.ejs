@@ -1,0 +1,17 @@
+<div class="cmp-customization-card" data-a11y-dialog-show="specifications-info-dialog">
+  <div class="radio-overlay">
+    <input
+      type="radio"
+      name="customization-option-<%= groupId %>"
+      class="customization-radio" aria-label="<%= name %>"
+    />
+    <div class="radio-checkmark"></div>
+  </div>
+  <div>
+    <p class="cmp-product-name"><%= name %></p>
+  </div>
+  <div>
+    <p class="price"><%= price %></p>
+  </div>
+  <%- include('../customization-dialogs/_specifiations-info.ejs') %>
+</div>

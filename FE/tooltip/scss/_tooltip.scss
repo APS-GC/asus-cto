@@ -1,0 +1,141 @@
+@use "../../../site/scss/settings/variables" as vars;
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+
+/* Tooltip trigger with pointer cursor */
+[data-tooltip-trigger] {
+  cursor: pointer;
+}
+
+.tooltip__content {
+  --tooltip-background: var(--color-primary-950);
+  --tooltip-color: var(--color-primary);
+  --tooltip-offset: 0;
+  position: absolute;
+  background: var(--tooltip-background);
+  color: var(--tooltip-color);
+  z-index: 99999;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  max-width: 400px;
+  border-radius: vars.$border-radius;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  transform: translate3d(0, 0, 0); // Force hardware acceleration
+  will-change: transform, opacity;
+  box-sizing: border-box;
+
+  @include mix.p(5);
+  @include typo.text-small;
+
+  &--theme-dark {
+    --tooltip-background: var(--color-primary-50);
+    --tooltip-color: var(--color-primary-950);
+  }
+
+  &--size-small {
+    max-width: 245px;
+    @include mix.p(3, "y");
+    @include mix.p(4, "x");
+    @include typo.text-xsmall;
+  }
+}
+
+.tooltip__content.tooltip--visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Base arrow */
+.tooltip__content::after {
+  content: "";
+  top: 50%;
+  left: -5px;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="5" height="12" viewBox="0 0 5 12" fill="none"><path d="M5 0.5C4.97696 0.519444 4.95461 0.540181 4.93304 0.562211L0.275596 5.32028C-0.0918658 5.69568 -0.0918658 6.30432 0.275596 6.67972L4.93304 11.4378C4.95461 11.4598 4.97696 11.4806 5 11.5L5 0.5Z" fill="white"/></svg>')
+    center / contain no-repeat;
+  width: 6px;
+  height: 11px;
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Arrows by direction */
+.tooltip--position-top {
+  margin-bottom: var(--tooltip-offset);
+
+  &::after {
+    bottom: -7px;
+    left: 50%;
+    top: unset;
+    transform: translateX(-50%) rotate(270deg);
+  }
+}
+
+.tooltip--position-bottom {
+  margin-top: var(--tooltip-offset);
+
+  &::after {
+    top: -7px;
+    left: 50%;
+    transform: translateX(-50%) rotate(90deg);
+  }
+}
+
+.tooltip--position-left {
+  margin-right: var(--tooltip-offset);
+
+  &::after {
+    top: 50%;
+    right: -5px;
+    left: unset;
+    transform: translateY(-50%) rotate(180deg);
+    background-position: left center;
+  }
+}
+
+.tooltip--position-right {
+  margin-left: var(--tooltip-offset);
+
+  &::after {
+    top: 50%;
+    left: -5px;
+    transform: translateY(-50%);
+    background-position: right center;
+  }
+}
+
+/* Adjust tooltip position when near viewport edges */
+.tooltip--flip-x {
+  &.tooltip--position-top,
+  &.tooltip--position-bottom {
+    transform: translateX(0) !important;
+    left: auto !important;
+    right: 0;
+
+    &::after {
+      left: auto;
+      right: 12px;
+      transform: none;
+    }
+  }
+}
+
+.tooltip--flip-y {
+  &.tooltip--position-left,
+  &.tooltip--position-right {
+    transform: translateY(0) !important;
+    top: auto !important;
+    bottom: 0;
+
+    &::after {
+      top: auto;
+      bottom: 12px;
+      transform: none;
+    }
+  }
+}

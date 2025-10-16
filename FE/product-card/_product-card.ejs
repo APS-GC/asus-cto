@@ -1,0 +1,117 @@
+<div class="cmp-product-card">
+  <div class="cmp-product-card__header">
+    <div class="cmp-product-card__status">
+      <span class="cmp-product-card__status-item cmp-product-card__status--in-stock">In Stock</span>
+      <span class="cmp-product-card__status-item cmp-product-card__status--new">New</span>
+      <span class="cmp-product-card__status-item cmp-product-card__status--deal">Deal</span>
+    </div>
+  </div>
+
+  <div class="cmp-product-card__body">
+    <div class="cmp-product-card__image cmp-image">
+      <button class="cmp-product-card__preview-btn" data-a11y-dialog-show="product-preview-dialog" aria-label="Quick view <%= name %>">Quick view</button>
+      <img class="cmp-image__image" src="<%= image %>" alt="<%= name %>" loading="lazy" />
+      <% if (typeof imageHover !== 'undefined' && imageHover) { %>
+        <img class="cmp-image__image--hover" src="<%= imageHover %>" alt="<%= name %>" aria-hidden="true" loading="lazy" />
+      <% } %>
+    </div>
+
+    <div class="cmp-product-card__info">
+      <div class="cmp-product-card__title">
+        <a href="pdp.html" aria-label="Buy <%=name%>"><%= name %></a>
+      </div>
+      <p class="cmp-product-card__model">
+        <a href="pdp.html#product-features"><%= model %></a>
+      </p>
+    </div>
+
+    <div class="cmp-product-card__rating_and_compare">
+      <div class="cmp-product-card__rating">
+        <div
+          data-bv-show="inline_rating"
+          data-bv-product-id="<%= bazaarvoiceProductId %>"
+          data-bv-redirect-url="pdp.html#product-reviews"
+        ></div>
+      </div>
+      <div class="cmp-product-card__compare">
+        <input type="checkbox" class="cmp-product-card__compare-checkbox" id="compare-<%= id %>" data-id="<%= id %>"
+          data-name="<%= name %>" data-model="<%= model %>" data-sku="<%= model %>" data-image="<%= image %>"
+          data-pdp="/product-detail/<%= id %>" data-add-to-compare />
+
+        <label for="compare-<%= id %>" class="cmp-product-card__compare-label">Compare</label>
+      </div>
+    </div>
+
+    <div class="cmp-product-card__fps">
+      <p class="cmp-product-card__fps-game">
+        <%= benchmarkGame %>
+      </p>
+
+      <button class="cmp-product-card__fps-score" data-tooltip-trigger aria-describedby="fps-details-<%= id %>" data-tooltip-position="right">
+          FPS: <%= fps %>
+      </button>
+      <div id="fps-details-<%= id %>" class="tooltip__content" role="tooltip">
+        <table class="cmp-product-card__fps-table">
+          <thead>
+            <tr>
+              <th>Game FPS</th>
+              <th>1080P</th>
+              <th>1440P</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Call of Duty: Modern Warfare III</td>
+              <td>--</td>
+              <td>57 FPS</td>
+            </tr>
+            <tr>
+              <td>Fortnite Chapter 4</td>
+              <td>346 FPS</td>
+              <td>45 FPS</td>
+            </tr>
+            <tr>
+              <td>Red Dead Redemption 2</td>
+              <td>315 FPS</td>
+              <td>--</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <ul class="cmp-product-card__specs">
+      <% specs.forEach(function(spec) { %>
+        <li class="cmp-product-card__spec-item">
+          <%= spec %>
+        </li>
+        <% }) %>
+    </ul>
+
+    <div class="cmp-product-card__estore">
+      <div class="cmp-product-card__estore-line">
+        <span class="cmp-product-card__estore-label">ASUS estore price</span>
+
+        <div class="cmp-product-card__estore-icon-wrapper">
+          <button class="cmp-product-card__estore-icon" data-tooltip-trigger aria-describedby="estore-price-info-<%= id %>" data-tooltip-position="top" aria-label="Information about ASUS estore price.">
+            <span class="visually-hidden"></span>
+          </button>
+          <div class="cmp-product-card__tooltip tooltip__content" id="estore-price-info-<%= id %>" role="tooltip">
+            ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be
+            available on estore and are for reference only.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmp-product-card__price-block">
+      <span class="cmp-product-card__price">$<%= price %></span>
+      <span class="cmp-product-card__original-price">$<%= originalPrice %></span>
+      <span class="cmp-product-card__discount">SAVE $<%= discount %></span>
+    </div>
+  </div>
+
+  <div class="cmp-product-card__footer">
+    <button class="cmp-button cmp-product-card__buy-button btn">Buy now</button>
+  </div>
+</div>

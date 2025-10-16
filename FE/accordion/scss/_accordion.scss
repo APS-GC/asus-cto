@@ -1,0 +1,74 @@
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+
+.cmp-accordion {
+  border-top: 1px solid var(--color-primary-300);
+
+  .cmp-accordion__item {
+    border-bottom: 1px solid var(--color-primary-300);
+
+    .cmp-accordion__header {
+      color: var(--color-primary-950);
+    }
+
+    .cmp-accordion__button {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      @include mix.p(0, "x");
+      @include mix.p(5, "y");
+      @include typo.text-cta;
+      font-weight: var(--medium);
+
+      .cmp-accordion__title {
+        flex-grow: 1;
+      }
+
+      .cmp-accordion__icon {
+        transform: rotate(180deg);
+        transition: transform 0.3s ease;
+
+        // Remove the pseudo-element
+        &::before {
+          content: "";
+          display: inline-block;
+          width: 24px;
+          height: 24px;
+          background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none"><path d="M20.25 17L12 8.45L3.75 17" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+        }
+      }
+    }
+
+    .cmp-accordion__panel {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 0.3s ease;
+      color: var(--color-primary-700);
+      @include mix.p(5, "b");
+    }
+
+    &[data-cmp-expanded] {
+      .cmp-accordion__button {
+        @include mix.p(3, "b");
+
+        .cmp-accordion__icon {
+          transform: rotate(0deg);
+        }
+      }
+
+      .cmp-accordion__panel {
+        max-height: 100%;
+        opacity: 1;
+      }
+    }
+  }
+}

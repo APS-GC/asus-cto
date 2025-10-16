@@ -1,0 +1,50 @@
+<div class="accordion panelcontainer">
+  <div 
+    id="accordion-<%= accordionId %>"
+    data-cmp-is="accordion"
+    class="cmp-accordion"
+    data-cmp-data-layer='{
+      "accordion-<%= accordionId %>": {
+      "shownItems": ["<%= accordionItems.find(i => i.expanded)?.id || '' %>"],
+      "@type": "core-components-examples/components/accordion"
+    }}'
+    data-placeholder-text="false"
+  >
+    <% accordionItems.forEach(function(item) { %>
+      <div 
+        class="cmp-accordion__item"
+        data-cmp-hook-accordion="item"
+        data-cmp-data-layer='{
+          "<%= item.id %>": {
+            "@type": "core-components-examples/components/accordion/item",
+            "dc:title": "<%= item.title %>"
+          }}'
+        id="<%= item.id %>"
+        <% if (item.expanded) { %> data-cmp-expanded <% } %>
+      >
+        <h3 class="cmp-accordion__header">
+          <button 
+            id="<%= item.id %>-button"
+            class="cmp-accordion__button <%= item.expanded ? 'cmp-accordion__button--expanded' : '' %>"
+            type="button"
+            aria-controls="<%= item.id %>-panel"
+            data-cmp-hook-accordion="button"
+          >
+            <span class="cmp-accordion__title"><%= item.title %></span>
+            <span class="cmp-accordion__icon"></span>
+          </button>
+        </h3>
+        <div 
+          data-cmp-hook-accordion="panel"
+          id="<%= item.id %>-panel"
+          class="cmp-accordion__panel <%= item.expanded ? 'cmp-accordion__panel--expanded' : 'cmp-accordion__panel--hidden' %>"
+          role="region"
+          aria-labelledby="<%= item.id %>-button"
+          aria-hidden="<%= item.expanded ? 'false' : 'true' %>"
+        >
+          <%- item.content %>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+</div>

@@ -1,0 +1,367 @@
+@use "../../../site/scss/settings/variables" as vars;
+@use "../../../site/scss/settings/mixins" as mix;
+@use "sass:color";
+@use "sass:map";
+
+// ================
+// Carousel Base
+// ================
+.carousel {
+  // Navigation in section heading
+  .cmp-carousel {
+    // This is required to handle the carousel navigation arrows in section heading
+    &__actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      @include mix.spacer(gap, 3);
+
+      // Hide actions if both are disabled
+      &:has(.cmp-carousel__action--disabled + .cmp-carousel__action--disabled) {
+        display: none;
+      }
+    }
+
+    &__action {
+      width: 48px;
+      height: 48px;
+      background: url('data:image/svg+xml,<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><g><path data-figma-bg-blur-radius="4" d="M24 48C37.2548 48 48 37.2548 48 24C48 10.7452 37.2548 0 24 0C10.7452 0 0 10.7452 0 24C0 37.2548 10.7452 48 24 48Z" fill="%234D4D4D" fill-opacity="0.64"></path><path d="M21.1719 32.4854L29.6572 24.0001L21.1719 15.5148" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></g><rect x="0.5" y="0.5" width="47" height="47" rx="23.5" stroke="%23999999"></rect></svg>')
+        center/contain no-repeat;
+      border-radius: 50%;
+      display: flex;
+      cursor: pointer;
+      border: 0;
+
+      &--previous {
+        transform: rotate(180deg);
+      }
+
+      // TODO: Check the expected behavior for disabled state
+      &--disabled {
+        background: url('data:image/svg+xml,<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><g><path data-figma-bg-blur-radius="4" d="M24 48C37.2548 48 48 37.2548 48 24C48 10.7452 37.2548 0 24 0C10.7452 0 0 10.7452 0 24C0 37.2548 10.7452 48 24 48Z" fill="%23181818"></path><path d="M21.1719 32.4854L29.6572 24.0001L21.1719 15.5148" stroke="%234D4D4D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>')
+          center/contain no-repeat;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  @include mix.respond-to("md", "max") {
+    .cmp-carousel__action {
+      width: 28px;
+      height: 28px;
+    }
+  }
+}
+
+// ================
+// Carousel Core
+// ================
+.cmp-carousel {
+  position: relative;
+
+  &__content {
+    position: relative;
+
+    &--overflow {
+      .swiper {
+        overflow: visible; // Show the overflow content
+      }
+    }
+  }
+
+  // Footer container
+  &__footer {
+    position: absolute;
+    bottom: 20px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 32px;
+    min-height: 32px;
+    width: 100%;
+    z-index: 2;
+    @include mix.p(10, "x");
+  }
+
+  // Indicators group
+  &__indicators-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 32px;
+    width: fit-content;
+    height: 16px; // Fixed height as per UI. Elements will have 24px click area
+  }
+
+  // Pagination indicators
+  &__indicators {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    list-style: none;
+    @include mix.p(0);
+    @include mix.m(0);
+    margin-top: -4px;
+    margin-left: -4px;
+  }
+
+  // Individual indicator
+  &__indicator {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    border-radius: 0;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    background-color: transparent;
+    @include mix.m(0);
+    @include mix.p(0);
+
+    &::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 8px; // Kept is pixel to fix the glitch in width transition
+      background-color: transparent;
+      border: 1px solid var(--color-primary-950);
+      display: inline-block;
+      opacity: 1;
+      box-sizing: border-box;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    &:hover::before {
+      background-color: color.change(map.get(vars.$color-primary-map, "950"), $alpha: 0.4);
+    }
+
+    &:focus {
+      // outline: 0;
+    }
+
+    &:focus::before {
+      background-color: var(--color-primary-600);
+      // outline: 2px solid var(--color-focus-ring);
+    }
+
+    // Active state
+    &--active {
+      width: 96px;
+      margin: 0 8px;
+      border: 0;
+      overflow: hidden;
+      cursor: default;
+
+      &::before {
+        width: 100%;
+        background-color: var(--color-primary-300);
+        border: 0;
+      }
+
+      &::after {
+        content: "";
+        background-color: var(--color-primary-950);
+        border-radius: 8px;
+        transform-origin: left;
+        // transform: scaleX(var(--slide-progress, 0));
+        position: absolute;
+        top: 8px;
+        height: 8px;
+        width: calc(100% * var(--slide-progress, 0));
+        left: 0px;
+      }
+    }
+  }
+
+  // Media controls
+  &__media-controls {
+    position: absolute;
+    right: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    gap: 0.5rem;
+    display: none;
+  }
+
+  &__media-control {
+    width: 32px;
+    height: 32px;
+    background-color: var(--color-primary-950);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+
+    &:focus {
+      background-color: var(--color-primary-600);
+      outline: 2px solid var(--color-focus-ring);
+    }
+  }
+
+  // Autoplay toggle button
+  .carousel-autoplay-toggle {
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="9" y="4.66699" width="1.66667" height="6.66667" rx="0.833333" fill="white"/><rect x="5.33398" y="4.66699" width="1.66667" height="6.66667" rx="0.833333" fill="white"/></svg>')
+      center / 16px no-repeat;
+    width: 24px;
+    height: 24px;
+    border: 0;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    color: var(--color-primary-950);
+    @include mix.p(1);
+    margin-top: -4px;
+  }
+
+  // Show media controls only for the slides with video
+  &:has(.swiper-slide-active .hero-video) {
+    .cmp-carousel__media-controls {
+      display: flex;
+    }
+  }
+}
+
+// ================
+// Creative Effect
+// ================
+.cmp-carousel[data-carousel-effect="creative"] {
+  overflow-x: visible;
+  @include mix.spacer("gap", 5);
+
+  .cmp-carousel__content {
+    grid-column: 1 / 12;
+  }
+
+  .swiper-3d {
+    overflow: visible;
+    width: 100%;
+  }
+
+  .cmp-carousel__footer {
+    position: relative;
+    top: unset;
+    bottom: unset;
+    @include mix.m(8, "t");
+  }
+
+  .cmp-carousel__actions {
+    display: none;
+  }
+
+  @include mix.respond-to("lg") {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    justify-content: center;
+    align-items: center;
+
+    .cmp-carousel__content {
+      grid-column: 2 / 12;
+    }
+
+    .swiper-3d {
+      max-width: 1032px;
+    }
+
+    .cmp-carousel__actions {
+      display: flex;
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      transform: translateY(-50%);
+      z-index: 3;
+      justify-content: space-between;
+    }
+
+    .cmp-carousel__action {
+      position: relative;
+
+      &--previous {
+        left: -32px;
+        translate: -100% 0;
+      }
+      &--next {
+        right: -32px;
+        transform: translateX(100%);
+      }
+    }
+  }
+}
+
+// ================
+// State Modifiers
+// ================
+// Autoplay paused state
+.cmp-carousel:has(.is-autoplay-paused) {
+  .carousel-autoplay-toggle {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 12L9 17.1962L9 6.80385L18 12Z" fill="white"/></svg>');
+  }
+}
+.cmp-carousel__media-controls {
+  .cmp-carousel__media-control--play-pause {
+    background: url('data:image/svg+xml,<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle data-figma-bg-blur-radius="10" cx="16" cy="16" r="15.5" fill="%23070707" fill-opacity="0.5" stroke="white"/><rect x="11.6002" y="9.99998" width="0.8" height="12" rx="0.4" fill="white" stroke="white" stroke-width="0.8"/><rect x="19.6002" y="9.99998" width="0.8" height="12" rx="0.4" fill="white" stroke="white" stroke-width="0.8"/></svg>');
+  }
+  &.paused {
+    .cmp-carousel__media-control--play-pause {
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><circle xmlns="http://www.w3.org/2000/svg" data-figma-bg-blur-radius="10" cx="16" cy="16" r="15.5" fill="%23070707" fill-opacity="0.5" stroke="white"/><path d="M22.5192 15.1362C23.1807 15.5221 23.1807 16.4779 22.5192 16.8638L13.5039 22.1227C12.8372 22.5116 12 22.0308 12 21.259L12 10.741C12 9.96925 12.8372 9.48838 13.5039 9.87726L22.5192 15.1362Z" fill="white"/></svg>');
+    }
+  }
+}
+.cmp-carousel__indicator {
+  cursor: pointer;
+}
+
+// Autoplay disabled state
+.swiper:not(.is-autoplay-enabled) {
+  .cmp-carousel__indicator--active {
+    background-color: var(--color-primary-950);
+  }
+}
+
+// ================
+// Mobile Overrides
+// ================
+@include mix.respond-to("md", "max") {
+  .cmp-carousel {
+    &__footer {
+      @include mix.p(5, "x");
+
+      .cmp-carousel__media-controls {
+        position: static;
+        right: unset;
+        top: unset;
+        transform: none;
+        margin-left: auto;
+      }
+    }
+
+    &[data-carousel-effect="creative"] .cmp-carousel__footer {
+      @include mix.m(5, "t");
+    }
+  }
+}
+
+// ================
+// Swiper Overrides
+// ================
+.cmp-carousel__item {
+  display: block;
+
+  &.swiper-slide {
+    width: 100%;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+}
+
+.swiper-wrapper {
+  display: flex;
+}
+
+section:has(.cmp-carousel) {
+  overflow: hidden;
+}

@@ -1,0 +1,128 @@
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/mixins" as mix;
+
+// TODO: Add styles for the button component based on the AEM specifications.
+:root {
+  // Default dark theme variables
+  --btn-bg: var(--color-primary-950);
+  --btn-color: var(--color-primary);
+  --btn-disabled-bg: var(--color-primary-600);
+  --btn-disabled-color: var(--color-primary-800);
+  --btn-hover-bg: var(--color-primary-700);
+  --btn-outline-border: var(--color-primary-950);
+  --btn-outline-disabled-border: var(--color-primary-600);
+  --btn-outline-hover-bg: var(--color-primary-950);
+  --btn-outline-hover-color: var(--color-primary);
+  --btn-link-color: var(--color-primary-950);
+  --btn-link-disabled-color: var(--color-primary-600);
+  --btn-link-hover-color: var(--color-primary-950);
+}
+
+.light-mode {
+  // Light theme overrides
+  --btn-bg: var(--color-primary);
+  --btn-color: var(--color-primary-950);
+  --btn-disabled-bg: var(--color-primary-700);
+  --btn-disabled-color: var(--color-primary-400);
+  --btn-hover-bg: var(--color-primary-300);
+  --btn-outline-border: var(--color-primary);
+  --btn-outline-disabled-border: var(--color-primary-700);
+  --btn-outline-hover-bg: var(--color-primary);
+  --btn-outline-hover-color: var(--color-primary-950);
+  --btn-link-color: var(--color-primary);
+  --btn-link-disabled-color: var(--color-primary-700);
+  --btn-link-hover-color: var(--color-primary);
+}
+
+.btn {
+  // Common properties
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 400;
+  white-space: nowrap;
+
+  // Default size/styles
+  @include mix.p(4, "x");
+  @include mix.p(2, "y");
+  @include mix.spacer("gap", 3);
+
+  @include typo.text-cta();
+
+  // Base button styles using CSS variables
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: var(--btn-disabled-bg);
+    color: var(--btn-disabled-color);
+  }
+
+  &:hover:not(:disabled) {
+    background-color: var(--btn-hover-bg);
+  }
+
+  &:focus-visible:not(:disabled) {
+    outline: solid 2px var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  // Size variants
+  &-sm {
+    @include mix.p(3, "x");
+    @include mix.p(2, "y");
+    @include mix.spacer("gap", 2);
+
+    @include typo.text-style(xs);
+  }
+
+  // Outline variant
+  &-outline {
+    background-color: transparent;
+    box-shadow: inset 0 0 0 2px var(--btn-outline-border);
+    color: var(--btn-outline-border);
+
+    &:disabled {
+      background-color: transparent;
+      box-shadow: inset 0 0 0 2px var(--btn-outline-disabled-border);
+      color: var(--btn-outline-disabled-border);
+    }
+
+    &:hover:not(:disabled),
+    &:focus:not(:disabled) {
+      background-color: var(--btn-outline-hover-bg);
+      color: var(--btn-outline-hover-color);
+    }
+  }
+
+  // Link variant
+  &-link {
+    background-color: transparent;
+    color: var(--btn-link-color);
+    @include mix.p(0);
+    @include mix.spacer("gap", 2);
+
+    &:disabled {
+      background-color: transparent;
+      color: var(--btn-link-disabled-color);
+    }
+
+    &:hover:not(:disabled),
+    &:focus:not(:disabled) {
+      background-color: transparent;
+      color: var(--btn-link-hover-color);
+      text-decoration: underline;
+    }
+
+    // Size adjustment for link variant
+    &.btn-sm {
+      @include typo.text-style(base);
+    }
+  }
+}

@@ -1,0 +1,35 @@
+@use "../../../site/scss/settings/variables" as vars;
+@use "../../../site/scss/settings/mixins" as mix;
+
+/** 
+ * ========================================================================== 
+ * Base Container
+ * Todo: We might need to remove this if we use AEM container.
+ * ========================================================================== 
+ */
+.container {
+  max-width: vars.$container;
+  padding: 0 20px;
+  margin: 0 auto;
+
+  @include mix.respond-to("md") {
+    padding: 0 40px;
+  }
+
+  @include mix.respond-to("xl") {
+    max-width: calc(100% - 200px);
+    @include mix.p(0);
+  }
+
+  @include mix.respond-to("2xl") {
+    max-width: vars.$container-xxl;
+  }
+
+  // Converts to full width on mobile
+  &-mobile-full {
+    @include mix.respond-to("md", "max") {
+      max-width: 100%;
+      @include mix.p(0, "x");
+    }
+  }
+}

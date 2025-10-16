@@ -1,0 +1,106 @@
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+
+.product-preview__overview-section {
+  flex: 1;
+  color: var(--color-primary-100);
+
+  .availability-tags {
+    display: flex;
+    align-items: center;
+    @include mix.spacer("gap", 2);
+
+    .tag {
+      @include typo.text-xsmall();
+
+      &.in-stock {
+        font-weight: 500;
+        color: var(--color-border-type);
+      }
+    }
+
+    .vertical-divider {
+      width: 1px;
+      height: 12px;
+      background-color: var(--color-primary-700);
+    }
+  }
+
+  .product-title {
+    color: var(--color-primary-100);
+    @include typo.text-display2();
+    @include mix.m(1, "b");
+  }
+
+  .product-model {
+    color: var(--color-primary-300);
+    @include typo.text-small();
+  }
+
+  .game-title {
+    display: flex;
+    color: var(--color-primary-100);
+    align-items: center;
+    @include typo.text-small();
+    @include mix.spacer("gap", 2);
+    @include mix.m(3, "t");
+
+    .badge {
+      display: inline-flex;
+      padding: 1px 12px;
+      justify-content: center;
+      align-items: center;
+      color: var(--color-primary-100);
+      border-radius: vars.$border-radius;
+      border: 1px solid var(--color-primary-400);
+      text-decoration: none;
+    }
+  }
+
+  .compare-product {
+    display: flex;
+    align-items: center;
+    color: var(--color-primary-100);
+    @include typo.text-small();
+    @include mix.m(3, "t");
+    @include mix.spacer("gap", 2);
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--color-primary-700);
+    @include mix.m(8, "y");
+  }
+
+  .features {
+    @include mix.m(3, "t");
+    @include mix.p(4, "l");
+
+    li {
+      @include typo.text-small();
+      color: var(--color-primary-300);
+      @include mix.m(4, "t");
+
+      strong {
+        @include typo.text-bold();
+        color: var(--color-primary-100);
+      }
+    }
+  }
+
+  .spec-summary {
+    &__heading {
+      color: var(--color-primary-100);
+      @include typo.text-bold();
+      @include mix.m(3, "b");
+    }
+
+    &__list {
+      color: var(--color-primary-300);
+      @include typo.text-small();
+      @include mix.p(4, "l");
+    }
+  }
+}

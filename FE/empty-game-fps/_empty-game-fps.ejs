@@ -1,0 +1,34 @@
+<div class="fps-section">
+  <div class="fps-header-row">
+    <span class="fps-title">Game FPS</span>
+    <div class="fps-info-group">
+      <button class="fps-info" data-a11y-dialog-show="fps-dialog" aria-label="View FPS Details">
+        What is FPS? <span class="icon icon--plus"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="fps-tabs-wrapper">
+    <%- include('../../components/tabs/_tabs.ejs',
+     { tabsId: 'empty-fps-tabs', 
+     activeTabId: 'empty-fps-tab-1080',
+     tabsStyle: 'solid',
+      tabs: [
+       { id: 'empty-fps-tab-1080',
+        title: '1080p', 
+        content: `
+      <div class="cmp-no-games-fps">
+        <p>Game FPS is currently unavailable</p>
+      </div>
+    ` },
+     { id: 'empty-fps-tab-1440', 
+     title: '1440p', 
+     content: `
+    <div class="cmp-no-games-fps">
+      <p>Game FPS is currently unavailable</p>
+    </div>
+    ` } 
+    ] 
+  }) %>
+  </div>
+</div>

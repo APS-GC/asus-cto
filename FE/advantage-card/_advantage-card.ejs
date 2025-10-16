@@ -1,0 +1,22 @@
+<div class="cmp-advantage-card">
+  <div class="cmp-advantage-card__image-wrapper">
+    <img
+      src="<%= image %>"
+      alt="Ultimate Gaming Experience"
+      class="cmp-advantage-card__image"
+      loading="lazy"
+    />
+
+    <% if (typeof video !== 'undefined' && video !== '') { %>
+      <video class="cmp-advantage-card__video" data-src="<%= video %>" playsinline controls></video>
+      <button class="cmp-advantage-card__close-video" aria-label="Close video"></button>
+    <% } %>
+  </div>
+  <div class="cmp-advantage-card__overlay">
+    <div class="cmp-advantage-card__content">
+      <h3 class="cmp-advantage-card__title"><%= title %></h3>
+      <p class="cmp-advantage-card__desc"><%= desc %></p>
+      <button class="cmp-advantage-card__btn btn" title="Watch Now <%= title%>" aria-label="Watch Now <%= title%>">Watch now <img src="./clientlib-site/images/icon-play-filled.svg" alt="play-icon" /></button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,94 @@
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+@use "../../../site/scss/settings/mixins" as mix;
+
+.featured-products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  @include mix.spacer(gap, 5);
+
+  .product-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    background-color: var(--color-primary-50);
+    border-radius: vars.$border-radius-xl;
+    color: var(--color-primary-950);
+    align-items: center;
+    box-shadow: vars.$shadow-normal;
+    @include mix.p(6);
+
+    .product-image-wrapper {
+      width: 120px;
+      height: auto;
+      overflow: hidden;
+      border-radius: vars.$border-radius-sm;
+
+      .product-image {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: contain;
+      }
+    }
+
+    .product-info {
+      display: grid;
+      align-self: center;
+      @include mix.p(10, "l");
+      @include mix.spacer("gap", 2);
+
+      .label {
+        color: var(--color-primary-950);
+        @include typo.text-xsmall();
+      }
+
+      .title {
+        @include mix.m(4, "b");
+        @include typo.text-display4();
+      }
+
+      .view-configs {
+        color: var(--color-primary-950);
+        text-decoration: none;
+        @include typo.text-base();
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: var(--btn-link-hover-color);
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .featured-products {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    @include mix.spacer(gap, 2);
+
+    .product-card {
+      @include mix.p(4);
+
+      .product-image-wrapper {
+        width: 84px;
+        align-self: flex-start;
+      }
+
+      .product-info {
+        @include mix.p(4, "l");
+
+        .label {
+          @include typo.text-xsmall();
+        }
+
+        .title {
+          @include typo.text-display5();
+          @include mix.m(4, "b");
+        }
+      }
+    }
+  }
+}

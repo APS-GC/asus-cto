@@ -1,0 +1,52 @@
+<div class="product-gallery">
+  <!-- Main Image Swiper -->
+  <div 
+    class="swiper product-gallery__main-carousel"
+    data-show-image-gallery-modal="<%= showImageGalleryModal %>"
+    data-gallery-title="<%= title === 'undefined' ? 'Product Gallery' : title %>"
+    data-gallery-description="<%= description === 'undefined' ? 'Product Gallery Description' : description %>"
+  >
+    <div class="swiper-wrapper">
+      <% images.forEach((img, index) => { %>
+        <div class="carousel__item swiper-slide">
+          <img 
+            src="<%= img.image %>" 
+            alt="<%= img.title %>"
+            class="gallery-main-image"
+            data-gallery-index="<%= index %>"
+            loading="<%= index === 0 ? 'eager' : 'lazy' %>"
+          />
+        </div>
+      <% }); %>
+    </div>
+  </div>
+
+  <!-- Thumbnails Swiper -->
+  <div class="product-gallery__thumbs-carousel-wrapper">
+    <div class="swiper product-gallery__thumbs-carousel">
+      <div class="swiper-wrapper">
+        <% images.forEach((img, index) => { %>
+          <div class="carousel__item swiper-slide">
+            <img 
+              src="<%= img.thumbnail || img.image %>" 
+              alt="<%= (img.title || `Product Image ${index + 1}`) + ' Thumbnail' %>"
+              class="gallery-thumb-image"
+              data-gallery-index="<%= index %>"
+              loading="lazy"
+            />
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  
+    <!-- Navigation Buttons -->
+    <div class="carousel__actions">
+      <button class="carousel__action carousel__action--previous" aria-label="Previous image">
+        <span class="icon icon--arrow-left"></span>
+      </button>
+      <button class="carousel__action carousel__action--next" aria-label="Next image">
+        <span class="icon icon--arrow-right"></span>
+      </button>
+    </div>
+  </div>
+</div>

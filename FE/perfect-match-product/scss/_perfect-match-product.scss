@@ -1,0 +1,149 @@
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+
+// Product card modifications for perfect match
+.cmp-perfect-match-product__item {
+  border-radius: vars.$border-radius-xl;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .cmp-product-card {
+    // Remove top border-radius. 2px spacing is reduced to match the outer radius.
+    border-radius: 0 0 14px 14px;
+    flex: 1;
+    height: unset;
+  }
+
+  // Perfect match badge styling
+  .perfect-match-badge {
+    text-align: center;
+    @include mix.p(1, "y");
+    @include mix.p(0, "x");
+
+    &__text {
+      color: var(--color-primary-950);
+      @include typo.text-bold();
+
+      @include mix.respond-to("lg", "max") {
+        @include typo.text-xsmall();
+      }
+    }
+  }
+
+  &:has(.perfect-match-badge--best-fit) {
+    background: linear-gradient(90deg, #da07ac 0%, #7b05fd 100%);
+  }
+
+  &:has(.perfect-match-badge--customer-choice) {
+    padding: 0 3px 3px 3px;
+    background: linear-gradient(90deg, #0c74e4 0%, #7b05fd 100%);
+  }
+
+  &:has(.perfect-match-badge--good-deal) {
+    background: linear-gradient(90deg, #00819e 0%, #2205fd 100%);
+  }
+}
+
+// Perfect match grid layout
+.perfect-match-grid {
+
+  // Single product: centered on desktop
+  &--single {
+    .perfect-match-grid__item {
+      @include mix.respond-to("lg", "min") {
+        grid-column: 5 / 9; // Center in 12-column grid (columns 5-8)
+      }
+    }
+  }
+
+  // Two products: centered on desktop
+  &--double {
+    .perfect-match-grid__item {
+      @include mix.respond-to("lg", "min") {
+        &:first-child {
+          grid-column: 3 / 7; // Columns 3-6
+        }
+
+        &:last-child {
+          grid-column: 7 / 11; // Columns 7-10
+        }
+      }
+    }
+  }
+
+  &__item {
+    // Ensure proper spacing and alignment
+    display: flex;
+    flex-direction: column;
+
+    // Mobile: force all products to stack vertically in single column
+    @include mix.respond-to("sm", "max") {
+      grid-column: 1 / -1 !important;
+      width: 100%;
+    }
+  }
+}
+
+// No match products styling
+.no-match-products {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  @include mix.p(8, "y");
+
+  &__title {
+    color: var(--color-primary-950);
+    @include typo.text-display2();
+  }
+
+  &__description {
+    color: var(--color-primary-950);
+    @include typo.text-base();
+    @include mix.m(8, "t");
+  }
+
+  @include mix.respond-to("lg", "max") {
+    &__title {
+      @include typo.text-display3();
+    }
+
+    &__description {
+      @include mix.m(3, "t");
+    }
+  }
+}
+
+// Mobile grid layout for perfect match products
+.perfect-match-mobile-grid {
+  display: flex;
+  flex-direction: column;
+  @include mix.spacer("gap", 2);
+
+  &__item {
+    width: 100%;
+  }
+}
+
+.top-spacing {
+  padding-top: 64px;
+
+  @include mix.respond-to("lg", "max") {
+    padding-top: 32px;
+  }
+}
+
+.bottom-spacing {
+  padding-bottom: 120px;
+
+  @include mix.respond-to("lg", "max") {
+    padding-bottom: 64px;
+  }
+}
+
+.cmp-product-card__title {
+  @include typo.text-display4();
+}

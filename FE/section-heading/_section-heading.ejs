@@ -1,0 +1,17 @@
+<div class="section-heading<% if (typeof centerContent !== 'undefined' && centerContent) { %> content-center<% } %>">
+  <div class="section-heading__text-group">
+    <h2 class="section-heading__title"><%= name %></h2>
+    <% if (typeof subTitle !== 'undefined') { %>
+    <p class="section-heading__description"><%= subTitle %></p>
+    <% } %>
+  </div>
+
+  <% if (typeof showArrow !== 'undefined' && showArrow) { %>
+    <div class="section-heading__action-buttons cmp-carousel__actions">
+      <button class="cmp-carousel__action cmp-carousel__action--previous">
+      </button>
+      <button class="cmp-carousel__action cmp-carousel__action--next">
+      </button>
+    </div>
+  <% } %>
+</div>

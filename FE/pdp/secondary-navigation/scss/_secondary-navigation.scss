@@ -1,0 +1,87 @@
+@use "../../../../site/scss/settings/typography" as typo;
+@use "../../../../site/scss/settings/variables" as vars;
+@use "../../../../site/scss/settings/mixins" as mix;
+
+.secondary-navigation {
+  position: sticky;
+  top: var(--floatingNavHeight, 0); /* This makes it stick to the top of the viewport */
+  background-color: var(--color-primary-100);
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .secondary-navigation-carousel {
+    flex-grow: 0;
+    justify-content: center;
+    overflow: hidden;
+
+    .cmp-tabs__tablist {
+      display: flex;
+      flex-wrap: unset;
+      justify-content: unset;
+      gap: unset;
+      max-width: max-content;
+      margin: auto;
+
+      .cmp-tabs__tab {
+        flex-shrink: 0;
+        width: auto;
+      }
+    }
+  }
+
+  .secondary-navigation-actions {
+    display: flex;
+    align-items: center;
+    border-left: 1px solid var(--color-primary-200);
+    height: 40px;
+    justify-content: center;
+
+    .secondary-navigation-action-next,
+    .secondary-navigation-action-prev {
+      color: var(--color-primary-500);
+      position: unset;
+      background: no-repeat;
+      border: none;
+    }
+    .secondary-navigation-action-prev {
+      @include mix.p(0, "r");
+    }
+    .secondary-navigation-action-next {
+      @include mix.p(0, "l");
+    }
+
+    &:has(:disabled + :disabled) {
+      display: none;
+    }
+  }
+}
+
+.pdp-detail-tabs {
+  &__content-wrapper {
+    @include mix.m(16, "y");
+
+    .cmp-tabs__tabpanel {
+      @include mix.m(0);
+    }
+  }
+}
+
+@include mix.respond-to("md", "max") {
+  .secondary-navigation {
+    .cmp-tabs__tab {
+      @include mix.p(5, "x");
+      @include mix.p(4, "y");
+    }
+    .secondary-navigation-actions {
+      flex-basis: 36%;
+    }
+  }
+
+  .pdp-detail-tabs {
+    &__content-wrapper {
+      @include mix.m(8, "y");
+    }
+  }
+}

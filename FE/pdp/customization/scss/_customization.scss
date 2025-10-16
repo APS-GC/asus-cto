@@ -1,0 +1,206 @@
+@use "../../../../site/scss/settings/typography" as typo;
+@use "../../../../site/scss/settings/variables" as vars;
+@use "../../../../site/scss/settings/mixins" as mix;
+
+.cmp-customizations {
+  // Mobile button is hidden by default
+  .mobile-button {
+    display: none;
+    position: absolute;
+    right: 0;
+    height: 7rem;
+    width: 2rem;
+    background: white;
+    border-radius: 8px 0 0 8px;
+    z-index: 1;
+  }
+  .cmp-customization__sidebar,
+  .customization-mobile-sidebar {
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: calc(var(--secondaryNavHeight, 0) + var(--floatingNavHeight, 0));
+    align-self: flex-start;
+    @include mix.spacer(gap, 2);
+    @include mix.p(8, "r");
+
+    .customizations-actions {
+      @include mix.m(8, "b");
+    }
+
+    &-nav-item {
+      display: flex;
+      align-items: center;
+      position: relative;
+      cursor: pointer;
+      text-decoration: none;
+      border-left: 4px solid transparent;
+      color: var(--color-primary-600);
+      @include mix.p(6);
+      @include mix.spacer(gap, 2);
+
+      &-icon {
+        width: 40px;
+        height: 40px;
+      }
+
+      .subtitle {
+        @include typo.text-small;
+      }
+
+      // Active state with border-left and background
+      &.active {
+        color: var(--color-primary-950);
+        border-color: var(--color-primary-950);
+      }
+    }
+  }
+  .customization-mobile-sidebar {
+    &-nav-item {
+      color: var(--color-primary-950);
+      &.active {
+        border-color: var(--color-primary-950);
+        background: var(--color-primary-950);
+        color: var(--color-primary-100);
+      }
+    }
+  }
+
+  .cmp-customization__component {
+    &-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      @include mix.spacer(gap, 1);
+      @include mix.m(6, "b");
+    }
+
+    &-title {
+      @include typo.text-display3;
+    }
+
+    &-actions {
+      .btn {
+        @include typo.text-small;
+      }
+    }
+
+    &-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      @include mix.spacer(gap, 2);
+    }
+
+    &:not(:first-child) {
+      @include mix.m(10, "t");
+    }
+  }
+}
+
+@include mix.respond-to("md", "max") {
+  .cmp-customizations {
+    .cmp-customization__sidebar {
+      @include mix.p(0);
+      &-nav {
+        display: none;
+      }
+    }
+    .cmp-customization__component {
+      @include mix.m(0);
+      @include mix.p(0);
+
+      &-header {
+        flex-direction: column;
+        align-items: flex-start;
+        @include mix.m(5, "b");
+      }
+
+      &-title {
+        @include typo.text-display4;
+      }
+
+      &-list {
+        grid-template-columns: 1fr;
+      }
+
+      &:not(:first-child) {
+        @include mix.m(8, "t");
+      }
+    }
+  }
+
+  .customization-mobile-sidenav {
+    .mobile-button {
+      display: block;
+      img {
+        @include mix.p(12, "t");
+      }
+      .customization-mobile-sidebar {
+        @include mix.p(0);
+
+        &-nav {
+          display: block;
+        }
+      }
+    }
+    .dialog-container {
+      .dialog-content {
+        position: absolute;
+        right: 0;
+        top: 0;
+        border-radius: 0;
+        min-height: 100%;
+        background-color: var(--color-primary-50);
+        margin: 0 auto;
+        @include mix.p(12);
+        .close-sidenav {
+          position: absolute;
+          border: none;
+          top: 1.5rem;
+          right: 1.5rem;
+          width: 32px;
+          height: 32px;
+          cursor: pointer;
+          background: url("data:image/svg+xml;utf8,<svg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'><rect width='32' height='32' rx='16' fill='%23666666'/><path d='M11.2859 20.714L20.714 11.286M11.2859 11.286L20.714 20.714' stroke='white' stroke-width='2.66667' stroke-linecap='round'/></svg>")
+            center/contain no-repeat;
+          .icon {
+            color: var(--color-primary-950);
+            background-color: transparent;
+          }
+        }
+      }
+    }
+  }
+
+  .cmp-customization__sidebar,
+  .customization-mobile-sidebar {
+    @include mix.p(0);
+
+    &-nav-item {
+      display: flex;
+      align-items: center;
+      position: relative;
+      cursor: pointer;
+      text-decoration: none;
+      border-left: 4px solid transparent;
+      color: var(--color-primary);
+      @include mix.p(6);
+      @include mix.spacer(gap, 2);
+
+      &-icon {
+        width: 40px;
+        height: 40px;
+      }
+
+      .subtitle {
+        @include typo.text-small;
+      }
+
+      // Active state with border-left and background
+      &.active {
+        color: var(--color-primary);
+        border-color: var(--color-primary-950);
+      }
+    }
+  }
+}

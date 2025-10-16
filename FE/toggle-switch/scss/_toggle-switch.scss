@@ -1,0 +1,42 @@
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+
+[role="switch"] {
+    display: flex;
+    @include mix.spacer("gap", 3);
+    align-items: center;
+    cursor: pointer;
+    width: max-content;
+    outline-offset: -2px;
+}
+[role="switch"] .label {
+    @include typo.text-small();
+}
+[role="switch"] .switch {
+    position: relative;
+    background-color: var(--color-primary-500);
+    border-radius: 12px;
+    height: 20px;
+    width: 40px;
+}
+[role="switch"][aria-checked="true"] .switch {
+    background-color: transparent;
+          border: 1px solid var(--color-primary);
+}
+
+[role="switch"] .switch span {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    border-radius: 8px;
+    height: 12px;
+    width: 12px;
+    background: var(--color-primary-950);
+}
+
+[role="switch"][aria-checked="true"] .switch span {
+    top: 3px;
+    left: 23px;
+    background: var(--color-primary);
+}

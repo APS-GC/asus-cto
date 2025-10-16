@@ -1,0 +1,33 @@
+<div 
+  class="dialog-container dialog-container--full-screen cmp-image-gallery"
+  data-a11y-dialog="image-gallery-dialog"
+  id="image-gallery-dialog"
+  aria-hidden="true"
+>
+  <div class="dialog-content" role="dialog" aria-modal="true" aria-labelledby="image-gallery-title">
+    <button data-a11y-dialog-hide="image-gallery-dialog" class="dialog-close" aria-label="Close dialog">&times;</button>
+
+    <h2 id="image-gallery-title" class="dialog-title">Image Gallery</h2>
+    <p id="image-gallery-description" class="dialog-description"></p>
+
+    <div class="swiper image-gallery__main-carousel">
+      <div class="swiper-wrapper">
+        <!-- Slides will be dynamically inserted here -->
+      </div>
+      <div class="carousel__actions">
+        <button class="carousel__action carousel__action--previous" aria-label="Previous Slide"> 
+          <span class="icon icon--arrow-left"></span>
+        </button>
+        <button class="carousel__action carousel__action--next" aria-label="Next Slide"> 
+          <span class="icon icon--arrow-right"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="swiper image-gallery__thumbs-carousel">
+      <div class="swiper-wrapper">
+        <!-- Thumbnails will be dynamically inserted here -->
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+<div class="tabs panelcontainer" data-cmp-is="custom-tabs">
+  <div
+    id="<%= tabsId %>"
+    class="cmp-tabs"
+    data-style="<%= typeof tabsStyle !== 'undefined' ? tabsStyle : 'basic' %>"
+  >
+    <ol role="tablist" class="cmp-tabs__tablist" aria-multiselectable="false">
+      <% tabs.forEach((tab, index) => { %>
+      <li
+        role="tab"
+        id="<%= tab.id %>-tab"
+        class="cmp-tabs__tab <%= tab.id === activeTabId ? 'cmp-tabs__tab--active' : '' %>"
+        aria-controls="<%= tab.id %>-tabpanel"
+        tabindex="<%= tab.id === activeTabId ? 0 : -1 %>"
+        aria-selected="<%= tab.id === activeTabId ? 'true' : 'false' %>"
+      >
+        <%= tab.title %>
+      </li>
+      <% }); %>
+    </ol>
+
+    <% tabs.forEach((tab, index) => { %>
+    <div
+      id="<%= tab.id %>-tabpanel"
+      role="tabpanel"
+      aria-labelledby="<%= tab.id %>-tab"
+      tabindex="0"
+      class="cmp-tabs__tabpanel <%= tab.id === activeTabId ? 'cmp-tabs__tabpanel--active' : '' %>"
+      aria-hidden="<%= tab.id === activeTabId ? 'false' : 'true' %>"
+    >
+      <%- tab.content %>
+    </div>
+    <% }); %>
+  </div>
+</div>

@@ -1,0 +1,121 @@
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+@use "../../../site/scss/settings/mixins" as mix;
+
+.cmp-advantage-card {
+  position: relative;
+  border-radius: vars.$border-radius-xl;
+  overflow: hidden;
+  max-width: 100%;
+  aspect-ratio: 25 / 16;
+  text-align: center;
+
+  &__heading {
+    @include typo.text-display2();
+    color: var(--color-primary-950);
+    @include mix.m(8, "b");
+  }
+
+  &__image-wrapper {
+    width: 100%;
+    height: 100%;
+
+    .cmp-advantage-card__image,
+    .cmp-advantage-card__video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cmp-advantage-card__close-video {
+      position: absolute;
+      border: none;
+      top: 1.25rem;
+      right: 1.25rem;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 1L1 19M1 1L19 19" stroke="%23999999" stroke-width="2" stroke-linecap="round"/></svg>')
+        center/18px no-repeat;
+    }
+
+    .cmp-advantage-card__video,
+    .cmp-advantage-card__close-video {
+      display: none;
+    }
+  }
+
+  &__overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem;
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+    background: linear-gradient(0deg, #0f0f10 0%, rgba(15, 15, 16, 0) 100%);
+  }
+
+  &__content {
+    color: var(--color-primary-950);
+    max-width: 600px;
+    text-align: left;
+
+    .cmp-advantage-card__title {
+      @include typo.text-display3();
+      @include mix.m(2, "b");
+    }
+
+    .cmp-advantage-card__desc {
+      color: var(--color-primary-700);
+      @include typo.text-base();
+      @include mix.m(4, "b");
+    }
+
+    .cmp-advantage-card__btn {
+      img {
+        object-fit: contain;
+        display: block;
+      }
+    }
+  }
+
+  &.is-playing {
+    .cmp-advantage-card__image,
+    .cmp-advantage-card__overlay {
+      display: none;
+    }
+    .cmp-advantage-card__video,
+    .cmp-advantage-card__close-video {
+      display: block;
+    }
+  }
+  @include mix.respond-to("sm", "max") {
+    aspect-ratio: 16 / 25;
+
+    &__content {
+      .cmp-advantage-card__title {
+        @include typo.text-display4();
+      }
+    }
+  }
+}
+
+.swiper-slide {
+  &:not(.swiper-slide-active) {
+    .cmp-advantage-card {
+      .cmp-advantage-card {
+        &__title {
+          opacity: 0.5;
+        }
+
+        &__desc,
+        &__btn {
+          display: none;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+/* stylelint-disable selector-class-pattern */
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+
+.cmp-tabs {
+  &__tablist {
+    @include mix.reset-list;
+
+    display: flex;
+    justify-content: center;
+
+    @include mix.spacer(gap, 6);
+  }
+
+  &__tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-bottom: 4px solid transparent;
+    color: var(--color-primary-600);
+
+    @include mix.p(10, "x");
+    @include mix.p(4, "y");
+    @include mix.spacer(gap, 5);
+    @include typo.text-display6;
+
+    &--active,
+    &:hover {
+      border-color: var(--ui-primary-950);
+      color: var(--ui-primary-950);
+    }
+  }
+
+  &__tabpanel {
+    display: none;
+
+    @include mix.m(12, "t");
+
+    &--active {
+      display: block;
+    }
+  }
+
+  // Modifier: Solid Style
+  &[data-style="solid"] {
+    background-color: var(--color-primary-900);
+    color: var(--color-primary);
+
+    @include mix.p(8);
+
+    .cmp-tabs__tablist {
+      display: flex;
+      justify-content: unset;
+      gap: 2px;
+      padding: 2px;
+      border-radius: 8px;
+      background-color: var(--color-primary-100);
+    }
+
+    .cmp-tabs__tab {
+      flex: 1;
+      border: 0;
+      border-radius: 6px;
+      color: var(--color-primary-950);
+
+      @include mix.p(4, "x");
+      @include mix.p(2, "y");
+      @include typo.text-small;
+
+      &--active,
+      &:hover {
+        background-color: var(--color-primary-950);
+        color: var(--color-primary-100);
+      }
+
+      &:focus-visible {
+        outline-offset: 3px;
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+/**
+ * Budget Range Slider
+ * This is a custom slider for the budget range. 
+ * Its used in multiple components.
+ */
+.budget-range-slider {
+  --slider-height: 4px;
+  --slider-handle-height: 32px;
+  --slider-handle-width: 8px;
+  height: var(--slider-height);
+  position: relative;
+  background: none;
+  border-radius: 0px;
+  border: none;
+  box-shadow: none;
+
+  .noUi-connects {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.8) 100%);
+    border: none;
+    height: var(--slider-height);
+    box-shadow: none;
+    border-radius: 0px;
+    cursor: pointer;
+
+    .noUi-connect {
+      background: transparent;
+      border-radius: 999px;
+      border: none;
+      box-shadow: none;
+    }
+  }
+
+  .noUi-handle {
+    width: var(--slider-handle-width);
+    height: var(--slider-handle-height);
+    background-color: var(--color-primary-950);
+    border: none;
+    border-radius: 1000px;
+    top: calc((var(--slider-handle-height, 16) / 2 * -1) + 1px);
+    box-shadow: none;
+    cursor: pointer;
+
+    &::before,
+    &::after {
+      display: none;
+    }
+
+    &:focus-visible {
+      outline-offset: 1px;
+    }
+  }
+
+  .noUi-handle-lower {
+    right: calc(var(--slider-handle-width) * -1);
+  }
+
+  .noUi-handle-upper {
+    right: 0;
+  }
+}

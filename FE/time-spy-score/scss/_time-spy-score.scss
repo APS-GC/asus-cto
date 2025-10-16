@@ -1,0 +1,85 @@
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+
+.cmp-time-spy-score-dialog {
+  position: fixed;
+  inset: 0;
+  background: var(--color-primary-base);
+  z-index: 9999;
+  overflow-y: auto;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  box-sizing: border-box;
+
+  .dialog-content {
+    h2 {
+      color: var(--color-primary-100);
+      @include typo.text-bolder();
+    }
+
+    .score-value {
+      color: var(--color-primary-100);
+      @include typo.text-display1();
+      @include mix.m(8, "b");
+    }
+
+    .score-levels-bar {
+      display: flex;
+      justify-content: space-between;
+      @include mix.m(8, "b");
+      @include mix.spacer(gap, 1);
+
+      .score-level {
+        flex: 1;
+        text-align: left;
+        border-top: 4px solid var(--color-primary-base);
+        @include mix.p(4, "t");
+
+        .score-badge {
+          display: inline-block;
+          background: var(--color-primary-base);
+          color: var(--color-primary-950);
+          border-radius: vars.$border-radius-xs;
+          backdrop-filter: blur(20px);
+          @include typo.text-small();
+          @include mix.p(1, "y");
+          @include mix.p(2, "x");
+          @include mix.m(3, "b");
+        }
+
+        .score-title {
+          color: var(--color-primary-100);
+          @include typo.text-small();
+        }
+
+        .score-range {
+          color: var(--color-primary-100);
+          @include typo.text-small();
+        }
+
+        &.current {
+          border-top: 4px solid var(--color-border-type);
+
+          .score-badge {
+            background: var(--color-border-type);
+            color: var(--color-primary-950);
+          }
+        }
+      }
+    }
+  }
+
+  @include mix.respond-to("md", "max") {
+    .dialog-content {
+      .score-levels-bar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        @include mix.spacer(column-gap, 2);
+        @include mix.spacer(row-gap, 4);
+      }
+    }
+  }
+}

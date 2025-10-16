@@ -1,0 +1,101 @@
+<%
+  // Define bonus section variables
+  const bonusSection1 = { selected: 1, max: 1 };
+  const bonusSection2 = { selected: 0, max: 1 };
+  const bonusSection3 = { selected: 0, max: 2 };
+%>
+<div class="cmp-bundles-bonuses" data-has-bundles="true" data-has-bonuses="true">
+   <div class="container">
+      <div class="layout-grid m-bottom cmp-bundles-wrapper" data-content-type="bundles">
+         <div class="layout-grid__col layout-grid__col--span-4 layout-grid__col--md-span-12">
+            <div class="bundles-section">
+               <div class="section-heading">
+                  <h2>Bundles</h2>
+               </div>
+            </div>
+         </div>
+         <div class="layout-grid__col layout-grid__col--span-8 layout-grid__col--md-span-12">
+            <h3>Choose a bundle</h3>
+            <div class="cmp-bundles__component-list">    
+               <%- include('../bundles-card/_bundles-card.ejs', { groupId: 'bundles' ,
+                  name: 'Just this item' ,discount:'' ,price: '' ,cta: '', cardId: 'bundle1', isJustThisItem: true }) %>
+               <%- include('../bundles-card/_bundles-card.ejs', { groupId: 'bundles' ,
+                  name: 'ASUS ROG Elite Gaming Bundle' ,label:'ASUS ROG Elite Gaming Bundle', discount:'',price: '+ $350.00' , cta: '', cardId: 'bundle2' }) %>
+               <%- include('../bundles-card/_bundles-card.ejs', { groupId: 'bundles' ,
+                  name: 'ROG Strix Overkill & Office 365 bundle' ,label:'ROG Strix Overkill & Office 365 bundle', discount:'', price: '' ,cta: 'Select options', cardId: 'bundle3' ,
+                  }) %>
+               <%- include('../bundles-card/_bundles-card.ejs', { groupId: 'bundles' ,
+                  name: 'ROG Slayer Ultimate Pack' ,label:'ROG Slayer Ultimate Pack', discount:'80', price: '+ $350.00' , cta: 'Select options', cardId: 'bundle4' }) %>
+            </div>
+         </div>
+      </div>
+      <div class="layout-grid cmp-bonus-container cmp-bonuses-wrapper" data-bonus-visibility="visible" data-content-type="bonuses">
+         <div class="layout-grid__col layout-grid__col--span-4 layout-grid__col--md-span-12">
+            <div class="cmp-bonus-section">
+               <div class="section-heading">
+                  <h2>Bonuses</h2>
+               </div>
+            </div>
+         </div>
+         <div class="layout-grid__col layout-grid__col--span-8 layout-grid__col--md-span-12">
+            <h3>Choose your bonus</h3>
+            <div class="cmp-bonus-section">
+               <p class="cmp__bonus-disclaimer">Freebies are only available while stock lasts.</p>
+               <p class="cmp__bonus-warning">Gear up for the best school year with powerful ROG Phone 9</p>
+               <p class="cmp__bonus-instructions">  <span class="icon icon--info"> </span> Please select a freebie</p>
+               <p class="cmp__bonus-selected" data-bonus-section="1" data-selected="<%= bonusSection1.selected %>" data-max="<%= bonusSection1.max %>">(<%= bonusSection1.selected %> / <%= bonusSection1.max %> selected) bonuses selected</p>
+               <div  class="cmp-bundles__component-list">
+                  <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
+                     image: './clientlib-site/images/marshmellow.webp',
+                     name: 'ASUS Marshmallow' , label:'ASUS Marshmallow Wireless mouse', price: '' ,cta: '', index: 0 ,cardId: 'bonus1'}) %>
+                  <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
+                     image: './clientlib-site/images/bagpack.webp',
+                     name: 'ASUS ProArt Backpack' , label:'ASUS ProArt Backpack', price: '' ,cta: 'select options', index: 1 ,cardId: 'bonus2'}) %>
+                  <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
+                     image: './clientlib-site/images/grey-mouse.webp',
+                     name: 'ROG Mouse Ace L' , label:'ROG Mouse Ace L', price: '' ,cta: '', index: 2 ,cardId: 'bonus3'}) %>
+               </div>
+            </div>
+            <div class="cmp-bonus-section">
+               <p class="cmp__bonus-warning">Rate Your Gear and Win up to P1,000 GCash!</p>
+               <p class="cmp__bonus-selected" data-bonus-section="2" data-selected="<%= bonusSection2.selected %>" data-max="<%= bonusSection2.max %>">(<%= bonusSection2.selected %> / <%= bonusSection2.max %> selected) bonuses selected</p>
+               <div  class="cmp-bundles__component-list">
+                  <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
+                  image: './clientlib-site/images/marshmellow.webp',
+                  name: 'ASUS Marshmallow' , label:'ASUS Marshmallow Wireless mouse', price: '' ,cta: '', index: 0 ,cardId: 'bonus4'}) %>
+               <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
+                  image: './clientlib-site/images/bagpack.webp',
+                  name: 'ASUS ProArt Backpack' , label:'ASUS ProArt Backpack', price: '' ,cta: '', index: 1 ,cardId: 'bonus5'}) %>
+               <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
+                  image: './clientlib-site/images/grey-mouse.webp',
+                  name: 'ROG Mouse Ace L' , label:'ROG Mouse Ace L', price: '' ,cta: '', index: 2 ,cardId: 'bonus6'}) %>
+               </div>
+            </div>
+            <div class="cmp-bonus-section">
+               <p class="cmp__bonus-warning">2025 Back to School Promotion</p>
+               <p class="cmp__bonus-selected" data-bonus-section="3" data-selected="<%= bonusSection3.selected %>" data-max="<%= bonusSection3.max %>">(<%= bonusSection3.selected %> / <%= bonusSection3.max %> selected) bonuses selected</p>
+               <div  class="cmp-bundles__component-list">
+                  <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
+                     image: './clientlib-site/images/marshmellow.webp',
+                     name: 'ASUS Marshmallow' , label:'ASUS Marshmallow Wireless mouse', price: '' ,cta: '', index: 0 ,cardId: 'bonus7', showCheckmark: bonusSection3.max >= 2 }) %>
+                  <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
+                     image: './clientlib-site/images/bagpack.webp',
+                     name: 'ASUS ProArt Backpack' , label:'ASUS ProArt Backpack', price: '' ,cta: '', index: 1 ,cardId: 'bonus8', showCheckmark: bonusSection3.max >= 2 }) %>
+                  <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
+                     image: './clientlib-site/images/grey-mouse.webp',
+                     name: 'ROG Mouse Ace L' , label:'ROG Mouse Ace L', price: '' ,cta: '', index: 2 ,cardId: 'bonus9', showCheckmark: bonusSection3.max >= 2 }) %>
+                     <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
+                     image: './clientlib-site/images/grey-mouse.webp',
+                     name: 'ROG Mouse Ace L' , label:'ROG Moonstone Ace L', price: '' ,cta: '', index: 2 ,cardId: 'bonus9', showCheckmark: bonusSection3.max >= 2 }) %>
+               </div>
+            </div>
+         </div>
+      </div>
+
+
+      <div class="cmp-no-bundles-bonus" data-no-content-visibility="hidden" hidden>
+         <h3>No bundles or bonuses available for this customization</h3>
+         <p>Click "Add to Cart" to continue with your current selection.</p>
+      </div>
+   </div>
+</div>

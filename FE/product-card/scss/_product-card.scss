@@ -1,0 +1,439 @@
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+
+.cmp-product-card {
+  background: var(--color-primary-50);
+  color: var(--color-primary-950);
+  border-radius: vars.$border-radius-xl;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  @include mix.p(8);
+  @include mix.spacer(gap, 5);
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    color: var(--color-primary-700);
+    min-height: 40px;
+    @include typo.text-small;
+    @include mix.spacer("gap", 6);
+    @include mix.m(5, "b");
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    @include mix.spacer(gap, 5);
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__status {
+    color: var(--color-primary-950);
+    display: flex;
+    align-items: center;
+    flex: 1;
+    @include typo.text-xsmall();
+    @include mix.spacer("gap", 2);
+
+    .cmp-product-card__status-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      @include mix.spacer("gap", 2);
+
+      &:not(:last-child)::after {
+        content: "";
+        width: 1px;
+        height: 12px;
+        background-color: var(--color-primary-300);
+      }
+    }
+
+    &--in-stock {
+      font-weight: 500;
+      color: var(--color-success);
+    }
+  }
+
+  &__image {
+    position: relative;
+    max-width: 200px;
+    margin: 0 auto;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--gradient-product-card);
+      border-radius: 100%;
+      filter: blur(32px);
+    }
+
+    .cmp-image__image {
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      border-radius: vars.$border-radius;
+      transition: opacity 0.3s ease;
+
+      &--hover {
+        display: none;
+        position: absolute;
+        inset: 0;
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    &:has(.cmp-image__image--hover):hover {
+      .cmp-image__image {
+        opacity: 0;
+
+        &--hover {
+          display: block;
+        }
+      }
+    }
+  }
+
+  &__title {
+    color: var(--color-primary-950);
+    @include typo.text-display4();
+    @include mix.m(1, "b");
+
+    a {
+      color: inherit;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__model {
+    color: var(--color-primary-700);
+    @include typo.text-small();
+
+    a {
+      color: inherit;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__rating_and_compare {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @include mix.spacer(gap, 2);
+  }
+
+  &__compare {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+
+    @include mix.spacer(gap, 2);
+
+    .cmp-product-card__compare-label {
+      color: var(--color-primary-950);
+      cursor: pointer;
+      @include typo.text-small();
+    }
+  }
+
+  &__fps {
+    &-game {
+      color: var(--color-primary-700);
+      @include mix.m(1, "b");
+      @include typo.text-tiny();
+    }
+
+    &-score {
+      display: inline-block;
+      background: transparent;
+      color: var(--color-primary-950);
+      border: 1px solid var(--color-primary-600);
+      border-radius: vars.$border-radius;
+      min-width: 64px;
+      min-height: 24px;
+      text-align: center;
+      @include mix.p(3, "x");
+      @include typo.text-small();
+    }
+  }
+
+  &__specs {
+    @include mix.m(0);
+    @include mix.p(3, "l");
+    @include typo.text-small();
+
+    &-item {
+      list-style-type: square;
+    }
+  }
+
+  &__price-block {
+    display: flex;
+    align-items: baseline;
+
+    @include mix.spacer(gap, 2);
+  }
+
+  &__price {
+    color: var(--color-primary-950);
+
+    @include typo.text-bolder();
+  }
+
+  &__original-price {
+    text-decoration: line-through;
+    color: var(--color-primary-700);
+    @include typo.text-small();
+  }
+
+  &__discount {
+    color: var(--color-warning);
+    @include typo.text-small();
+  }
+
+  &:has(.cmp-product-card__original-price) {
+    .cmp-product-card__price {
+      color: var(--color-warning);
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto; // Push footer to bottom of card
+    @include mix.spacer(gap, 3);
+
+    .btn {
+      flex: 1;
+    }
+  }
+
+  &__estore {
+    margin-top: 0.5rem;
+
+    &-line {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      position: relative;
+
+      &::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background-color: var(--color-primary-300); // adjust as needed
+        margin-left: 0.5rem;
+      }
+    }
+
+    &-label {
+      color: var(--color-primary-700);
+      white-space: nowrap;
+      @include typo.text-small();
+    }
+  }
+
+  &__bundle-message {
+    color: var(--color-primary-950);
+    @include typo.text-small();
+
+    &-break {
+      display: block;
+
+      @include mix.respond-to("sm") {
+        display: inline;
+      }
+
+      @include mix.respond-to("xl") {
+        display: block;
+      }
+    }
+  }
+
+  &__estore-icon-label {
+    cursor: pointer;
+  }
+
+  &__estore-icon-wrapper {
+    position: relative;
+    display: inline-flex;
+
+    &:hover .cmp-product-card__tooltip {
+      display: block;
+    }
+  }
+
+  &__estore-icon {
+    background-color: transparent;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="%23999999"/><rect x="7.25" y="7" width="1.5" height="5.5" rx="0.75" fill="%23999999"/><rect x="7" y="4" width="2" height="2" rx="1" fill="%23999999"/></svg>');
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 16px;
+    height: 16px;
+    border: none;
+    border-radius: 100%;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+    }
+  }
+
+  &__tooltip {
+    width: 260px;
+  }
+
+  &__preview-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-950);
+    border: 1px solid var(--color-primary-700);
+    border-radius: vars.$border-radius;
+    cursor: pointer;
+    z-index: 2;
+    visibility: hidden;
+    transition: opacity 0.2s ease;
+    @include typo.text-small();
+    @include mix.p(2, "y");
+    @include mix.p(3, "x");
+
+    &:focus-visible {
+      visibility: visible;
+    }
+  }
+
+  &__image:hover {
+    .cmp-product-card__preview-btn {
+      visibility: visible;
+    }
+  }
+
+  @include mix.respond-to("lg", "max") {
+    @include mix.p(5);
+
+    &__preview-btn {
+      display: none;
+    }
+    &__title {
+      @include typo.text-display5();
+    }
+  }
+}
+
+// Moved this out of the product card to avoid duplication
+// This is used in both product card and product preview
+// and should be consistent across both components
+.cmp-product-card__stars {
+  --star-size: 16px;
+  --percent: 0%;
+  display: inline-flex;
+  align-items: center;
+  @include mix.spacer(gap, 2);
+
+  &-icon {
+    position: relative;
+    width: calc(var(--star-size) * 5);
+    height: var(--star-size);
+    background-size: var(--star-size) calc(var(--star-size) + 4px);
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5.52772 0.858695C5.68337 0.410914 6.31663 0.410914 6.47228 0.858694L7.53156 3.90611C7.60023 4.10364 7.78457 4.23758 7.99366 4.24184L11.2193 4.30757C11.6932 4.31723 11.8889 4.9195 11.5111 5.20591L8.94022 7.15505C8.77357 7.28139 8.70315 7.4981 8.76371 7.69827L9.69796 10.7863C9.83524 11.2401 9.32291 11.6123 8.93379 11.3415L6.28559 9.49873C6.11393 9.37928 5.88607 9.37928 5.71441 9.49873L3.06621 11.3415C2.67709 11.6123 2.16476 11.2401 2.30204 10.7863L3.23629 7.69827C3.29685 7.4981 3.22643 7.28139 3.05979 7.15505L0.488857 5.20591C0.11109 4.91951 0.30678 4.31723 0.780742 4.30757L4.00634 4.24184C4.21543 4.23758 4.39977 4.10365 4.46844 3.90611L5.52772 0.858695Z" fill="%23CCCCCC"/></svg>');
+
+    &::after {
+      content: "";
+      overflow: hidden;
+      width: var(--percent);
+      height: var(--star-size);
+      z-index: 1;
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-size: var(--star-size) calc(var(--star-size) + 4px);
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5.52772 0.858695C5.68337 0.410914 6.31663 0.410914 6.47228 0.858694L7.53156 3.90611C7.60023 4.10364 7.78457 4.23758 7.99366 4.24184L11.2193 4.30757C11.6932 4.31723 11.8889 4.9195 11.5111 5.20591L8.94022 7.15505C8.77357 7.28139 8.70315 7.4981 8.76371 7.69827L9.69796 10.7863C9.83524 11.2401 9.32291 11.6123 8.93379 11.3415L6.28559 9.49873C6.11393 9.37928 5.88607 9.37928 5.71441 9.49873L3.06621 11.3415C2.67709 11.6123 2.16476 11.2401 2.30204 10.7863L3.23629 7.69827C3.29685 7.4981 3.22643 7.28139 3.05979 7.15505L0.488857 5.20591C0.11109 4.91951 0.30678 4.31723 0.780742 4.30757L4.00634 4.24184C4.21543 4.23758 4.39977 4.10365 4.46844 3.90611L5.52772 0.858695Z" fill="%23006CE1"/></svg>');
+    }
+  }
+
+  &-text {
+    color: var(--color-primary-700);
+    @include typo.text-xsmall();
+  }
+}
+
+// This is part of tooltip which will be outside the product card component.
+.cmp-product-card__fps-table {
+  border-collapse: collapse;
+  text-align: left;
+  @include typo.text-xsmall();
+
+  thead {
+    border-bottom: 1px solid var(--color-primary);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--color-primary-700);
+
+    td {
+      @include mix.p(3, "y");
+
+      &:not(:last-child) {
+        @include mix.p(4, "r");
+      }
+    }
+
+    &:last-child {
+      border: 0;
+
+      td {
+        @include mix.p(0, "b");
+      }
+    }
+  }
+
+  th {
+    @include mix.p(3, "b");
+
+    &:not(:last-child) {
+      @include mix.p(4, "r");
+    }
+  }
+}
+
+.cmp-carousel__item {
+  &:has(.cmp-product-card) {
+    height: auto;
+  }
+
+  .cmp-product-card {
+    height: 100%;
+  }
+}
+
+@include mix.respond-to("lg", "max") {
+  .mobile-margin-top {
+    @include mix.m(5, "t");
+  }
+}

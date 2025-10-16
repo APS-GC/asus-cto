@@ -1,0 +1,77 @@
+<section
+  class="dialog-container dialog--boxed cmp-fps-dialog"
+  data-a11y-dialog="fps-dialog"
+  id="fps-dialog"
+  aria-hidden="true"
+>
+  <div class="dialog-overlay" data-a11y-dialog-hide="fps-dialog"></div>
+  <div class="dialog-content" role="dialog" aria-modal="true" aria-labelledby="fps-title">
+    <button
+      class="dialog-close"
+      type="button"
+      data-a11y-dialog-hide="fps-dialog"
+      aria-label="Close dialog"
+    ></button>
+
+    <div class="fps-content">
+      <h2 id="fps-title" class="dialog-title">FPS</h2>
+
+      <div class="dialog-section">
+        <h3 class="dialog-section-title">What is FPS?</h3>
+        <p>
+          FPS stands for "Frames Per Second". It measures how many frames (images) your computer can
+          render and display every second while playing a game. Higher FPS means smoother gameplay, as
+          your screen refreshes images more frequently.
+        </p>
+        <p>
+          Note that all FPS performance data presented are theoretical and may vary in real-world
+          usage. The FPS data is based on third-party testing conducted by UL and is provided for
+          reference purposes only. Actual performance may differ.
+        </p>
+      </div>
+
+      <div class="dialog-section">
+        <h3 class="dialog-section-title">What should my FPS be for a good gaming experience?</h3>
+        <ul class="list-style-square">
+          <li>
+            <strong>30 FPS:</strong> Playable but may feel choppy, especially in
+            fast-paced games.
+          </li>
+          <li>
+            <strong>60 FPS:</strong> Ideal for most games, providing smooth and
+            responsive gameplay.
+          </li>
+          <li>
+            <strong>120 FPS or higher:</strong> Excellent for competitive gaming,
+            offering a fluid experience on high-refresh-rate monitors.
+          </li>
+        </ul>
+      </div>
+
+      <div class="dialog-section">
+        <img class="dialog-image--rounded"
+          src="./clientlib-site/images/fps-comparison.webp"
+          alt="FPS comparison: 60Hz vs 144Hz vs 240Hz"
+          loading="lazy"
+        />
+      </div>
+
+      <div class="dialog-section">
+        <p>
+          <strong>PS:</strong> If you have a monitor with higher resolution (e.g., 1440p), you might
+          need a stronger GPU to reach enough FPS for good gaming experience.
+        </p>
+      </div>
+
+      <div class="dialog-section">
+        <h3 class="dialog-section-title">How to increase my FPS?</h3>
+        <p>
+          The most effective way to increase your FPS is by upgrading your GPU, CPU, and RAM, as these
+          are the key hardware components that affect gaming performance. Additionally, adjusting the
+          in-game graphics settings—such as lowering resolution, shadows, and texture quality—can also
+          help improve FPS to a certain extent, depending on your computer’s capabilities.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

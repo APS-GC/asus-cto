@@ -1,0 +1,58 @@
+<%
+  // Static games array
+  const games = [
+    { id: "cod", name: "Call of Duty: Modern Warfare", image: "./clientlib-site/images/games/call-of-duty.webp" },
+    { id: "alanwake", name: "Alan Wake 2", image: "./clientlib-site/images/games/alan-wake.webp" },
+    { id: "cs2", name: "Counter Strike 2", image: "./clientlib-site/images/games/counter-strike.webp" },
+    { id: "baldur", name: "Baldur's Gate 3", image: "./clientlib-site/images/games/baldurs-gate.webp" },
+    { id: "civ6", name: "Fortnite", image: "./clientlib-site/images/games/fortnite.webp" },
+    { id: "fortnite", name: "Red Redemption 2", image: "./clientlib-site/images/games/red-redemption.webp" }
+  ];
+%>
+
+
+<div class="help-me-choose-container container">
+    <div class="text-container">
+        <%- include('../section-heading/_section-heading.ejs', { name: 'Help me choose' }) %>
+        <p class='text-para'>Tell us your preferred games, budget and chipset, and we will recommend desktops that best suit your needs.</p>
+    </div>
+    <div class="panelcontainer">
+        <form id="game-selection-form" action="./product-matches.html" class="game-form" aria-label="Game selection form" data-select-game-form>
+            <div class="layout-grid layout-grid--cols-6" aria-atomic="false" aria-live="polite">
+                <% games.forEach(game=> { %>
+                    <div class="layout-grid__col layout-grid__col--span-1 layout-grid__col--md-span-3">
+                        <div class="grid-item">
+                            <%- include('../game-card/_game-card.ejs', { game }) %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+            <div class="budget-bar">
+        <div class="budget-left">
+          <label for="budget-min-value">Your budget:</label>
+        </div>
+        <div class="budget-center">
+          <input type="text" class="budget-value" id="budget-min-value" aria-label="Minimum budget" />
+          <div class="budget-separator">to</div>
+          <div class="budget-range-wrapper">
+            <div id="budget-range" class="budget-range-slider" data-start="[1100, 5000]" data-min="500" data-max="5000" role="slider" data-step="100" aria-label="Budget range slider" aria-valuemax="5000" aria-valuemin="500" aria-orientation="horizontal" aria-valuenow="1100" aria-valuetext="Budget range between $500 to $5000"></div>
+            <div class="range-labels">
+              <span>$500</span>
+              <span>$5,000</span>
+            </div>
+          </div>
+          <input type="text" class="budget-value" id="budget-max-value" aria-label="Maximum budget" />
+        </div>
+
+        <!-- Hidden inputs to submit budget values -->
+        <input type="hidden" name="min-budget" id="min-budget" value="" />
+        <input type="hidden" name="max-budget" id="max-budget" value="" />
+
+        <div class="budget-actions">
+          <button type="reset" class="reset-button btn btn-link">Reset</button>
+          <button type="submit" class="btn" disabled>Help me choose</button>
+        </div>
+      </div>
+        </form>
+    </div>
+</div>

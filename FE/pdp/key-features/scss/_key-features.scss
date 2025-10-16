@@ -1,0 +1,69 @@
+@use "../../../../site/scss/settings/typography" as typo;
+@use "../../../../site/scss/settings/variables" as vars;
+@use "../../../../site/scss/settings/mixins" as mix;
+
+.cmp-key-features {
+  .cmp-key-features__heading {
+    @include typo.text-display2;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include mix.m(10, "b");
+  }
+  .cmp-key-features__images {
+    display: flex;
+    justify-content: center;
+    @include mix.m(10, "b");
+
+    img {
+      width: 100%;
+    }
+  }
+  .cmp-key-features__actions {
+    display: flex;
+    justify-content: center;
+
+    button {
+      transition: all 0.2s ease;
+      @include mix.p(3, "x");
+      @include mix.p(2, "y");
+
+      // Icon rotation animation
+      .icon {
+        transition: transform 0.2s ease;
+      }
+
+      &[aria-expanded="true"] .icon--arrow-bottom {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .cmp-feature-content {
+    &,
+    p {
+      @include typo.text-xsmall;
+    }
+
+    &__title {
+      @include typo.text-display7;
+    }
+  }
+}
+
+// Additional content styles
+.cmp-key-features__additional-content {
+  transition: opacity 0.3s ease;
+
+  &[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+.cmp-feature-content {
+  @include typo.text-display6;
+  p {
+    @include mix.m(5, "b");
+  }
+}

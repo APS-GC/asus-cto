@@ -1,0 +1,151 @@
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+
+.dialog-container {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  @include mix.p(20, "t");
+  @include mix.p(8, "b");
+  z-index: 9999;
+
+  &[aria-hidden="true"] {
+    display: none;
+  }
+
+  &--full-screen {
+    @include mix.p(0);
+  }
+
+  .dialog-overlay {
+    position: fixed;
+    inset: 0;
+  }
+
+  .dialog-content {
+    position: relative;
+    min-height: 100%;
+    background-color: var(--color-primary-950);
+    margin: 0 auto;
+    @include mix.p(12);
+
+    .dialog-title {
+      @include typo.text-display3();
+      @include mix.m(8, "b");
+    }
+
+    .dialog-section:not(:last-child) {
+      @include mix.m(8, "b");
+    }
+
+    .dialog-section-title {
+      @include typo.text-display4();
+      @include mix.m(2, "b");
+    }
+
+    ul {
+      @include typo.text-base();
+      @include mix.m(0);
+      @include mix.p(0);
+      @include mix.p(5, "l");
+
+      li {
+        @include mix.m(2, "b");
+
+        .fps-label {
+          display: inline-block;
+          font-weight: 500;
+          color: var(--color-primary-50);
+        }
+      }
+    }
+
+    .dialog-image--rounded {
+      width: 100%;
+      border-radius: vars.$border-radius-lg;
+    }
+  }
+
+  .dialog-close {
+    position: absolute;
+    border: none;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M25 7L7 25M7 7L25 25" stroke="%234D4D4D" stroke-width="1.5" stroke-linecap="round"/></svg>')
+      center/contain no-repeat;
+  }
+
+  &.dialog--boxed {
+    background: var(--color-primary-base);
+    color: var(--color-primary-100);
+
+    .dialog-content {
+      width: 100%;
+      margin: 0 auto;
+      max-width: 680px;
+      border-radius: vars.$border-radius-xl;
+      @include mix.p(12);
+      @include mix.m(20, "b");
+    }
+
+    .dialog-close {
+      position: absolute;
+      border: none;
+      top: 1rem;
+      right: 1rem;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M25 7L7 25M7 7L25 25" stroke="%234D4D4D" stroke-width="1.5" stroke-linecap="round"/></svg>')
+        center/contain no-repeat;
+    }
+
+    .back-link {
+      color: var(--color-primary-100);
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      border: none;
+      background: none;
+      @include typo.text-bolder();
+      @include mix.m(8, "b");
+      @include mix.p(0, "x");
+
+      svg {
+        vertical-align: middle; // Ensure proper vertical alignment
+        @include mix.m(2, "r");
+      }
+    }
+  }
+
+  @include mix.respond-to("md", "max") {
+    .dialog-content {
+      * {
+        @include typo.text-style("sm");
+      }
+
+      .dialog-section:not(:last-child) {
+        @include mix.m(4, "b");
+      }
+
+      .dialog-section-title {
+        @include typo.text-small();
+        font-weight: var(--medium);
+        @include mix.m(1, "b");
+      }
+    }
+
+    &.dialog--boxed .dialog-content {
+      width: calc(100% - 40px);
+      @include mix.p(5);
+    }
+  }
+}
+
+html:has(.dialog-container:not([aria-hidden="true"])) {
+  overflow: hidden;
+}

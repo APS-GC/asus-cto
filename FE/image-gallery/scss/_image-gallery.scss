@@ -1,0 +1,113 @@
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/variables" as vars;
+@use "../../../site/scss/settings/typography" as typo;
+
+.cmp-image-gallery {
+  color: var(--color-primary);
+
+  .dialog-content {
+    .dialog-title {
+      @include typo.text-display4();
+      @include mix.m(1, "b");
+    }
+
+    .dialog-description {
+      color: var(--color-primary-300);
+      @include typo.text-small();
+
+      &:not(:empty) {
+        @include mix.m(8, "b");
+      }
+    }
+  }
+
+  .swiper {
+    width: 100%;
+    height: auto;
+  }
+
+  .image-gallery__main-carousel {
+    .carousel__item {
+      text-align: center;
+
+      img {
+        width: auto;
+        height: auto;
+      }
+    }
+
+    .carousel__actions {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 10;
+
+      button {
+        pointer-events: all;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        cursor: pointer;
+        background: none;
+        color: var(--color-primary-950);
+        background-color: var(--color-primary-600);
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+
+        &:hover {
+          background-color: var(--color-primary-400);
+        }
+
+        &--disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        &--disabled:hover {
+          background-color: var(--color-primary-600);
+        }
+      }
+    }
+  }
+
+  .image-gallery__thumbs-carousel {
+    position: relative;
+    max-width: fit-content;
+    @include mix.m(8, "t");
+    @include mix.p(0, "x");
+
+    .carousel__item {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 75px;
+      aspect-ratio: 1/1;
+      border: 2px solid transparent;
+      border-radius: vars.$border-radius-sm;
+      overflow: hidden;
+      @include mix.p(1);
+
+      &--active {
+        border-color: var(--color-primary-100);
+      }
+
+      img {
+        object-fit: cover;
+        max-width: 100%;
+        backdrop-filter: blur(20px);
+      }
+
+      @include mix.respond-to("md", "max") {
+        width: 60px;
+      }
+    }
+  }
+}

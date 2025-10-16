@@ -1,0 +1,31 @@
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+
+.faq-heading {
+  @include mix.m(12, "b");
+
+  @include mix.respond-to("lg", "max") {
+    @include mix.m(3, "b");
+  }
+}
+
+.cmp-banner__image {
+  width: 100%;
+  height: auto;
+  object-fit: cover; // crop edges
+  object-position: center; // show middle
+  aspect-ratio: 11 / 5;
+
+  @include mix.respond-to("lg", "max") {
+    aspect-ratio: 15 / 9;
+  }
+
+  @include mix.respond-to("md", "max") {
+    aspect-ratio: 9 / 9;
+  }
+
+  @include mix.respond-to("sm", "max") {
+    aspect-ratio: 8 / 9;
+  }
+}

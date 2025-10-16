@@ -1,0 +1,74 @@
+<div
+  class="cmp-product-compare is-hidden is-collapsed"
+  data-compare-container
+  role="region"
+  aria-labelledby="compare-title"
+>
+  <div class="container">
+    <div class="cmp-product-compare__header">
+      <div class="cmp-product-compare__header-content">
+        <div class="cmp-product-compare__title-group">
+          <div class="cmp-product-compare__title-row">
+            <h2 class="cmp-product-compare__title" id="compare-title">
+              Product Comparison (<span data-count>0</span>/4)
+            </h2>
+            <div class="cmp-product-compare__error-container" aria-live="polite">
+              <div class="cmp-product-compare__error" hidden data-error="limit">
+                You have reached the limit of 4 products, please remove one product before adding a
+                new one for comparison.
+              </div>
+              <div class="cmp-product-compare__error" hidden data-error="minimum">
+                Please select at least 2 products to compare.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="cmp-button cmp-product-compare__toggle"
+          data-action="toggle-collapse"
+          data-toggle="collapse"
+          aria-expanded="false"
+          aria-controls="compare-content"
+          aria-label="Toggle compare content"
+        ></button>
+      </div>
+    </div>
+
+    <div class="cmp-product-compare__content-row" id="compare-content">
+      <div class="carousel panelcontainer">
+        <div
+          id="carousel-product-compare"
+          class="cmp-carousel"
+          role="group"
+          aria-live="polite"
+          aria-roledescription="carousel"
+          data-cmp-is="carousel"
+          data-slides-per-view="2"
+          data-slides-per-view-tablet="2"
+          data-slides-per-view-desktop="4"
+          data-loop-slides="false"
+          data-space-between="8"
+          data-space-between-tablet="8"
+          data-space-between-desktop="20"
+        >
+          <div 
+            class="cmp-carousel__content cmp-carousel__content--overflow cmp-product-compare__list"
+            aria-atomic="false"
+            aria-live="polite"
+          >
+          </div>
+        </div>
+      </div>
+
+      <div class="cmp-product-compare__actions">
+        <button class="cmp-button cmp-button--primary" data-action="compare" data-compare-link="./product-comparison.html" aria-label="Compare the selected products">
+          View Comparison
+        </button>
+        <button class="cmp-button cmp-button--tertiary btn btn-link" data-action="clear-all">
+          Clear All
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

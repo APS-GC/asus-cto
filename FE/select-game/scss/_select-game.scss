@@ -1,0 +1,190 @@
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+@use "../../../site/scss/settings/mixins" as mix;
+
+.game-recommendation {
+  color: var(--color-primary-950);
+
+  .game-form {
+    display: flex;
+    flex-direction: column;
+    @include mix.spacer(gap, 8);
+  }
+
+  .budget-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--color-primary-100);
+    flex-wrap: wrap;
+    border-radius: vars.$border-radius-xl;
+    @include mix.p(8, "y");
+    @include mix.p(10, "x");
+    @include mix.spacer(gap, 4);
+
+    .budget-left {
+      color: var(--color-primary-950);
+      min-width: 120px;
+      @include typo.text-display5;
+    }
+
+    .budget-center {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+      flex-wrap: wrap;
+      @include mix.spacer(gap, 6);
+
+      .budget-value {
+        border-radius: vars.$border-radius;
+        width: 5rem;
+        min-width: auto;
+        text-align: center;
+        border: 1px solid var(--color-primary-700);
+        background-color: var(--color-primary-100);
+        color: var(--color-primary-950);
+        letter-spacing: 0.16px;
+        @include mix.p(2, 'y');
+        @include mix.p(4, 'x');
+        @include typo.text-small();
+      }
+
+      .budget-separator {
+        display: none;
+        align-self: center;
+        text-align: center;
+        font-weight: 500;
+        color: var(--color-primary-700);
+        @include typo.text-tiny();
+      }
+
+      .budget-range-wrapper {
+        position: relative;
+        flex-grow: 1;
+
+        .range-labels {
+          display: flex;
+          justify-content: space-between;
+          position: absolute;
+          width: 100%;
+          color: var(--color-primary-700);
+          @include mix.m(4, "t");
+
+          span {
+            @include typo.text-tiny();
+          }
+        }
+      }
+    }
+
+    .budget-actions {
+      display: flex;
+      @include mix.spacer("gap", 4);
+
+      .reset-button {
+        display: inline-flex;
+        align-items: center;
+        background-color: var(--color-primary-100);
+        color: var(--color-primary-950);
+        border: none;
+        cursor: pointer;
+
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M9.16667 17.0255C7.60361 16.8224 6.31007 16.1339 5.28604 14.9599C4.26201 13.7857 3.75 12.4101 3.75 10.8332C3.75 9.98598 3.91722 9.17431 4.25167 8.3982C4.58611 7.62195 5.05458 6.94001 5.65708 6.35237L6.54813 7.24341C6.03632 7.71036 5.65035 8.2523 5.39021 8.86924C5.13007 9.48619 5 10.1408 5 10.8332C5 12.0554 5.39021 13.1326 6.17063 14.0649C6.95104 14.997 7.94972 15.5672 9.16667 15.7755V17.0255ZM10.8333 17.0415V15.7915C12.0364 15.5479 13.0316 14.9649 13.819 14.0424C14.6063 13.1199 15 12.0501 15 10.8332C15 9.44431 14.5139 8.26376 13.5417 7.29154C12.5694 6.31931 11.3889 5.8332 10 5.8332H9.70521L10.8302 6.9582L9.95188 7.83633L7.32375 5.2082L9.95188 2.58008L10.8302 3.4582L9.70521 4.5832H10C11.7436 4.5832 13.2212 5.18897 14.4327 6.40049C15.6442 7.61202 16.25 9.08959 16.25 10.8332C16.25 12.4015 15.7367 13.7701 14.71 14.939C13.6832 16.1078 12.391 16.8086 10.8333 17.0415Z' fill='%23999999'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right center;
+        background-size: 20px;
+        @include mix.p(6, "r");
+        @include mix.p(2, "y");
+        @include mix.p(4, "l");
+        @include typo.text-cta();
+      }
+
+      button[type="submit"] {
+        background-color: var(--color-primary-950);
+        color: var(--color-primary-50);
+        cursor: pointer;
+        border: none;
+        border-radius: vars.$border-radius-sm;
+
+        @include mix.p(2, "y");
+        @include mix.p(4, "x");
+        @include typo.text-cta();
+
+        &:disabled {
+          background-color: var(--color-primary-600);
+          color: var(--color-primary-800);
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  @include mix.respond-to("lg", "max") {
+    .game-form {
+      @include mix.spacer(gap, 5);
+    }
+
+    .budget-bar {
+      flex-direction: column;
+      align-items: flex-start;
+      @include mix.p(6, "y");
+      @include mix.p(5, "x");
+
+      .budget-left {
+        @include typo.text-display6;
+      }
+
+      .budget-center {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        width: 100%;
+        @include mix.spacer(gap, 3);
+
+        .budget-separator {
+          display: block;
+        }
+
+        .budget-value {
+          width: 100%;
+          text-align: center;
+          border-radius: vars.$border-radius;
+          border: 1px solid var(--color-primary-700);
+          color: var(--color-primary-950);
+        }
+
+        .budget-range-wrapper {
+          grid-column: 1 / -1;
+          order: 2;
+          position: relative;
+          @include mix.m(3, "t");
+
+          .range-labels {
+            display: flex;
+            justify-content: space-between;
+            color: var(--color-primary-700);
+            position: relative;
+            @include typo.text-xsmall();
+            @include mix.m(4, "t");
+          }
+        }
+      }
+
+      .budget-actions {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        @include mix.spacer("gap", 0);
+
+        .reset-button {
+          margin-right: auto;
+          @include mix.p(0, "l");
+          @include typo.text-small();
+        }
+
+        button[type="submit"] {
+          margin-left: auto;
+        }
+      }
+    }
+  }
+}

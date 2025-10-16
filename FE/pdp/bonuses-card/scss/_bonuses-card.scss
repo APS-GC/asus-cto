@@ -1,0 +1,192 @@
+@use "../../../../site/scss/settings/typography" as typo;
+@use "../../../../site/scss/settings/variables" as vars;
+@use "../../../../site/scss/settings/mixins" as mix;
+
+.cmp-bundles-card {
+  display: flex;
+  flex-direction: column;
+  @include mix.spacer(gap, 4);
+  @include mix.p(6);
+  border: 1px solid var(--color-primary-200);
+  border-radius: 8px;
+  min-height: 130px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  .checkmark-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 1rem;
+    height: 1rem;
+    border: 1px solid var(--color-primary-700);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    background-color: var(--color-primary);
+    .checkmark-icon {
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--color-primary);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .selected-state {
+      display: block;
+    }
+  }
+
+  &:hover {
+    border-color: var(--color-primary-400);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:has(.bundles-checkbox:checked) {
+    border: 1px solid var(--color-brand-asus);
+    background-color: transparent;
+    box-shadow: 0 2px 12px rgba(0, 123, 255, 0.25);
+
+    .checkmark-indicator {
+      background-color: var(--color-primary-950);
+      border-color: var(--color-primary-950);
+
+      .checkmark-icon {
+        opacity: 1;
+      }
+    }
+  }
+
+  &.bonus-out-of-stock {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background-color: var(--color-primary-50);
+
+    .bundles-checkbox:disabled {
+      cursor: not-allowed;
+      & + .checkbox-checkmark {
+        display: none;
+      }
+    }
+
+    .checkbox-overlay::after {
+      content: "Out of Stock";
+      position: absolute;
+      bottom: 20px;
+      right: 8px;
+      background-color: var(--color-error-500);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 500;
+      @include typo.text-base;
+    }
+  }
+
+  &.selection-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+
+    .checkmark-indicator {
+      opacity: 0.5;
+    }
+
+    &:hover {
+      border-color: var(--color-primary-200);
+      box-shadow: none;
+    }
+  }
+
+  .checkbox-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+
+    .bundles-checkbox {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 100%;
+      width: 100%;
+      margin: 0;
+    }
+
+    .checkbox-checkmark {
+      display: none;
+    }
+  }
+
+  .cmp-bundles-card__product {
+    display: flex;
+    gap: 1rem;
+  }
+  .cmp-product-name {
+    @include typo.text-cta;
+    font-weight: var(--medium);
+  }
+  .selected-items {
+    @include mix.m(8, "b");
+    ul {
+      padding-left: 20px;
+      margin: 10px 0;
+      list-style-type: disc;
+    }
+    li {
+      display: list-item;
+      list-style: disc;
+      list-style-position: outside;
+      margin-bottom: 5px;
+      line-height: 1.4;
+      // max-width: 200px;
+      // word-wrap: break-word;
+    }
+  }
+  .bonus-card-bottom {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    .price {
+      text-align: right;
+      @include typo.text-base;
+      @include mix.m(2, "b");
+      span {
+        color: var(--color-warning);
+      }
+    }
+    .select-cta {
+      text-align: right;
+      .actions {
+        @include typo.text-cta;
+        text-align: right;
+        background: none;
+        border: none;
+        color: var(--color-primary-950);
+        cursor: pointer;
+        z-index: 3;
+        position: relative;
+      }
+    }
+  }
+}
+
+.bonus-out-of-stock {
+  background-color: var(--color-primary-50);
+}
+@include mix.respond-to("md", "max") {
+  .cmp-bundles-card {
+    @include mix.p(4);
+    @include mix.spacer(gap, 2);
+    min-height: 100px;
+    .cmp-product-name {
+      @include typo.text-base;
+    }
+  }
+}

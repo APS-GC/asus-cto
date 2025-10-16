@@ -1,0 +1,33 @@
+<header class="header-component-wrapper">
+    <div class="container header-container flex justify-between items-center">
+        <div class="internal-container flex justify-between items-center">
+            <a class="btn btn-link btn-sm back-button" id="comparison-page-back-button" aria-label="Go back to previous page">
+                <span class="icon icon--arrow-left" aria-hidden="true"></span>
+                <span class="back-button-text">Back</span>
+            </a>
+            <div class="vertical-divider" aria-hidden="true"></div>
+            <%- include('../section-heading/_section-heading.ejs', { name: 'Product comparison'}) %>
+        </div>
+        <%- include('../section-heading/_section-heading.ejs', { name: 'Product comparison'}) %>
+        <div class="clear-all-action-container">
+            <span><span id="comparison-products-count" aria-live="polite"></span>/4</span>
+            <button class="clear-all-button btn btn-link" aria-label="Clear all selected products">
+                Clear All
+            </button>
+        </div>
+    </div>
+</header>
+<div class="scrollable-component container" role="region" aria-label="Product comparison details">
+        <div class="product-comparison-card__container layout-grid layout-grid--cols"></div>
+        <div class="product-comparison-table">
+            <div class="switch-container no-differences flex" id="switch-container">
+                <%- include('../toggle-switch/_toggle-switch.ejs') %>
+                <div class="info-container">
+                    <span class="icon icon--info"></span>
+                    <div class="info-msg"><p>Highlight Differences is unavailable because all products have identical specifications.</p></div>
+                </div>
+            </div>
+            <div class="product-comparison-table-rows"></div>
+        </div>
+        <div class="trailing-action-buttons-wrapper layout-grid layout-grid--cols"></div>
+</div>

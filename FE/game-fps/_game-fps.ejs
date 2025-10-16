@@ -1,0 +1,115 @@
+<div class="fps-section" id="game-fps">
+  <div class="fps-header-row">
+    <span class="fps-title">Game FPS</span>
+    <div class="fps-info-group">
+      <button class="fps-info" data-a11y-dialog-show="fps-dialog" aria-label="View FPS Details">
+        What is FPS? <span class="icon icon--plus"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="fps-tabs-wrapper">
+    <%- include('../../components/tabs/_tabs.ejs', { 
+      tabsId: 'fps-tabs',
+      activeTabId: 'fps-tab-1080',
+      tabsStyle: 'solid',
+      tabs: [ 
+        { 
+          id: 'fps-tab-1080', 
+          title: '1080p', 
+          content: `
+            <div class="fps-scores">
+              <div class="fps-item">
+                <img src="./clientlib-site/images/games/call-of-duty.webp" alt="Call of Duty: Modern Warfare" loading="lazy" />
+                <span>118 FPS</span>
+              </div>
+              <div class="fps-item">
+                <img src="./clientlib-site/images/games/alan-wake.webp" alt="Alan Wake 2" loading="lazy" />
+                <span>67 FPS</span>
+              </div>
+              <div class="fps-item">
+                <img src="./clientlib-site/images/games/counter-strike.webp" alt="Counter Strike 2" loading="lazy" />
+                <span>100 FPS</span>
+              </div>
+              <div class="fps-item">
+                <img src="./clientlib-site/images/games/baldurs-gate.webp" alt="Baldur's Gate 3" loading="lazy" />
+                <span>82 FPS</span>
+              </div>
+              <div class="fps-item">
+                <img src="./clientlib-site/images/games/fortnite.webp" alt="Fortnite" loading="lazy" />
+                <span>75 FPS</span>
+              </div>
+              <div class="fps-item">
+                <img src="./clientlib-site/images/games/red-redemption.webp" alt="Red Redemption 2" loading="lazy" />
+                <span>130 FPS</span>
+              </div>
+            </div>
+          ` 
+        },
+        { 
+          id: 'fps-tab-1440', 
+          title: '1440p', 
+          content: `
+            <div class="fps-scores">
+              <div class="fps-item">
+                <img src="./clientlib-site/images/games/call-of-duty.webp" alt="Call of Duty: Modern Warfare" loading="lazy" />
+                <span>120 FPS</span>
+              </div>
+              <div class="fps-item">
+                <img src="./clientlib-site/images/games/alan-wake.webp" alt="Alan Wake 2" loading="lazy" />
+                <span>67 FPS</span>
+              </div>
+              <div class="fps-item">
+                <img src="./clientlib-site/images/games/counter-strike.webp" alt="Counter Strike 2" loading="lazy" />
+                <span>100 FPS</span>
+              </div>
+              <div class="fps-item">
+                <img src="./clientlib-site/images/games/baldurs-gate.webp" alt="Baldur's Gate 3" loading="lazy" />
+                <span>82 FPS</span>
+              </div>
+              <div class="fps-item">
+                <img src="./clientlib-site/images/games/fortnite.webp" alt="Fortnite" loading="lazy" />
+                <span>75 FPS</span>
+              </div>
+              <div class="fps-item">
+                <img src="./clientlib-site/images/games/red-redemption.webp" alt="Red Redemption 2" loading="lazy" />
+                <span>130 FPS</span>
+              </div>
+            </div>
+          ` 
+        }
+      ]
+    }) %>
+  </div>
+
+  <div class="time-spy-score">
+    <div class="time-spy-score-left">
+      <div class="time-spy-score-label">
+        <span class="label">Time Spy Score</span>
+        <button type="button" class="time-spy-score-btn" data-a11y-dialog-show="time-spy-score-dialog"
+          aria-label="Time Spy Score Information" data-score="10,999" data-level="4">
+          <span class="icon icon--plus"></span>
+        </button>
+      </div>
+      <span class="score">10,999</span>
+    </div>
+    <div class="time-spy-score-right">
+      <span class="data-from">Data from</span>
+      <div class="data-source">
+        <img src="./clientlib-site/images/3dmark.webp" alt="3DMark logo" loading="lazy" />
+        <button 
+          data-tooltip-trigger
+          aria-describedby="fps-tooltip"
+          data-tooltip-position="bottom"
+          class="btn btn-link"
+          aria-label="3D Mark information"
+        >
+          <span class="icon icon--info"></span>
+        </button>
+        <div id="fps-tooltip" class="tooltip__content tooltip__content--theme-dark tooltip__content--size-small" role="tooltip">
+          All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

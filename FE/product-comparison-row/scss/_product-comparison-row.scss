@@ -1,0 +1,44 @@
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+
+.product-comparison-row {
+  scroll-margin-top: 150px;
+  @include mix.p(8, "y");
+  flex-direction: column;
+  @include mix.spacer("gap", 6);
+  border-bottom: 1px solid var(--color-primary-700);
+  .product-row-info {
+    .table-cell {
+      color: var(--color-primary-100);
+      @include mix.spacer("gap", 2);
+      align-items: center;
+      .color-block {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid var(--color-primary-600);
+      }
+    }
+  }
+  .highlight {
+    color: var(--color-info);
+    font-weight: var(--medium);
+  }
+  @include mix.respond-to("lg", "max") {
+    width: max-content;
+    h3{
+      @include typo.text-display3();
+    }
+    @include mix.p(4, "y");
+  }
+  @include mix.respond-to("md", "max") {
+    @include mix.spacer("gap", 4);
+    h3{
+      @include typo.text-display3();
+    }
+  }
+}
+.different-row {
+  background-color: #e5f6fd;
+}

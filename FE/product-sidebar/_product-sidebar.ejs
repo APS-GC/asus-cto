@@ -1,0 +1,291 @@
+<aside 
+  class="cmp-sidebar"
+  id="product-filter-dialog"
+>
+  <!-- Sidebar Info (hidden on mobile) -->
+  <div class="cmp-sidebar__info">
+    <p class="cmp-sidebar__note" role="status">
+      <span class="icon icon--info"></span>
+      Selecting filter(s) will refresh the results and may change the availability of other options.
+    </p>
+  </div>
+  
+  <div class="cmp-mobile--header">
+    <div class="product-mobile--header__title">
+      <h2 class="product-mobile__title">Filter</h2>
+    </div>
+  </div>
+
+  <!-- Applied Filters -->
+  <div class="cmp-sidebar__applied-filters">
+    <div class="applied-filters__header">
+      <h2 class="applied-filters__title">Applied filters</h2>
+      <button class="applied-filters__clear btn btn-link" aria-label="Clear all applied filters">Clear all</button>
+    </div>
+    <div class="applied-filters__list" role="list" aria-live="polite" aria-label="Currently applied filters"></div>
+  </div>
+
+  <!-- Search -->
+  <div class="cmp-sidebar__search hidden">
+    <label class="cmp-form__field" for="product-search">
+      <span class="cmp-form__icon">
+        <img src="./clientlib-site/images/icon-search.svg" alt="Search" />
+      </span>
+      <input type="search" placeholder="Enter keywords" class="cmp-form__input" aria-label="Enter keywords" id="product-search"/>
+    </label>
+  </div>
+
+  <!-- Budget -->
+  <div class="cmp-sidebar__budget">
+    <!-- Hidden inputs to submit budget values -->
+    <input type="hidden" name="minBudget" id="minBudget" value="1100" />
+    <input type="hidden" name="maxBudget" id="maxBudget" value="5000" />
+
+    <div class="budget-left">
+      <h3 class="budget-left">Your budget:</h3>
+    </div>
+    <div class="budget-center">
+      <div class="budget-inputs">
+        <input type="text" class="budget-value-input" id="budget-min-value" value="1100" aria-label="Minimum budget" />
+        <span class="budget-separator">to</span>
+        <input type="text" class="budget-value-input" id="budget-max-value" value="5000" aria-label="Maximum budget" />
+      </div>
+      <div class="budget-range-wrapper">
+        <div
+          id="budget-range-slider"
+          class="budget-range-slider"
+          data-start="[1100,5000]"
+          data-min="500"
+          data-max="5000"
+          data-step="100"
+          role="slider"
+          aria-label="Price range slider"
+          aria-valuemax="5000"
+          aria-valuemin="500"
+          aria-valuenow="1100"
+        ></div>
+        <div class="range-labels">
+          <span>$500</span>
+          <span>$5,000</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion Filters -->
+  <div class="cmp-sidebar__filters">
+    <%- include('../../components/accordion/_accordion.ejs', { accordionId: 'accordion-bb7b39a94e' , accordionItems: [ 
+      {
+        id: 'accordion-bb7b39a94e-item-b09e9d5a74',
+        title: 'Availability',
+        content: `<ul class="cmp-checkbox-list">
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="in-stock" value="stock">
+            <label for="in-stock">In Stock</label>
+          </li>
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="temporarily-out-of-stock" value="out-of-stock">
+            <label for="temporarily-out-of-stock">Temporarily Out of Stock</label>
+          </li>
+           <li class="cmp-checkbox">
+            <input type="checkbox" id="all-products" value="all-products">
+            <label for="all-products">All Products</label>
+          </li>
+        </ul>`
+      },
+      {
+        id: 'accordion-bb7b39a94e-item-c6628ce7e9',
+        title: 'Product Type',
+        content: `<ul class="cmp-checkbox-list">
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="ready-to-ship" value="ready-to-ship">
+            <label for="ready-to-ship">Ready to Ship</label>
+          </li>
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="customizable" value="customizable">
+            <label for="customizable">Customizable</label>
+          </li>
+        </ul>`
+      },
+      {
+        id: 'accordion-bb7b39a94e-item-8b82f9685f',
+        title: 'Deals & promotions',
+        content: `<ul class="cmp-checkbox-list">
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="deals" value="deals">
+            <label for="deals">Deals</label>
+          </li>
+        </ul>`
+      },
+      {
+        id: 'accordion-bb7b39a94e-item-brand-series',
+        title: 'By Brand / Series',
+        content: `<ul class="cmp-checkbox-list">
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="rog" value="rog">
+            <label for="rog">ROG</label>
+          </li>
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="rog-strix" value="rog-strix">
+            <label for="rog-strix">ROG Strix</label>
+          </li>
+           <li class="cmp-checkbox">
+            <input type="checkbox" id="tuf-gaming" value="tuf-gaming">
+            <label for="tuf-gaming">TUF Gaming</label>
+          </li>
+        </ul>`
+      },
+      {
+        id: 'accordion-bb7b39a94e-item-gpu',
+        title: 'GPU',
+        content: `<ul class="cmp-checkbox-list">
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="GeForce-RTX-4080" value="GeForce-RTX-4080">
+            <label for="GeForce-RTX-4080">GeForce RTX 4080</label>
+          </li>
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="GeForce-RTX-3090" value="GeForce-RTX-3090">
+            <label for="GeForce-RTX-3090">GeForce RTX 3090</label>
+          </li>
+           <li class="cmp-checkbox">
+            <input type="checkbox" id="GeForce-RTX-3080" value="GeForce-RTX-3080">
+            <label for="GeForce-RTX-3080">GeForce RTX 3080</label>
+          </li>
+        </ul>`,
+        expanded: true
+      },
+      {
+        id: 'accordion-bb7b39a94e-item-cpu',
+        title: 'CPU',
+        content: `<ul class="cmp-checkbox-list">
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="13th-Gen-Intel-Core-i7" value="13th-Gen-Intel-Core-i7">
+            <label for="13th-Gen-Intel-Core-i7">13th Gen Intel Core i7</label>
+          </li>
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="13th-Gen-Intel-Core-i5" value="13th-Gen-Intel-Core-i5">
+            <label for="13th-Gen-Intel-Core-i5">13th Gen Intel Core i5</label>
+          </li>
+           <li class="cmp-checkbox">
+            <input type="checkbox" id="11th-Gen-Intel-Core-i7" value="11th-Gen-Intel-Core-i7">
+            <label for="11th-Gen-Intel-Core-i7">11th Gen Intel Core i7</label>
+          </li>
+           <li class="cmp-checkbox">
+            <input type="checkbox" id="11th-Gen-Intel-Core-i5" value="11th-Gen-Intel-Core-i5">
+            <label for="11th-Gen-Intel-Core-i5">11th Gen Intel Core i5</label>
+          </li>
+           <li class="cmp-checkbox">
+            <input type="checkbox" id="amd-ryzen-9-3000-series" value="amd-ryzen-9-3000-series">
+            <label for="amd-ryzen-9-3000-series">AMD Ryzen 9 3000 Series</label>
+          </li>
+            <li class="cmp-checkbox">
+            <input type="checkbox" id="amd-ryzen-7-5800X-3d" value="amd-ryzen-7-5800X-3d">
+            <label for="amd-ryzen-7-5800X-3d">AMD Ryzen 7 5800X 3D</label>
+          </li>
+        </ul>`,
+        expanded: true
+      },
+       {
+        id: 'accordion-bb7b39a94e-item-cpu-cooling',
+        title: 'CPU cooling',
+        content: `<ul class="cmp-checkbox-list">
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="liquid" value="liquid">
+            <label for="liquid">Liquid</label>
+          </li>
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="air" value="air">
+            <label for="air">Air</label>
+          </li>
+        </ul>`
+      },
+           {
+        id: 'accordion-bb7b39a94e-item-chipset',
+        title: 'Chipset',
+        content: `<ul class="cmp-checkbox-list">
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="intel-z390" value="intel-z390">
+            <label for="intel-z390">Intel Z390</label>
+          </li>
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="adm-b450" value="adm-b450">
+            <label for="adm-b450">AMD B450</label>
+          </li>
+        </ul>`
+      },
+            {
+        id: 'accordion-bb7b39a94e-item-memory',
+        title: 'Memory',
+        content: `<ul class="cmp-checkbox-list">
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="64gb" value="64gb">
+            <label for="64gb">64GB</label>
+          </li>
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="32gb" value="32gb">
+            <label for="32gb">32GB</label>
+          </li>
+           <li class="cmp-checkbox">
+            <input type="checkbox" id="16gb" value="16gb">
+            <label for="16gb">16GB</label>
+          </li>
+           <li class="cmp-checkbox">
+            <input type="checkbox" id="8gb" value="8gb">
+            <label for="8gb">8GB</label>
+          </li>
+        </ul>`
+      },
+       {
+        id: 'accordion-bb7b39a94e-item-storage',
+        title: 'Storage',
+        content: `<ul class="cmp-checkbox-list">
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="1tb-and-up" value="1tb-and-up">
+            <label for="1tb-and-up">1TB and up</label>
+          </li>
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="256gb-512gb" value="256gb-512gb">
+            <label for="256gb-512gb">256GB - 512GB</label>
+          </li>
+           <li class="cmp-checkbox">
+            <input type="checkbox" id="ssd" value="ssd">
+            <label for="ssd">SSD</label>
+          </li>
+           <li class="cmp-checkbox">
+            <input type="checkbox" id="hdd" value="hdd">
+            <label for="hdd">HDD</label>
+          </li>
+        </ul>`
+      },
+          {
+        id: 'accordion-bb7b39a94e-item-connectivity',
+        title: 'Connectivity',
+        content: `<ul class="cmp-checkbox-list">
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="type-c-usb-3.2-gen-2" value="type-c-usb-3.2-gen-2">
+            <label for="type-c-usb-3.2-gen-2">Type-C USB 3.2 Gen 2</label>
+          </li>
+          <li class="cmp-checkbox">
+            <input type="checkbox" id="type-c-usb-3.2-gen-1" value="type-c-usb-3.2-gen-1">
+            <label for="type-c-usb-3.2-gen-1">Type-C USB 3.2 Gen 1</label>
+          </li>
+           <li class="cmp-checkbox">
+            <input type="checkbox" id="type-a-usb-3.2-gen-2" value="type-a-usb-3.2-gen-2">
+            <label for="type-a-usb-3.2-gen-2">Type-A USB 3.2 Gen 2</label>
+          </li>
+           <li class="cmp-checkbox">
+            <input type="checkbox" id="type-a-usb-3.2-gen-1" value="type-a-usb-3.2-gen-1">
+            <label for="type-a-usb-3.2-gen-1">Type-A USB 3.2 Gen 1</label>
+          </li>
+        </ul>`
+      }
+    ] }) %>
+  </div>
+
+  <!-- Sticky Footer Actions (mobile only) -->
+<div class="cmp-sidebar__actions">
+  <button class="btn-cancel btn" data-a11y-dialog-hide="product-filter-dialog">Cancel</button>
+  <button class="btn-apply btn">Apply</button>
+</div>
+</aside>
+

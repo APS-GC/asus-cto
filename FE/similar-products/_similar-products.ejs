@@ -1,0 +1,56 @@
+<div class="spacing-with-bottom section-with-top-spacing similar-products-container">
+    <%- include('../section-heading/_section-heading.ejs', { name: 'Explore more gaming desktops'}) %>
+    <div class="product-toolbar">
+        <small class="matched-product"><span id="similar-products-count"></span> Matching Products</small>
+        <div class="cmp-product-toolbar__sort-wrapper">
+            <div class="cmp-product-sort-label">
+                <label for="similar-products-sort-by">Sort by:</label>
+            </div>
+          <div class="cmp-product-sort">
+            <select 
+                id="similar-products-sort-by" 
+                name="sort-by" 
+                class="cmp-product-sort__select"
+                aria-label="Sort products by">
+                <option value="best-performance">Best Performance</option>
+                <option value="price-low-high">Price: Low to High</option>
+                <option value="price-high-low">Price: High to Low</option>
+                <option value="ratings">Ratings</option>
+                <option value="best-selling">Best Selling</option>
+            </select>
+          </div>
+        </div>
+    </div>
+    <div class="carousel panelcontainer">
+
+      <div
+        id="similar-products-grid"
+        class="cmp-carousel"
+        role="group"
+        aria-live="polite"
+        aria-label="Similar Gaming Desktops"
+        aria-roledescription="carousel"
+        data-cmp-is="carousel"
+        data-slides-per-view="1.3"
+        data-slides-per-view-tablet="3.2"
+        data-slides-per-view-desktop="3.2"
+        data-loop-slides="false"
+        data-space-between="8"
+        data-space-between-tablet="8"
+      >
+        <div 
+          class="cmp-carousel__content cmp-carousel__content--overflow"
+          aria-atomic="false"
+          aria-live="polite"
+          aria-busy="true"
+        >
+
+          <!-- Products will be loaded here -->
+        </div>
+        <div class="section-actions-container is-loading">
+          <div class="loader"><span class="icon icon--loader"></span></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-outline " id="view-all-desktops-btn" aria-label="View all gaming desktops">View All Desktops</button>
+</div>

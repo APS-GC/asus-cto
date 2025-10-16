@@ -1,0 +1,121 @@
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+
+.product-gallery {
+  position: relative;
+  width: 100%;
+
+  .product-gallery__main-carousel {
+    aspect-ratio: 1/1; // Ensures consistent ratio for main image
+    margin-bottom: 16px;
+
+    .carousel__item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+        max-height: 500px;
+      }
+    }
+  }
+
+  .product-gallery__thumbs-carousel-wrapper {
+    position: relative;
+    @include mix.p(9, "x");
+
+    .carousel__actions {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 10;
+
+      .carousel__action {
+        pointer-events: all;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border: none;
+        cursor: pointer;
+        background: transparent;
+
+        &--disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .icon {
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      &--previous {
+        margin-left: 0;
+      }
+
+      &--next {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .product-gallery__thumbs-carousel {
+    position: unset;
+
+    .carousel__item {
+      border-radius: vars.$border-radius;
+      cursor: pointer;
+      flex-shrink: 0;
+      width: 75px;
+      aspect-ratio: 1/1;
+      border: 2px solid transparent;
+      overflow: hidden;
+
+      &:hover:not(.swiper-slide-thumb-active) {
+        opacity: 0.8;
+      }
+
+      &--active {
+        opacity: 1;
+        border-color: var(--color-primary-100);
+      }
+
+      img {
+        max-width: 100%;
+        object-fit: cover;
+        backdrop-filter: blur(20px);
+      }
+    }
+  }
+
+  @include mix.respond-to("md", "max") {
+    .product-gallery__thumbs-carousel-wrapper {
+      overflow: visible;
+      @include mix.p(0);
+
+      .carousel__actions {
+        left: -24px;
+        right: -24px;
+      }
+    }
+
+    .product-gallery__thumbs-carousel {
+      .carousel__item {
+        width: 60px;
+      }
+    }
+  }
+}

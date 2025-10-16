@@ -1,0 +1,49 @@
+@use "../../../site/scss/settings/mixins" as mix;
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+
+.no-matches {
+  background: transparent;
+  color: var(--color-primary-950);
+  text-align: center;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  @include mix.p(8, "y");
+  @include mix.p(16, "x");
+  @include mix.m(20, "b");
+
+  &.show {
+    display: flex;
+  }
+
+  @include mix.respond-to("md", "max") {
+    @include mix.p(10, "y");
+    @include mix.p(5, "x");
+    @include mix.m(5, "b");
+  }
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__title {
+    @include typo.text-display3();
+    @include mix.m(3, "b");
+
+    @include mix.respond-to("md", "max") {
+      @include typo.text-display4();
+    }
+  }
+
+  &__description {
+    @include typo.text-base();
+
+    @include mix.respond-to("md", "max") {
+      @include typo.text-small();
+    }
+  }
+}

@@ -1,0 +1,41 @@
+<div class="hero-banner cmp-hero-banner <%= alignmentClass %>">
+  <% if (typeof video !== 'undefined' && video) { %>
+    <div class="hero-video-wrapper">
+      <video
+        class="hero-video"
+        loop
+        muted
+        playsinline
+        poster="<%= image %>"
+        data-src="<%= video %>"
+      ></video>
+    </div>
+  <% } else { %>
+    <div class="hero-image-wrapper">
+      <picture>
+        <% if (typeof imageDesktop !== 'undefined' && imageDesktop) { %>
+          <source media="(min-width: 1024px)" srcset="<%= imageDesktop %>" />
+        <% } %>
+        <% if (typeof imageTablet !== 'undefined' && imageTablet) { %>
+          <source media="(min-width: 768px)" srcset="<%= imageTablet %>" />
+        <% } %>
+        <img src="<%= image %>" alt="<%= name %>" class="hero-image" loading="lazy" />
+      </picture>
+    </div>
+  <% } %>
+
+  <div class="hero-content">
+    <p class="product-name"><%= name %></p>
+    <% if (typeof renderAsH1 !== 'undefined' && renderAsH1) { %>
+      <h1 class="headline"><%- headline %></h1>
+    <% } else { %>
+      <h2 class="headline"><%- headline %></h2>
+    <% } %>
+    <a href="<%= ctaLink %>" class="cta-button btn" aria-label="<%- ctaName%> <%= name %>">
+      <%- ctaName %>
+      <% if (typeof ctaDescription !== 'undefined') { %>
+        <span class="sr-only"><%- ctaDescription %></span>
+      <% } %>
+    </a>
+  </div>
+</div>

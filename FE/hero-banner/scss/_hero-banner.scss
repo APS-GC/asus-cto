@@ -1,0 +1,133 @@
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+@use "../../../site/scss/settings/mixins" as mix;
+
+.hero-banner,
+.cmp-hero-banner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  aspect-ratio: 1440 / 777;
+
+  .hero-image-wrapper,
+  .hero-video-wrapper {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero-image,
+  .hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: absolute;
+    z-index: 2;
+    color: var(--color-primary-950);
+
+    .product-name {
+      text-transform: uppercase;
+      @include typo.text-display7();
+      @include mix.m(2, "b");
+    }
+
+    .headline {
+      @include typo.text-display1;
+      @include mix.m(6, "b");
+    }
+  }
+
+  // Combined alignment variants
+
+  &.hero-content--start-center .hero-content {
+    top: 50%;
+    left: 10%;
+    transform: translateY(-50%);
+    text-align: left;
+  }
+
+  &.hero-content--center-top .hero-content {
+    top: calc(64px + var(--header-height));
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+
+  &.hero-content--end-center .hero-content {
+    top: 50%;
+    right: 8%;
+    transform: translateY(-50%);
+    text-align: left;
+  }
+
+  &.hero-content--start-top .hero-content {
+    top: 10%;
+    left: 10%;
+    text-align: left;
+  }
+
+  &.hero-content--start-bottom .hero-content {
+    bottom: 10%;
+    left: 10%;
+    text-align: left;
+  }
+
+  &.hero-content--center-center .hero-content {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  &.hero-content--center-bottom .hero-content {
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+
+  &.hero-content--end-top .hero-content {
+    top: 10%;
+    right: 8%;
+    text-align: right;
+  }
+
+  &.hero-content--end-bottom .hero-content {
+    bottom: 10%;
+    right: 8%;
+    text-align: right;
+  }
+
+  @include mix.respond-to("xl", "max") {
+    aspect-ratio: 768 / 429;
+
+    .hero-content {
+      .headline {
+        @include typo.text-display3();
+        @include mix.m(4, "b");
+      }
+    }
+
+    &.hero-content--start-center .hero-content {
+      left: 20px;
+      top: unset;
+      transform: unset;
+      bottom: 76px;
+    }
+  }
+
+  @include mix.respond-to("md", "max") {
+    aspect-ratio: 360 / 528;
+  }
+}
+
+@include mix.respond-to("md", "max") {
+  .cmp-carousel:has(.cmp-hero-banner) .cmp-carousel__footer {
+    justify-content: space-between;
+    bottom: 20px;
+  }
+}

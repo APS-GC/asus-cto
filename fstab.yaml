@@ -1,0 +1,5 @@
+mountpoints:
+  /:
+    url: "https://author-p165753-e1767020.adobeaemcloud.com/bin/franklin.delivery/epai-tw/eds-enablement-xwalk/main"
+    type: "markup"
+    suffix: ".html"

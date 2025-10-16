@@ -1,0 +1,317 @@
+@use "../../../site/scss/settings/typography" as typo;
+@use "../../../site/scss/settings/variables" as vars;
+@use "../../../site/scss/settings/mixins" as mix;
+
+footer {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-950);
+  @include mix.p(8, "y");
+  @include mix.m(15, "t");
+
+  .w-500 {
+    font-weight: 500;
+  }
+
+  // Fixes: layout now shows two equal-width columns side-by-side
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: flex-start;
+    @include mix.spacer(gap, 12);
+    @include mix.m(6, "t");
+    @include mix.m(10, "b");
+    @include typo.text-bolder;
+    @include mix.respond-to("md", "max") {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .footer-left,
+  .footer-right {
+    width: 100%;
+  }
+
+  .newsletter {
+    @include mix.m(6, "b");
+
+    p {
+      font-weight: 500;
+      @include mix.m(2, "b");
+    }
+
+    &__form {
+      display: flex;
+      width: 100%;
+      max-width: 80%;
+      @include mix.spacer(gap, 2);
+
+      input {
+        flex: 1;
+        border-radius: vars.$border-radius; // 0.5rem = 8px
+        border: 1px solid var(--color-primary-200); // light gray
+        background-color: var(--color-primary-100); // dark gray
+        color: var(--color-primary-950);
+        outline: none;
+        @include mix.p(2, "y");
+        @include mix.p(4, "x");
+
+        &::placeholder {
+          color: var(--color-primary-600);
+        }
+
+        &:focus {
+          border-color: var(--color-primary-600);
+        }
+      }
+
+      button {
+        @include typo.text-cta();
+      }
+    }
+  }
+
+  .social {
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    p {
+      @include typo.text-bold;
+      @include mix.m(2, "b");
+    }
+
+    .text-social {
+      font-size: 0.75rem;
+      line-height: 1.125rem;
+    }
+
+    &__icons {
+      display: flex;
+      flex-wrap: wrap;
+      list-style: none;
+      @include mix.spacer(gap, 4);
+      @include mix.m(6, "t");
+
+      li {
+        height: 40px;
+
+        a {
+          display: inline-flex;
+
+          img {
+            background: var(--color-primary-300);
+            border-radius: vars.$border-radius-xxl; // 0.5rem = 8px
+          }
+        }
+      }
+    }
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    &__column {
+      flex: 1 1 30%;
+      @include mix.m(4, "b");
+      list-style: none;
+      margin-block-start: 0px;
+      p.w-500 {
+        color: var(--color-primary-950);
+        @include typo.text-bold;
+        @include mix.m(4, "b");
+      }
+
+      a {
+        color: var(--color-primary-600);
+        display: block;
+        text-decoration: none;
+        @include typo.text-small();
+        @include mix.m(4, "b");
+
+        &:hover {
+          color: var(--color-primary-950);
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--color-primary-300);
+    @include mix.p(4, "t");
+    @include mix.p(3, "b");
+
+    span {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      line-height: 18px;
+      color: var(--color-primary-600);
+      @include mix.spacer(gap, 2);
+    }
+
+    &__links {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      line-height: 100%;
+      color: var(--color-primary-600);
+
+      a {
+        position: relative;
+        padding: 0 12px;
+        text-decoration: none;
+        color: inherit;
+
+        &:hover {
+          color: var(--color-primary-950);
+          text-decoration: underline;
+        }
+
+        &:not(:last-child)::after {
+          content: "";
+          position: absolute;
+          top: 50%;
+          right: 0;
+          transform: translateY(-50%);
+          width: 1px;
+          height: 16px;
+          background-color: var(--color-primary-300);
+        }
+      }
+    }
+  }
+
+  @include mix.respond-to("xs", "max") {
+    padding: 1rem 0rem 1rem 0rem;
+
+    .footer-bottom {
+      &__links {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap !important;
+        align-items: center;
+        @include mix.spacer(gap, 2);
+      }
+    }
+  }
+
+  @include mix.respond-to("lg", "max") {
+    @include mix.p(4, "y");
+    @include mix.p(0, "x");
+    @include mix.m(8, "t");
+
+    .footer-grid {
+      grid-template-columns: 1fr;
+      text-align: left;
+      @include mix.spacer(gap, 8);
+      @include mix.m(4, "t");
+      @include mix.m(4, "b");
+    }
+
+    .newsletter {
+      &__form {
+        flex-direction: row;
+        justify-content: flex-start;
+        width: 100%;
+        max-width: 100%;
+        @include mix.spacer(gap, 2);
+
+        input {
+          width: 65%;
+          @include mix.m(0, "b");
+        }
+
+        button {
+          width: auto;
+          white-space: nowrap;
+          @include mix.m(0, "l");
+        }
+      }
+    }
+
+    .social {
+      .text-social {
+        text-align: left;
+        @include mix.m(2, "b");
+      }
+
+      &__icons {
+        justify-content: flex-start;
+      }
+    }
+
+    .footer-links {
+      flex-direction: column;
+      align-items: flex-start;
+
+      &__column {
+        text-align: left;
+        width: 100%;
+        @include mix.m(4, "b");
+
+        p {
+          @include typo.text-bold;
+          @include mix.m(2, "b");
+        }
+
+        a {
+          font-size: 0.85rem;
+          @include mix.m(3, "b");
+        }
+      }
+    }
+
+    .footer-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      gap: 1rem;
+
+      span {
+        justify-content: flex-start;
+      }
+
+      &__links {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        @include mix.spacer(gap, 2);
+
+        a {
+          font-size: 0.75rem;
+          color: var(--color-primary-600);
+          position: relative;
+          text-decoration: none;
+          white-space: nowrap;
+          @include mix.p(1, "x");
+
+          &:hover {
+            color: var(--color-primary-950);
+          }
+
+          &:not(:last-child)::after {
+            content: "|";
+            position: absolute;
+            right: -6px;
+            color: var(--color-primary-300);
+          }
+        }
+      }
+    }
+  }
+}
