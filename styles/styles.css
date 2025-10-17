@@ -3,53 +3,65 @@
  * Based on ASUS brand guidelines and Figma design specifications
  * ========================================================================== */
 
-/* CSS Custom Properties for Colors */
+/* CSS Custom Properties for Colors - Aligned with webpack/scss design system */
 :root {
-  /* ASUS Brand Colors */
-  --color-primary: #0057b7;           /* ASUS Blue */
-  --color-primary-dark: #003d82;      /* Darker ASUS Blue */
-  --color-primary-light: #4285f4;     /* Lighter ASUS Blue */
+  /* ASUS Brand Colors - Aligned with webpack/scss */
+  --color-brand-asus: #0057b7;        /* ASUS Blue */
+  --color-brand-rog: #f7323f;         /* ROG Red */
   
-  /* Secondary Colors */
-  --color-secondary: #f05f17;         /* ASUS Orange */
-  --color-secondary-dark: #d44a0c;    /* Darker Orange */
-  --color-secondary-light: #ff7a3d;   /* Lighter Orange */
+  /* Primary Color System - Following webpack/scss structure */
+  --color-primary: #000000;           /* Base black */
+  --color-primary-50: #16151b;        /* Dark/Grey03 */
+  --color-primary-100: #181818;       /* Dark/Grey02, Light/Grey07 */
+  --color-primary-200: #262626;       /* Dark/Grey04, Light/Grey06 */
+  --color-primary-300: #4d4d4d;       /* Dark/Grey05, Light/Grey05 */
+  --color-primary-400: #666666;       /* Light/Grey04 */
+  --color-primary-500: #818181;       /* Light/Grey03 */
+  --color-primary-600: #999999;       /* Dark/Grey06 */
+  --color-primary-700: #cccccc;       /* Dark/Grey07, Light/Grey02 */
+  --color-primary-800: #dcdcdc;       /* Dark/Grey08 */
+  --color-primary-900: #f5f5f5;       /* Light/Grey01 */
+  --color-primary-950: #ffffff;       /* White */
   
-  /* Gradient Colors - From Figma Design */
-  --gradient-blue: #19377B;           /* Gradient Blue */
-  --gradient-red: #5A1644;            /* Gradient Red */
-  --gradient-black: #17131F;          /* Gradient Black */
+  /* Status Colors - Aligned with webpack/scss */
+  --color-success: #6fc371;           /* Success Green */
+  --color-info: #006ce1;              /* Info Blue */
+  --color-warning: #f05f17;           /* Warning Orange */
+  --color-error: #e75b4b;             /* Error Red */
   
-  /* Status Colors */
-  --color-success: #00c851;           /* Success Green */
-  --color-success-dark: #007e33;      /* Darker Green */
-  --color-success-light: #69f0ae;     /* Lighter Green */
+  /* Additional System Colors */
+  --color-focus-ring: #006ce1;        /* Focus ring color */
+  --color-border-type: #1a821c;       /* Border type color */
+  --color-select-box-highlight: #248dff; /* Select box highlight */
   
-  --color-warning: #ffbb33;           /* Warning Yellow */
-  --color-warning-dark: #ff8f00;      /* Darker Yellow */
-  --color-warning-light: #fff350;     /* Lighter Yellow */
+  /* Legacy color mappings for backward compatibility */
+  --color-white: var(--color-primary-950);
+  --color-black: var(--color-primary);
+  --color-gray-50: var(--color-primary-900);
+  --color-gray-100: var(--color-primary-800);
+  --color-gray-200: var(--color-primary-700);
+  --color-gray-300: var(--color-primary-600);
+  --color-gray-400: var(--color-primary-500);
+  --color-gray-500: var(--color-primary-400);
+  --color-gray-600: var(--color-primary-300);
+  --color-gray-700: var(--color-primary-200);
+  --color-gray-800: var(--color-primary-100);
+  --color-gray-900: var(--color-primary-50);
   
-  --color-error: #3f0903;             /* Error Red (from Figma) */
-  --color-error-dark: #2d0602;        /* Darker Red */
-  --color-error-light: #ff5722;       /* Lighter Red */
-  
-  --color-info: #33b5e5;              /* Info Blue */
-  --color-info-dark: #0099cc;         /* Darker Info Blue */
-  --color-info-light: #81d4fa;        /* Lighter Info Blue */
-  
-  /* Neutral Colors */
-  --color-white: #ffffff;
-  --color-black: #000000;
-  --color-gray-50: #fafafa;
-  --color-gray-100: #f5f5f5;
-  --color-gray-200: #eeeeee;
-  --color-gray-300: #e0e0e0;
-  --color-gray-400: #bdbdbd;
-  --color-gray-500: #9e9e9e;
-  --color-gray-600: #757575;
-  --color-gray-700: #616161;
-  --color-gray-800: #424242;
-  --color-gray-900: #212121;
+  /* Legacy status color mappings */
+  --color-success-dark: #007e33;
+  --color-success-light: #69f0ae;
+  --color-warning-dark: #ff8f00;
+  --color-warning-light: #fff350;
+  --color-error-dark: #2d0602;
+  --color-error-light: #ff5722;
+  --color-info-dark: #0099cc;
+  --color-info-light: #81d4fa;
+  --color-secondary: var(--color-warning);
+  --color-secondary-dark: var(--color-warning-dark);
+  --color-secondary-light: var(--color-warning-light);
+  --color-primary-dark: var(--color-primary-100);
+  --color-primary-light: var(--color-brand-asus);
   
   /* Background Colors */
   --color-background-primary: #ffffff;
@@ -78,14 +90,30 @@
   --color-shadow-medium: rgba(0, 0, 0, 0.15);
   --color-shadow-dark: rgba(0, 0, 0, 0.25);
   
-  /* Font Families */
-  --font-primary: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-display: 'Roboto Condensed', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  /* Elevation System - Complete Shadow System from webpack/scss */
+  --shadow-normal: 0px 4px 20px 0px rgba(0, 0, 0, 0.08);
+  --shadow-interactive: 0px 4px 12px 0px rgba(0, 0, 0, 0.12);
+  --shadow-hover: 0px 8px 24px 0px rgba(0, 0, 0, 0.22);
+  --shadow-strong: 0px 8px 30px 0px rgba(0, 0, 0, 0.3);
+  --shadow-strong-light-blue: 0 0 30px rgba(0, 183, 255, 0.6);
   
-  /* Font Weights */
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-bold: 700;
+  /* Legacy elevation mapping for backward compatibility */
+  --elevation-1: var(--shadow-normal);
+  
+  /* Font Families - Aligned with webpack/scss */
+  --font-text: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'TTNormsProMedium', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-display-regular: 'TTNormsProRegular', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  
+  /* Font Weights - Aligned with webpack/scss */
+  --regular: 400;
+  --medium: 500;
+  
+  /* Legacy font mappings for backward compatibility */
+  --font-primary: var(--font-text);
+  --font-weight-regular: var(--regular);
+  --font-weight-medium: var(--medium);
+  --font-weight-bold: var(--medium);
   
   /* Font Sizes - Mobile First Approach */
   --font-size-xs: 0.75rem;    /* 12px */
@@ -113,6 +141,23 @@
   --letter-spacing-wide: 0.025em;
   --letter-spacing-wider: 0.05em;
   --letter-spacing-widest: 0.1em;
+  
+  /* Border Radius Tokens - Complete Scale from webpack/scss */
+  --border-radius-xs: 0.25rem;    /* 4px */
+  --border-radius-sm: 0.375rem;   /* 6px */
+  --border-radius: 0.5rem;        /* 8px */
+  --border-radius-md: 0.625rem;   /* 10px */
+  --border-radius-lg: 0.75rem;    /* 12px */
+  --border-radius-xl: 1rem;       /* 16px */
+  --border-radius-xxl: 1.25rem;   /* 20px */
+  --border-radius-xxxl: 1.5rem;   /* 24px */
+  --border-radius-xxxxl: 2rem;    /* 32px */
+  
+  /* Legacy border radius mappings for backward compatibility */
+  --radius-sm: var(--border-radius-xs);     /* Compact components, checkbox */
+  --radius-md: var(--border-radius);        /* Standard buttons, inputs, fields, snackbars */
+  --radius-lg: var(--border-radius-xl);     /* Modals, Product cards, Frame, Images */
+  --radius-full: 9999px;                    /* Fully-rounded pills */
 }
 
 /* Base Typography Styles */
@@ -873,33 +918,78 @@ p,
 }
 
 /* ========================================================================== 
- * Grid Layout System - Based on Figma Design Specifications
+ * Spacing Principles - Based on ASUS CTO Figma Design System
+ * Following 8px baseline spacing scale for consistent rhythm and hierarchy
  * ========================================================================== */
 
-/* CSS Custom Properties for Grid System */
+/* CSS Custom Properties for Spacing System - Aligned with webpack/scss */
 :root {
-  /* Grid Spacing - Primary 20px Base (Desktop) */
-  --grid-spacing-base: 20px;
-  --grid-spacing-8px: 8px;
+  /* Rem-based Spacing Scale - Following webpack/scss structure */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;   /* 4px */
+  --spacing-2: 0.5rem;    /* 8px */
+  --spacing-3: 0.75rem;   /* 12px */
+  --spacing-4: 1rem;      /* 16px */
+  --spacing-5: 1.25rem;   /* 20px */
+  --spacing-6: 1.5rem;    /* 24px */
+  --spacing-8: 2rem;      /* 32px */
+  --spacing-9: 2.25rem;   /* 36px */
+  --spacing-10: 2.5rem;   /* 40px */
+  --spacing-12: 3rem;     /* 48px */
+  --spacing-13: 3.25rem;  /* 52px */
+  --spacing-14: 3.5rem;   /* 56px */
+  --spacing-15: 3.75rem;  /* 60px */
+  --spacing-16: 4rem;     /* 64px */
+  --spacing-18: 4.5rem;   /* 72px */
+  --spacing-20: 5rem;     /* 80px */
+  --spacing-24: 6rem;     /* 96px */
+  --spacing-32: 8rem;     /* 128px */
+  --spacing-40: 10rem;    /* 160px */
+  --spacing-48: 12rem;    /* 192px */
+  --spacing-56: 14rem;    /* 224px */
+  --spacing-64: 16rem;    /* 256px */
   
-  /* Grid Columns */
+  /* Component-level spacing (inside sections/cards) */
+  --component-spacing-xs: var(--spacing-4);
+  --component-spacing-sm: var(--spacing-8);
+  --component-spacing-md: var(--spacing-12);
+  --component-spacing-lg: var(--spacing-16);
+  --component-spacing-xl: var(--spacing-20);
+  --component-spacing-2xl: var(--spacing-24);
+  
+  /* Section-level spacing (between full-width modules) */
+  --section-spacing-sm: var(--spacing-32);
+  --section-spacing-md: var(--spacing-40);
+  --section-spacing-lg: var(--spacing-48);
+  --section-spacing-xl: var(--spacing-56);
+  --section-spacing-2xl: var(--spacing-64);
+  --section-spacing-3xl: var(--spacing-80);
+  --section-spacing-4xl: var(--spacing-92);
+  --section-spacing-5xl: var(--spacing-120);
+  
+  /* Grid System - Updated with Figma specifications */
   --grid-columns: 12;
   --grid-column-width-desktop: 85px;
   --grid-column-width-tablet: 50px;
   --grid-column-width-mobile: 33px;
   
-  /* Grid Gutters */
-  --grid-gutter-desktop: 20px;
-  --grid-gutter-tablet: 8px;
-  --grid-gutter-mobile: 8px;
+  /* Grid Gutters - Following 8px system */
+  --grid-gutter-desktop: var(--spacing-20);
+  --grid-gutter-tablet: var(--spacing-8);
+  --grid-gutter-mobile: var(--spacing-8);
   
   /* Grid Margins */
   --grid-margin-desktop: auto; /* ≤40px change view point */
-  --grid-margin-tablet: 40px;
-  --grid-margin-mobile: 20px;
+  --grid-margin-tablet: var(--spacing-40);
+  --grid-margin-mobile: var(--spacing-20);
   
-  /* Container Max Widths */
-  --container-max-width: 1440px;
+  /* Container Max Widths - Aligned with webpack/scss */
+  --container: 100%;
+  --container-xl: 1240px;
+  --container-xxl: 1440px;
+  
+  /* Legacy container mappings for backward compatibility */
+  --container-max-width: var(--container-xxl);
   --container-tablet-width: 768px;
   --container-mobile-width: 375px;
 }
@@ -965,86 +1055,347 @@ p,
 .flex-col-11 { flex: 0 0 91.666667%; }
 .flex-col-12 { flex: 0 0 100%; }
 
-/* Spacing Utilities - 8px Base System */
-.spacing-8px {
-  --local-spacing: var(--grid-spacing-8px);
-}
+/* ========================================================================== 
+ * Spacing Utilities - Following ASUS CTO 8px Baseline System
+ * Component-level and Section-level spacing as per Figma design principles
+ * ========================================================================== */
 
-.spacing-20px {
-  --local-spacing: var(--grid-spacing-base);
-}
+/* Component-level Spacing Utilities */
+.component-spacing-xs { gap: var(--component-spacing-xs); }
+.component-spacing-sm { gap: var(--component-spacing-sm); }
+.component-spacing-md { gap: var(--component-spacing-md); }
+.component-spacing-lg { gap: var(--component-spacing-lg); }
+.component-spacing-xl { gap: var(--component-spacing-xl); }
+.component-spacing-2xl { gap: var(--component-spacing-2xl); }
 
-/* Margin Utilities */
+/* Section-level Spacing Utilities */
+.section-spacing-sm { gap: var(--section-spacing-sm); }
+.section-spacing-md { gap: var(--section-spacing-md); }
+.section-spacing-lg { gap: var(--section-spacing-lg); }
+.section-spacing-xl { gap: var(--section-spacing-xl); }
+.section-spacing-2xl { gap: var(--section-spacing-2xl); }
+.section-spacing-3xl { gap: var(--section-spacing-3xl); }
+.section-spacing-4xl { gap: var(--section-spacing-4xl); }
+.section-spacing-5xl { gap: var(--section-spacing-5xl); }
+
+/* Margin Utilities - 8px Baseline System */
 .m-0 { margin: 0; }
-.m-1 { margin: var(--grid-spacing-8px); }
-.m-2 { margin: calc(var(--grid-spacing-8px) * 2); }
-.m-3 { margin: calc(var(--grid-spacing-8px) * 3); }
-.m-4 { margin: calc(var(--grid-spacing-8px) * 4); }
-.m-5 { margin: var(--grid-spacing-base); }
+.m-4 { margin: var(--spacing-4); }
+.m-8 { margin: var(--spacing-8); }
+.m-12 { margin: var(--spacing-12); }
+.m-16 { margin: var(--spacing-16); }
+.m-20 { margin: var(--spacing-20); }
+.m-24 { margin: var(--spacing-24); }
+.m-32 { margin: var(--spacing-32); }
+.m-40 { margin: var(--spacing-40); }
+.m-48 { margin: var(--spacing-48); }
+.m-56 { margin: var(--spacing-56); }
+.m-64 { margin: var(--spacing-64); }
+.m-80 { margin: var(--spacing-80); }
+.m-92 { margin: var(--spacing-92); }
+.m-120 { margin: var(--spacing-120); }
 
+/* Margin Top */
 .mt-0 { margin-top: 0; }
-.mt-1 { margin-top: var(--grid-spacing-8px); }
-.mt-2 { margin-top: calc(var(--grid-spacing-8px) * 2); }
-.mt-3 { margin-top: calc(var(--grid-spacing-8px) * 3); }
-.mt-4 { margin-top: calc(var(--grid-spacing-8px) * 4); }
-.mt-5 { margin-top: var(--grid-spacing-base); }
+.mt-4 { margin-top: var(--spacing-4); }
+.mt-8 { margin-top: var(--spacing-8); }
+.mt-12 { margin-top: var(--spacing-12); }
+.mt-16 { margin-top: var(--spacing-16); }
+.mt-20 { margin-top: var(--spacing-20); }
+.mt-24 { margin-top: var(--spacing-24); }
+.mt-32 { margin-top: var(--spacing-32); }
+.mt-40 { margin-top: var(--spacing-40); }
+.mt-48 { margin-top: var(--spacing-48); }
+.mt-56 { margin-top: var(--spacing-56); }
+.mt-64 { margin-top: var(--spacing-64); }
+.mt-80 { margin-top: var(--spacing-80); }
+.mt-92 { margin-top: var(--spacing-92); }
+.mt-120 { margin-top: var(--spacing-120); }
 
+/* Margin Bottom */
 .mb-0 { margin-bottom: 0; }
-.mb-1 { margin-bottom: var(--grid-spacing-8px); }
-.mb-2 { margin-bottom: calc(var(--grid-spacing-8px) * 2); }
-.mb-3 { margin-bottom: calc(var(--grid-spacing-8px) * 3); }
-.mb-4 { margin-bottom: calc(var(--grid-spacing-8px) * 4); }
-.mb-5 { margin-bottom: var(--grid-spacing-base); }
+.mb-4 { margin-bottom: var(--spacing-4); }
+.mb-8 { margin-bottom: var(--spacing-8); }
+.mb-12 { margin-bottom: var(--spacing-12); }
+.mb-16 { margin-bottom: var(--spacing-16); }
+.mb-20 { margin-bottom: var(--spacing-20); }
+.mb-24 { margin-bottom: var(--spacing-24); }
+.mb-32 { margin-bottom: var(--spacing-32); }
+.mb-40 { margin-bottom: var(--spacing-40); }
+.mb-48 { margin-bottom: var(--spacing-48); }
+.mb-56 { margin-bottom: var(--spacing-56); }
+.mb-64 { margin-bottom: var(--spacing-64); }
+.mb-80 { margin-bottom: var(--spacing-80); }
+.mb-92 { margin-bottom: var(--spacing-92); }
+.mb-120 { margin-bottom: var(--spacing-120); }
 
+/* Margin Left */
 .ml-0 { margin-left: 0; }
-.ml-1 { margin-left: var(--grid-spacing-8px); }
-.ml-2 { margin-left: calc(var(--grid-spacing-8px) * 2); }
-.ml-3 { margin-left: calc(var(--grid-spacing-8px) * 3); }
-.ml-4 { margin-left: calc(var(--grid-spacing-8px) * 4); }
-.ml-5 { margin-left: var(--grid-spacing-base); }
+.ml-4 { margin-left: var(--spacing-4); }
+.ml-8 { margin-left: var(--spacing-8); }
+.ml-12 { margin-left: var(--spacing-12); }
+.ml-16 { margin-left: var(--spacing-16); }
+.ml-20 { margin-left: var(--spacing-20); }
+.ml-24 { margin-left: var(--spacing-24); }
+.ml-32 { margin-left: var(--spacing-32); }
+.ml-40 { margin-left: var(--spacing-40); }
+.ml-48 { margin-left: var(--spacing-48); }
+.ml-56 { margin-left: var(--spacing-56); }
+.ml-64 { margin-left: var(--spacing-64); }
+.ml-80 { margin-left: var(--spacing-80); }
+.ml-92 { margin-left: var(--spacing-92); }
+.ml-120 { margin-left: var(--spacing-120); }
 
+/* Margin Right */
 .mr-0 { margin-right: 0; }
-.mr-1 { margin-right: var(--grid-spacing-8px); }
-.mr-2 { margin-right: calc(var(--grid-spacing-8px) * 2); }
-.mr-3 { margin-right: calc(var(--grid-spacing-8px) * 3); }
-.mr-4 { margin-right: calc(var(--grid-spacing-8px) * 4); }
-.mr-5 { margin-right: var(--grid-spacing-base); }
+.mr-4 { margin-right: var(--spacing-4); }
+.mr-8 { margin-right: var(--spacing-8); }
+.mr-12 { margin-right: var(--spacing-12); }
+.mr-16 { margin-right: var(--spacing-16); }
+.mr-20 { margin-right: var(--spacing-20); }
+.mr-24 { margin-right: var(--spacing-24); }
+.mr-32 { margin-right: var(--spacing-32); }
+.mr-40 { margin-right: var(--spacing-40); }
+.mr-48 { margin-right: var(--spacing-48); }
+.mr-56 { margin-right: var(--spacing-56); }
+.mr-64 { margin-right: var(--spacing-64); }
+.mr-80 { margin-right: var(--spacing-80); }
+.mr-92 { margin-right: var(--spacing-92); }
+.mr-120 { margin-right: var(--spacing-120); }
 
-/* Padding Utilities */
+/* Padding Utilities - 8px Baseline System */
 .p-0 { padding: 0; }
-.p-1 { padding: var(--grid-spacing-8px); }
-.p-2 { padding: calc(var(--grid-spacing-8px) * 2); }
-.p-3 { padding: calc(var(--grid-spacing-8px) * 3); }
-.p-4 { padding: calc(var(--grid-spacing-8px) * 4); }
-.p-5 { padding: var(--grid-spacing-base); }
+.p-4 { padding: var(--spacing-4); }
+.p-8 { padding: var(--spacing-8); }
+.p-12 { padding: var(--spacing-12); }
+.p-16 { padding: var(--spacing-16); }
+.p-20 { padding: var(--spacing-20); }
+.p-24 { padding: var(--spacing-24); }
+.p-32 { padding: var(--spacing-32); }
+.p-40 { padding: var(--spacing-40); }
+.p-48 { padding: var(--spacing-48); }
+.p-56 { padding: var(--spacing-56); }
+.p-64 { padding: var(--spacing-64); }
+.p-80 { padding: var(--spacing-80); }
+.p-92 { padding: var(--spacing-92); }
+.p-120 { padding: var(--spacing-120); }
 
+/* Padding Top */
 .pt-0 { padding-top: 0; }
-.pt-1 { padding-top: var(--grid-spacing-8px); }
-.pt-2 { padding-top: calc(var(--grid-spacing-8px) * 2); }
-.pt-3 { padding-top: calc(var(--grid-spacing-8px) * 3); }
-.pt-4 { padding-top: calc(var(--grid-spacing-8px) * 4); }
-.pt-5 { padding-top: var(--grid-spacing-base); }
+.pt-4 { padding-top: var(--spacing-4); }
+.pt-8 { padding-top: var(--spacing-8); }
+.pt-12 { padding-top: var(--spacing-12); }
+.pt-16 { padding-top: var(--spacing-16); }
+.pt-20 { padding-top: var(--spacing-20); }
+.pt-24 { padding-top: var(--spacing-24); }
+.pt-32 { padding-top: var(--spacing-32); }
+.pt-40 { padding-top: var(--spacing-40); }
+.pt-48 { padding-top: var(--spacing-48); }
+.pt-56 { padding-top: var(--spacing-56); }
+.pt-64 { padding-top: var(--spacing-64); }
+.pt-80 { padding-top: var(--spacing-80); }
+.pt-92 { padding-top: var(--spacing-92); }
+.pt-120 { padding-top: var(--spacing-120); }
 
+/* Padding Bottom */
 .pb-0 { padding-bottom: 0; }
-.pb-1 { padding-bottom: var(--grid-spacing-8px); }
-.pb-2 { padding-bottom: calc(var(--grid-spacing-8px) * 2); }
-.pb-3 { padding-bottom: calc(var(--grid-spacing-8px) * 3); }
-.pb-4 { padding-bottom: calc(var(--grid-spacing-8px) * 4); }
-.pb-5 { padding-bottom: var(--grid-spacing-base); }
+.pb-4 { padding-bottom: var(--spacing-4); }
+.pb-8 { padding-bottom: var(--spacing-8); }
+.pb-12 { padding-bottom: var(--spacing-12); }
+.pb-16 { padding-bottom: var(--spacing-16); }
+.pb-20 { padding-bottom: var(--spacing-20); }
+.pb-24 { padding-bottom: var(--spacing-24); }
+.pb-32 { padding-bottom: var(--spacing-32); }
+.pb-40 { padding-bottom: var(--spacing-40); }
+.pb-48 { padding-bottom: var(--spacing-48); }
+.pb-56 { padding-bottom: var(--spacing-56); }
+.pb-64 { padding-bottom: var(--spacing-64); }
+.pb-80 { padding-bottom: var(--spacing-80); }
+.pb-92 { padding-bottom: var(--spacing-92); }
+.pb-120 { padding-bottom: var(--spacing-120); }
 
+/* Padding Left */
 .pl-0 { padding-left: 0; }
-.pl-1 { padding-left: var(--grid-spacing-8px); }
-.pl-2 { padding-left: calc(var(--grid-spacing-8px) * 2); }
-.pl-3 { padding-left: calc(var(--grid-spacing-8px) * 3); }
-.pl-4 { padding-left: calc(var(--grid-spacing-8px) * 4); }
-.pl-5 { padding-left: var(--grid-spacing-base); }
+.pl-4 { padding-left: var(--spacing-4); }
+.pl-8 { padding-left: var(--spacing-8); }
+.pl-12 { padding-left: var(--spacing-12); }
+.pl-16 { padding-left: var(--spacing-16); }
+.pl-20 { padding-left: var(--spacing-20); }
+.pl-24 { padding-left: var(--spacing-24); }
+.pl-32 { padding-left: var(--spacing-32); }
+.pl-40 { padding-left: var(--spacing-40); }
+.pl-48 { padding-left: var(--spacing-48); }
+.pl-56 { padding-left: var(--spacing-56); }
+.pl-64 { padding-left: var(--spacing-64); }
+.pl-80 { padding-left: var(--spacing-80); }
+.pl-92 { padding-left: var(--spacing-92); }
+.pl-120 { padding-left: var(--spacing-120); }
 
+/* Padding Right */
 .pr-0 { padding-right: 0; }
-.pr-1 { padding-right: var(--grid-spacing-8px); }
-.pr-2 { padding-right: calc(var(--grid-spacing-8px) * 2); }
-.pr-3 { padding-right: calc(var(--grid-spacing-8px) * 3); }
-.pr-4 { padding-right: calc(var(--grid-spacing-8px) * 4); }
-.pr-5 { padding-right: var(--grid-spacing-base); }
+.pr-4 { padding-right: var(--spacing-4); }
+.pr-8 { padding-right: var(--spacing-8); }
+.pr-12 { padding-right: var(--spacing-12); }
+.pr-16 { padding-right: var(--spacing-16); }
+.pr-20 { padding-right: var(--spacing-20); }
+.pr-24 { padding-right: var(--spacing-24); }
+.pr-32 { padding-right: var(--spacing-32); }
+.pr-40 { padding-right: var(--spacing-40); }
+.pr-48 { padding-right: var(--spacing-48); }
+.pr-56 { padding-right: var(--spacing-56); }
+.pr-64 { padding-right: var(--spacing-64); }
+.pr-80 { padding-right: var(--spacing-80); }
+.pr-92 { padding-right: var(--spacing-92); }
+.pr-120 { padding-right: var(--spacing-120); }
+
+/* Gap Utilities for Flexbox and Grid */
+.gap-0 { gap: 0; }
+.gap-4 { gap: var(--spacing-4); }
+.gap-8 { gap: var(--spacing-8); }
+.gap-12 { gap: var(--spacing-12); }
+.gap-16 { gap: var(--spacing-16); }
+.gap-20 { gap: var(--spacing-20); }
+.gap-24 { gap: var(--spacing-24); }
+.gap-32 { gap: var(--spacing-32); }
+.gap-40 { gap: var(--spacing-40); }
+.gap-48 { gap: var(--spacing-48); }
+.gap-56 { gap: var(--spacing-56); }
+.gap-64 { gap: var(--spacing-64); }
+.gap-80 { gap: var(--spacing-80); }
+.gap-92 { gap: var(--spacing-92); }
+.gap-120 { gap: var(--spacing-120); }
+
+/* ========================================================================== 
+ * Border Radius Utilities - From ASUS CTO Figma Design System
+ * ========================================================================== */
+
+/* Border Radius Utility Classes */
+.rounded-sm {
+  border-radius: var(--radius-sm);
+}
+
+.rounded-md {
+  border-radius: var(--radius-md);
+}
+
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+
+.rounded-full {
+  border-radius: var(--radius-full);
+}
+
+/* Individual Corner Utilities */
+.rounded-t-sm {
+  border-top-left-radius: var(--radius-sm);
+  border-top-right-radius: var(--radius-sm);
+}
+
+.rounded-t-md {
+  border-top-left-radius: var(--radius-md);
+  border-top-right-radius: var(--radius-md);
+}
+
+.rounded-t-lg {
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+}
+
+.rounded-r-sm {
+  border-top-right-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+.rounded-r-md {
+  border-top-right-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
+}
+
+.rounded-r-lg {
+  border-top-right-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+
+.rounded-b-sm {
+  border-bottom-left-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+.rounded-b-md {
+  border-bottom-left-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
+}
+
+.rounded-b-lg {
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+
+.rounded-l-sm {
+  border-top-left-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
+}
+
+.rounded-l-md {
+  border-top-left-radius: var(--radius-md);
+  border-bottom-left-radius: var(--radius-md);
+}
+
+.rounded-l-lg {
+  border-top-left-radius: var(--radius-lg);
+  border-bottom-left-radius: var(--radius-lg);
+}
+
+/* ========================================================================== 
+ * Elevation System - From ASUS CTO Figma Design System
+ * Provides visual hierarchy, depth, and clarity by simulating layers and surfaces
+ * ========================================================================== */
+
+/* Elevation Utility Classes */
+.elevation-1 {
+  box-shadow: var(--elevation-1);
+}
+
+/* Remove elevation */
+.elevation-none {
+  box-shadow: none;
+}
+
+/* Hover elevation effects */
+.hover\:elevation-1:hover {
+  box-shadow: var(--elevation-1);
+}
+
+.hover\:elevation-none:hover {
+  box-shadow: none;
+}
+
+/* Focus elevation effects */
+.focus\:elevation-1:focus {
+  box-shadow: var(--elevation-1);
+}
+
+/* Component-specific elevation applications */
+.dropdown-menu {
+  box-shadow: var(--elevation-1);
+}
+
+.modal {
+  box-shadow: var(--elevation-1);
+}
+
+.card {
+  box-shadow: var(--elevation-1);
+}
+
+.tooltip {
+  box-shadow: var(--elevation-1);
+}
+
+.popover {
+  box-shadow: var(--elevation-1);
+}
 
 /* Tablet Responsive Grid (768px and up) */
 @media (min-width: 768px) {
@@ -1192,6 +1543,422 @@ p,
 }
 
 /* ========================================================================== 
+ * Modal Styles - Based on ASUS CTO Figma Design System
+ * Three modal types: White Background (Informational), Black Background (Decisional), Fullscreen
+ * ========================================================================== */
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--color-background-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-20);
+}
+
+/* Base Modal Container */
+.modal {
+  position: relative;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-1);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+/* Modal Animation */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* White Background Modal - Informational */
+.modal-white {
+  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  width: 80%;
+  max-width: 824px;
+  padding: var(--spacing-48);
+}
+
+/* Black Background Modal - Decisional */
+.modal-black {
+  background-color: var(--gradient-black);
+  color: var(--color-white);
+  width: 80%;
+  max-width: 610px;
+  padding: var(--spacing-48);
+}
+
+/* Fullscreen Modal */
+.modal-fullscreen {
+  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 0;
+  padding: var(--spacing-48);
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-32);
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-snug);
+  margin: 0;
+}
+
+/* Modal Close Button */
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-8);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.modal-close:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.modal-black .modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.modal-close svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 2px;
+}
+
+/* Modal Content */
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+}
+
+.modal-body {
+  flex: 1;
+}
+
+.modal-body p {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--spacing-16);
+}
+
+.modal-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* Modal Footer */
+.modal-footer {
+  display: flex;
+  gap: var(--spacing-16);
+  justify-content: flex-end;
+  margin-top: var(--spacing-32);
+}
+
+/* Modal Form Elements */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+.modal-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+.modal-form-label {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: inherit;
+}
+
+.modal-form-input {
+  padding: var(--spacing-12) var(--spacing-16);
+  border: 1px solid var(--color-gray-400);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  transition: border-color 0.2s ease;
+}
+
+.modal-form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 87, 183, 0.1);
+}
+
+.modal-black .modal-form-input {
+  background-color: transparent;
+  border-color: var(--color-gray-400);
+  color: var(--color-white);
+}
+
+.modal-black .modal-form-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Modal Checkbox */
+.modal-checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-8);
+}
+
+.modal-checkbox {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+}
+
+.modal-checkbox-label {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: inherit;
+}
+
+/* Modal Buttons */
+.modal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-12) var(--spacing-24);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.modal-btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+.modal-btn-primary:hover {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+.modal-btn-secondary {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.modal-btn-secondary:hover {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.modal-black .modal-btn-secondary {
+  color: var(--color-white);
+  border-color: var(--color-white);
+}
+
+.modal-black .modal-btn-secondary:hover {
+  background-color: var(--color-white);
+  color: var(--color-black);
+}
+
+/* Modal Content Sections */
+.modal-section {
+  margin-bottom: var(--spacing-32);
+}
+
+.modal-section:last-child {
+  margin-bottom: 0;
+}
+
+.modal-section-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-16);
+  color: inherit;
+}
+
+/* Modal Product Info */
+.modal-product-info {
+  display: flex;
+  gap: var(--spacing-32);
+  align-items: flex-start;
+}
+
+.modal-product-image {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+
+.modal-product-details {
+  flex: 1;
+}
+
+.modal-product-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-8);
+  color: inherit;
+}
+
+.modal-product-description {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  color: inherit;
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .modal-white,
+  .modal-black {
+    width: 80%;
+    padding: var(--spacing-40);
+  }
+  
+  .modal-fullscreen {
+    padding: var(--spacing-40);
+  }
+  
+  .modal-white {
+    max-width: 786px;
+  }
+  
+  .modal-product-info {
+    gap: var(--spacing-24);
+  }
+  
+  .modal-product-image {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: var(--spacing-20);
+  }
+  
+  .modal-white,
+  .modal-black,
+  .modal-fullscreen {
+    width: calc(100% - 40px);
+    padding: var(--spacing-20);
+  }
+  
+  .modal-white {
+    max-width: none;
+  }
+  
+  .modal-black {
+    max-width: none;
+  }
+  
+  .modal-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+    gap: var(--spacing-12);
+  }
+  
+  .modal-btn {
+    width: 100%;
+  }
+  
+  .modal-product-info {
+    flex-direction: column;
+    gap: var(--spacing-16);
+  }
+  
+  .modal-product-image {
+    width: 100%;
+    height: 200px;
+  }
+}
+
+/* Modal Height and Scroll Behavior */
+.modal-overlay.content-fits {
+  align-items: center;
+}
+
+.modal-overlay.content-overflows {
+  align-items: flex-start;
+  padding-top: 100px;
+}
+
+@media (max-width: 1024px) {
+  .modal-overlay.content-overflows {
+    padding-top: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-overlay.content-overflows {
+    padding-top: 20px;
+  }
+}
+
+/* Modal Accessibility */
+.modal[aria-hidden="true"] {
+  display: none;
+}
+
+.modal:focus {
+  outline: none;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* ========================================================================== 
  * Component-Specific Color Applications
  * ========================================================================== */
 
@@ -1214,7 +1981,7 @@ a:hover {
   justify-content: center;
   padding: 0.5rem 1rem;
   border: 1px solid transparent;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-md);
   font-weight: var(--font-weight-medium);
   text-decoration: none;
   transition: all 0.2s ease;
@@ -1276,7 +2043,7 @@ input,
 textarea,
 select {
   border: 1px solid var(--color-border-primary);
-  border-radius: 0.25rem;
+  border-radius: var(--radius-md);
   padding: 0.5rem;
   transition: border-color 0.2s ease;
 }
