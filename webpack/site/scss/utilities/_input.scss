@@ -1,0 +1,48 @@
+input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background-color: transparent;
+  border: 1px solid var(--color-primary-600);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+
+  &:focus-visible {
+    outline-color: var(--color-focus-ring);
+  }
+
+  &:checked {
+    color: var(--color-primary);
+    background: var(--color-primary-950);
+    border: 1px solid var(--color-primary-950);
+
+    &::after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0.875 5.16071L3.74457 8.375L9.125 1.625" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+      background-color: currentColor;
+      mask-repeat: no-repeat;
+      mask-position: center;
+      mask-size: contain;
+    }
+  }
+}
+
+.light-mode {
+  input[type="checkbox"] {
+    border-color: var(--color-primary-500);
+
+    &:checked {
+      background: var(--color-primary-100);
+      border-color: var(--color-primary-100);
+      color: var(--color-primary-950);
+    }
+  }
+}

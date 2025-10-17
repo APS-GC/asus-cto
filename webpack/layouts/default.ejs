@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Asus CTO | <%= title %></title>
+    <meta name="description" content="Asus CTO | <%= title %>" />
+    <meta name="template" content="page-content" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <base href="<%= baseDir %>">
+
+    <link rel="preload" href="./clientlib-site/fonts/roboto.woff2" as="font" type="font/woff2" />
+    <link rel="preload" href="./clientlib-site/fonts/roboto-500.woff2" as="font" type="font/woff" />
+    <link rel="preload" href="./clientlib-site/fonts/tt-norms-pro-500.woff2" as="font" type="font/woff" />
+
+    <link
+      rel="stylesheet"
+      href="./clientlib-site/clientlibs/clientlib-base.css"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="./clientlib-site/clientlibs/clientlib-dependencies.css"
+      type="text/css"
+    />
+  </head>
+  <body class="page" data-page="<%= page %>">
+    <div class="root responsivegrid">
+      <%- include('../components/header/_header') %>
+
+      <main class="responsivegrid"><%- include(content, { filename: content }) %></main>
+
+      <%- include('../components/footer/_footer') %>
+
+      <!-- Global Components -->
+      
+      <% if (page !== 'pdp') { %>
+        <%- include('../components/product-preview/_product-preview.ejs') %>
+        <%- include('../components/product-compare/_product-compare.ejs') %>
+      <% } %>
+
+      <%- include('../components/image-gallery/_image-gallery.ejs') %>
+      <%- include('../components/fps-popup/_fps-popup.ejs') %>
+      <%- include('../components/time-spy-score/_time-spy-score.ejs') %>
+    </div>
+
+    <script
+      src="./clientlib-site/clientlibs/clientlib-dependencies.js"
+      defer
+    ></script>
+    <script
+      src="./clientlib-site/clientlibs/clientlib-site.js"
+      defer
+    ></script>
+    <script
+      src="./clientlib-site/clientlibs/clientlib-base.js"
+      defer
+    ></script>
+
+    <script src="https://apps.bazaarvoice.com/deployments/asustek/cto_main_site_black/production/en_US/bv.js" defer></script>
+  </body>
+</html>

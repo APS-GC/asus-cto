@@ -1,0 +1,187 @@
+@use "sass:map";
+@use "sass:list";
+
+@use "mixins" as mix;
+
+@font-face {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("Roboto"),
+    url("../clientlib-site/fonts/roboto.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src:
+    local("Roboto"),
+    url("../clientlib-site/fonts/roboto-500.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "TTNormsProRegular";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local("TTNormsProRegular"),
+    url("../clientlib-site/fonts/tt-norms-pro.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "TTNormsProMedium";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src:
+    local("TTNormsProMedium"),
+    url("../clientlib-site/fonts/tt-norms-pro-500.woff2") format("woff2");
+}
+
+$scale: (
+  // 12px / 18px
+  "xxs": (0.75rem, 1.125rem),
+  // 13px / 18px
+  "xs": (0.8125rem, 1.125rem),
+  // 14px / 20px
+  "sm": (0.875rem, 1.25rem),
+  // 16px / 24px
+  "base": (1rem, 1.5rem),
+  // 18px / 24px
+  "lg": (1.125rem, 1.5rem),
+  // 18px / 26px
+  "xl": (1.125rem, 1.625rem),
+  // 20px / 28px
+  "2xl": (1.25rem, 1.75rem),
+  // 30px / 38px
+  "3xl": (1.875rem, 2.375rem),
+  // 44px / 52px
+  "4xl": (2.75rem, 3.25rem),
+  // 52px / 60px
+  "5xl": (3.25rem, 3.75rem)
+);
+
+@mixin text-style($size) {
+  $props: map.get($scale, $size);
+
+  @if $props and list.length($props) == 2 {
+    font-size: list.nth($props, 1);
+    line-height: list.nth($props, 2);
+  } @else {
+    @error "Invalid size '#{$size}' or missing properties in scale map";
+  }
+}
+
+@mixin display-font {
+  font-family: var(--font-display);
+  font-weight: var(--medium);
+  letter-spacing: 0;
+}
+
+@mixin text-font {
+  font-family: var(--font-text);
+  font-weight: var(--regular);
+  letter-spacing: 0;
+}
+
+// Named mixins for heading and text sizes
+@mixin text-display1 {
+  @include display-font;
+  @include text-style("5xl");
+}
+
+@mixin text-display2 {
+  @include display-font;
+  @include text-style("4xl");
+}
+
+@mixin text-display3 {
+  @include display-font;
+  @include text-style("3xl");
+}
+
+@mixin text-display4 {
+  @include display-font;
+  @include text-style("2xl");
+}
+
+@mixin text-display5 {
+  @include display-font;
+  @include text-style("xl");
+}
+
+@mixin text-display6 {
+  @include display-font;
+  @include text-style("base");
+}
+
+@mixin text-display7 {
+  @include display-font;
+  @include text-style("sm");
+}
+
+@mixin text-base {
+  @include text-font;
+  @include text-style("base");
+}
+
+@mixin text-bolder {
+  @include text-font;
+  @include text-style("2xl");
+
+  font-weight: var(--medium);
+}
+
+@mixin text-bold {
+  @include text-font;
+  @include text-style("base");
+
+  font-weight: var(--medium);
+}
+
+@mixin text-small {
+  @include text-font;
+  @include text-style("sm");
+  letter-spacing: 0.16px;
+}
+
+@mixin text-xsmall {
+  @include text-font;
+  @include text-style("xs");
+  letter-spacing: 0.24px;
+}
+
+@mixin text-tiny {
+  @include text-font;
+  @include text-style("xxs");
+  letter-spacing: 0.24px;
+}
+
+@mixin text-cta {
+  @include text-font;
+  @include text-style("lg");
+}
+
+@mixin text-cta-small {
+  @include text-font;
+  @include text-style("xs");
+  letter-spacing: 0.16px;
+}
+
+@mixin text-tag {
+  @include text-font;
+  @include text-style("xs");
+  letter-spacing: 0.24px;
+  font-weight: var(--medium);
+}
+
+@mixin text-tag-small {
+  @include text-font;
+  @include text-style("xxs");
+  letter-spacing: 0.24px;
+}

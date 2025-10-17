@@ -1,0 +1,118 @@
+@use "../settings/variables" as vars;
+@use "../settings/mixins" as mix;
+@use "sass:map";
+
+/** 
+ * ========================================================================== 
+ * Grid Container
+ * ========================================================================== 
+ */
+.layout-grid {
+  display: grid;
+
+  // Default column count
+  grid-template-columns: repeat(12, 1fr);
+
+  // Default gap
+  gap: map.get(vars.$spacing, 5);
+
+  // Column count variations (e.g. layout-grid--cols-6)
+  @for $i from 1 through 12 {
+    &--cols-#{$i} {
+      grid-template-columns: repeat($i, 1fr);
+    }
+  }
+
+  /** 
+   * ========================================================================== 
+   * Grid Column
+   * ========================================================================== 
+   */
+  &__col {
+    // Default span (12 column)
+    grid-column: span 12;
+
+    // Column span variations (e.g. layout-grid__col--span-6)
+    @for $i from 1 through 12 {
+      &--span-#{$i} {
+        grid-column: span $i;
+      }
+    }
+  }
+
+  /** 
+   * ========================================================================== 
+   * Gap Modifiers
+   * ========================================================================== 
+   */
+  @each $size, $value in vars.$spacing {
+    &--gap-#{$size} {
+      @include mix.spacer(gap, $size);
+    }
+  }
+
+  // Default gap for tablet and phone
+  @include mix.respond-to("md", "max") {
+    @include mix.spacer(gap, 2);
+  }
+}
+
+/** 
+ * ========================================================================== 
+ * Responsive Variants
+ * ========================================================================== 
+ */
+@each $bp, $bp-size in mix.$breakpoints {
+  @include mix.respond-to($bp, "max") {
+    .layout-grid {
+      // Responsive gaps (e.g. layout-grid--md-gap-3)
+      @each $size, $value in vars.$spacing {
+        &--#{$bp}-gap-#{$size} {
+          @include mix.spacer(gap, $size);
+        }
+      }
+
+      &__col {
+        // Responsive spans (e.g. layout-grid__col--md-span-6)
+        @for $i from 1 through 12 {
+          &--#{$bp}-span-#{$i} {
+            grid-column: span $i;
+          }
+        }
+      }
+    }
+  }
+}
+
+/** 
+ * ========================================================================== 
+ * AEM Grid custom spacings
+ * ========================================================================== 
+ */
+.aem-Grid {
+  &--custom-spacing-default {
+    margin: -10px;
+    width: unset;
+
+    .aem-GridColumn {
+      padding: 10px;
+    }
+
+    @include mix.respond-to("lg", "max") {
+      margin: -4px;
+
+      .aem-GridColumn {
+        padding: 4px;
+      }
+    }
+  }
+
+  &--custom-spacing-dense {
+    margin: -4px;
+    width: unset;
+
+    .aem-GridColumn {
+      padding: 4px;
+    }
+  }
+}

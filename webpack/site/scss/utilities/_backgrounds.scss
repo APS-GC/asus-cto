@@ -1,0 +1,40 @@
+@use "../settings/variables" as vars;
+
+/** 
+ * ========================================================================== 
+ * Background Colors
+ * ========================================================================== 
+ */
+.bg-light {
+  background-color: vars.$color-white;
+}
+
+.bg-dark {
+  background-color: vars.$color-black;
+}
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-info {
+  background-color: var(--color-info);
+}
+
+.bg-warning {
+  background-color: var(--color-warning);
+}
+
+.bg-error {
+  background-color: var(--color-error);
+}
+
+.bg-success {
+  background-color: var(--color-success);
+}
+
+@each $level, $value in vars.$color-primary-map {
+  .bg-primary-#{$level} {
+    background-color: $value;
+  }
+}

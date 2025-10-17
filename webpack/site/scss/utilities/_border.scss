@@ -1,0 +1,19 @@
+@use "../settings/variables" as vars;
+@use "../settings/mixins" as mix;
+
+/** 
+ * ========================================================================== 
+ * Border Utility Classes
+ * ========================================================================== 
+ */
+@each $size, $value in vars.$spacing {
+  @each $dir, $props in vars.$directions {
+    .border-#{$dir}-#{$size} {
+      @include mix.spacer(border, $size, $props);
+    }
+  }
+
+  .border-#{$size} {
+    @include mix.spacer(border, $size);
+  }
+}

@@ -1,0 +1,89 @@
+@use "settings/base";
+
+/** 
+ * ========================================================================== 
+ * Utility classes
+ * ========================================================================== 
+ */
+@use "utilities/backgrounds";
+@use "utilities/border";
+@use "utilities/display";
+@use "utilities/spacing";
+@use "utilities/text";
+@use "utilities/grid";
+@use "utilities/list";
+@use "utilities/input";
+@use "utilities/select-box";
+
+/** 
+ * ========================================================================== 
+ * Plugins
+ * ========================================================================== 
+ */
+@use "swiper/scss";
+@use "swiper/scss/navigation";
+@use "nouislider/dist/nouislider.css";
+
+/** 
+ * ========================================================================== 
+ * Components
+ * Include only the components that are used in the project
+ * TODO: Check if we should move components to SCSS directory
+ * ========================================================================== 
+ */
+
+// Generic components
+@use "../../components/container/scss/container";
+@use "../../components/button/scss/button";
+@use "../../components/icons/scss/icons";
+@use "../../components/accordion/scss/accordion";
+@use "../../components/carousel/scss/carousel";
+@use "../../components/tooltip/scss/tooltip";
+@use "../../components/modal/scss/modal";
+@use "../../components/tabs/scss/tabs";
+@use "../../components/range-slider/scss/range-slider";
+@use "../../components/toggle-switch/scss/toggle-switch";
+
+// Global components
+@use "../../components/header/scss/header";
+@use "../../components/footer/scss/footer";
+@use "../../components/section-heading/scss/section-heading";
+@use "../../components/image-gallery/scss/image-gallery";
+@use "../../components/hero-banner/scss/hero-banner";
+
+// Cards
+@use "../../components/article-card/scss/article-card";
+@use "../../components/advantage-card/scss/advantage-card";
+@use "../../components/product-card/scss/product-card";
+@use "../../components/featured-product-card/scss/featured-product-card";
+@use "../../components/game-card/scss/game-card";
+@use "../../components/product-comparison-card/scss/product-comparison-card";
+
+// Help me choose
+@use "../../components/select-game/scss/select-game";
+@use "../../components/help-me-choose-filter/scss/help-me-choose-filter";
+@use "../../components/help-me-choose-page/scss/help-me-choose-page";
+@use "../../components/similar-products/scss/similar-products";
+
+// Product Compare
+@use "../../components/product-compare/scss/product-compare";
+@use "../../components/product-comparison-page/scss/product-comparison-page";
+@use "../../components/product-comparison-row/scss/product-comparison-row";
+@use "../../components/product-comparison-floating-card/scss/product-comparison-floating-card";
+
+// Popups
+@use "../../components/fps-popup/scss/fps-popup";
+@use "../../components/time-spy-score/scss/time-spy-score";
+
+// Product preview components
+@use "../../components/product-preview/scss/product-preview";
+@use "../../components/game-fps/scss/game-fps";
+@use "../../components/empty-game-fps/scss/empty-game-fps";
+@use "../../components/product-summary/scss/product-summary";
+@use "../../components/product-gallary/scss/product-gallery";
+
+// PLP specific components
+@use "../../components/product-sidebar/scss/product-sidebar";
+@use "../../components/no-matches/scss/no-matches";
+@use "../../components/faq/scss/faq";
+@use "../../components/perfect-match-product/scss/perfect-match-product";

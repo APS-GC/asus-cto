@@ -1,0 +1,83 @@
+<div class="cmp-container spacing-to-top overlap-header">
+  <img 
+    src="./clientlib-site/images/PLP-banner.webp" 
+    alt="PLP Banner" 
+    class="cmp-banner__image"
+    loading="lazy"  />
+</div>
+<div class="gradient-animation">
+  <section class='section-with-top-spacing section-with-bottom-spacing'>
+    <div class='container'>
+      <div class="cmp-hero__container">
+        <h1 class="cmp-hero__title">Gaming Desktops</h1>
+        <p class="cmp-hero__subtitle">
+          View all gaming desktops or filter for what you want.
+        </p>
+      </div>
+
+      <div class="sidebar-grid section-with-bottom-spacing">
+        <!-- Left Sidebar -->
+        <%- include('../components/product-sidebar/_product-sidebar.ejs') %>
+
+        <!-- Middle Content -->
+        <div class="cmp-product-listing">
+          <!-- Toolbar -->
+          <div class="cmp-product-toolbar">
+            <!-- Product count -->
+            <div class="cmp-product-count">
+              <span id="product-count"></span>
+            </div>
+
+            <!-- Sort wrapper -->
+            <div class="cmp-product-toolbar__sort-wrapper">
+              <div class="cmp-product-sort-label">
+                <label for="sort-by">Sort by:</label>
+              </div>
+              <div class="cmp-product-sort">
+                <select 
+                  id="sort-by" 
+                  name="sort-by" 
+                  class="cmp-product-sort__select"
+                  aria-label="Sort products by"
+                >
+                  <option value="best-performance" selected>Best Performance</option>
+                  <option value="price-low-high">Price Low to High</option>
+                  <option value="price-high-low">Price High to Low</option>
+                  <option value="ratings">Ratings</option>
+                  <option value="best-selling">Best Selling</option>
+                </select>
+
+                <button class="cmp-product-filter-trigger btn" data-a11y-dialog-show="product-filter-dialog">
+                  Filter
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <%- include('../components/no-matches/_no-matches.ejs') %>
+
+          <!-- Product Grid -->
+          <div class="layout-grid" id="product-grid">
+            <!-- Products will be dynamically loaded here -->
+          </div>
+
+          <!-- Show More Button -->
+          <div class="section-actions-container" id="show-more-products-container">
+            <button class="section-actions-btn btn btn-link" id="show-more-products-btn">
+              Show more <span class="icon icon--arrow-bottom"></span>
+            </button>
+            <div class="loader">
+              <span class="icon icon--loader"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-with-bottom-spacing section-with-top-spacing hidden">
+    <div class="container">
+      <%- include('../components/faq/_faq.ejs') %>
+    </div>
+  </section>
+</div>

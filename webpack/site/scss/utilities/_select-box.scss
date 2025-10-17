@@ -1,0 +1,130 @@
+@use "../settings/variables" as vars;
+@use "../settings/mixins" as mix;
+@use "../settings/typography" as typo;
+
+@use "choices.js/src/styles/choices";
+
+.choices {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0 !important;
+  padding: 2px;
+  .choices__inner {
+    background: var(--color-primary-base);
+    border: 1px solid var(--color-primary-600);
+    border-radius: vars.$border-radius;
+    color: var(--color-primary-950);
+    width: 100%;
+    position: relative;
+    @include typo.text-base();
+    @include mix.p(4, "x");
+    min-height: auto;
+    &::after {
+      content: "";
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 8px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      pointer-events: none;
+      z-index: 10;
+    }
+  }
+
+  .choices__list--single {
+    @include mix.p(0);
+  }
+  .choices__list--single .choices__item {
+    color: var(--color-primary-950);
+  }
+
+  // Hide default Choices.js arrow and button
+  &::before,
+  &::after {
+    display: none !important;
+  }
+  .choices__button {
+    display: none !important;
+  }
+
+  .choices__list--dropdown {
+    background: var(--color-primary-base);
+    border: 1px solid var(--color-primary-600);
+    border-radius: vars.$border-radius;
+    z-index: 2000;
+    position: absolute;
+    width: 100% !important;
+    min-width: 100%;
+    box-sizing: border-box;
+    left: 0;
+    @include typo.text-base();
+    @include mix.m(1, "t");
+    @include mix.p(2, "y");
+
+    .choices__item {
+      color: var(--color-primary-950);
+      @include mix.p(1, "y");
+      @include mix.p(4, "x");
+      @include typo.text-base();
+
+      &.is-highlighted {
+        background: var(--color-select-box-highlight);
+        color: var(--color-primary-950);
+      }
+    }
+  }
+
+  &.is-open {
+    .choices__inner {
+      border-color: var(--color-primary-950);
+    }
+  }
+}
+
+@include mix.respond-to("lg", "min") {
+  .choices {
+    min-width: 220px;
+
+    .choices__inner {
+      position: relative;
+
+      &::after {
+        content: "";
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 12px;
+        height: 8px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: center;
+        pointer-events: none;
+        z-index: 10;
+      }
+    }
+
+    // Hide default Choices.js elements
+    &::before,
+    &::after {
+      display: none !important;
+    }
+
+    .choices__button {
+      display: none !important;
+    }
+  }
+}
+
+@include mix.respond-to("lg", "max") {
+  .choices__inner {
+    min-height: 40px;
+  }
+  .choices[data-type*="select-one"] .choices__inner {
+    @include mix.p(0, "b");
+  }
+}

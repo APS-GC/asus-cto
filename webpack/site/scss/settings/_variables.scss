@@ -1,0 +1,124 @@
+/** 
+ * ========================================================================== 
+ * Containers
+ * ========================================================================== 
+ */
+$container: 100%; /* 100% width for mobile and screns below 1280px */
+$container-xl: 1240px; /* For screens above 1280px. For screens with and above 1440px width. This will add 100px gutter space on sides */
+$container-xxl: 1440px; /* For screens above 1536px */
+
+/** 
+ * ========================================================================== 
+ * Colors
+ * ========================================================================== 
+ */
+$color-brand-asus: #0057b7;
+$color-brand-rog: #f7323f;
+$color-black: #000 !default;
+$color-white: #fff !default;
+$color-success: #6fc371;
+$color-info: #006ce1;
+$color-warning: #f05f17;
+$color-error: #e75b4b;
+$color-focus-ring: #006ce1;
+$color-border-type: #1a821c;
+$color-select-box-highlight: #248dff;
+$color-primary-map: (
+  // Figma: Dark/Grey01, Light/Black
+  "base": $color-black,
+  // Figma: Dark/Grey03
+  "50": #16151b,
+  // Figma: Dark/Grey02, Light/Grey07
+  "100": #181818,
+  // Figma: Dark/Grey04, Light/Grey06
+  "200": #262626,
+  // Figma: Dark/Grey05, Light/Grey05
+  "300": #4d4d4d,
+  // Figma: Light/Grey04
+  "400": #666,
+  // Figma: Light/Grey03
+  "500": #818181,
+  // Figma: Dark/Grey06
+  "600": #999,
+  // Figma: Dark/Grey07, Light/Grey02
+  "700": #ccc,
+  // Figma: Dark/Grey08
+  "800": #dcdcdc,
+  // Figma: Light/Grey01
+  "900": #f5f5f5,
+  // Figma: Dark/White, Light/White
+  "950": $color-white
+) !default;
+
+/** 
+ * ========================================================================== 
+ * Border Radius
+ * ========================================================================== 
+ */
+$border-radius-xs: 0.25rem;
+$border-radius-sm: 0.375rem;
+$border-radius: 0.5rem;
+$border-radius-md: 0.625rem;
+$border-radius-lg: 0.75rem;
+$border-radius-xl: 1rem;
+$border-radius-xxl: 1.25rem;
+$border-radius-xxxl: 1.5rem;
+$border-radius-xxxxl: 2rem;
+
+/** 
+ * ========================================================================== 
+ * Spacings
+ * ========================================================================== 
+ */
+$spacing: (
+  0: 0,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 0.75rem,
+  4: 1rem,
+  5: 1.25rem,
+  6: 1.5rem,
+  8: 2rem,
+  9: 2.25rem,
+  10: 2.5rem,
+  12: 3rem,
+  13: 3.25rem,
+  14: 3.5rem,
+  15: 3.75rem,
+  16: 4rem,
+  18: 4.5rem,
+  20: 5rem,
+  24: 6rem,
+  32: 8rem,
+  40: 10rem,
+  48: 12rem,
+  56: 14rem,
+  64: 16rem,
+) !default;
+
+// Spacing directions map
+$directions: (
+  "t": "top",
+  "r": "right",
+  "b": "bottom",
+  "l": "left",
+  "x": (
+    "left",
+    "right",
+  ),
+  "y": (
+    "top",
+    "bottom",
+  ),
+);
+
+/** 
+ * ========================================================================== 
+ * Elevations (Shadows)
+ * ========================================================================== 
+ */
+$shadow-normal: 0px 4px 20px 0px rgba($color-black, 0.08);
+$shadow-interactive: 0px 4px 12px 0px rgba($color-black, 0.12);
+$shadow-hover: 0px 8px 24px 0px rgba($color-black, 0.22);
+$shadow-strong: 0px 8px 30px 0px rgba($color-black, 0.3);
+$shadow-strong-light-blue: 0 0 30px rgba(0, 183, 255, 0.6);

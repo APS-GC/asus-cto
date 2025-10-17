@@ -1,0 +1,40 @@
+<section class="gradient-animation">
+  <%- include('../components/help-me-choose-filter/_help-me-choose-filter.ejs', { isOpen: false , selectedGames: [], minBudget: 500, maxBudget: 5000 }) %>
+
+  <div class="container top-spacing bottom-spacing">
+    <%- include('../components/section-heading/_section-heading.ejs', { name: 'We have found your perfect matches!' , centerContent: true  }) %>
+     
+    <div class="carousel panelcontainer">
+
+      <div
+        id="carousel-product-matches"
+        class="cmp-carousel"
+        role="group"
+        aria-live="polite"
+        aria-roledescription="carousel"
+        data-cmp-is="carousel"
+        data-placeholder-text="false"
+        data-slides-per-view="1"
+        data-slides-per-view-tablet="2.3"
+        data-slides-per-view-desktop="3"
+        data-loop-slides="false"
+        data-space-between="8"
+        data-space-between-tablet="8"
+        data-space-between-desktop="20"
+       
+      >
+        <div 
+          class="cmp-carousel__content cmp-carousel__content--overflow perfect-match-products-container section-with-bottom-spacing"
+          aria-atomic="false"
+          aria-live="polite"
+        >
+          <!-- Products will be loaded here -->
+        </div>
+        <div class="section-actions-container">
+          <div class="loader"><span class="icon icon--loader"></span></div>
+        </div>
+      </div>
+    </div>
+    <%- include('../components/similar-products/_similar-products.ejs') %>
+  </div>
+</section>

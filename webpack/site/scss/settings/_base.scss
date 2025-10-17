@@ -1,0 +1,380 @@
+@use "sass:map";
+@use "variables" as vars;
+@use "mixins" as mix;
+@use "typography" as typo;
+
+:root {
+  // This section defines all CSS variables for centralized access.
+  // It is imported only once in the main entry point of the application,
+  // ensuring no duplication of CSS variables in the final output.
+
+  --font-text: "Roboto";
+  --font-display: "TTNormsProMedium";
+  --font-display-regular: "TTNormsProRegular";
+  --regular: 400;
+  --medium: 500;
+  --text-scale: typo.$scale;
+
+  // Generate CSS variables for primary color levels
+  --color-primary: #{map.get(vars.$color-primary-map, "base")};
+
+  @each $level, $value in vars.$color-primary-map {
+    --color-primary-#{$level}: #{$value};
+  }
+
+  // Brand colors
+  --color-brand-asus: #{vars.$color-brand-asus};
+  --color-brand-rog: #{vars.$color-brand-rog};
+
+  // Status color variables
+  --color-success: #{vars.$color-success};
+  --color-info: #{vars.$color-info};
+  --color-warning: #{vars.$color-warning};
+  --color-error: #{vars.$color-error};
+  --color-border-type: #{vars.$color-border-type};
+  --color-select-box-highlight: #{vars.$color-select-box-highlight};
+  --color-focus-ring: #{vars.$color-focus-ring};
+
+  // Gradients
+  --gradient-product-card: conic-gradient(from 90deg,
+    rgba(107, 121, 145, 1) 0deg,
+    rgba(107, 121, 145, 1) 71.2543deg,
+    rgba(107, 121, 145, 1) 161.353deg,
+    rgba(107, 121, 145, 1) 245.421deg,
+    rgba(107, 121, 145, 1) 339.262deg,
+    rgba(107, 121, 145, 1) 360deg);
+
+  // Swiper resets
+  --swiper-pagination-bullet-horizontal-gap: 0;
+}
+
+html,
+body {
+  margin: 0;
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-primary);
+  color: var(--color-primary-950);
+  overflow-x: hidden;
+
+  @include typo.text-font;
+  @include typo.text-style(base);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/** 
+ * ========================================================================== 
+ * Base Typography
+ * ========================================================================== 
+ */
+h1,
+.text-h1,
+.text-display1 {
+  @include typo.text-display1;
+}
+
+h2,
+.text-h2,
+.text-display2 {
+  @include typo.text-display2;
+}
+
+h3,
+.text-h3,
+.text-display3 {
+  @include typo.text-display3;
+}
+
+h4,
+.text-h4,
+.text-display4 {
+  @include typo.text-display4;
+}
+
+h5,
+.text-h5,
+.text-display5 {
+  @include typo.text-display5;
+}
+
+h6,
+.text-h6,
+.text-display6 {
+  @include typo.text-display6;
+}
+
+.text-display7 {
+  @include typo.text-display7;
+}
+
+p,
+.text-base {
+  @include typo.text-base;
+}
+
+.text-bolder {
+  @include typo.text-bolder;
+}
+
+b,
+strong,
+.text-bold {
+  @include typo.text-bold;
+}
+
+small,
+.text-small {
+  @include typo.text-small;
+}
+
+.text-x-small {
+  @include typo.text-xsmall;
+}
+
+// TODO: Verify the mobile font sizes with UI team.
+@include mix.respond-to("sm", "max") {
+
+  h1,
+  .text-h1,
+  .text-display1 {
+    @include typo.text-display3;
+  }
+
+  h2,
+  .text-h2,
+  .text-display2 {
+    @include typo.text-display3;
+  }
+
+  h3,
+  .text-h3,
+  .text-display3 {
+    @include typo.text-display4;
+  }
+
+  h4,
+  .text-h4,
+  .text-display4 {
+    @include typo.text-display5;
+  }
+}
+
+/** 
+ * ========================================================================== 
+ * A11Y
+ * ========================================================================== 
+ */
+:focus-visible {
+  outline: solid 2px var(--color-focus-ring);
+}
+
+// This class is used to hide elements visually but keep them accessible for screen readers.
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/** 
+ * ========================================================================== 
+ * Light theme
+ * ========================================================================== 
+ */
+.light-mode {
+  background-color: var(--color-primary-950);
+  color: var(--color-primary);
+}
+
+/** 
+ * ========================================================================== 
+ * Generic classes for testing
+ * We can remove these classes later if not in use.
+ * ========================================================================== 
+ */
+.product-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+
+  @include mix.respond-to("md") {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include mix.respond-to("lg") {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.section-with-bottom-spacing {
+  padding-bottom: 60px !important;
+
+  @include mix.respond-to("md", "max") {
+    padding-bottom: 32px !important;
+  }
+
+  @include mix.respond-to("lg", "max") {
+    padding-bottom: 32px !important;
+  }
+}
+
+.section-with-top-spacing {
+  padding-top: 60px !important;
+
+  @include mix.respond-to("md", "max") {
+    padding-top: 32px !important;
+  }
+
+  @include mix.respond-to("lg", "max") {
+    padding-top: 32px !important;
+  }
+}
+
+body.no-scroll {
+  overflow: hidden;
+  height: 100%;
+}
+
+.hide-on-mobile {
+  @include mix.respond-to("md", "max") {
+    display: none;
+  }
+}
+
+.section-actions-container {
+  display: flex;
+  justify-content: center;
+  @include mix.m(5, "t");
+
+  .section-actions-btn {
+    background-color: var(--color-black-50);
+    color: var(--color-white);
+    border: none;
+    cursor: pointer;
+    @include typo.text-cta();
+
+    .icon {
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  .loader {
+    display: none;
+    animation: loader 1s linear infinite;
+
+    .icon {
+      width: 48px;
+      height: 48px;
+    }
+
+    @keyframes loader {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
+
+  &.is-loading {
+    @include mix.m(0, "t");
+    @include mix.p(24, "t");
+
+    .section-actions-btn {
+      display: none;
+    }
+
+    .loader {
+      display: flex;
+    }
+  }
+
+  &.has-more:not(.is-loading) {
+    .section-actions-btn {
+      display: block;
+    }
+  }
+}
+
+// Gradient animation for background
+.gradient-animation {
+  overflow-x: hidden;
+
+  &--active::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+
+    background: conic-gradient(from 90deg,
+        rgba(24, 36, 75, 1) 0deg,
+        rgba(25, 54, 122, 1) 109.038deg,
+        rgba(89, 21, 67, 1) 188.654deg,
+        rgba(23, 19, 31, 1) 256.154deg,
+        rgba(24, 36, 75, 1) 360deg);
+    filter: blur(150px);
+    /* Gaussian blur */
+    animation: rotateGradient 20s linear infinite;
+    /* animate rotation */
+  }
+}
+
+/* Gradient rotation animation */
+@keyframes rotateGradient {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Star rating
+.star-rating-wrapper {
+  [data-bv-theme="light"] {
+    .bv_main_container .bv_text {
+      color: var(--color-primary-300) !important;
+    }
+  }
+}

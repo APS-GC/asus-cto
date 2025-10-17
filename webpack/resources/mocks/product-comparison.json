@@ -1,0 +1,179 @@
+[
+  {
+    "id": "rog-g700-2025",
+    "bazaarvoiceProductId": "ASUS_M1_25392_P",
+    "name": "TUF Gaming GT302 ARGB",
+    "model": "G700TF-XS776",
+    "isBuyable": true,
+    "isCustomizable": true,
+    "buyLink": "./pdp.html",
+    "customizeLink": "./pdp.html",
+    "image": "./clientlib-site/images/products/product-1-image-1.webp",
+    "price": "1,999.99",
+    "originalPrice": "1,099",
+    "discount": "100",
+    "specs": [
+      {
+        "key": "color",
+        "label": "Color",
+        "value": "Grey",
+        "colorCode": "#CCCCCC"
+      },
+      {
+        "key": "operating-system",
+        "label": "Operating System",
+        "value": "Windows 11 Home - ASUS recommends Windows 11 Pro for business"
+      },
+      {
+        "key": "processor",
+        "label": "Processor",
+        "value": "Windows 11 Home - ASUS recommends Windows 11 Pro for business",
+        "highlight": "Fast processing speed"
+      },
+      {
+        "key": "graphics",
+        "label": "Graphics",
+        "value": "NVIDIA® GeForce RTX™4060TI DUAL 8GB GDDR6 : 3xDP, 1x HDMI (up to 353 AI TOPs)",
+        "highlight": "Powerful graphics for smooth game-play at high settings"
+      },
+      {
+        "key": "chipset",
+        "label": "Chipset",
+        "value": "Intel® B760 Chipset"
+      },
+      {
+        "key": "memory",
+        "label": "Memory",
+        "value": ["4x DDR5 U-DIMM slot 16GB DDR5 U-DIMM", "x 2 Memory max up to: 64GB"]
+      },
+      {
+        "key": "sata",
+        "label": "SATA",
+        "value": "6 x SATA 6.0Gb/s ports"
+      },
+      {
+        "key": "frontPort",
+        "label": "Front I/O Port",
+        "value": ["1x Headphone", "1x Mic in", "2x USB 3.2 Gen 1 Type-A", "2x USB 3.2 Gen 1 Type-C"]
+      }
+    ]
+  },
+  {
+    "id": "rog-strix-g13chr",
+    "bazaarvoiceProductId": "ASUS_M1_25392_P",
+    "name": "ROG Strix G13",
+    "model": "G13CHR-51440F199W",
+    "isBuyable": false,
+    "isCustomizable": true,
+    "customizeLink": "./pdp.html",
+    "image": "./clientlib-site/images/products/product-2-image-1.webp",
+    "price": "1,999.99",
+    "originalPrice": "1,099",
+    "discount": "100",
+    "specs": [
+      {
+        "key": "color",
+        "label": "Color",
+        "value": "Extreme Dark Grey",
+        "colorCode": "#000000"
+      },
+      {
+        "key": "operating-system",
+        "label": "Operating System",
+        "value": "Windows 11 Home - ASUS recommends Windows 11 Pro for business"
+      },
+      {
+        "key": "processor",
+        "label": "Processor",
+        "value": "Windows 11 Home - ASUS recommends Windows 11 Pro for business",
+        "highlight": "Fast processing speed"
+      },
+      {
+        "key": "graphics",
+        "label": "Graphics",
+        "value": "NVIDIA® GeForce RTX™4060TI DUAL 8GB GDDR6 : 3xDP, 1x HDMI (up to 353 AI TOPs)",
+        "highlight": "Powerful graphics for smooth game-play at high settings"
+      },
+      {
+        "key": "chipset",
+        "label": "Chipset",
+        "value": "Intel® B760 Chipset"
+      },
+      {
+        "key": "memory",
+        "label": "Memory",
+        "value": ["4x DDR5 U-DIMM slot 16GB DDR5 U-DIMM", "x 2 Memory max up to: 64GB"]
+      },
+      {
+        "key": "sata",
+        "label": "SATA",
+        "value": "6 x SATA 6.0Gb/s ports"
+      },
+      {
+        "key": "frontPort",
+        "label": "Front I/O Port",
+        "value": ["1x Headphone", "1x Mic in", "2x USB 3.2 Gen 1 Type-A", "2x USB 3.2 Gen 1 Type-C"]
+      }
+    ]
+  },
+  {
+    "id": "rog-strix-g10dk",
+    "bazaarvoiceProductId": "ASUS_M1_25392_P",
+    "name": "ROG Strix G10DK",
+    "model": "G10DK(SPNL)-BBR54S",
+    "isBuyable": true,
+    "isCustomizable": false,
+    "buyLink": "./pdp.html",
+    "customizeLink": "./pdp.html",
+    "image": "./clientlib-site/images/products/product-3-image-1.webp",
+    "price": "1,999.99",
+    "originalPrice": "1,099",
+    "discount": "100",
+    "specs": [
+      {
+        "key": "color",
+        "label": "Color",
+        "value": "Extreme Dark Grey",
+        "colorCode": "#000000"
+      },
+      {
+        "key": "operating-system",
+        "label": "Operating System",
+        "value": "Windows 11 Home - ASUS recommends Windows 11 Pro for business"
+      },
+      {
+        "key": "processor",
+        "label": "Processor",
+        "value": "Windows 11 Home - ASUS recommends Windows 11 Pro for business",
+        "highlight": "Fast processing speed"
+      },
+      {
+        "key": "graphics",
+        "label": "Graphics",
+        "value": "NVIDIA® GeForce RTX™4060TI DUAL 8GB GDDR6 : 3xDP, 1x HDMI (up to 353 AI TOPs)",
+        "highlight": "Powerful graphics for smooth game-play at high settings"
+      },
+      {
+        "key": "chipset",
+        "label": "Chipset",
+        "value": "Intel® B760 Chipset"
+      },
+      {
+        "key": "memory",
+        "label": "Memory",
+        "value": ["4x DDR5 U-DIMM slot 16GB DDR5 U-DIMM", "x 2 Memory max up to: 64GB"]
+      },
+      {
+        "key": "sata",
+        "label": "SATA",
+        "value": "6 x SATA 6.0Gb/s ports"
+      },
+      {
+        "key": "frontPort",
+        "label": "Front I/O Port",
+        "value": ["1x Headphone", "1x Mic in", "2x USB 3.2 Gen 1 Type-A", "2x USB 3.2 Gen 1 Type-C"]
+      }
+    ]
+  }
+]
+ 

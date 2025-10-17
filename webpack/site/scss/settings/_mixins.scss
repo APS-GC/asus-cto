@@ -1,0 +1,152 @@
+@use "sass:map";
+@use "sass:meta";
+@use "variables" as vars;
+
+// Breakpoints map for responsive design
+$breakpoints: (
+  "xs": 20rem,
+  "sm": 36rem,
+  "md": 48rem,
+  "lg": 64rem,
+  "xl": 80rem,
+  "2xl": 96rem,
+) !default;
+
+/**
+ * Mixin to handle responsive breakpoints with optional orientation
+ * 
+ * @param {string|number} $breakpoint - The breakpoint key or a custom value (in rem)
+ * @param {string} $type - The type of media query ('min' or 'max')
+ * @param {string|null} $orientation - Optional orientation ('portrait' or 'landscape')
+ *
+ * @usage
+ *   @include respond-to("sm") {
+ *     // Styles for small screens and up
+ *   }
+ *   @include respond-to("md", "max") {
+ *     // Styles for medium screens and down
+ *   }
+ *   @include respond-to(50rem, "min", "landscape") { 
+ *     // Styles for screens wider than 50rem in landscape orientation
+ *   }
+ */
+@mixin respond-to($breakpoint, $type: "min", $orientation: null) {
+  // Check if breakpoint exists in map
+  @if map.has-key($breakpoints, $breakpoint) {
+    $value: map.get($breakpoints, $breakpoint);
+
+    @if $type == "max" {
+      $value: $value - 0.0625rem; // Subtracts 1px to ensure the breakpoint is exclusive
+    }
+
+    @if $orientation {
+      @media only screen and (#{$type}-width: $value) and (orientation: $orientation) {
+        @content;
+      }
+    } @else {
+      @media only screen and (#{$type}-width: $value) {
+        @content;
+      }
+    }
+  }
+
+  // Handle custom values directly
+  @else if meta.type-of($breakpoint) == "number" {
+    @if $orientation {
+      @media only screen and (#{$type}-width: $breakpoint) and (orientation: $orientation) {
+        @content;
+      }
+    } @else {
+      @media only screen and (#{$type}-width: $breakpoint) {
+        @content;
+      }
+    }
+  } @else {
+    @warn "Breakpoint '#{$breakpoint}' not found in $breakpoints map";
+  }
+}
+
+/** 
+ * ========================================================================== 
+ * Spacer Mixin
+ * This mixin applies spacing to a given property (margin or padding)
+ * based on the size and optional direction.
+ * This can also be used for border spacing, gaps, etc.
+ * ========================================================================== 
+ */
+@mixin spacer($property, $size, $direction: null) {
+  $value: map.get(vars.$spacing, $size);
+  $dir: map.get(vars.$directions, $direction);
+
+  @if not $value and not $dir {
+    @error "Spacing size '#{$size}' or direction '#{$direction}' not found in $spacing or $directions map";
+  }
+
+  @if not $value {
+    @error "Spacing size '#{$size}' not found in $spacing map";
+  }
+
+  @if $dir {
+    @each $d in $dir {
+      #{$property}-#{$d}: $value;
+    }
+  } @else {
+    #{$property}: $value;
+  }
+}
+
+/** 
+ * ========================================================================== 
+ * Margin and Padding Mixins
+ * These mixins provide a convenient way to apply margin and padding
+ * with optional direction support.
+ * ========================================================================== 
+ */
+@mixin m($size, $direction: null) {
+  @include spacer(margin, $size, $direction);
+}
+
+@mixin p($size, $direction: null) {
+  @include spacer(padding, $size, $direction);
+}
+
+/** 
+ * ========================================================================== 
+ * Reset List Mixin
+ * This mixin resets the list styles for a given element.
+ * ========================================================================== 
+ */
+@mixin reset-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@mixin absolute-fill {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+@mixin absolute-center-x {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+@mixin absolute-center-y {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@mixin reset-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: inherit;
+}

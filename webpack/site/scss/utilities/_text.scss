@@ -1,0 +1,33 @@
+/** 
+ * ========================================================================== 
+ * Text Color Utility Classes
+ * ========================================================================== 
+ */
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-info {
+  color: var(--color-info);
+}
+
+.text-warning {
+  color: var(--color-warning);
+}
+
+.text-error {
+  color: var(--color-error);
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+/** 
+ * ========================================================================== 
+ * Text Alignment Utility Classes
+ * ========================================================================== 
+ */
+.text-center {
+  text-align: center;
+}

@@ -1,0 +1,37 @@
+@use "../settings/variables" as vars;
+@use "../settings/mixins" as mix;
+
+/** 
+ * ========================================================================== 
+ * Spacing Utility Classes
+ * ========================================================================== 
+ */
+@each $size, $value in vars.$spacing {
+  // Margin and Padding
+  @each $dir, $props in vars.$directions {
+    .m#{$dir}-#{$size} {
+      @include mix.m($size, $dir);
+    }
+    .p#{$dir}-#{$size} {
+      @include mix.p($size, $dir);
+    }
+  }
+
+  .m-#{$size} {
+    @include mix.m($size);
+  }
+  .p-#{$size} {
+    @include mix.p($size);
+  }
+
+  // Gap
+  .gap-#{$size} {
+    gap: $value;
+  }
+  .gap-x-#{$size} {
+    column-gap: $value;
+  }
+  .gap-y-#{$size} {
+    row-gap: $value;
+  }
+}

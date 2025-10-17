@@ -1,0 +1,268 @@
+<div class="overlap-header">
+  <div class="cmp-container">
+    <div class="carousel panelcontainer">
+      <div
+        id="carousel-4e80c7e13c"
+        class="cmp-carousel"
+        role="group"
+        aria-live="polite"
+        aria-roledescription="carousel"
+        data-cmp-is="carousel"
+        data-cmp-delay="5000"
+        data-placeholder-text="false"
+        data-loop-slides="true"
+      >
+        <div class="cmp-carousel__content">
+          <div id="carousel-4e80c7e13c-item-30704e84cd-tabpanel" class="cmp-carousel__item cmp-carousel__item--active">
+            <%- include('../components/hero-banner/_hero-banner.ejs', {
+              alignmentClass: 'hero-content--start-center',
+              name: 'ROG GT51CA',
+              headline: 'Next-Level<br>Gaming',
+              image: './clientlib-site/images/hero-banner-1.webp',
+              video: './clientlib-site/videos/hero-banner-video-1.mp4',
+              ctaLink: './pdp.html',
+              ctaName: 'Customize &amp; buy',
+              renderAsH1: true,
+            }) %>
+          </div>
+          <div id="carousel-4e80c7e13c-item-645fc67b90-tabpanel" class="cmp-carousel__item">
+            <%- include('../components/hero-banner/_hero-banner.ejs', {
+              alignmentClass: 'hero-content--center-top',
+              name: 'MAKE YOUR',
+              headline: 'Dream PC a Reality',
+              image: './clientlib-site/images/hero-banner-2.webp',
+              video: './clientlib-site/videos/hero-banner-video-1.mp4',
+              ctaLink: './pdp.html',
+              ctaName: 'Learn more',
+              ctaDescription: ' about Dream PC a Reality',
+            }) %>
+          </div>
+          <div id="carousel-4e80c7e13c-item-85d21a3332-tabpanel" class="cmp-carousel__item">
+            <%- include('../components/hero-banner/_hero-banner.ejs', {
+              alignmentClass: 'hero-content--end-center',
+              name: 'ASUS GEFORCE RTX™ 40',
+              headline: 'Super <br> Resurgence',
+              image: './clientlib-site/images/hero-banner-3.webp',
+              ctaLink: './pdp.html',
+              ctaName: 'Learn more',
+              ctaDescription: ' about ASUS GEFORCE RTX™ 40',
+            }) %>
+          </div>
+        </div>
+
+        <!-- Pagination indicatoors -->
+        <ol class="cmp-carousel__indicators" role="tablist" aria-label="Choose a slide to display"></ol>
+
+        <!-- Media controls for Video and other media types -->
+        <div class="cmp-carousel__media-controls">
+          <button class="cmp-carousel__media-control cmp-carousel__media-control--play-pause" aria-label="Play video auto-play"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="gradient-animation">
+  <div class="pt-5 section-with-bottom-spacing">
+    <div class="cmp-container container">
+      <div class="aem-Grid aem-Grid--12 aem-Grid--custom-spacing-default">
+        <div class="aem-GridColumn aem-GridColumn--default--6 aem-GridColumn--phone--12">
+          <%- include('../components/featured-product-card/_featured-product-card.ejs', {
+            image: './clientlib-site/images/latest-pick2.webp',
+            title: 'ROG G700 (2025)',
+            label: 'Latest creations',
+            link: 'pdp.html',
+          }) %>
+        </div>
+        <div class="aem-GridColumn aem-GridColumn--default--6 aem-GridColumn--phone--12">
+          <%- include('../components/featured-product-card/_featured-product-card.ejs', {
+            image: './clientlib-site/images/latest-pick.webp',
+            title: 'ROG Strix G10DK G10DK',
+            label: 'Top picks',
+            link: 'pdp.html',
+          }) %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class='section-with-top-spacing section-with-bottom-spacing'>
+    <div class='container'>
+      <div class="carousel panelcontainer">
+        <%- include('../components/section-heading/_section-heading.ejs', { name: 'Hot Products', showArrow: true }) %>
+        <div
+          id="carousel-4e80c7e13k"
+          class="cmp-carousel"
+          role="group"
+          aria-live="polite"
+          aria-roledescription="carousel"
+          data-cmp-is="carousel"
+          data-placeholder-text="false"
+          data-slides-per-view="1"
+          data-slides-per-view-tablet="2.3"
+          data-slides-per-view-desktop="3"
+          data-loop-slides="false"
+          data-init="false"
+          data-product-type="hot"
+        >
+          <div class="cmp-carousel__content cmp-carousel__content--overflow">
+            <!-- Products will be loaded here -->
+          </div>
+        </div>
+
+        <!-- View All Button -->
+        <div class="section-actions-container mobile-margin-top">
+          <a href="./product-listing.html" class="section-actions-btn btn btn-link" aria-label="View all products">
+            View all <span class="icon icon--arrow-right"></span>
+          </a>
+          <div class="loader">
+            <span class="icon icon--loader"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-with-top-spacing section-with-bottom-spacing">
+    <div class="cmp-container container">
+      <%- include('../components/select-game/_select-game.ejs', {
+          games: [
+            { id: "cod", name: "Call of Duty: Modern Warfare", image: "./clientlib-site/images/games/call-of-duty.webp" },
+            { id: "alanwake", name: "Alan Wake 2", image: "./clientlib-site/images/games/alan-wake.webp" },
+            { id: "cs2", name: "Counter Strike 2", image: "./clientlib-site/images/games/counter-strike.webp" },
+            { id: "baldur", name: "Baldur's Gate 3", image: "./clientlib-site/images/games/baldurs-gate.webp" },
+            { id: "civ6", name: "Fortnite", image: "./clientlib-site/images/games/fortnite.webp" },
+            { id: "fortnite", name: "Red Redemption 2", image: "./clientlib-site/images/games/red-redemption.webp" }
+          ]
+        }) %>
+    </div>
+  </section>
+
+  <section class='section-with-top-spacing section-with-bottom-spacing'>
+    <div class='container'>
+      <div class="carousel panelcontainer">
+        <%- include('../components/section-heading/_section-heading.ejs', { name: 'Our Advantages', centerContent: true }) %>
+        <div
+          id="carousel-4e80c7e13a"
+          class="cmp-carousel"
+          role="group"
+          aria-live="polite"
+          aria-roledescription="carousel"
+          data-cmp-is="carousel"
+          data-cmp-delay="5000"
+          data-carousel-effect="creative"
+          data-prev-slide-message="Previous advantage"
+          data-next-slide-message="Next advantage"
+        >
+          <div class="cmp-carousel__content">
+            <div id="carousel-4e80c7e13a-item-30704e84cd-tabpanel" class="cmp-carousel__item cmp-carousel__item--active">
+              <%- include('../components/advantage-card/_advantage-card.ejs', {
+                image: './clientlib-site/images/advantage-1.webp',
+                title: 'Ultimate Gaming Experience',
+                desc: 'Our systems are engineered to enhance both performance and noise control, guaranteeing stability and an unparalleled gaming experience.',
+                video: './clientlib-site/videos/hero-banner-video-1.mp4',
+              }) %>
+            </div>
+            <div id="carousel-4e80c7e13a-item-645fc67b90-tabpanel" class="cmp-carousel__item">
+              <%- include('../components/advantage-card/_advantage-card.ejs', {
+                image: './clientlib-site/images/advantage-2.webp',
+                title: 'Superior Component Quality',
+                desc: 'Inspiration can come from anywhere, to shape our works and the world we create. As a multidisciplinary motion design and VFX studio, KORB creates immersive sensory experiences, building worlds that are beyond all imagination.',
+                video: './clientlib-site/videos/hero-banner-video-1.mp4',
+              }) %>
+            </div>
+            <div id="carousel-4e80c7e13a-item-85d21a3332-tabpanel" class="cmp-carousel__item">
+              <%- include('../components/advantage-card/_advantage-card.ejs', {
+                image: './clientlib-site/images/advantage-3.webp',
+                title: 'New Technology and Trends',
+                desc: 'Inspiration can come from anywhere, to shape our works and the world we create. As a multidisciplinary motion design and VFX studio, KORB creates immersive sensory experiences, building worlds that are beyond all imagination.',
+                video: './clientlib-site/videos/hero-banner-video-1.mp4',
+              }) %>
+            </div>
+            <div id="carousel-4e80c7e13a-item-30704e84c1-tabpanel" class="cmp-carousel__item cmp-carousel__item--active">
+              <%- include('../components/advantage-card/_advantage-card.ejs', {
+                image: './clientlib-site/images/advantage-1.webp',
+                title: 'Ultimate Gaming Experience 2',
+                desc: 'Our systems are engineered to enhance both performance and noise control, guaranteeing stability and an unparalleled gaming experience.',
+                video: './clientlib-site/videos/hero-banner-video-1.mp4',
+              }) %>
+            </div>
+          </div>
+
+          <!-- Carousel actions - Previous/Next -->
+          <div class="cmp-carousel__actions">
+            <button class="cmp-carousel__action cmp-carousel__action--previous">
+              <span class="visually-hidden"></span>
+            </button>
+            <button class="cmp-carousel__action cmp-carousel__action--next">
+              <span class="visually-hidden"></span>
+            </button>
+          </div>
+
+          <!-- Pagination indicatoors -->
+          <ol class="cmp-carousel__indicators" role="tablist" aria-label="Choose a slide to display"></ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-with-top-spacing section-with-bottom-spacing">
+    <div class="cmp-container container">
+      <div class="carousel panelcontainer">
+        <%- include('../components/section-heading/_section-heading.ejs', { name: 'Featured News & Articles', showArrow: true }) %>
+        <div
+          id="carousel-5e80c7e13a"
+          class="cmp-carousel"
+          role="group"
+          aria-live="polite"
+          aria-roledescription="carousel"
+          data-cmp-is="carousel"
+          data-cmp-delay="false"
+          data-slides-per-view="auto"
+          data-slides-per-view-tablet="3"
+          data-slides-per-view-desktop="3"
+          data-loop-slides="false"
+        >
+          <div class="cmp-carousel__content cmp-carousel__content--overflow">
+            <div id="carousel-5e80c7e13a-item-30704e84cd-tabpanel" class="cmp-carousel__item cmp-carousel__item--active">
+              <%- include('../components/article-card/_article-card.ejs', {
+                image: './clientlib-site/images/news-article-1.webp',
+                link: '/news/article-1',
+                alt: 'Motherboard',
+                date: 'Feb 10, 2025',
+                title: 'ROG Strix vs Extreme vs Apex vs Hero: What\'s the difference between ROG gaming motherboards?',
+                description: 'One of the best parts of being a PC enthusiast is the freedom to build your computer in your own way. You’re not limited to picking from a couple different preset options. When we launch a new generation of motherboards, we don’t just design one model and expect it to meet everyone’s needs. We give you a broad range of options from our ROG Maximus, Crosshair, and Strix lineups so that you can find the board with the right features and style for your next build.'
+              }) %>
+            </div>
+            <div id="carousel-5e80c7e13a-item-30704e84ce-tabpanel" class="cmp-carousel__item">
+              <%- include('../components/article-card/_article-card.ejs', {
+                image: './clientlib-site/images/news-article-2.webp',
+                link: '/news/article-2',
+                alt: 'Motherboard',
+                date: 'Jan 15, 2025',
+                title: 'ROG Astral vs Strix vs TUF vs Prime: which ASUS graphics card is right for you?',
+                description: 'When you go to buy a new graphics card, you might have an idea of which GPU you want—like the GeForce RTX 5080 or the Radeon RX 9070 XT—but choosing a specific model of RTX 5080 can be a tough decision. Do you want a simple 2.5-slot solution that offers bang for your buck, or a decked-out quad fan system with all the bells and whistles? Are you looking for something with an unobtrusive and straightforward design, or do you want a showpiece that will draw every eye to your build? ASUS and ROG offer a number of variants to provide options that fit your build (and budget) best. Let\'s break them down.'
+              }) %>
+            </div>
+            <div id="carousel-5e80c7e13a-item-30704e84cf-tabpanel" class="cmp-carousel__item">
+              <%- include('../components/article-card/_article-card.ejs', {
+                image: './clientlib-site/images/news-article-3.webp',
+                link: '/news/article-3',
+                alt: 'Motherboard',
+                date: 'Jan 24, 2025',
+                title: 'Introducing the ROG G700 prebuilt gaming PC: your next-gen power tower',
+                description: 'ROG has a storied history of producing some of the best desktop gaming PC components on the market. We\'ve taken that component-level expertise to craft a next-gen tower from the ground up and give you the ultimate ROG experience. If you want a rig that’s fine-tuned, tested, and assembled by us, that uses our world-class components to the fullest for a truly exceptional out-of-the-box experience, our ROG G700 prebuilt gaming PC answers the call.'
+              }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- View All Button -->
+    <div class="section-actions-container">
+      <a class="section-actions-btn btn btn-link" href="/news-articles.html" target="_blank">
+        See all News & Articles <img src="./clientlib-site/images/icon-arrow.svg" alt="Arrow Right">
+      </a>
+    </div>
+  </section>
+</div>

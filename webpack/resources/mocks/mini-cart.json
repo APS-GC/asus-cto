@@ -1,0 +1,62 @@
+[
+    {
+        "id": "rog-g700-2025",
+        "name": "ROG Strix G10DK G10DK",
+        "image": "./clientlib-site/images/products/product-1-image-1.webp",
+        "price": "1549.00",
+        "quantity": 1
+    },
+    {
+        "id": "rog-gladius",
+        "name": "ROG Gladius II Origin PNK LTD",
+        "description": "Bundle-Zenbook 14 Flip OLED bundle set",
+        "image": "./clientlib-site/images/products/product-1-image-1.webp",
+        "price": "59.00",
+        "quantity": 2
+    },
+    {
+        "id": "rog-g700-2024",
+        "name": "ROG Strix G10DK G10DK",
+        "image": "./clientlib-site/images/products/product-1-image-1.webp",
+        "price": "1549.00",
+        "quantity": 1
+    },
+    {
+        "id": "rog-gladius-II",
+        "name": "ROG Gladius II Origin PNK LTD",
+        "description": "Bundle-Zenbook 14 Flip OLED bundle set",
+        "image": "./clientlib-site/images/products/product-1-image-1.webp",
+        "price": "59.00",
+        "quantity": 2
+    },
+    {
+        "id": "rog-g700-2025",
+        "name": "ROG Strix G10DK G10DK",
+        "image": "./clientlib-site/images/products/product-1-image-1.webp",
+        "price": "1549.00",
+        "quantity": 1
+    },
+    {
+        "id": "rog-gladius",
+        "name": "ROG Gladius II Origin PNK LTD",
+        "description": "Bundle-Zenbook 14 Flip OLED bundle set",
+        "image": "./clientlib-site/images/products/product-1-image-1.webp",
+        "price": "59.00",
+        "quantity": 2
+    },
+    {
+        "id": "rog-g700-2024",
+        "name": "ROG Strix G10DK G10DK",
+        "image": "./clientlib-site/images/products/product-1-image-1.webp",
+        "price": "1549.00",
+        "quantity": 1
+    },
+    {
+        "id": "rog-gladius-II",
+        "name": "ROG Gladius II Origin PNK LTD",
+        "description": "Bundle-Zenbook 14 Flip OLED bundle set",
+        "image": "./clientlib-site/images/products/product-1-image-1.webp",
+        "price": "59.00",
+        "quantity": 2
+    }
+]
