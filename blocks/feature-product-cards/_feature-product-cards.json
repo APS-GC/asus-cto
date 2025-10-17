@@ -1,30 +1,30 @@
 {
   "definitions": [
     {
-      "title": "Top Pick",
-      "id": "top-pick",
+      "title": "Feature Product Cards",
+      "id": "feature-product-cards",
       "plugins": {
         "xwalk": {
           "page": {
             "resourceType": "core/franklin/components/block/v1/block",
             "template": {
-              "name": "Top Pick",
-              "filter": "top-pick"
+              "name": "Feature Product Cards",
+              "filter": "feature-product-cards"
             }
           }
         }
       }
     },
     {
-      "title": "Top Pick Item",
-      "id": "top-pick-item",
+      "title": "Feature Product Card",
+      "id": "feature-product-card",
       "plugins": {
         "xwalk": {
           "page": {
             "resourceType": "core/franklin/components/block/v1/block/item",
             "template": {
-              "name": "Top Pick Item",
-              "model": "top-pick-item"
+              "name": "Feature Product Card",
+              "model": "feature-product-card"
             }
           }
         }
@@ -33,20 +33,22 @@
   ],
   "models": [
     {
-      "id": "top-pick-item",
+      "id": "feature-product-card",
       "fields": [
         {
           "component": "reference",
           "valueType": "string",
           "name": "image",
           "label": "Product Image",
+          "description": "Upload or select a product image",
           "multi": false
         },
         {
           "component": "text",
           "valueType": "string",
-          "name": "category",
-          "label": "Category",
+          "name": "label",
+          "label": "Product Label/Category",
+          "description": "Small label text (e.g., 'Top picks', 'Featured', etc.)",
           "value": "Top picks"
         },
         {
@@ -54,12 +56,17 @@
           "valueType": "string",
           "name": "title",
           "label": "Product Title",
-          "value": ""
+          "description": "Main product title or name",
+          "value": "",
+          "validation": {
+            "required": true
+          }
         },
         {
           "component": "aem-content",
           "name": "link",
-          "label": "Action Link",
+          "label": "Call-to-Action Link",
+          "description": "Link with text (e.g., 'View configs', 'Learn more')",
           "valueType": "string",
           "value": "<p><a href=\"#\">View configs</a></p>"
         }
@@ -68,9 +75,9 @@
   ],
   "filters": [
     {
-      "id": "top-pick",
+      "id": "feature-product-cards",
       "components": [
-        "top-pick-item"
+        "feature-product-card"
       ]
     }
   ]

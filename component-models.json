@@ -283,20 +283,22 @@
     ]
   },
   {
-    "id": "top-pick-item",
+    "id": "feature-product-card",
     "fields": [
       {
         "component": "reference",
         "valueType": "string",
         "name": "image",
         "label": "Product Image",
+        "description": "Upload or select a product image",
         "multi": false
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "category",
-        "label": "Category",
+        "name": "label",
+        "label": "Product Label/Category",
+        "description": "Small label text (e.g., 'Top picks', 'Featured', etc.)",
         "value": "Top picks"
       },
       {
@@ -304,12 +306,17 @@
         "valueType": "string",
         "name": "title",
         "label": "Product Title",
-        "value": ""
+        "description": "Main product title or name",
+        "value": "",
+        "validation": {
+          "required": true
+        }
       },
       {
         "component": "aem-content",
         "name": "link",
-        "label": "Action Link",
+        "label": "Call-to-Action Link",
+        "description": "Link with text (e.g., 'View configs', 'Learn more')",
         "valueType": "string",
         "value": "<p><a href=\"#\">View configs</a></p>"
       }

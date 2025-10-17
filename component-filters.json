@@ -43,9 +43,9 @@
     ]
   },
   {
-    "id": "top-pick",
-    "components": [
-      "top-pick-item"
-    ]
-  }
+      "id": "feature-product-cards",
+      "components": [
+        "feature-product-card"
+      ]
+    }
 ]

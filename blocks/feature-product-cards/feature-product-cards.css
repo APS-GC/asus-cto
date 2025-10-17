@@ -1,0 +1,247 @@
+/* Feature Product Cards Block - Based on webpack component */
+.feature-product-cards {
+  margin: var(--spacing-32) 0;
+}
+
+.feature-product-cards > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--spacing-24);
+}
+
+.feature-product-cards .featured-product-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  background-color: var(--color-primary-50);
+  border-radius: var(--border-radius-xl);
+  color: var(--color-primary-950);
+  align-items: center;
+  box-shadow: var(--shadow-normal);
+  padding: var(--spacing-8);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-product-cards .featured-product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.feature-product-cards .product-image-wrapper {
+  width: 120px;
+  height: auto;
+  border-radius: var(--border-radius-sm);
+  position: relative;
+}
+
+.feature-product-cards .product-image-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0057b7 0%, #f7323f 50%, #000000 100%);
+  border-radius: 100%;
+  filter: blur(32px);
+  z-index: 0;
+}
+
+.feature-product-cards .product-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+  border-radius: var(--border-radius-sm);
+}
+
+.feature-product-cards .product-info {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  height: 100%;
+  padding-left: var(--spacing-10);
+  gap: var(--spacing-1);
+}
+
+.feature-product-cards .label {
+  color: var(--color-primary-950);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  margin: 0;
+  opacity: 0.8;
+}
+
+.feature-product-cards .title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-snug);
+  margin: var(--spacing-12) 0;
+  color: var(--color-primary-950);
+}
+
+.feature-product-cards .cta-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+}
+
+.feature-product-cards .cta {
+  color: var(--color-primary-950);
+  text-decoration: none;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.3s ease;
+  gap: var(--spacing-1);
+}
+
+.feature-product-cards .cta:hover {
+  color: var(--color-text-link-hover);
+  text-decoration: underline;
+}
+
+.feature-product-cards .icon--arrow-wide-right {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .feature-product-cards {
+    margin: var(--spacing-24) 0;
+  }
+
+  .feature-product-cards > ul {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-20);
+  }
+
+  .feature-product-cards .featured-product-card {
+    padding: var(--spacing-5);
+  }
+
+  .feature-product-cards .product-image-wrapper {
+    width: 84px;
+    align-self: flex-start;
+  }
+
+  .feature-product-cards .product-info {
+    padding-left: var(--spacing-4);
+  }
+
+  .feature-product-cards .label {
+    font-size: var(--font-size-xs);
+  }
+
+  .feature-product-cards .title {
+    font-size: var(--font-size-xl);
+  }
+}
+
+@media (max-width: 768px) {
+  .feature-product-cards > ul {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-16);
+  }
+
+  .feature-product-cards .featured-product-card {
+    padding: var(--spacing-4);
+  }
+
+  .feature-product-cards .product-image-wrapper {
+    width: 72px;
+  }
+
+  .feature-product-cards .title {
+    font-size: var(--font-size-lg);
+    margin: var(--spacing-8) 0;
+  }
+
+  .feature-product-cards .cta {
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Dark theme variant */
+.feature-product-cards.dark .featured-product-card {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-950);
+}
+
+.feature-product-cards.dark .label,
+.feature-product-cards.dark .title,
+.feature-product-cards.dark .cta {
+  color: var(--color-primary-950);
+}
+
+/* Light theme variant */
+.feature-product-cards.light .featured-product-card {
+  background-color: var(--color-primary-950);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-normal);
+}
+
+.feature-product-cards.light .label,
+.feature-product-cards.light .title,
+.feature-product-cards.light .cta {
+  color: var(--color-primary);
+}
+
+.feature-product-cards.light .cta:hover {
+  color: var(--color-primary-300);
+}
+
+/* Accessibility improvements */
+.feature-product-cards .featured-product-card:focus-within {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+.feature-product-cards .cta:focus {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--border-radius-xs);
+}
+
+/* Animation for better UX */
+@media (prefers-reduced-motion: no-preference) {
+  .feature-product-cards .featured-product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .feature-product-cards .cta {
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+  }
+  
+  .feature-product-cards .product-image {
+    transition: transform 0.3s ease;
+  }
+  
+  .feature-product-cards .featured-product-card:hover .product-image {
+    transform: scale(1.02);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .feature-product-cards .featured-product-card {
+    border: 2px solid var(--color-primary);
+  }
+  
+  .feature-product-cards .cta {
+    text-decoration: underline;
+  }
+}
