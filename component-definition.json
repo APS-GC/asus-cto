@@ -203,23 +203,23 @@
             }
           }
         }
-         },
+        },
         {
-          "title": "Feature Product Card",
-          "id": "feature-product-card",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block/item",
-                "template": {
-                  "name": "Feature Product Card",
-                  "model": "feature-product-card"
-                }
+        "title": "Feature Product Card",
+        "id": "feature-product-card",
+        "plugins": {
+          "xwalk": {
+            "page": {
+              "resourceType": "core/franklin/components/block/v1/block/item",
+              "template": {
+                "name": "Feature Product Card",
+                "model": "feature-product-card"
               }
             }
           }
         }
-    ]
+        }
+      ]
     }
   ]
 }

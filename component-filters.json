@@ -42,7 +42,7 @@
       "title"
     ]
   },
-  {
+   {
       "id": "feature-product-cards",
       "components": [
         "feature-product-card"
