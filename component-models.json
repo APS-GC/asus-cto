@@ -322,32 +322,68 @@
       }
     ]
   },
-    {
-    "id": "feature-product-card",
+  {
+    "id": "footer",
     "fields": [
       {
-        "component": "reference",
-        "valueType": "string",
-        "name": "image",
-        "label": "Product Image",
-        "description": "Upload or select a product image",
-        "multi": false
+        "component": "text",
+        "name": "newsletterTitle",
+        "label": "Newsletter Title",
+        "description": "Title for the newsletter signup section",
+        "value": "Get the latest deals and more"
       },
       {
         "component": "text",
-        "valueType": "string",
-        "name": "label",
-        "label": "Product Label/Category",
-        "description": "Small label text (e.g., 'Top picks', 'Featured', etc.)",
-        "value": "Top picks"
+        "name": "newsletterPlaceholder",
+        "label": "Newsletter Placeholder",
+        "description": "Placeholder text for email input",
+        "value": "Enter email address"
       },
       {
         "component": "text",
-        "valueType": "string",
-        "name": "title",
-        "label": "Product Title",
-        "description": "Main product title or name",
-        "value": "",
+        "name": "newsletterButtonText",
+        "label": "Newsletter Button Text",
+        "description": "Text for the newsletter signup button",
+        "value": "Sign up"
+      },
+      {
+        "component": "text",
+        "name": "socialTitle",
+        "label": "Social Media Title",
+        "description": "Title for the social media section",
+        "value": "Follow us at:"
+      },
+      {
+        "component": "text",
+        "name": "globalText",
+        "label": "Global Text",
+        "description": "Text for global/language selector",
+        "value": "Global / English"
+      }
+    ]
+  },
+  {
+    "id": "footer-link-column",
+    "fields": [
+      {
+        "component": "text",
+        "name": "columnTitle",
+        "label": "Column Title",
+        "description": "Title for this navigation column",
+        "validation": {
+          "required": true
+        }
+      }
+    ]
+  },
+  {
+    "id": "footer-link",
+    "fields": [
+      {
+        "component": "text",
+        "name": "linkText",
+        "label": "Link Text",
+        "description": "Display text for the link",
         "validation": {
           "required": true
         }
@@ -355,10 +391,21 @@
       {
         "component": "aem-content",
         "name": "link",
-        "label": "Call-to-Action Link",
-        "description": "Link with text (e.g., 'View configs', 'Learn more')",
-        "valueType": "string",
-        "value": "<p><a href=\"#\">View configs</a></p>"
+        "label": "Link URL",
+        "description": "URL or page reference for the link"
+      },
+      {
+        "component": "text",
+        "name": "linkTitle",
+        "label": "Link Title",
+        "description": "Title attribute for accessibility (optional)"
+      },
+      {
+        "component": "boolean",
+        "name": "openInNewWindow",
+        "label": "Open in New Window",
+        "description": "Whether to open the link in a new window/tab",
+        "value": false
       }
     ]
   }
