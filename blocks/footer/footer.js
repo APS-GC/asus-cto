@@ -1,7 +1,8 @@
 function parseFooterData(block) {
+  // Default data structure
   const data = {
     newsletterLabel: 'Get the latest deals and more',
-    newsletterPlaceholder: 'Enter email address',
+    newsletterPlaceholder: 'Enter email address', 
     newsletterButtonText: 'Sign up',
     socialLabel: 'Follow us at:',
     socialLinks: [
@@ -20,7 +21,7 @@ function parseFooterData(block) {
         links: [{ linkText: 'All Desktops', linkUrl: '#' }]
       },
       {
-        columnTitle: 'Support',
+        columnTitle: 'Support', 
         links: [
           { linkText: 'Help Me Choose', linkUrl: '#' },
           { linkText: 'Contact Us', linkUrl: '#' },
@@ -43,35 +44,101 @@ function parseFooterData(block) {
     ]
   };
 
-  // Parse authoring data from block content
+  // Process block content for authoring data
   const rows = [...block.children];
-  rows.forEach((row) => {
+  let footerColumnsArray = [];
+  let legalLinksArray = [];
+  let socialLinksArray = [];
+  let currentColumn = null;
+  let currentSection = '';
+  
+  rows.forEach((row, index) => {
     const cells = [...row.children];
+    
     if (cells.length >= 2) {
-      const key = cells[0].textContent.trim().toLowerCase().replace(/\s+/g, '');
+      const field = cells[0].textContent.trim();
       const value = cells[1].textContent.trim();
       
-      switch (key) {
-        case 'newsletterlabel':
+      // Handle simple text fields
+      switch (field) {
+        case 'Newsletter Label':
           data.newsletterLabel = value;
           break;
-        case 'newsletterplaceholder':
+        case 'Newsletter Placeholder':
           data.newsletterPlaceholder = value;
           break;
-        case 'newsletterbuttontext':
+        case 'Newsletter Button Text':
           data.newsletterButtonText = value;
           break;
-        case 'sociallabel':
+        case 'Social Label':
           data.socialLabel = value;
           break;
-        case 'globaltext':
+        case 'Global Text':
           data.globalText = value;
           break;
         default:
+          // Handle complex structured data
+          if (field.startsWith('Column ')) {
+            // Parse footer columns - format: "Column Title" | "Links (pipe separated)"
+            const columnTitle = field.replace('Column ', '');
+            const links = value.split('|').map(link => {
+              const [linkText, linkUrl] = link.split(' - ');
+              return { 
+                linkText: linkText ? linkText.trim() : link.trim(), 
+                linkUrl: linkUrl ? linkUrl.trim() : '#' 
+              };
+            });
+            footerColumnsArray.push({ columnTitle, links });
+          } else if (field.startsWith('Legal ')) {
+            // Parse legal links - format: "Legal Link Name" | "URL"
+            const linkText = field.replace('Legal ', '');
+            legalLinksArray.push({ linkText, linkUrl: value });
+          } else if (field.startsWith('Social ')) {
+            // Parse social links - format: "Social Platform" | "URL"
+            const platform = field.replace('Social ', '').toLowerCase();
+            socialLinksArray.push({ platform, url: value });
+          }
           break;
+      }
+    } else if (cells.length === 1) {
+      const singleValue = cells[0].textContent.trim();
+      
+      // Handle single-cell rows that might contain structured data
+      if (singleValue.includes('|')) {
+        // Parse pipe-separated data
+        const parts = singleValue.split('|').map(p => p.trim());
+        if (parts.length === 2) {
+          const [key, value] = parts;
+          
+          if (key.startsWith('Column:')) {
+            const columnTitle = key.replace('Column:', '').trim();
+            const links = value.split(',').map(link => {
+              const [linkText, linkUrl] = link.split(' - ');
+              return { 
+                linkText: linkText ? linkText.trim() : link.trim(), 
+                linkUrl: linkUrl ? linkUrl.trim() : '#' 
+              };
+            });
+            footerColumnsArray.push({ columnTitle, links });
+          } else if (key.startsWith('Legal:')) {
+            const linkText = key.replace('Legal:', '').trim();
+            legalLinksArray.push({ linkText, linkUrl: value });
+          }
+        }
       }
     }
   });
+
+  // Update arrays if they have content
+  if (footerColumnsArray.length > 0) {
+    data.footerColumns = footerColumnsArray;
+  }
+  if (legalLinksArray.length > 0) {
+    data.legalLinks = legalLinksArray;
+  }
+  if (socialLinksArray.length > 0) {
+    data.socialLinks = socialLinksArray;
+  }
 
   return data;
 }
