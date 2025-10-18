@@ -1,0 +1,130 @@
+.article-card > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-gap: 24px;
+}
+
+.article-card > ul > li {
+  overflow: visible;
+}
+
+.article-card-link {
+  background: #1a1a1a;
+  color: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+  text-decoration: none;
+  border: 1px solid #333333;
+  height: 100%;
+}
+
+.article-card-link:hover {
+  border-color: #555555;
+  transform: translateY(-2px);
+}
+
+.article-card-link:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
+}
+
+.article-card-image {
+  width: 100%;
+  height: fit-content;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.article-card-image picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.article-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.article-card-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
+}
+
+.article-card-date {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #ffffff;
+  margin: 0;
+  font-weight: 500;
+}
+
+.article-card-title {
+  font-size: 20px;
+  line-height: 1.3;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.article-card-desc {
+  color: #b3b3b3;
+  font-size: 14px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+.article-card-desc p {
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .article-card-title {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .article-card > ul {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-gap: 16px;
+  }
+  
+  .article-card-content {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .article-card > ul {
+    grid-template-columns: 1fr;
+    grid-gap: 16px;
+  }
+}
+
+/* Responsive adjustments for larger screens */
+@media (min-width: 1200px) {
+  .article-card > ul {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

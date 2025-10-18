@@ -19,7 +19,8 @@
       "quote",
       "carousel",
       "feature-product-cards",
-      "footer"
+      "footer",
+      "article-card"
     ]
   },
   {
@@ -47,6 +48,12 @@
       "id": "feature-product-cards",
       "components": [
         "feature-product-card"
+      ]
+    },
+    {
+      "id": "article-card",
+      "components": [
+        "article-card-item"
       ]
     }
 ]

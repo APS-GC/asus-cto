@@ -480,5 +480,60 @@
         ]
       }
     ]
+  },
+  {
+    "id": "article-card-item",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Article Image",
+        "description": "Upload or select an article image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Image Alt Text",
+        "description": "Alternative text for the article image",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "date",
+        "label": "Article Date",
+        "description": "Publication date of the article (e.g., February 10, 2025)",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Article Title",
+        "description": "Main title of the article",
+        "value": "",
+        "validation": {
+          "required": true
+        }
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Article Description",
+        "description": "Brief description or excerpt of the article",
+        "valueType": "string",
+        "value": ""
+      },
+      {
+        "component": "aem-content",
+        "name": "link",
+        "label": "Article Link",
+        "description": "Link to the full article",
+        "valueType": "string"
+      }
+    ]
   }
 ]
