@@ -13,13 +13,23 @@ export default function decorate(block) {
   const footerGrid = document.createElement('div');
   footerGrid.className = 'footer-grid';
   
-  // Get configuration from block data attributes or use defaults
+  // Get configuration from Universal Editor fields or block data attributes or use defaults
+  const getFieldValue = (fieldName, defaultValue) => {
+    // Try Universal Editor field first
+    const fieldElement = block.querySelector(`[data-field="${fieldName}"]`);
+    if (fieldElement && fieldElement.textContent.trim()) {
+      return fieldElement.textContent.trim();
+    }
+    // Fallback to dataset attribute
+    return block.dataset[fieldName] || defaultValue;
+  };
+  
   const config = {
-    newsletterTitle: block.dataset.newsletterTitle || 'Get the latest deals and more',
-    newsletterPlaceholder: block.dataset.newsletterPlaceholder || 'Enter email address',
-    newsletterButtonText: block.dataset.newsletterButtonText || 'Sign up',
-    socialTitle: block.dataset.socialTitle || 'Follow us at:',
-    globalText: block.dataset.globalText || 'Global / English'
+    newsletterTitle: getFieldValue('newsletterTitle', 'Get the latest deals and more'),
+    newsletterPlaceholder: getFieldValue('newsletterPlaceholder', 'Enter email address'),
+    newsletterButtonText: getFieldValue('newsletterButtonText', 'Sign up'),
+    socialTitle: getFieldValue('socialTitle', 'Follow us at:'),
+    globalText: getFieldValue('globalText', 'Global / English')
   };
   
   // Process block content
@@ -30,44 +40,75 @@ export default function decorate(block) {
   const socialLinks = [];
   const bottomLinks = [];
   
-  // Process rows to categorize content
+  // Process rows to categorize content - Updated for Universal Editor
   rows.forEach(row => {
     const cells = [...row.children];
     cells.forEach(cell => {
       // Check if this is a social link component
-      if (cell.dataset.component === 'footer-social-link') {
+      if (cell.dataset.component === 'footer-social-link' || cell.classList.contains('footer-social-link')) {
+        const socialName = cell.dataset.socialName || cell.querySelector('[data-field="socialName"]')?.textContent || 'Social';
+        const socialUrl = cell.dataset.socialUrl || cell.querySelector('[data-field="socialUrl"]')?.textContent || cell.querySelector('a')?.href || '#';
+        const socialIcon = cell.dataset.socialIcon || cell.querySelector('[data-field="socialIcon"]')?.textContent || 'icon-facebook.svg';
+        
         socialLinks.push({
-          name: cell.dataset.socialName || 'Social',
-          url: cell.dataset.socialUrl || '#',
-          icon: cell.dataset.socialIcon || 'icon-facebook.svg'
+          name: socialName,
+          url: socialUrl,
+          icon: socialIcon
         });
       }
       // Check if this is a bottom link component
-      else if (cell.dataset.component === 'footer-bottom-link') {
+      else if (cell.dataset.component === 'footer-bottom-link' || cell.classList.contains('footer-bottom-link')) {
+        const linkText = cell.dataset.linkText || cell.querySelector('[data-field="linkText"]')?.textContent || cell.textContent.trim() || 'Link';
+        const linkUrl = cell.dataset.link || cell.querySelector('[data-field="link"]')?.textContent || cell.querySelector('a')?.href || '#';
+        const linkTitle = cell.dataset.linkTitle || cell.querySelector('[data-field="linkTitle"]')?.textContent || '';
+        const openInNewWindow = cell.dataset.openInNewWindow === 'true' || cell.querySelector('[data-field="openInNewWindow"]')?.textContent === 'true';
+        
         bottomLinks.push({
-          text: cell.dataset.linkText || 'Link',
-          url: cell.dataset.link || '#',
-          title: cell.dataset.linkTitle || '',
-          openInNewWindow: cell.dataset.openInNewWindow === 'true'
+          text: linkText,
+          url: linkUrl,
+          title: linkTitle,
+          openInNewWindow: openInNewWindow
         });
       }
       // Check if this is a link column component
-      else if (cell.dataset.component === 'footer-link-column') {
+      else if (cell.dataset.component === 'footer-link-column' || cell.classList.contains('footer-link-column')) {
+        const columnTitle = cell.dataset.columnTitle || cell.querySelector('[data-field="columnTitle"]')?.textContent || cell.querySelector('h3, h4, h5, h6')?.textContent || 'Column';
+        
         const columnData = {
-          title: cell.dataset.columnTitle || 'Column',
+          title: columnTitle,
           links: []
         };
         
-        // Find child links
-        const childLinks = cell.querySelectorAll('[data-component="footer-link"]');
+        // Find child links - Updated for Universal Editor
+        const childLinks = cell.querySelectorAll('[data-component="footer-link"], .footer-link');
         childLinks.forEach(linkEl => {
+          const linkText = linkEl.dataset.linkText || linkEl.querySelector('[data-field="linkText"]')?.textContent || linkEl.textContent.trim() || 'Link';
+          const linkUrl = linkEl.dataset.link || linkEl.querySelector('[data-field="link"]')?.textContent || linkEl.querySelector('a')?.href || '#';
+          const linkTitle = linkEl.dataset.linkTitle || linkEl.querySelector('[data-field="linkTitle"]')?.textContent || '';
+          const openInNewWindow = linkEl.dataset.openInNewWindow === 'true' || linkEl.querySelector('[data-field="openInNewWindow"]')?.textContent === 'true';
+          
           columnData.links.push({
-            text: linkEl.dataset.linkText || 'Link',
-            url: linkEl.dataset.link || '#',
-            title: linkEl.dataset.linkTitle || '',
-            openInNewWindow: linkEl.dataset.openInNewWindow === 'true'
+            text: linkText,
+            url: linkUrl,
+            title: linkTitle,
+            openInNewWindow: openInNewWindow
           });
         });
+        
+        // Also check for direct links in the column (fallback)
+        if (columnData.links.length === 0) {
+          const directLinks = cell.querySelectorAll('a');
+          directLinks.forEach(linkEl => {
+            if (linkEl.textContent.trim() && linkEl.textContent.trim() !== columnTitle) {
+              columnData.links.push({
+                text: linkEl.textContent.trim(),
+                url: linkEl.href || '#',
+                title: linkEl.title || '',
+                openInNewWindow: linkEl.target === '_blank'
+              });
+            }
+          });
+        }
         
         linkColumns.push(columnData);
       }
@@ -301,6 +342,79 @@ export default function decorate(block) {
   container.appendChild(footerGrid);
   container.appendChild(footerBottom);
   footer.appendChild(container);
+  
+  // Add Universal Editor instrumentation for editable areas
+  
+  // Make newsletter title editable
+  const newsletterTitleElement = footer.querySelector('label[for="newsletter-email"]');
+  if (newsletterTitleElement) {
+    newsletterTitleElement.setAttribute('data-aue-prop', 'newsletterTitle');
+    newsletterTitleElement.setAttribute('data-aue-type', 'text');
+    newsletterTitleElement.setAttribute('data-aue-label', 'Newsletter Title');
+  }
+  
+  // Make social title editable
+  const socialTitleElement = footer.querySelector('.text-social');
+  if (socialTitleElement) {
+    socialTitleElement.setAttribute('data-aue-prop', 'socialTitle');
+    socialTitleElement.setAttribute('data-aue-type', 'text');
+    socialTitleElement.setAttribute('data-aue-label', 'Social Media Title');
+  }
+  
+  // Make global text editable
+  const globalTextElement = footer.querySelector('span');
+  if (globalTextElement) {
+    globalTextElement.setAttribute('data-aue-prop', 'globalText');
+    globalTextElement.setAttribute('data-aue-type', 'text');
+    globalTextElement.setAttribute('data-aue-label', 'Global Text');
+  }
+  
+  // Add instrumentation for social links
+  const socialLinksElements = footer.querySelectorAll('.social__icons li');
+  socialLinksElements.forEach((li, index) => {
+    if (index < socialLinks.length) {
+      const link = socialLinks[index];
+      li.setAttribute('data-aue-resource', `urn:aemconnection:${link.name.toLowerCase()}-social-link`);
+      li.setAttribute('data-aue-type', 'component');
+      li.setAttribute('data-aue-filter', 'footer-social-link');
+      li.setAttribute('data-aue-label', `${link.name} Social Link`);
+    }
+  });
+  
+  // Add instrumentation for footer link columns
+  const columnElements = footer.querySelectorAll('.footer-links__column');
+  columnElements.forEach((column, index) => {
+    if (index < linkColumns.length) {
+      const columnData = linkColumns[index];
+      column.setAttribute('data-aue-resource', `urn:aemconnection:footer-column-${index}`);
+      column.setAttribute('data-aue-type', 'component');
+      column.setAttribute('data-aue-filter', 'footer-link-column');
+      column.setAttribute('data-aue-label', `${columnData.title} Column`);
+      
+      // Add instrumentation for individual links within columns
+      const linkElements = column.querySelectorAll('li a');
+      linkElements.forEach((linkEl, linkIndex) => {
+        if (linkIndex > 0) { // Skip the title
+          linkEl.parentElement.setAttribute('data-aue-resource', `urn:aemconnection:footer-link-${index}-${linkIndex}`);
+          linkEl.parentElement.setAttribute('data-aue-type', 'component');
+          linkEl.parentElement.setAttribute('data-aue-filter', 'footer-link');
+          linkEl.parentElement.setAttribute('data-aue-label', `${linkEl.textContent} Link`);
+        }
+      });
+    }
+  });
+  
+  // Add instrumentation for bottom links
+  const bottomLinksElements = footer.querySelectorAll('.footer-bottom__links a');
+  bottomLinksElements.forEach((linkEl, index) => {
+    if (index < bottomLinks.length) {
+      const link = bottomLinks[index];
+      linkEl.setAttribute('data-aue-resource', `urn:aemconnection:footer-bottom-link-${index}`);
+      linkEl.setAttribute('data-aue-type', 'component');
+      linkEl.setAttribute('data-aue-filter', 'footer-bottom-link');
+      linkEl.setAttribute('data-aue-label', `${link.text} Bottom Link`);
+    }
+  });
   
   // Move instrumentation and replace block content
   moveInstrumentation(block, footer);
