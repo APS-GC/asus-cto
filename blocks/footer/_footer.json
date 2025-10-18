@@ -1,0 +1,190 @@
+{
+  "title": "Footer",
+  "description": "Footer block with newsletter signup, social media links, navigation columns, and legal links",
+  "lastModified": "2024-10-18",
+  "author": "ASUS",
+  "template": {
+    "newsletterLabel": "Get the latest deals and more",
+    "newsletterPlaceholder": "Enter email address",
+    "newsletterButtonText": "Sign up",
+    "socialLabel": "Follow us at:",
+    "socialLinks": [
+      {
+        "platform": "facebook",
+        "url": "#"
+      },
+      {
+        "platform": "x",
+        "url": "#"
+      },
+      {
+        "platform": "discord",
+        "url": "#"
+      },
+      {
+        "platform": "youtube",
+        "url": "#"
+      },
+      {
+        "platform": "twitch",
+        "url": "#"
+      },
+      {
+        "platform": "instagram",
+        "url": "#"
+      },
+      {
+        "platform": "tiktok",
+        "url": "#"
+      },
+      {
+        "platform": "thread",
+        "url": "#"
+      }
+    ],
+    "footerColumns": [
+      {
+        "columnTitle": "Shop",
+        "links": [
+          {
+            "linkText": "All Desktops",
+            "linkUrl": "#"
+          }
+        ]
+      },
+      {
+        "columnTitle": "Support",
+        "links": [
+          {
+            "linkText": "Help Me Choose",
+            "linkUrl": "#"
+          },
+          {
+            "linkText": "Contact Us",
+            "linkUrl": "#"
+          },
+          {
+            "linkText": "Shopping FAQs",
+            "linkUrl": "#"
+          }
+        ]
+      },
+      {
+        "columnTitle": "Support",
+        "links": [
+          {
+            "linkText": "Help Me Choose",
+            "linkUrl": "#"
+          },
+          {
+            "linkText": "Education & Commercial Inquiries",
+            "linkUrl": "#"
+          }
+        ]
+      }
+    ],
+    "globalText": "Global / English",
+    "legalLinks": [
+      {
+        "linkText": "Privacy Policy",
+        "linkUrl": "#"
+      },
+      {
+        "linkText": "Terms & Conditions",
+        "linkUrl": "#"
+      },
+      {
+        "linkText": "Cookie Settings",
+        "linkUrl": "#"
+      }
+    ]
+  },
+  "fields": [
+    {
+      "name": "newsletterLabel",
+      "type": "text",
+      "required": false,
+      "default": "Get the latest deals and more"
+    },
+    {
+      "name": "newsletterPlaceholder",
+      "type": "text",
+      "required": false,
+      "default": "Enter email address"
+    },
+    {
+      "name": "newsletterButtonText",
+      "type": "text",
+      "required": false,
+      "default": "Sign up"
+    },
+    {
+      "name": "socialLabel",
+      "type": "text",
+      "required": false,
+      "default": "Follow us at:"
+    },
+    {
+      "name": "socialLinks",
+      "type": "array",
+      "required": false,
+      "fields": [
+        {
+          "name": "platform",
+          "type": "select",
+          "options": ["facebook", "x", "discord", "youtube", "twitch", "instagram", "tiktok", "thread"]
+        },
+        {
+          "name": "url",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "name": "footerColumns",
+      "type": "array",
+      "required": false,
+      "fields": [
+        {
+          "name": "columnTitle",
+          "type": "text"
+        },
+        {
+          "name": "links",
+          "type": "array",
+          "fields": [
+            {
+              "name": "linkText",
+              "type": "text"
+            },
+            {
+              "name": "linkUrl",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "globalText",
+      "type": "text",
+      "required": false,
+      "default": "Global / English"
+    },
+    {
+      "name": "legalLinks",
+      "type": "array",
+      "required": false,
+      "fields": [
+        {
+          "name": "linkText",
+          "type": "text"
+        },
+        {
+          "name": "linkUrl",
+          "type": "text"
+        }
+      ]
+    }
+  ]
+}
