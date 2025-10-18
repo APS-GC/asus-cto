@@ -25,6 +25,55 @@ export default function decorate(block) {
   // Process block content
   const rows = [...block.children];
   
+  // Separate different types of content
+  const linkColumns = [];
+  const socialLinks = [];
+  const bottomLinks = [];
+  
+  // Process rows to categorize content
+  rows.forEach(row => {
+    const cells = [...row.children];
+    cells.forEach(cell => {
+      // Check if this is a social link component
+      if (cell.dataset.component === 'footer-social-link') {
+        socialLinks.push({
+          name: cell.dataset.socialName || 'Social',
+          url: cell.dataset.socialUrl || '#',
+          icon: cell.dataset.socialIcon || 'icon-facebook.svg'
+        });
+      }
+      // Check if this is a bottom link component
+      else if (cell.dataset.component === 'footer-bottom-link') {
+        bottomLinks.push({
+          text: cell.dataset.linkText || 'Link',
+          url: cell.dataset.link || '#',
+          title: cell.dataset.linkTitle || '',
+          openInNewWindow: cell.dataset.openInNewWindow === 'true'
+        });
+      }
+      // Check if this is a link column component
+      else if (cell.dataset.component === 'footer-link-column') {
+        const columnData = {
+          title: cell.dataset.columnTitle || 'Column',
+          links: []
+        };
+        
+        // Find child links
+        const childLinks = cell.querySelectorAll('[data-component="footer-link"]');
+        childLinks.forEach(linkEl => {
+          columnData.links.push({
+            text: linkEl.dataset.linkText || 'Link',
+            url: linkEl.dataset.link || '#',
+            title: linkEl.dataset.linkTitle || '',
+            openInNewWindow: linkEl.dataset.openInNewWindow === 'true'
+          });
+        });
+        
+        linkColumns.push(columnData);
+      }
+    });
+  });
+  
   // Create footer left section (newsletter and social)
   const footerLeft = document.createElement('div');
   footerLeft.className = 'footer-left';
@@ -73,22 +122,24 @@ export default function decorate(block) {
   const socialList = document.createElement('ul');
   socialList.className = 'social__icons p-0 m-0';
   
-  // Social media links data
-  const socialLinks = [
-    { name: 'Facebook', icon: 'icon-facebook.svg' },
-    { name: 'Twitter', icon: 'icon-x.svg' },
-    { name: 'Discord', icon: 'icon-discord.svg' },
-    { name: 'YouTube', icon: 'icon-youtube.svg' },
-    { name: 'Twitch', icon: 'icon-twitch.svg' },
-    { name: 'Instagram', icon: 'icon-instagram.svg' },
-    { name: 'TikTok', icon: 'icon-tiktok.svg' },
-    { name: 'Threads', icon: 'icon-thread.svg' }
+  // Use authorable social links if available, otherwise use defaults
+  const defaultSocialLinks = [
+    { name: 'Facebook', icon: 'icon-facebook.svg', url: '#' },
+    { name: 'Twitter', icon: 'icon-x.svg', url: '#' },
+    { name: 'Discord', icon: 'icon-discord.svg', url: '#' },
+    { name: 'YouTube', icon: 'icon-youtube.svg', url: '#' },
+    { name: 'Twitch', icon: 'icon-twitch.svg', url: '#' },
+    { name: 'Instagram', icon: 'icon-instagram.svg', url: '#' },
+    { name: 'TikTok', icon: 'icon-tiktok.svg', url: '#' },
+    { name: 'Threads', icon: 'icon-thread.svg', url: '#' }
   ];
   
-  socialLinks.forEach(link => {
+  const socialLinksToUse = socialLinks.length > 0 ? socialLinks : defaultSocialLinks;
+  
+  socialLinksToUse.forEach(link => {
     const li = document.createElement('li');
     const a = document.createElement('a');
-    a.href = '#';
+    a.href = link.url || '#';
     a.target = '_blank';
     a.setAttribute('aria-label', `Follow us on ${link.name} (open a new window)`);
     
@@ -118,52 +169,88 @@ export default function decorate(block) {
   footerLinks.className = 'footer-links';
   footerLinks.setAttribute('aria-label', 'Footer Navigation');
   
-  // Process rows to create navigation columns
-  rows.forEach((row, index) => {
-    if (index === 0) return; // Skip first row if it's a header
-    
-    const column = document.createElement('ul');
-    column.className = 'footer-links__column pl-0';
-    
-    const cells = [...row.children];
-    cells.forEach((cell, cellIndex) => {
-      const li = document.createElement('li');
+  // Use authorable link columns if available, otherwise create default columns
+  if (linkColumns.length > 0) {
+    // Use authorable columns
+    linkColumns.forEach(columnData => {
+      const column = document.createElement('ul');
+      column.className = 'footer-links__column pl-0';
       
-      if (cellIndex === 0) {
-        // First cell is the column header
-        const p = document.createElement('p');
-        p.className = 'w-500';
-        p.textContent = cell.textContent.trim();
-        li.appendChild(p);
-      } else {
-        // Other cells are links
-        const links = cell.querySelectorAll('a');
-        if (links.length > 0) {
-          links.forEach(link => {
-            const linkLi = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = link.href || '#';
-            a.textContent = link.textContent.trim();
-            linkLi.appendChild(a);
-            column.appendChild(linkLi);
-          });
-        } else if (cell.textContent.trim()) {
-          const a = document.createElement('a');
-          a.href = '#';
-          a.textContent = cell.textContent.trim();
-          li.appendChild(a);
+      // Add column title
+      const titleLi = document.createElement('li');
+      const titleP = document.createElement('p');
+      titleP.className = 'w-500';
+      titleP.textContent = columnData.title;
+      titleLi.appendChild(titleP);
+      column.appendChild(titleLi);
+      
+      // Add links
+      columnData.links.forEach(linkData => {
+        const linkLi = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = linkData.url || '#';
+        a.textContent = linkData.text;
+        a.target = linkData.openInNewWindow ? '_blank' : '_self';
+        if (linkData.title) {
+          a.title = linkData.title;
         }
-      }
+        if (linkData.openInNewWindow) {
+          a.setAttribute('aria-label', `${linkData.text} (open a new window)`);
+        }
+        linkLi.appendChild(a);
+        column.appendChild(linkLi);
+      });
       
-      if (li.children.length > 0) {
-        column.appendChild(li);
+      footerLinks.appendChild(column);
+    });
+  } else {
+    // Fallback: Process rows to create navigation columns (legacy support)
+    rows.forEach((row, index) => {
+      if (index === 0) return; // Skip first row if it's a header
+      
+      const column = document.createElement('ul');
+      column.className = 'footer-links__column pl-0';
+      
+      const cells = [...row.children];
+      cells.forEach((cell, cellIndex) => {
+        const li = document.createElement('li');
+        
+        if (cellIndex === 0) {
+          // First cell is the column header
+          const p = document.createElement('p');
+          p.className = 'w-500';
+          p.textContent = cell.textContent.trim();
+          li.appendChild(p);
+        } else {
+          // Other cells are links
+          const links = cell.querySelectorAll('a');
+          if (links.length > 0) {
+            links.forEach(link => {
+              const linkLi = document.createElement('li');
+              const a = document.createElement('a');
+              a.href = link.href || '#';
+              a.textContent = link.textContent.trim();
+              linkLi.appendChild(a);
+              column.appendChild(linkLi);
+            });
+          } else if (cell.textContent.trim()) {
+            const a = document.createElement('a');
+            a.href = '#';
+            a.textContent = cell.textContent.trim();
+            li.appendChild(a);
+          }
+        }
+        
+        if (li.children.length > 0) {
+          column.appendChild(li);
+        }
+      });
+      
+      if (column.children.length > 0) {
+        footerLinks.appendChild(column);
       }
     });
-    
-    if (column.children.length > 0) {
-      footerLinks.appendChild(column);
-    }
-  });
+  }
   
   footerRight.appendChild(footerLinks);
   
@@ -182,27 +269,33 @@ export default function decorate(block) {
   globalSpan.appendChild(globalImg);
   globalSpan.appendChild(document.createTextNode(config.globalText));
   
-  const bottomLinks = document.createElement('nav');
-  bottomLinks.className = 'footer-bottom__links';
-  bottomLinks.setAttribute('aria-label', 'Legal links');
+  const bottomLinksNav = document.createElement('nav');
+  bottomLinksNav.className = 'footer-bottom__links';
+  bottomLinksNav.setAttribute('aria-label', 'Legal links');
   
-  const legalLinks = [
+  // Use authorable bottom links if available, otherwise use defaults
+  const defaultLegalLinks = [
     { text: 'Privacy Policy', href: '#' },
     { text: 'Terms & Conditions', href: '#' },
     { text: 'Cookie Settings', href: '#' }
   ];
   
-  legalLinks.forEach(link => {
+  const linksToUse = bottomLinks.length > 0 ? bottomLinks : defaultLegalLinks;
+  
+  linksToUse.forEach(link => {
     const a = document.createElement('a');
-    a.href = link.href;
-    a.target = '_blank';
-    a.setAttribute('aria-label', `View ${link.text} (open a new window)`);
+    a.href = link.url || link.href || '#';
+    a.target = link.openInNewWindow ? '_blank' : '_self';
+    a.setAttribute('aria-label', `View ${link.text} ${link.openInNewWindow ? '(open a new window)' : ''}`);
     a.textContent = link.text;
-    bottomLinks.appendChild(a);
+    if (link.title) {
+      a.title = link.title;
+    }
+    bottomLinksNav.appendChild(a);
   });
   
   footerBottom.appendChild(globalSpan);
-  footerBottom.appendChild(bottomLinks);
+  footerBottom.appendChild(bottomLinksNav);
   
   // Assemble the complete footer
   container.appendChild(footerGrid);

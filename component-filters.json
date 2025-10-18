@@ -52,7 +52,9 @@
     {
       "id": "footer",
       "components": [
-        "footer-link-column"
+        "footer-link-column",
+        "footer-social-link",
+        "footer-bottom-link"
       ]
     },
     {

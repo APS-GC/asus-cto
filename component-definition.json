@@ -264,6 +264,36 @@
               }
             }
           }
+        },
+        {
+          "title": "Footer Social Link",
+          "id": "footer-social-link",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Footer Social Link",
+                  "model": "footer-social-link"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Footer Bottom Link",
+          "id": "footer-bottom-link",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Footer Bottom Link",
+                  "model": "footer-bottom-link"
+                }
+              }
+            }
+          }
         }
       ]
     }

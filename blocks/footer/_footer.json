@@ -45,6 +45,36 @@
           }
         }
       }
+    },
+    {
+      "title": "Footer Social Link",
+      "id": "footer-social-link",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Footer Social Link",
+              "model": "footer-social-link"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Footer Bottom Link",
+      "id": "footer-bottom-link",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Footer Bottom Link",
+              "model": "footer-bottom-link"
+            }
+          }
+        }
+      }
     }
   ],
   "models": [
@@ -85,6 +115,74 @@
           "label": "Global Text",
           "description": "Text for global/language selector",
           "value": "Global / English"
+        }
+      ]
+    },
+    {
+      "id": "footer-social-link",
+      "fields": [
+        {
+          "component": "text",
+          "name": "socialName",
+          "label": "Social Media Name",
+          "description": "Name of the social media platform",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "component": "aem-content",
+          "name": "socialUrl",
+          "label": "Social Media URL",
+          "description": "URL for the social media profile",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "component": "text",
+          "name": "socialIcon",
+          "label": "Social Media Icon",
+          "description": "Icon filename (e.g., icon-facebook.svg)",
+          "validation": {
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "footer-bottom-link",
+      "fields": [
+        {
+          "component": "text",
+          "name": "linkText",
+          "label": "Link Text",
+          "description": "Display text for the bottom link",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "component": "aem-content",
+          "name": "link",
+          "label": "Link URL",
+          "description": "URL or page reference for the link",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "component": "text",
+          "name": "linkTitle",
+          "label": "Link Title",
+          "description": "Title attribute for accessibility"
+        },
+        {
+          "component": "boolean",
+          "name": "openInNewWindow",
+          "label": "Open in New Window",
+          "description": "Whether to open the link in a new window/tab",
+          "value": true
         }
       ]
     },
@@ -140,7 +238,9 @@
     {
       "id": "footer",
       "components": [
-        "footer-link-column"
+        "footer-link-column",
+        "footer-social-link",
+        "footer-bottom-link"
       ]
     },
     {
