@@ -18,8 +18,7 @@
       "fragment",
       "quote",
       "carousel",
-      "feature-product-cards",
-      "footer"
+      "feature-product-cards"
     ]
   },
   {
@@ -47,20 +46,6 @@
       "id": "feature-product-cards",
       "components": [
         "feature-product-card"
-      ]
-    },
-    {
-      "id": "footer",
-      "components": [
-        "footer-link-column",
-        "footer-social-link",
-        "footer-bottom-link"
-      ]
-    },
-    {
-      "id": "footer-link-column",
-      "components": [
-        "footer-link"
       ]
     }
 ]
