@@ -617,6 +617,15 @@ function decorateBlocks(main) {
  */
 async function loadHeader(header) {
   const headerBlock = buildBlock('header', '');
+  
+  // Add Universal Editor instrumentation for editability
+  headerBlock.setAttribute('data-aue-resource', 'urn:aemconnection:/content/header');
+  headerBlock.setAttribute('data-aue-type', 'component');
+  headerBlock.setAttribute('data-aue-behavior', 'component');
+  headerBlock.setAttribute('data-aue-model', 'header');
+  headerBlock.setAttribute('data-aue-label', 'Header');
+  headerBlock.setAttribute('data-aue-filter', 'header');
+  
   header.append(headerBlock);
   decorateBlock(headerBlock);
   return loadBlock(headerBlock);
@@ -629,6 +638,15 @@ async function loadHeader(header) {
  */
 async function loadFooter(footer) {
   const footerBlock = buildBlock('footer', '');
+  
+  // Add Universal Editor instrumentation for editability
+  footerBlock.setAttribute('data-aue-resource', 'urn:aemconnection:/content/footer');
+  footerBlock.setAttribute('data-aue-type', 'component');
+  footerBlock.setAttribute('data-aue-behavior', 'component');
+  footerBlock.setAttribute('data-aue-model', 'footer');
+  footerBlock.setAttribute('data-aue-label', 'Footer');
+  footerBlock.setAttribute('data-aue-filter', 'footer');
+  
   footer.append(footerBlock);
   decorateBlock(footerBlock);
   return loadBlock(footerBlock);

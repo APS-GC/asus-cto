@@ -408,6 +408,20 @@
             "name": "url",
             "label": "Platform URL",
             "description": "URL for the social media platform"
+          },
+          {
+            "component": "reference",
+            "name": "icon",
+            "label": "Platform Icon",
+            "description": "Select icon from DAM for this social platform",
+            "multi": false
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "altText",
+            "label": "Icon Alt Text",
+            "description": "Alternative text for the platform icon"
           }
         ]
       },
@@ -456,6 +470,14 @@
         "label": "Global/Language Text",
         "description": "Text for global/language selector",
         "value": "Global / English"
+      },
+      {
+        "component": "reference",
+        "name": "globalIcon",
+        "label": "Global/Language Icon",
+        "description": "Select icon from DAM for global/language selector",
+        "multi": false,
+        "value": "/icons/Global.svg"
       },
       {
         "component": "container",
@@ -556,6 +578,62 @@
       },
       {
         "component": "container",
+        "name": "logos",
+        "label": "Logo Variants",
+        "description": "Different logo variants for different brands",
+        "multi": true,
+        "fields": [
+          {
+            "component": "select",
+            "name": "name",
+            "label": "Logo Variant",
+            "options": [
+              {
+                "name": "ASUS",
+                "value": "asus"
+              },
+              {
+                "name": "ROG",
+                "value": "rog"
+              },
+              {
+                "name": "Gaming PC",
+                "value": "gaming"
+              }
+            ]
+          },
+          {
+            "component": "reference",
+            "name": "icon",
+            "label": "Logo Icon",
+            "description": "Select logo from DAM",
+            "multi": false
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "altText",
+            "label": "Logo Alt Text",
+            "description": "Alternative text for the logo"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "width",
+            "label": "Logo Width",
+            "description": "Width of the logo"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "height",
+            "label": "Logo Height",
+            "description": "Height of the logo"
+          }
+        ]
+      },
+      {
+        "component": "container",
         "name": "navigationItems",
         "label": "Navigation Items",
         "description": "Main navigation menu items",
@@ -598,6 +676,70 @@
         "value": true
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "searchPlaceholder",
+        "label": "Mobile Search Placeholder",
+        "description": "Placeholder text for mobile search input",
+        "value": "Enter keywords"
+      },
+      {
+        "component": "reference",
+        "name": "searchIcon",
+        "label": "Search Icon",
+        "description": "Select search icon from DAM",
+        "multi": false,
+        "value": "/icons/search.svg"
+      },
+      {
+        "component": "reference",
+        "name": "cartIcon",
+        "label": "Cart Icon",
+        "description": "Select cart icon from DAM",
+        "multi": false,
+        "value": "/icons/cart.svg"
+      },
+      {
+        "component": "reference",
+        "name": "profileIcon",
+        "label": "Profile Icon",
+        "description": "Select profile icon from DAM",
+        "multi": false,
+        "value": "/icons/profile.svg"
+      },
+      {
+        "component": "reference",
+        "name": "hamburgerIcon",
+        "label": "Hamburger Menu Icon",
+        "description": "Select hamburger menu icon from DAM",
+        "multi": false,
+        "value": "/icons/hamburger.svg"
+      },
+      {
+        "component": "reference",
+        "name": "closeIcon",
+        "label": "Close Icon",
+        "description": "Select close icon from DAM",
+        "multi": false,
+        "value": "/icons/close.svg"
+      },
+      {
+        "component": "reference",
+        "name": "arrowLeftIcon",
+        "label": "Left Arrow Icon",
+        "description": "Select left arrow icon from DAM",
+        "multi": false,
+        "value": "/icons/arrow-left.svg"
+      },
+      {
+        "component": "reference",
+        "name": "arrowRightIcon",
+        "label": "Right Arrow Icon",
+        "description": "Select right arrow icon from DAM",
+        "multi": false,
+        "value": "/icons/arrow-right.svg"
+      },
+      {
         "component": "container",
         "name": "profileMenuItems",
         "label": "Profile Menu Items",
@@ -618,14 +760,6 @@
             "description": "URL for the profile menu item"
           }
         ]
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "searchPlaceholder",
-        "label": "Mobile Search Placeholder",
-        "description": "Placeholder text for mobile search input",
-        "value": "Enter keywords"
       }
     ]
   }
