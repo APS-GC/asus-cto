@@ -15,9 +15,9 @@
 .feature-product-cards .featured-product-card {
   display: grid;
   grid-template-columns: auto 1fr;
-  background-color: var(--color-primary-50);
+  background-color: #2a2d3a;
   border-radius: var(--border-radius-xl);
-  color: var(--color-primary-950);
+  color: #ffffff;
   align-items: center;
   box-shadow: var(--shadow-normal);
   padding: var(--spacing-8);
@@ -47,6 +47,7 @@
   border-radius: 100%;
   filter: blur(32px);
   z-index: 0;
+  opacity: 0.8;
 }
 
 .feature-product-cards .product-image {
@@ -69,7 +70,7 @@
 }
 
 .feature-product-cards .label {
-  color: var(--color-primary-950);
+  color: #ffffff;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-normal);
@@ -83,7 +84,7 @@
   font-weight: var(--font-weight-medium);
   line-height: var(--line-height-snug);
   margin: var(--spacing-12) 0;
-  color: var(--color-primary-950);
+  color: #ffffff;
 }
 
 .feature-product-cards .cta-wrapper {
@@ -93,7 +94,7 @@
 }
 
 .feature-product-cards .cta {
-  color: var(--color-primary-950);
+  color: #ffffff;
   text-decoration: none;
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-regular);
@@ -104,7 +105,7 @@
 }
 
 .feature-product-cards .cta:hover {
-  color: var(--color-text-link-hover);
+  color: #cccccc;
   text-decoration: underline;
 }
 
@@ -112,7 +113,7 @@
   width: 12px;
   height: 12px;
   display: inline-block;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
