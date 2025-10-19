@@ -3,6 +3,11 @@ function parseHeaderData(block) {
   const data = {
     logoAlt: 'ASUS Logo',
     logoUrl: '/',
+    logos: [
+      { name: 'asus', icon: '/icons/logo-asus.svg', altText: 'ASUS Logo', width: '87', height: '20' },
+      { name: 'rog', icon: '/icons/logo-rog.svg', altText: 'ROG Logo', width: '135', height: '26' },
+      { name: 'gaming', icon: '/icons/gaming_pc_logo.svg', altText: 'Gaming PC Custom Builder Logo', width: '104', height: '22' }
+    ],
     navigationItems: [
       { linkText: 'All Desktops', linkUrl: '/product-listing.html' },
       { linkText: 'Help Me Choose', linkUrl: '/help-me-choose.html' },
@@ -19,7 +24,14 @@ function parseHeaderData(block) {
       { linkText: 'My Wishlist', linkUrl: '#' },
       { linkText: 'Sign out', linkUrl: '#' }
     ],
-    searchPlaceholder: 'Enter keywords'
+    searchPlaceholder: 'Enter keywords',
+    searchIcon: '/icons/search.svg',
+    cartIcon: '/icons/cart.svg',
+    profileIcon: '/icons/profile.svg',
+    hamburgerIcon: '/icons/hamburger.svg',
+    closeIcon: '/icons/close.svg',
+    arrowLeftIcon: '/icons/arrow-left.svg',
+    arrowRightIcon: '/icons/arrow-right.svg'
   };
 
   // Check if block has UE model data or fallback to table parsing
@@ -33,6 +45,16 @@ function parseHeaderData(block) {
     if (typeof modelData.showSearch === 'boolean') data.showSearch = modelData.showSearch;
     if (typeof modelData.showProfile === 'boolean') data.showProfile = modelData.showProfile;
     if (typeof modelData.showCart === 'boolean') data.showCart = modelData.showCart;
+    if (modelData.searchIcon) data.searchIcon = modelData.searchIcon;
+    if (modelData.cartIcon) data.cartIcon = modelData.cartIcon;
+    if (modelData.profileIcon) data.profileIcon = modelData.profileIcon;
+    if (modelData.hamburgerIcon) data.hamburgerIcon = modelData.hamburgerIcon;
+    if (modelData.closeIcon) data.closeIcon = modelData.closeIcon;
+    if (modelData.arrowLeftIcon) data.arrowLeftIcon = modelData.arrowLeftIcon;
+    if (modelData.arrowRightIcon) data.arrowRightIcon = modelData.arrowRightIcon;
+    if (modelData.logos && Array.isArray(modelData.logos)) {
+      data.logos = modelData.logos;
+    }
     if (modelData.navigationItems && Array.isArray(modelData.navigationItems)) {
       data.navigationItems = modelData.navigationItems;
     }
@@ -119,34 +141,34 @@ function parseHeaderData(block) {
   return data;
 }
 
-function buildLogo(logoAlt, logoUrl) {
+function buildLogo(logoAlt, logoUrl, logos) {
+  const logoItems = logos.map(logo => {
+    const iconSrc = logo.icon || `/icons/logo-${logo.name}.svg`;
+    const altText = logo.altText || logoAlt;
+    const width = logo.width || 'auto';
+    const height = logo.height || 'auto';
+    
+    return `
+      <div class="logo-item logo-item--${logo.name}">
+        <div class="logo-wrapper">
+          <img src="${iconSrc}" alt="${altText}" class="logo-default" width="${width}" height="${height}" />
+        </div>
+      </div>
+    `;
+  }).join('');
+
   return `
     <div class="navigation">
       <nav class="cmp-navigation" itemscope itemtype="http://schema.org/SiteNavigationElement" aria-label="Main Navigation">
         <a href="${logoUrl}" aria-label="${logoAlt}" title="${logoAlt}" class="cmp-navigation__item--logo">
-          <!-- ASUS Logo -->
-          <div class="logo-item logo-item--asus">
-            <div class="logo-wrapper">
-              <img src="/icons/logo-asus.svg" alt="${logoAlt}" class="logo-default" width="87" height="20" />
-            </div>
-          </div>
-          <!-- ROG Logo -->
-          <div class="logo-item logo-item--rog">
-            <div class="logo-wrapper">
-              <img src="/icons/logo-rog.svg" alt="ROG Logo" class="logo-default" width="135" height="26" />
-            </div>
-          </div>
-          <!-- Gaming PC Custom Builder -->
-          <div title="Gaming PC Custom Builder" class="logo-item logo-item--gaming">
-            <img src="/icons/gaming_pc_logo.svg" alt="Gaming PC Custom Builder Logo" width="104" height="22" />
-          </div>
+          ${logoItems}
         </a>
       </nav>
     </div>
   `;
 }
 
-function buildNavigation(navigationItems, showSearch, showProfile, showCart, profileMenuItems) {
+function buildNavigation(navigationItems, showSearch, showProfile, showCart, profileMenuItems, icons) {
   const navItems = navigationItems.map(item => `
     <li class="cmp-sitenavigation__item">
       <a class="cmp-sitenavigation__item-link" href="${item.linkUrl}">${item.linkText}</a>
@@ -156,7 +178,7 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
   const searchIcon = showSearch ? `
     <li class="cmp-sitenavigation__item cmp-sitenavigation__item--search">
       <a class="cmp-sitenavigation__item-link" href="/" aria-label="Search">
-        <span class="icon icon--search"></span>
+        <img src="${icons.searchIcon}" alt="Search" class="icon icon--search" />
       </a>
     </li>
   ` : '';
@@ -172,7 +194,7 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
           aria-expanded="false"
           aria-controls="mini-cart-container"
         >
-          <span class="icon icon--cart"></span>
+          <img src="${icons.cartIcon}" alt="Cart" class="icon icon--cart" />
         </button>
         <div 
           id="mini-cart-container"
@@ -182,7 +204,9 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
           aria-labelledby="mini-cart-title" 
           aria-hidden="true"
         >
-          <button class="mini-cart__close" aria-label="Close mini cart"></button>
+          <button class="mini-cart__close" aria-label="Close mini cart">
+            <img src="${icons.closeIcon}" alt="Close" class="icon icon--close" />
+          </button>
           <h4 id="mini-cart-title" class="cart-summary"></h4>
         </div>
       </div>
@@ -197,11 +221,13 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
     <li class="cmp-sitenavigation__item cmp-sitenavigation__item--profile">
       <div class="profile-dropdown">
         <button class="cmp-sitenavigation__item-link profile-toggle logged-in" aria-label="Member Account" aria-expanded="false">
-          <span class="icon icon--profile"></span>
+          <img src="${icons.profileIcon}" alt="Profile" class="icon icon--profile" />
         </button>
         <ul class="profile-menu">
           <li class="profile-menu__header">
-            <button class="profile-menu__close" aria-label="Close profile menu"></button>
+            <button class="profile-menu__close" aria-label="Close profile menu">
+              <img src="${icons.closeIcon}" alt="Close" class="icon icon--close" />
+            </button>
           </li>
           ${profileMenuHTML}
         </ul>
@@ -221,8 +247,8 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
           ${profileIcon}
           <li class="cmp-sitenavigation__item cmp-sitenavigation__item--menu-toggle">
             <button id="header-hamburger-menu-toggle" class="btn btn-link" aria-label="Toggle Menu">
-              <span class="icon icon--hamburger"></span>
-              <span class="icon icon--close"></span>
+              <img src="${icons.hamburgerIcon}" alt="Menu" class="icon icon--hamburger" />
+              <img src="${icons.closeIcon}" alt="Close" class="icon icon--close" />
             </button>
           </li>
         </ul>
@@ -231,7 +257,7 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
   `;
 }
 
-function buildMobileMenu(navigationItems, showSearch, profileMenuItems, searchPlaceholder) {
+function buildMobileMenu(navigationItems, showSearch, profileMenuItems, searchPlaceholder, icons) {
   const mobileNavItems = navigationItems.map(item => `
     <li><a href="${item.linkUrl}" class="px-6">${item.linkText}</a></li>
   `).join('');
@@ -239,7 +265,7 @@ function buildMobileMenu(navigationItems, showSearch, profileMenuItems, searchPl
   const mobileSearch = showSearch ? `
     <li class="px-6">
       <div class="mobile-search">
-        <span class="icon icon--search"></span>
+        <img src="${icons.searchIcon}" alt="Search" class="icon icon--search" />
         <input type="text" placeholder="${searchPlaceholder}" title="${searchPlaceholder}"/>
       </div>
     </li>
@@ -258,14 +284,14 @@ function buildMobileMenu(navigationItems, showSearch, profileMenuItems, searchPl
           ${mobileSearch}
           <li class="mobile-account-section">
             <button class="mobile-account-toggle px-6 d-flex-align mobile-account-link" aria-expanded="false">
-              <span class="icon icon--profile"></span>
+              <img src="${icons.profileIcon}" alt="Profile" class="icon icon--profile" />
               <span class="profile">My Account</span>
-              <span class="icon icon--arrow-right arrow-icon"></span>
+              <img src="${icons.arrowRightIcon}" alt="Arrow Right" class="icon icon--arrow-right arrow-icon" />
             </button>
             <div class="mobile-account-submenu">
               <div class="submenu-header">
                 <button class="back-button" aria-label="Back">
-                  <span class="icon icon--arrow-left"></span>
+                  <img src="${icons.arrowLeftIcon}" alt="Arrow Left" class="icon icon--arrow-left" />
                   <span class="submenu-title">My Account</span>
                 </button>
               </div>
@@ -283,18 +309,29 @@ function buildMobileMenu(navigationItems, showSearch, profileMenuItems, searchPl
 export default function decorate(block) {
   const data = parseHeaderData(block);
 
+  // Create icons object for passing to build functions
+  const icons = {
+    searchIcon: data.searchIcon,
+    cartIcon: data.cartIcon,
+    profileIcon: data.profileIcon,
+    hamburgerIcon: data.hamburgerIcon,
+    closeIcon: data.closeIcon,
+    arrowLeftIcon: data.arrowLeftIcon,
+    arrowRightIcon: data.arrowRightIcon
+  };
+
   // Create the header structure using parsed data
   const headerHTML = `
     <div class="header-wrapper">
       <header class="experiencefragment">
         <div class="cmp-experiencefragment">
           <div class="cmp-container cmp-header container">
-            ${buildLogo(data.logoAlt, data.logoUrl)}
-            ${buildNavigation(data.navigationItems, data.showSearch, data.showProfile, data.showCart, data.profileMenuItems)}
+            ${buildLogo(data.logoAlt, data.logoUrl, data.logos)}
+            ${buildNavigation(data.navigationItems, data.showSearch, data.showProfile, data.showCart, data.profileMenuItems, icons)}
           </div>
         </div>
       </header>
-      ${buildMobileMenu(data.navigationItems, data.showSearch, data.profileMenuItems, data.searchPlaceholder)}
+      ${buildMobileMenu(data.navigationItems, data.showSearch, data.profileMenuItems, data.searchPlaceholder, icons)}
     </div>
   `;
 
