@@ -49,14 +49,24 @@ export default function decorate(block) {
           productInfo.append(title);
         }
       } else if (index === 3) {
-        // Fourth cell contains the CTA link
+        // Fourth cell contains the CTA link name
+        const ctaLinkName = cell.textContent.trim();
+        // Store the CTA link name for use in the next cell
+        li.dataset.ctaLinkName = ctaLinkName;
+      } else if (index === 4) {
+        // Fifth cell contains the CTA link URL
         const link = cell.querySelector('a');
         if (link) {
           const ctaWrapper = document.createElement('div');
           ctaWrapper.className = 'cta-wrapper';
           
           link.className = 'cta';
-          link.setAttribute('aria-label', `View configurations for ${productInfo.querySelector('.title')?.textContent || 'product'}`);
+          
+          // Use the CTA link name from the previous cell, or fallback to existing text
+          const ctaLinkName = li.dataset.ctaLinkName || link.textContent.trim() || 'View configs';
+          link.textContent = ctaLinkName;
+          
+          link.setAttribute('aria-label', `${ctaLinkName} for ${productInfo.querySelector('.title')?.textContent || 'product'}`);
           
           // Add arrow icon
           const arrowIcon = document.createElement('span');
@@ -66,6 +76,8 @@ export default function decorate(block) {
           ctaWrapper.append(link);
           productInfo.append(ctaWrapper);
         }
+        // Clean up the temporary data attribute
+        delete li.dataset.ctaLinkName;
       }
     });
     
@@ -76,7 +88,12 @@ export default function decorate(block) {
   // Optimize images
   ul.querySelectorAll('picture > img').forEach((img) => {
     const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '240' }]);
-    moveInstrumentation(img, optimizedPic.querySelector('img'));
+    const newImg = optimizedPic.querySelector('img');
+    moveInstrumentation(img, newImg);
+    // Preserve the className from the original img
+    if (img.className) {
+      newImg.className = img.className;
+    }
     img.closest('picture').replaceWith(optimizedPic);
   });
   

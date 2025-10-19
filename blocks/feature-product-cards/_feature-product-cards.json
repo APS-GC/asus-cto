@@ -63,12 +63,19 @@
           }
         },
         {
+          "component": "text",
+          "valueType": "string",
+          "name": "ctaLinkName",
+          "label": "CTA Link Name",
+          "description": "Text for the call-to-action button (e.g., 'View configs', 'Learn more')",
+          "value": "View configs"
+        },
+        {
           "component": "aem-content",
           "name": "link",
           "label": "Call-to-Action Link",
-          "description": "Link with text (e.g., 'View configs', 'Learn more')",
-          "valueType": "string",
-          "value": "<p><a href=\"#\">View configs</a></p>"
+          "description": "Link URL for the call-to-action",
+          "valueType": "string"
         }
       ]
     }
