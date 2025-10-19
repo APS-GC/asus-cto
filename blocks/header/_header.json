@@ -1,19 +1,247 @@
 {
-  "definitions": [
-    {
-      "title": "Header",
-      "id": "header",
-      "plugins": {
-        "xwalk": {
-          "page": {
-            "resourceType": "core/franklin/components/block/v1/block",
-            "template": {
-              "name": "Header",
-              "model": "header"
-            }
-          }
-        }
+  "title": "Header",
+  "description": "Header block with logo, navigation, search, cart, and profile functionality",
+  "lastModified": "2024-10-18",
+  "author": "ASUS",
+  "template": {
+    "logoAlt": "ASUS Logo",
+    "logoUrl": "/",
+    "logos": [
+      {
+        "name": "asus",
+        "icon": "/icons/logo-asus.svg",
+        "altText": "ASUS Logo",
+        "width": "87",
+        "height": "20"
+      },
+      {
+        "name": "rog",
+        "icon": "/icons/logo-rog.svg",
+        "altText": "ROG Logo",
+        "width": "135",
+        "height": "26"
+      },
+      {
+        "name": "gaming",
+        "icon": "/icons/gaming_pc_logo.svg",
+        "altText": "Gaming PC Custom Builder Logo",
+        "width": "104",
+        "height": "22"
       }
+    ],
+    "navigationItems": [
+      {
+        "linkText": "All Desktops",
+        "linkUrl": "/product-listing.html"
+      },
+      {
+        "linkText": "Help Me Choose",
+        "linkUrl": "/help-me-choose.html"
+      },
+      {
+        "linkText": "News & Articles",
+        "linkUrl": "/news-articles.html"
+      }
+    ],
+    "showSearch": true,
+    "showProfile": true,
+    "showCart": true,
+    "searchPlaceholder": "Enter keywords",
+    "searchIcon": "/icons/search.svg",
+    "cartIcon": "/icons/cart.svg",
+    "profileIcon": "/icons/profile.svg",
+    "hamburgerIcon": "/icons/hamburger.svg",
+    "closeIcon": "/icons/close.svg",
+    "arrowLeftIcon": "/icons/arrow-left.svg",
+    "arrowRightIcon": "/icons/arrow-right.svg",
+    "profileMenuItems": [
+      {
+        "linkText": "Login",
+        "linkUrl": "#"
+      },
+      {
+        "linkText": "My Account",
+        "linkUrl": "#"
+      },
+      {
+        "linkText": "Product Registration",
+        "linkUrl": "#"
+      },
+      {
+        "linkText": "Check My Order",
+        "linkUrl": "#"
+      },
+      {
+        "linkText": "My Wishlist",
+        "linkUrl": "#"
+      },
+      {
+        "linkText": "Sign out",
+        "linkUrl": "#"
+      }
+    ]
+  },
+  "fields": [
+    {
+      "name": "logoAlt",
+      "type": "text",
+      "required": false,
+      "default": "ASUS Logo",
+      "description": "Alt text for the main logo"
+    },
+    {
+      "name": "logoUrl",
+      "type": "text",
+      "required": false,
+      "default": "/",
+      "description": "URL for logo link"
+    },
+    {
+      "name": "logos",
+      "type": "array",
+      "required": false,
+      "description": "Logo variants for different brands",
+      "fields": [
+        {
+          "name": "name",
+          "type": "select",
+          "options": ["asus", "rog", "gaming"],
+          "description": "Logo variant name"
+        },
+        {
+          "name": "icon",
+          "type": "media",
+          "required": false,
+          "description": "Select logo from DAM"
+        },
+        {
+          "name": "altText",
+          "type": "text",
+          "required": false,
+          "description": "Alternative text for the logo"
+        },
+        {
+          "name": "width",
+          "type": "text",
+          "required": false,
+          "description": "Logo width"
+        },
+        {
+          "name": "height",
+          "type": "text",
+          "required": false,
+          "description": "Logo height"
+        }
+      ]
+    },
+    {
+      "name": "navigationItems",
+      "type": "array",
+      "required": false,
+      "description": "Main navigation menu items",
+      "fields": [
+        {
+          "name": "linkText",
+          "type": "text"
+        },
+        {
+          "name": "linkUrl",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "name": "showSearch",
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Show search functionality"
+    },
+    {
+      "name": "showProfile",
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Show profile menu"
+    },
+    {
+      "name": "showCart",
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Show shopping cart"
+    },
+    {
+      "name": "searchPlaceholder",
+      "type": "text",
+      "required": false,
+      "default": "Enter keywords",
+      "description": "Search input placeholder text"
+    },
+    {
+      "name": "searchIcon",
+      "type": "media",
+      "required": false,
+      "description": "Select search icon from DAM",
+      "default": "/icons/search.svg"
+    },
+    {
+      "name": "cartIcon",
+      "type": "media",
+      "required": false,
+      "description": "Select cart icon from DAM",
+      "default": "/icons/cart.svg"
+    },
+    {
+      "name": "profileIcon",
+      "type": "media",
+      "required": false,
+      "description": "Select profile icon from DAM",
+      "default": "/icons/profile.svg"
+    },
+    {
+      "name": "hamburgerIcon",
+      "type": "media",
+      "required": false,
+      "description": "Select hamburger menu icon from DAM",
+      "default": "/icons/hamburger.svg"
+    },
+    {
+      "name": "closeIcon",
+      "type": "media",
+      "required": false,
+      "description": "Select close icon from DAM",
+      "default": "/icons/close.svg"
+    },
+    {
+      "name": "arrowLeftIcon",
+      "type": "media",
+      "required": false,
+      "description": "Select left arrow icon from DAM",
+      "default": "/icons/arrow-left.svg"
+    },
+    {
+      "name": "arrowRightIcon",
+      "type": "media",
+      "required": false,
+      "description": "Select right arrow icon from DAM",
+      "default": "/icons/arrow-right.svg"
+    },
+    {
+      "name": "profileMenuItems",
+      "type": "array",
+      "required": false,
+      "description": "Profile dropdown menu items",
+      "fields": [
+        {
+          "name": "linkText",
+          "type": "text"
+        },
+        {
+          "name": "linkUrl",
+          "type": "text"
+        }
+      ]
     }
   ]
 }

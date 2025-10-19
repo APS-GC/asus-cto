@@ -11,35 +11,51 @@
     "socialLinks": [
       {
         "platform": "facebook",
-        "url": "#"
+        "url": "#",
+        "icon": "/icons/social/icon-facebook.svg",
+        "altText": "Facebook"
       },
       {
         "platform": "x",
-        "url": "#"
+        "url": "#",
+        "icon": "/icons/social/icon-x.svg",
+        "altText": "Twitter"
       },
       {
         "platform": "discord",
-        "url": "#"
+        "url": "#",
+        "icon": "/icons/social/icon-discord.svg",
+        "altText": "Discord"
       },
       {
         "platform": "youtube",
-        "url": "#"
+        "url": "#",
+        "icon": "/icons/social/icon-youtube.svg",
+        "altText": "YouTube"
       },
       {
         "platform": "twitch",
-        "url": "#"
+        "url": "#",
+        "icon": "/icons/social/icon-twitch.svg",
+        "altText": "Twitch"
       },
       {
         "platform": "instagram",
-        "url": "#"
+        "url": "#",
+        "icon": "/icons/social/icon-instagram.svg",
+        "altText": "Instagram"
       },
       {
         "platform": "tiktok",
-        "url": "#"
+        "url": "#",
+        "icon": "/icons/social/icon-tiktok.svg",
+        "altText": "TikTok"
       },
       {
         "platform": "thread",
-        "url": "#"
+        "url": "#",
+        "icon": "/icons/social/icon-thread.svg",
+        "altText": "Threads"
       }
     ],
     "footerColumns": [
@@ -84,6 +100,7 @@
       }
     ],
     "globalText": "Global / English",
+    "globalIcon": "/icons/Global.svg",
     "legalLinks": [
       {
         "linkText": "Privacy Policy",
@@ -137,6 +154,18 @@
         {
           "name": "url",
           "type": "text"
+        },
+        {
+          "name": "icon",
+          "type": "media",
+          "required": false,
+          "description": "Select icon from DAM"
+        },
+        {
+          "name": "altText",
+          "type": "text",
+          "required": false,
+          "description": "Alternative text for the icon"
         }
       ]
     },
@@ -170,6 +199,13 @@
       "type": "text",
       "required": false,
       "default": "Global / English"
+    },
+    {
+      "name": "globalIcon",
+      "type": "media",
+      "required": false,
+      "description": "Select global icon from DAM",
+      "default": "/icons/Global.svg"
     },
     {
       "name": "legalLinks",

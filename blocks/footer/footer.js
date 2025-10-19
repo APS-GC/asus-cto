@@ -6,14 +6,14 @@ function parseFooterData(block) {
     newsletterButtonText: 'Sign up',
     socialLabel: 'Follow us at:',
     socialLinks: [
-      { platform: 'facebook', url: '#' },
-      { platform: 'x', url: '#' },
-      { platform: 'discord', url: '#' },
-      { platform: 'youtube', url: '#' },
-      { platform: 'twitch', url: '#' },
-      { platform: 'instagram', url: '#' },
-      { platform: 'tiktok', url: '#' },
-      { platform: 'thread', url: '#' }
+      { platform: 'facebook', url: '#', icon: '/icons/social/icon-facebook.svg', altText: 'Facebook' },
+      { platform: 'x', url: '#', icon: '/icons/social/icon-x.svg', altText: 'Twitter' },
+      { platform: 'discord', url: '#', icon: '/icons/social/icon-discord.svg', altText: 'Discord' },
+      { platform: 'youtube', url: '#', icon: '/icons/social/icon-youtube.svg', altText: 'YouTube' },
+      { platform: 'twitch', url: '#', icon: '/icons/social/icon-twitch.svg', altText: 'Twitch' },
+      { platform: 'instagram', url: '#', icon: '/icons/social/icon-instagram.svg', altText: 'Instagram' },
+      { platform: 'tiktok', url: '#', icon: '/icons/social/icon-tiktok.svg', altText: 'TikTok' },
+      { platform: 'thread', url: '#', icon: '/icons/social/icon-thread.svg', altText: 'Threads' }
     ],
     footerColumns: [
       {
@@ -37,6 +37,7 @@ function parseFooterData(block) {
       }
     ],
     globalText: 'Global / English',
+    globalIcon: '/icons/Global.svg',
     legalLinks: [
       { linkText: 'Privacy Policy', linkUrl: '#' },
       { linkText: 'Terms & Conditions', linkUrl: '#' },
@@ -76,6 +77,9 @@ function parseFooterData(block) {
         case 'Global Text':
           data.globalText = value;
           break;
+        case 'Global Icon':
+          data.globalIcon = value;
+          break;
         default:
           // Handle complex structured data
           if (field.startsWith('Column ')) {
@@ -94,9 +98,16 @@ function parseFooterData(block) {
             const linkText = field.replace('Legal ', '');
             legalLinksArray.push({ linkText, linkUrl: value });
           } else if (field.startsWith('Social ')) {
-            // Parse social links - format: "Social Platform" | "URL"
+            // Parse social links - format: "Social Platform" | "URL|Icon|AltText"
             const platform = field.replace('Social ', '').toLowerCase();
-            socialLinksArray.push({ platform, url: value });
+            const parts = value.split('|');
+            const socialLink = { 
+              platform, 
+              url: parts[0] || '#',
+              icon: parts[1] || `/icons/social/icon-${platform}.svg`,
+              altText: parts[2] || platform.charAt(0).toUpperCase() + platform.slice(1)
+            };
+            socialLinksArray.push(socialLink);
           }
           break;
       }
@@ -144,35 +155,19 @@ function parseFooterData(block) {
 }
 
 function buildSocialIcons(socialLinks, socialLabel) {
-  const platformIcons = {
-    facebook: 'icon-facebook.svg',
-    x: 'icon-x.svg',
-    discord: 'icon-discord.svg',
-    youtube: 'icon-youtube.svg',
-    twitch: 'icon-twitch.svg',
-    instagram: 'icon-instagram.svg',
-    tiktok: 'icon-tiktok.svg',
-    thread: 'icon-thread.svg'
-  };
-
-  const platformLabels = {
-    facebook: 'Facebook',
-    x: 'Twitter',
-    discord: 'Discord',
-    youtube: 'YouTube',
-    twitch: 'Twitch',
-    instagram: 'Instagram',
-    tiktok: 'TikTok',
-    thread: 'Threads'
-  };
-
-  const socialIconsHTML = socialLinks.map(link => `
-    <li>
-      <a href="${link.url}" target="_blank" aria-label="Follow us on ${platformLabels[link.platform]} (open a new window)">
-        <img src="/icons/social/${platformIcons[link.platform]}" alt="" width="40" height="40">
-      </a>
-    </li>
-  `).join('');
+  const socialIconsHTML = socialLinks.map(link => {
+    // Use authored icon if available, fallback to default platform icon
+    const iconSrc = link.icon || `/icons/social/icon-${link.platform}.svg`;
+    const altText = link.altText || link.platform.charAt(0).toUpperCase() + link.platform.slice(1);
+    
+    return `
+      <li>
+        <a href="${link.url}" target="_blank" aria-label="Follow us on ${altText} (open a new window)">
+          <img src="${iconSrc}" alt="${altText}" width="40" height="40">
+        </a>
+      </li>
+    `;
+  }).join('');
 
   return `
     <div class='social'>
@@ -231,7 +226,7 @@ export default function decorate(block) {
         </div>
 
         <div class='footer-bottom'>
-          <span><img src="/icons/Global.svg" alt="Global">${data.globalText}</span>
+          <span><img src="${data.globalIcon}" alt="Global">${data.globalText}</span>
           <nav class='footer-bottom__links' aria-label="Legal links">
             ${buildLegalLinks(data.legalLinks)}
           </nav>
