@@ -535,5 +535,98 @@
         "valueType": "string"
       }
     ]
+  },
+  {
+    "id": "header",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "logoAlt",
+        "label": "Logo Alt Text",
+        "description": "Alternative text for the logo",
+        "value": "ASUS Logo"
+      },
+      {
+        "component": "aem-content",
+        "name": "logoUrl",
+        "label": "Logo URL",
+        "description": "URL the logo should link to",
+        "value": "/"
+      },
+      {
+        "component": "container",
+        "name": "navigationItems",
+        "label": "Navigation Items",
+        "description": "Main navigation menu items",
+        "multi": true,
+        "fields": [
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "linkText",
+            "label": "Link Text",
+            "description": "Display text for the navigation link"
+          },
+          {
+            "component": "aem-content",
+            "name": "linkUrl",
+            "label": "Link URL",
+            "description": "URL for the navigation link"
+          }
+        ]
+      },
+      {
+        "component": "boolean",
+        "name": "showSearch",
+        "label": "Show Search Icon",
+        "description": "Display the search icon in the header",
+        "value": true
+      },
+      {
+        "component": "boolean",
+        "name": "showProfile",
+        "label": "Show Profile Icon",
+        "description": "Display the profile icon in the header",
+        "value": true
+      },
+      {
+        "component": "boolean",
+        "name": "showCart",
+        "label": "Show Cart Icon",
+        "description": "Display the cart icon in the header",
+        "value": true
+      },
+      {
+        "component": "container",
+        "name": "profileMenuItems",
+        "label": "Profile Menu Items",
+        "description": "Items in the profile dropdown menu",
+        "multi": true,
+        "fields": [
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "linkText",
+            "label": "Menu Item Text",
+            "description": "Display text for the profile menu item"
+          },
+          {
+            "component": "aem-content",
+            "name": "linkUrl",
+            "label": "Menu Item URL",
+            "description": "URL for the profile menu item"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "searchPlaceholder",
+        "label": "Mobile Search Placeholder",
+        "description": "Placeholder text for mobile search input",
+        "value": "Enter keywords"
+      }
+    ]
   }
 ]

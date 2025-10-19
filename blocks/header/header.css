@@ -1,0 +1,582 @@
+/* Header Styles */
+.header {
+  background-color: #000;
+  color: #fff;
+  position: relative;
+  z-index: 1000;
+}
+
+.header.experiencefragment {
+  background-color: #000;
+  color: #fff;
+  padding: 0;
+  margin: 0;
+}
+
+.header-wrapper {
+  position: relative;
+  background-color: #000;
+}
+
+/* Header Container */
+.cmp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Logo Section */
+.navigation {
+  flex: 0 0 auto;
+}
+
+.cmp-navigation__item--logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 1rem;
+}
+
+.logo-item {
+  display: flex;
+  align-items: center;
+}
+
+.logo-item--asus .logo-wrapper img,
+.logo-item--rog .logo-wrapper img,
+.logo-item--gaming img {
+  height: auto;
+  max-height: 26px;
+}
+
+.logo-item--asus {
+  border-right: 1px solid #333;
+  padding-right: 1rem;
+}
+
+.logo-item--rog {
+  border-right: 1px solid #333;
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+.logo-item--gaming {
+  padding-left: 1rem;
+}
+
+/* Site Navigation */
+.sitenavigation {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cmp-sitenavigation {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+.cmp-sitenavigation__group {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 2rem;
+}
+
+.cmp-sitenavigation__group--main {
+  flex: 1;
+  justify-content: center;
+}
+
+.cmp-sitenavigation__group--icons {
+  flex: 0 0 auto;
+}
+
+.cmp-sitenavigation__item {
+  list-style: none;
+}
+
+.cmp-sitenavigation__item-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 400;
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.cmp-sitenavigation__item-link:hover {
+  color: #ccc;
+}
+
+/* Icons */
+.icon {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.icon--search {
+  background-image: url('/icons/search.svg');
+}
+
+.icon--cart {
+  background-image: url('/icons/cart.svg');
+}
+
+.icon--profile {
+  background-image: url('/icons/profile.svg');
+  position: relative;
+}
+
+.icon--hamburger {
+  background-image: url('/icons/hamburger.svg');
+}
+
+.icon--close {
+  background-image: url('/icons/close.svg');
+  display: none;
+}
+
+.icon--arrow-right {
+  background-image: url('/icons/arrow-right.svg');
+}
+
+.icon--arrow-left {
+  background-image: url('/icons/arrow-left.svg');
+}
+
+/* Profile logged-in indicator */
+.profile-toggle.logged-in .icon--profile::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: #00ff00;
+  border-radius: 50%;
+  border: 1px solid #000;
+}
+
+/* Profile Dropdown */
+.profile-dropdown {
+  position: relative;
+}
+
+.profile-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  z-index: 1001;
+}
+
+.profile-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.profile-menu__header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-menu__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.profile-menu__item {
+  list-style: none;
+}
+
+.profile-menu__item a {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: #000;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.profile-menu__item a:hover {
+  background-color: #f5f5f5;
+}
+
+/* Mini Cart */
+.mini-cart {
+  position: relative;
+}
+
+.mini-cart-container {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 300px;
+  padding: 1rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  z-index: 1001;
+}
+
+.mini-cart-container.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.mini-cart-container[aria-hidden="false"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.mini-cart__close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Mobile Menu Toggle */
+.cmp-sitenavigation__item--menu-toggle {
+  display: none;
+}
+
+.btn.btn-link {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+/* Mobile Menu */
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-overlay[aria-hidden="false"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobile-menu-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80%;
+  max-width: 320px;
+  height: 100%;
+  background-color: #fff;
+  color: #000;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.mobile-menu-overlay[aria-hidden="false"] .mobile-menu-container {
+  transform: translateX(0);
+}
+
+.mobile-menu {
+  list-style: none;
+  margin: 0;
+  padding: 2rem 0;
+}
+
+.mobile-menu li {
+  border-bottom: 1px solid #eee;
+}
+
+.mobile-menu a {
+  display: block;
+  padding: 1rem 1.5rem;
+  color: #000;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.mobile-menu a:hover {
+  background-color: #f5f5f5;
+}
+
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Mobile Search */
+.mobile-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0;
+}
+
+.mobile-search input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+/* Mobile Account Section */
+.mobile-account-section {
+  position: relative;
+}
+
+.mobile-account-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 1rem;
+  color: #000;
+  cursor: pointer;
+  padding: 1rem 1.5rem;
+}
+
+.d-flex-align {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobile-account-submenu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: #fff;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+.mobile-account-submenu.show {
+  transform: translateX(0);
+}
+
+.submenu-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.submenu-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.submenu-items li {
+  border-bottom: 1px solid #eee;
+}
+
+.submenu-items a {
+  display: block;
+  padding: 1rem 1.5rem;
+  color: #000;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.submenu-items a:hover {
+  background-color: #f5f5f5;
+}
+
+/* Screen Reader Only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Body class when mobile menu is open */
+body.mobile-menu-open {
+  overflow: hidden;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cmp-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .cmp-sitenavigation__group--main {
+    display: none;
+  }
+
+  .cmp-sitenavigation__item--menu-toggle {
+    display: block;
+  }
+
+  .cmp-sitenavigation__item--search {
+    display: none;
+  }
+
+  .logo-item--asus,
+  .logo-item--rog {
+    border-right: none;
+    padding-right: 0.5rem;
+  }
+
+  .logo-item--gaming {
+    padding-left: 0.5rem;
+  }
+
+  .cmp-navigation__item--logo {
+    gap: 0.5rem;
+  }
+
+  .logo-item--asus .logo-wrapper img,
+  .logo-item--rog .logo-wrapper img,
+  .logo-item--gaming img {
+    max-height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cmp-header {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .logo-item--rog,
+  .logo-item--gaming {
+    display: none;
+  }
+
+  .cmp-sitenavigation__group--icons {
+    gap: 1rem;
+  }
+
+  .mobile-menu-container {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* Hidden class utility */
+.hidden {
+  display: none !important;
+}
+
+/* Hover states for desktop */
+@media (min-width: 769px) {
+  .cmp-sitenavigation__item-link:hover {
+    color: #ccc;
+  }
+
+  .profile-toggle:hover .profile-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+/* Focus styles for accessibility */
+.cmp-sitenavigation__item-link:focus,
+.profile-toggle:focus,
+.mini-cart-toggle:focus,
+button:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .header {
+    border-bottom: 2px solid #fff;
+  }
+  
+  .cmp-sitenavigation__item-link {
+    text-shadow: none;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .profile-menu,
+  .mini-cart-container,
+  .mobile-menu-overlay,
+  .mobile-menu-container,
+  .mobile-account-submenu {
+    transition: none;
+  }
+}
