@@ -2174,7 +2174,7 @@ select.error {
   overflow-x: hidden;
 }
 
-.gradient-animation--active::after {
+.gradient-animation-active::after {
   content: "";
   position: fixed;
   top: 0;
