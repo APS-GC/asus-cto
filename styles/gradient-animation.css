@@ -1,0 +1,107 @@
+/* ========================================================================== 
+ * Gradient Animation Background - From webpack SCSS
+ * Based on webpack/site/scss/settings/_base.scss gradient animation
+ * ========================================================================== */
+
+/* Gradient animation for background - EDS Implementation */
+.gradient-animation {
+  overflow-x: hidden;
+}
+
+.gradient-animation--active::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+
+  background: conic-gradient(from 90deg,
+      rgba(24, 36, 75, 1) 0deg,
+      rgba(25, 54, 122, 1) 109.038deg,
+      rgba(89, 21, 67, 1) 188.654deg,
+      rgba(23, 19, 31, 1) 256.154deg,
+      rgba(24, 36, 75, 1) 360deg);
+  filter: blur(150px);
+  /* Gaussian blur */
+  animation: rotateGradient 20s linear infinite;
+  /* animate rotation */
+}
+
+/* Gradient rotation animation */
+@keyframes rotateGradient {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================================================== 
+ * Section-level Gradient Animation Classes
+ * Apply these classes to sections for gradient background animation
+ * ========================================================================== */
+
+/* Basic gradient animation section */
+.section-gradient-animation {
+  position: relative;
+  overflow: hidden;
+}
+
+.section-gradient-animation::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+
+  background: conic-gradient(from 90deg,
+      rgba(24, 36, 75, 1) 0deg,
+      rgba(25, 54, 122, 1) 109.038deg,
+      rgba(89, 21, 67, 1) 188.654deg,
+      rgba(23, 19, 31, 1) 256.154deg,
+      rgba(24, 36, 75, 1) 360deg);
+  filter: blur(150px);
+  animation: rotateGradient 20s linear infinite;
+}
+
+
+/* ========================================================================== 
+ * Responsive Adjustments
+ * ========================================================================== */
+
+@media (max-width: 768px) {
+  .section-gradient-animation::before {
+    filter: blur(100px);
+  }
+}
+
+@media (max-width: 480px) {
+  .section-gradient-animation::before {
+    filter: blur(80px);
+  }
+}
+
+/* ========================================================================== 
+ * Performance and Accessibility
+ * ========================================================================== */
+
+/* Reduce animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .gradient-animation--active::after,
+  .section-gradient-animation::before {
+    animation: none;
+  }
+}
+
+/* Hardware acceleration for smooth animations */
+.section-gradient-animation::before,
+.gradient-animation--active::after {
+  will-change: transform;
+  transform: translateZ(0);
+}

@@ -191,6 +191,22 @@
           "description": "Last modification date (YYYY-MM-DD format)"
         },
         {
+          "component": "multiselect",
+          "name": "style",
+          "label": "Style",
+          "description": "Apply additional styling options",
+          "options": [
+            {
+              "name": "Gradient",
+              "value": "gradient-animation"
+            }, 
+            {
+              "name": "Gradient Animation",
+              "value": "gradient-animation--active"
+            }
+          ]
+        },
+        {
           "component": "select",
           "name": "pageBackgroundColor",
           "label": "Page Background Color",
@@ -211,18 +227,6 @@
             {
               "name": "Primary Brand",
               "value": "page-bg-primary"
-            }
-          ]
-        },
-        {
-          "component": "multiselect",
-          "name": "style",
-          "label": "Additional Styles",
-          "description": "Apply additional styling options",
-          "options": [
-            {
-              "name": "Gradient",
-              "value": "gradient-animation gradient-animation--active"
             }
           ]
         }
