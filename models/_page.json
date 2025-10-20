@@ -7,20 +7,188 @@
           "component": "text",
           "valueType": "string",
           "name": "jcr:title",
-          "label": "Title"
+          "label": "Page Title",
+          "description": "Main page title - used in browser tab and search results",
+          "validation": {
+            "required": true
+          }
         },
         {
           "component": "text",
           "valueType": "string",
           "name": "jcr:description",
-          "label": "Description"
+          "label": "Meta Description",
+          "description": "Brief description for search engines and social media (150-160 characters recommended)",
+          "validation": {
+            "required": true
+          }
         },
         {
           "component": "text",
           "valueType": "string",
           "name": "keywords",
           "multi": true,
-          "label": "Keywords"
+          "label": "Keywords",
+          "description": "SEO keywords for this page (comma separated)"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "canonicalUrl",
+          "label": "Canonical URL",
+          "description": "Canonical URL for this page (helps prevent duplicate content issues)"
+        },
+        {
+          "component": "select",
+          "name": "pageLanguage",
+          "label": "Page Language",
+          "description": "Language code for this page",
+          "options": [
+            {
+              "name": "English (US)",
+              "value": "en-US"
+            },
+            {
+              "name": "English (UK)",
+              "value": "en-GB"
+            },
+            {
+              "name": "English (General)",
+              "value": "en"
+            },
+            {
+              "name": "French",
+              "value": "fr"
+            },
+            {
+              "name": "German",
+              "value": "de"
+            },
+            {
+              "name": "Spanish",
+              "value": "es"
+            },
+            {
+              "name": "Italian",
+              "value": "it"
+            },
+            {
+              "name": "Japanese",
+              "value": "ja"
+            },
+            {
+              "name": "Chinese (Simplified)",
+              "value": "zh-CN"
+            },
+            {
+              "name": "Chinese (Traditional)",
+              "value": "zh-TW"
+            }
+          ]
+        },
+        {
+          "component": "select",
+          "name": "robots",
+          "label": "Search Engine Indexing",
+          "description": "Control how search engines index this page",
+          "options": [
+            {
+              "name": "Index, Follow (Default)",
+              "value": "index,follow"
+            },
+            {
+              "name": "Index, No Follow",
+              "value": "index,nofollow"
+            },
+            {
+              "name": "No Index, Follow",
+              "value": "noindex,follow"
+            },
+            {
+              "name": "No Index, No Follow",
+              "value": "noindex,nofollow"
+            }
+          ]
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "author",
+          "label": "Author",
+          "description": "Author of this page content"
+        },
+        {
+          "component": "reference",
+          "name": "ogImage",
+          "label": "Social Media Image",
+          "description": "Image for social media sharing (Open Graph) - recommended 1200x630px",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "ogImageAlt",
+          "label": "Social Media Image Alt Text",
+          "description": "Alternative text for the social media image"
+        },
+        {
+          "component": "select",
+          "name": "ogType",
+          "label": "Open Graph Type",
+          "description": "Type of content for social media sharing",
+          "options": [
+            {
+              "name": "Website",
+              "value": "website"
+            },
+            {
+              "name": "Article",
+              "value": "article"
+            },
+            {
+              "name": "Product",
+              "value": "product"
+            },
+            {
+              "name": "Video",
+              "value": "video"
+            }
+          ]
+        },
+        {
+          "component": "reference",
+          "name": "pageVideo",
+          "label": "Page Video",
+          "description": "Main video for this page (hero/background video)",
+          "multi": false
+        },
+        {
+          "component": "reference",
+          "name": "videoTrack",
+          "label": "Video Captions/Subtitles",
+          "description": "Caption or subtitle file for the page video (VTT format)",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "videoDescription",
+          "label": "Video Description",
+          "description": "Description of the page video content for accessibility"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "publishDate",
+          "label": "Publish Date",
+          "description": "Publication date (YYYY-MM-DD format)"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "modifiedDate",
+          "label": "Last Modified Date",
+          "description": "Last modification date (YYYY-MM-DD format)"
         }
       ]
     }
