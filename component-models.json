@@ -3,6 +3,22 @@
     "id": "page-metadata",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "style",
+        "label": "Style",
+        "description": "Apply additional styling options",
+        "options": [
+          {
+            "name": "Gradient",
+            "value": "gradient-animation"
+          }, 
+          {
+            "name": "Gradient Animation",
+            "value": "gradient-animation--active"
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "jcr:title",
