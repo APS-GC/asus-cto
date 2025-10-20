@@ -494,60 +494,39 @@ function decorateSections(main) {
     section.dataset.sectionStatus = 'initialized';
     section.style.display = 'none';
 
-    // Process section metadata
+    // Process section metadata - check multiple sources
+    let meta = {};
+    
+    // 1. Check for traditional section-metadata div (for backwards compatibility)
     const sectionMeta = section.querySelector('div.section-metadata');
     if (sectionMeta) {
-      const meta = readBlockConfig(sectionMeta);
-      
-      // Fields that should be applied as CSS classes to the section element
-      const cssClassFields = ['marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'backgroundColor', 'style'];
-      
-      Object.keys(meta).forEach((key) => {
-        if (cssClassFields.includes(key)) {
-          if (key === 'style') {
-            // Handle multiselect style field - can have multiple values separated by commas
-            const styles = meta.style
-              .split(',')
-              .filter((style) => style)
-              .map((style) => toClassName(style.trim()));
-            styles.forEach((style) => section.classList.add(style));
-          } else {
-            // Handle single CSS class fields - apply the value directly as a CSS class
-            if (meta[key] && meta[key].trim()) {
-              section.classList.add(meta[key].trim());
-            }
-          }
-        } else {
-          // Other metadata fields become data attributes
-          section.dataset[toCamelCase(key)] = meta[key];
-        }
-      });
+      meta = readBlockConfig(sectionMeta);
       sectionMeta.parentNode.remove();
     }
-  });
-}
-
-/**
- * Updates section metadata dynamically (for Universal Editor)
- * @param {Element} section The section element to update
- */
-function updateSectionMetadata(section) {
-  // Find and process section metadata
-  const sectionMeta = section.querySelector('div.section-metadata');
-  if (sectionMeta) {
-    const meta = readBlockConfig(sectionMeta);
     
-    // Fields that should be applied as CSS classes to the section element
+    // 2. Check for UE data attributes or model data on the section element
+    const ueModelData = section.dataset.ueModel;
+    if (ueModelData) {
+      try {
+        const modelData = JSON.parse(ueModelData);
+        meta = { ...meta, ...modelData };
+      } catch (e) {
+        // Invalid JSON, skip
+      }
+    }
+    
+    // 3. Check for individual UE data attributes
+    const ueFields = ['marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'backgroundColor', 'style'];
+    ueFields.forEach(field => {
+      const dataAttr = `data-${field.toLowerCase()}`;
+      if (section.hasAttribute(dataAttr)) {
+        meta[field] = section.getAttribute(dataAttr);
+      }
+    });
+    
+    // Apply metadata as CSS classes
     const cssClassFields = ['marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'backgroundColor', 'style'];
     
-    // Remove existing styling classes from section
-    const existingClasses = Array.from(section.classList).filter(cls => 
-      cls.startsWith('mt-') || cls.startsWith('mb-') || cls.startsWith('pt-') || cls.startsWith('pb-') ||
-      cls.startsWith('bg-') || cls === 'highlight' || cls === 'full-width' || cls === 'text-center'
-    );
-    existingClasses.forEach(cls => section.classList.remove(cls));
-    
-    // Apply new metadata as CSS classes
     Object.keys(meta).forEach((key) => {
       if (cssClassFields.includes(key)) {
         if (key === 'style') {
@@ -568,7 +547,74 @@ function updateSectionMetadata(section) {
         section.dataset[toCamelCase(key)] = meta[key];
       }
     });
+  });
+}
+
+/**
+ * Updates section metadata dynamically (for Universal Editor)
+ * @param {Element} section The section element to update
+ */
+function updateSectionMetadata(section) {
+  // Process section metadata - check multiple sources (same as decorateSections)
+  let meta = {};
+  
+  // 1. Check for traditional section-metadata div (for backwards compatibility)
+  const sectionMeta = section.querySelector('div.section-metadata');
+  if (sectionMeta) {
+    meta = readBlockConfig(sectionMeta);
   }
+  
+  // 2. Check for UE data attributes or model data on the section element
+  const ueModelData = section.dataset.ueModel;
+  if (ueModelData) {
+    try {
+      const modelData = JSON.parse(ueModelData);
+      meta = { ...meta, ...modelData };
+    } catch (e) {
+      // Invalid JSON, skip
+    }
+  }
+  
+  // 3. Check for individual UE data attributes
+  const ueFields = ['marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'backgroundColor', 'style'];
+  ueFields.forEach(field => {
+    const dataAttr = `data-${field.toLowerCase()}`;
+    if (section.hasAttribute(dataAttr)) {
+      meta[field] = section.getAttribute(dataAttr);
+    }
+  });
+  
+  // Fields that should be applied as CSS classes to the section element
+  const cssClassFields = ['marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'backgroundColor', 'style'];
+  
+  // Remove existing styling classes from section
+  const existingClasses = Array.from(section.classList).filter(cls => 
+    cls.startsWith('mt-') || cls.startsWith('mb-') || cls.startsWith('pt-') || cls.startsWith('pb-') ||
+    cls.startsWith('bg-') || cls === 'highlight' || cls === 'full-width' || cls === 'text-center'
+  );
+  existingClasses.forEach(cls => section.classList.remove(cls));
+  
+  // Apply new metadata as CSS classes
+  Object.keys(meta).forEach((key) => {
+    if (cssClassFields.includes(key)) {
+      if (key === 'style') {
+        // Handle multiselect style field - can have multiple values separated by commas
+        const styles = meta.style
+          .split(',')
+          .filter((style) => style)
+          .map((style) => toClassName(style.trim()));
+        styles.forEach((style) => section.classList.add(style));
+      } else {
+        // Handle single CSS class fields - apply the value directly as a CSS class
+        if (meta[key] && meta[key].trim()) {
+          section.classList.add(meta[key].trim());
+        }
+      }
+    } else {
+      // Other metadata fields become data attributes
+      section.dataset[toCamelCase(key)] = meta[key];
+    }
+  });
 }
 
 /**
