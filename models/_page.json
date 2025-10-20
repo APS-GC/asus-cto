@@ -192,8 +192,8 @@
         },
         {
           "component": "multiselect",
-          "name": "style",
-          "label": "Style",
+          "name": "theme",
+          "label": "Theme",
           "description": "Apply additional styling options",
           "options": [
             {
