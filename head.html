@@ -55,6 +55,62 @@
     document.head.appendChild(script);
   }
   
+  // Function to get UE page metadata - checks multiple sources
+  function getUEPageMetadata(name) {
+    // 1. Try traditional meta tags first (for non-UE environments)
+    let value = getMetadata(name);
+    if (value) return value;
+    
+    // 2. Check if we're in UE environment and try to get from page model
+    if (typeof window !== 'undefined' && window.aue) {
+      try {
+        // Try to get from UE context
+        const pageModel = window.aue.getPageModel?.();
+        if (pageModel && pageModel[name]) {
+          return pageModel[name];
+        }
+      } catch (e) {
+        // UE API not available or different structure
+      }
+    }
+    
+    // 3. Check main element data attributes (where UE might store page metadata)
+    const main = document.querySelector('main');
+    if (main) {
+      const dataAttr = `data-${name.toLowerCase()}`;
+      if (main.hasAttribute(dataAttr)) {
+        return main.getAttribute(dataAttr);
+      }
+      
+      // Check camelCase version
+      const camelCaseAttr = `data-${name}`;
+      if (main.hasAttribute(camelCaseAttr)) {
+        return main.getAttribute(camelCaseAttr);
+      }
+    }
+    
+    // 4. Check body element data attributes
+    const bodyDataAttr = `data-${name.toLowerCase()}`;
+    if (document.body.hasAttribute(bodyDataAttr)) {
+      return document.body.getAttribute(bodyDataAttr);
+    }
+    
+    // 5. Check for UE model data in script tags
+    const ueModelScript = document.querySelector('script[type="application/json"][data-aue-model="page"]');
+    if (ueModelScript) {
+      try {
+        const modelData = JSON.parse(ueModelScript.textContent);
+        if (modelData[name]) {
+          return modelData[name];
+        }
+      } catch (e) {
+        // Invalid JSON
+      }
+    }
+    
+    return '';
+  }
+
   // Wait for DOM to be ready
   document.addEventListener('DOMContentLoaded', () => {
     // Get page metadata
@@ -194,16 +250,17 @@
     
     addStructuredData(structuredData);
     
-    // Handle page background color from metadata
-    const pageBackgroundColor = getMetadata('pageBackgroundColor');
+    // Handle page background color from metadata (using UE-aware function)
+    const pageBackgroundColor = getUEPageMetadata('pageBackgroundColor');
     if (pageBackgroundColor) {
       document.body.classList.add(pageBackgroundColor);
+      console.log('Initial page background applied:', pageBackgroundColor);
     }
   });
-  
+
   // Universal Editor Integration for Dynamic Metadata Updates
   function updatePageBackground() {
-    const pageBackgroundColor = getMetadata('pageBackgroundColor');
+    const pageBackgroundColor = getUEPageMetadata('pageBackgroundColor');
     
     // Remove existing page background classes
     const existingBgClasses = ['page-bg-light-grey', 'page-bg-dark', 'page-bg-primary'];
@@ -212,26 +269,44 @@
     // Apply new background class if specified
     if (pageBackgroundColor) {
       document.body.classList.add(pageBackgroundColor);
+      console.log('Applied page background class:', pageBackgroundColor);
+    }
+  }
+  
+  // Enhanced UE event handling
+  function handleUEPageUpdate(event) {
+    console.log('UE page update detected:', event.detail);
+    
+    // Check if this is a page-level update
+    const detail = event.detail;
+    const resource = detail?.request?.target?.resource || detail?.response?.updates?.[0]?.resource;
+    
+    if (resource && (resource.includes('jcr:content') || resource.includes('/main'))) {
+      console.log('Page metadata update detected, refreshing background...');
+      setTimeout(() => {
+        updatePageBackground();
+        
+        // Also trigger a complete page refresh of metadata processing
+        const main = document.querySelector('main');
+        if (main && typeof window.decorateSections === 'function') {
+          window.decorateSections(main);
+        }
+      }, 100);
     }
   }
   
   // Listen for UE metadata changes
   if (typeof window !== 'undefined') {
-    // Listen for page metadata updates
-    document.addEventListener('aue:content-patch', (event) => {
-      // Check if this is a page metadata update
-      const detail = event.detail;
-      if (detail?.request?.target?.resource?.includes('jcr:content')) {
-        // Page metadata changed, update background
-        setTimeout(updatePageBackground, 100);
-      }
-    });
+    // Listen for various UE events
+    document.addEventListener('aue:content-patch', handleUEPageUpdate);
+    document.addEventListener('aue:content-update', handleUEPageUpdate);
+    document.addEventListener('aue:content-add', handleUEPageUpdate);
+    document.addEventListener('aue:content-move', handleUEPageUpdate);
     
-    document.addEventListener('aue:content-update', (event) => {
-      const detail = event.detail;
-      if (detail?.request?.target?.resource?.includes('jcr:content')) {
-        setTimeout(updatePageBackground, 100);
-      }
+    // Also listen for direct model updates
+    document.addEventListener('aue:model-update', (event) => {
+      console.log('UE model update:', event.detail);
+      setTimeout(updatePageBackground, 100);
     });
   }
 </script>
