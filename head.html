@@ -200,4 +200,38 @@
       document.body.classList.add(pageBackgroundColor);
     }
   });
+  
+  // Universal Editor Integration for Dynamic Metadata Updates
+  function updatePageBackground() {
+    const pageBackgroundColor = getMetadata('pageBackgroundColor');
+    
+    // Remove existing page background classes
+    const existingBgClasses = ['page-bg-light-grey', 'page-bg-dark', 'page-bg-primary'];
+    existingBgClasses.forEach(cls => document.body.classList.remove(cls));
+    
+    // Apply new background class if specified
+    if (pageBackgroundColor) {
+      document.body.classList.add(pageBackgroundColor);
+    }
+  }
+  
+  // Listen for UE metadata changes
+  if (typeof window !== 'undefined') {
+    // Listen for page metadata updates
+    document.addEventListener('aue:content-patch', (event) => {
+      // Check if this is a page metadata update
+      const detail = event.detail;
+      if (detail?.request?.target?.resource?.includes('jcr:content')) {
+        // Page metadata changed, update background
+        setTimeout(updatePageBackground, 100);
+      }
+    });
+    
+    document.addEventListener('aue:content-update', (event) => {
+      const detail = event.detail;
+      if (detail?.request?.target?.resource?.includes('jcr:content')) {
+        setTimeout(updatePageBackground, 100);
+      }
+    });
+  }
 </script>

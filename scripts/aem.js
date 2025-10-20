@@ -528,6 +528,50 @@ function decorateSections(main) {
 }
 
 /**
+ * Updates section metadata dynamically (for Universal Editor)
+ * @param {Element} section The section element to update
+ */
+function updateSectionMetadata(section) {
+  // Find and process section metadata
+  const sectionMeta = section.querySelector('div.section-metadata');
+  if (sectionMeta) {
+    const meta = readBlockConfig(sectionMeta);
+    
+    // Fields that should be applied as CSS classes to the section element
+    const cssClassFields = ['marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'backgroundColor', 'style'];
+    
+    // Remove existing styling classes from section
+    const existingClasses = Array.from(section.classList).filter(cls => 
+      cls.startsWith('mt-') || cls.startsWith('mb-') || cls.startsWith('pt-') || cls.startsWith('pb-') ||
+      cls.startsWith('bg-') || cls === 'highlight' || cls === 'full-width' || cls === 'text-center'
+    );
+    existingClasses.forEach(cls => section.classList.remove(cls));
+    
+    // Apply new metadata as CSS classes
+    Object.keys(meta).forEach((key) => {
+      if (cssClassFields.includes(key)) {
+        if (key === 'style') {
+          // Handle multiselect style field - can have multiple values separated by commas
+          const styles = meta.style
+            .split(',')
+            .filter((style) => style)
+            .map((style) => toClassName(style.trim()));
+          styles.forEach((style) => section.classList.add(style));
+        } else {
+          // Handle single CSS class fields - apply the value directly as a CSS class
+          if (meta[key] && meta[key].trim()) {
+            section.classList.add(meta[key].trim());
+          }
+        }
+      } else {
+        // Other metadata fields become data attributes
+        section.dataset[toCamelCase(key)] = meta[key];
+      }
+    });
+  }
+}
+
+/**
  * Builds a block DOM Element from a two dimensional array, string, or object
  * @param {string} blockName name of the block
  * @param {*} content two dimensional array or string or object of content
@@ -724,6 +768,7 @@ export {
   setup,
   toCamelCase,
   toClassName,
+  updateSectionMetadata,
   waitForFirstImage,
   wrapTextNodes,
 };
