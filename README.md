@@ -2,8 +2,8 @@
 Your project's 
 
 ## Environments
-- Preview: https://main--{repo}--{owner}.aem.page/
-- Live: https://main--{repo}--{owner}.aem.live/
+- Preview: https://main--asus--AEM-COMP.aem.page/home
+- Live: https://main--asus--AEM-COMP.aem.live/home
 
 ## Documentation
 
