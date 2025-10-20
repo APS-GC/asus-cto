@@ -1,6 +1,7 @@
 {
   "mappings": [
     "/content/ROG/:/",
+    "/content/ROG/home:/",
     "/content/ROG/configuration:/.helix/config.json",
     "/content/ROG/metadata:/metadata.json"
   ],
