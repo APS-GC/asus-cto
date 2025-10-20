@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Page Background Test</title>
+  
+  <!-- Test with static meta tag first -->
+  <meta name="pageBackgroundColor" content="page-bg-light-grey">
+  
+  <!-- Include head.html content -->
+  <script src="/scripts/aem.js" type="module"></script>
+  <script src="/scripts/scripts.js" type="module"></script>
+  <link rel="stylesheet" href="/styles/styles.css"/>
+  
+  <!-- Include the UE page metadata logic from head.html -->
+  <script type="module">
+    // Self-contained getMetadata function
+    function getMetadata(name) {
+      const attr = name && name.includes(':') ? 'property' : 'name';
+      const meta = document.querySelector(`meta[${attr}="${name}"]`);
+      return meta ? meta.content : '';
+    }
+    
+    function getUEPageMetadata(name) {
+      let value = getMetadata(name);
+      if (value) return value;
+      
+      if (typeof window !== 'undefined' && window.aue) {
+        try {
+          const pageModel = window.aue.getPageModel?.();
+          if (pageModel && pageModel[name]) {
+            return pageModel[name];
+          }
+        } catch (e) {
+          // UE API not available
+        }
+      }
+      
+      const main = document.querySelector('main');
+      if (main) {
+        const dataAttr = `data-${name.toLowerCase()}`;
+        if (main.hasAttribute(dataAttr)) {
+          return main.getAttribute(dataAttr);
+        }
+        const camelCaseAttr = `data-${name}`;
+        if (main.hasAttribute(camelCaseAttr)) {
+          return main.getAttribute(camelCaseAttr);
+        }
+      }
+      
+      const bodyDataAttr = `data-${name.toLowerCase()}`;
+      if (document.body.hasAttribute(bodyDataAttr)) {
+        return document.body.getAttribute(bodyDataAttr);
+      }
+      
+      const ueModelScript = document.querySelector('script[type="application/json"][data-aue-model="page"]');
+      if (ueModelScript) {
+        try {
+          const modelData = JSON.parse(ueModelScript.textContent);
+          if (modelData[name]) {
+            return modelData[name];
+          }
+        } catch (e) {
+          // Invalid JSON
+        }
+      }
+      
+      return '';
+    }
+    
+    function updatePageBackground() {
+      const pageBackgroundColor = getUEPageMetadata('pageBackgroundColor');
+      console.log('Checking page background color:', pageBackgroundColor);
+      
+      const existingBgClasses = ['page-bg-light-grey', 'page-bg-dark', 'page-bg-primary'];
+      existingBgClasses.forEach(cls => document.body.classList.remove(cls));
+      
+      if (pageBackgroundColor) {
+        document.body.classList.add(pageBackgroundColor);
+        console.log('Applied page background class:', pageBackgroundColor);
+      }
+      
+      // Show current body classes in the page
+      document.getElementById('body-classes').textContent = document.body.className || 'none';
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      updatePageBackground();
+      
+      // UE event listeners
+      document.addEventListener('aue:content-patch', (event) => {
+        console.log('UE content patch:', event.detail);
+        setTimeout(updatePageBackground, 100);
+      });
+      
+      document.addEventListener('aue:content-update', (event) => {
+        console.log('UE content update:', event.detail);
+        setTimeout(updatePageBackground, 100);
+      });
+    });
+    
+    // Manual test button
+    window.testPageBackground = function() {
+      console.log('Manual test triggered');
+      updatePageBackground();
+    };
+    
+    window.setTestBackground = function(bgClass) {
+      document.querySelector('meta[name="pageBackgroundColor"]').content = bgClass;
+      updatePageBackground();
+    };
+  </script>
+  
+  <style>
+    .test-controls {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: white;
+      border: 2px solid #333;
+      padding: 1rem;
+      border-radius: 8px;
+      z-index: 1000;
+    }
+    .test-content {
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-controls">
+    <h4>Page Background Test</h4>
+    <p><strong>Body Classes:</strong> <span id="body-classes">Loading...</span></p>
+    <button onclick="testPageBackground()">🔄 Refresh</button>
+    <br><br>
+    <button onclick="setTestBackground('page-bg-light-grey')">Light Grey</button>
+    <button onclick="setTestBackground('page-bg-dark')">Dark</button>
+    <button onclick="setTestBackground('page-bg-primary')">Primary</button>
+    <button onclick="setTestBackground('')">Default</button>
+  </div>
+
+  <main>
+    <div class="test-content">
+      <h1>🎨 Page Background Color Test</h1>
+      
+      <div style="background: white; padding: 2rem; border-radius: 8px; margin: 2rem 0;">
+        <h2>Test Instructions</h2>
+        <ol>
+          <li><strong>Static Test:</strong> This page should have a light grey background by default</li>
+          <li><strong>Dynamic Test:</strong> Use the buttons in the top-right to change backgrounds</li>
+          <li><strong>UE Test:</strong> Open this page in Universal Editor and change the page background color property</li>
+        </ol>
+        
+        <h3>Expected Results:</h3>
+        <ul>
+          <li><strong>Light Grey:</strong> <code>page-bg-light-grey</code> class → Light grey background</li>
+          <li><strong>Dark:</strong> <code>page-bg-dark</code> class → Dark background with white text</li>
+          <li><strong>Primary:</strong> <code>page-bg-primary</code> class → ASUS blue background with white text</li>
+          <li><strong>Default:</strong> No class → White background</li>
+        </ul>
+        
+        <h3>Debug Info:</h3>
+        <p>Check the browser console for debug logs when testing.</p>
+        <p>The body classes should update in the control panel above.</p>
+      </div>
+      
+      <div style="background: rgba(0,0,0,0.1); padding: 2rem; border-radius: 8px; margin: 2rem 0;">
+        <h2>Implementation Details</h2>
+        <p>This test verifies that:</p>
+        <ul>
+          <li>✅ Page metadata can be read from meta tags</li>
+          <li>✅ Page background classes are applied to body</li>
+          <li>✅ UE events trigger background updates</li>
+          <li>✅ Multiple data source checking works</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
