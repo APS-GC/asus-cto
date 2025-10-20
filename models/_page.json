@@ -189,6 +189,30 @@
           "name": "modifiedDate",
           "label": "Last Modified Date",
           "description": "Last modification date (YYYY-MM-DD format)"
+        },
+        {
+          "component": "select",
+          "name": "pageBackgroundColor",
+          "label": "Page Background Color",
+          "description": "Set the background color for the entire page",
+          "options": [
+            {
+              "name": "Default (White)",
+              "value": ""
+            },
+            {
+              "name": "Light Grey",
+              "value": "page-bg-light-grey"
+            },
+            {
+              "name": "Dark",
+              "value": "page-bg-dark"
+            },
+            {
+              "name": "Primary Brand",
+              "value": "page-bg-primary"
+            }
+          ]
         }
       ]
     }

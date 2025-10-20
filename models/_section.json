@@ -197,11 +197,11 @@
             },
             {
               "name": "White",
-              "value": "bg-light"
+              "value": "bg-white"
             },
             {
               "name": "Black",
-              "value": "bg-dark"
+              "value": "bg-black"
             },
             {
               "name": "Primary Brand",

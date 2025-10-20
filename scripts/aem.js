@@ -498,14 +498,27 @@ function decorateSections(main) {
     const sectionMeta = section.querySelector('div.section-metadata');
     if (sectionMeta) {
       const meta = readBlockConfig(sectionMeta);
+      
+      // Fields that should be applied as CSS classes to the section element
+      const cssClassFields = ['marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'backgroundColor', 'style'];
+      
       Object.keys(meta).forEach((key) => {
-        if (key === 'style') {
-          const styles = meta.style
-            .split(',')
-            .filter((style) => style)
-            .map((style) => toClassName(style.trim()));
-          styles.forEach((style) => section.classList.add(style));
+        if (cssClassFields.includes(key)) {
+          if (key === 'style') {
+            // Handle multiselect style field - can have multiple values separated by commas
+            const styles = meta.style
+              .split(',')
+              .filter((style) => style)
+              .map((style) => toClassName(style.trim()));
+            styles.forEach((style) => section.classList.add(style));
+          } else {
+            // Handle single CSS class fields - apply the value directly as a CSS class
+            if (meta[key] && meta[key].trim()) {
+              section.classList.add(meta[key].trim());
+            }
+          }
         } else {
+          // Other metadata fields become data attributes
           section.dataset[toCamelCase(key)] = meta[key];
         }
       });
