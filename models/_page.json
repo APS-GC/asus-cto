@@ -213,6 +213,18 @@
               "value": "page-bg-primary"
             }
           ]
+        },
+        {
+          "component": "multiselect",
+          "name": "style",
+          "label": "Additional Styles",
+          "description": "Apply additional styling options",
+          "options": [
+            {
+              "name": "Gradient",
+              "value": "gradient-animation gradient-animation--active"
+            }
+          ]
         }
       ]
     }
