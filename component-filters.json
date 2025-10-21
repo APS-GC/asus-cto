@@ -18,7 +18,7 @@
       "fragment",
       "quote",
       "carousel",
-      "feature-product-cards",
+      "top-picks-cards",
       "footer",
       "article-card",
       "header"
@@ -46,9 +46,9 @@
     ]
   },
    {
-      "id": "feature-product-cards",
+      "id": "top-picks-cards",
       "components": [
-        "feature-product-card"
+        "top-picks-card"
       ]
     },
     {

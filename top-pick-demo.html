@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Pick Block Demo</title>
+    <title>Top Picks Cards Block Demo</title>
     <link rel="stylesheet" href="styles/styles.css">
-    <link rel="stylesheet" href="blocks/top-pick/top-pick.css">
+    <link rel="stylesheet" href="blocks/top-picks-cards/top-picks-cards.css">
 </head>
 <body>
     <main>
         <div class="section">
-            <div class="top-pick block" data-block-name="top-pick">
+            <div class="top-picks-cards block" data-block-name="top-picks-cards">
                 <div>
                     <div>
                         <picture>
                             <img src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400&h=300&fit=crop" alt="ROG G700 Gaming PC" loading="lazy">
                         </picture>
                     </div>
-                    <div>
-                        <p>Latest creations</p>
-                        <h3>ROG G700 (2025)</h3>
-                        <p><a href="#config1">View configs</a></p>
-                    </div>
+                    <div>Latest creations</div>
+                    <div>ROG G700 (2025)</div>
+                    <div>View configs</div>
+                    <div><a href="#config1">View configs</a></div>
                 </div>
                 <div>
                     <div>
@@ -29,11 +28,10 @@
                             <img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop" alt="ROG Strix Gaming PC" loading="lazy">
                         </picture>
                     </div>
-                    <div>
-                        <p>Top picks</p>
-                        <h3>ROG Strix G10DK G10DK</h3>
-                        <p><a href="#config2">View configs</a></p>
-                    </div>
+                    <div>Top picks</div>
+                    <div>ROG Strix G10DK G10DK</div>
+                    <div>View configs</div>
+                    <div><a href="#config2">View configs</a></div>
                 </div>
             </div>
         </div>
@@ -42,10 +40,10 @@
     <script type="module">
         import { loadBlock } from './scripts/aem.js';
         
-        // Load the top-pick block
-        const topPickBlock = document.querySelector('.top-pick');
-        if (topPickBlock) {
-            loadBlock(topPickBlock);
+        // Load the top-picks-cards block
+        const topPicksCardsBlock = document.querySelector('.top-picks-cards');
+        if (topPicksCardsBlock) {
+            loadBlock(topPicksCardsBlock);
         }
     </script>
 </body>

@@ -158,6 +158,15 @@
   --radius-md: var(--border-radius);        /* Standard buttons, inputs, fields, snackbars */
   --radius-lg: var(--border-radius-xl);     /* Modals, Product cards, Frame, Images */
   --radius-full: 9999px;                    /* Fully-rounded pills */
+  
+  /* Gradient Variables */
+  --gradient-product-card: conic-gradient(from 90deg,
+    rgba(107, 121, 145, 1) 0deg,
+    rgba(107, 121, 145, 1) 71.2543deg,
+    rgba(107, 121, 145, 1) 161.353deg,
+    rgba(107, 121, 145, 1) 245.421deg,
+    rgba(107, 121, 145, 1) 339.262deg,
+    rgba(107, 121, 145, 1) 360deg);
 }
 
 /* Base Typography Styles */

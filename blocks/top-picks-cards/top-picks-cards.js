@@ -1,4 +1,4 @@
-  import { createOptimizedPicture } from '../../scripts/aem.js';
+import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
@@ -6,7 +6,7 @@ export default function decorate(block) {
   const ul = document.createElement('ul');
   [...block.children].forEach((row) => {
     const li = document.createElement('li');
-    li.className = 'featured-product-card';
+    li.className = 'top-picks-card';
     moveInstrumentation(row, li);
     
     // Create the product image wrapper
