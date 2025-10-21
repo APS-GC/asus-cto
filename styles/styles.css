@@ -162,7 +162,7 @@
 
 /* Base Typography Styles */
 body {
-  /* background-color: var(--color-primary); */
+ background-color: var(--color-primary); 
   overflow-x: hidden;
   font-family: var(--font-primary);
   font-weight: var(--font-weight-regular);
