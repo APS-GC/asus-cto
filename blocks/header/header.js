@@ -308,21 +308,22 @@ function buildLogo(logos) {
     const height = logo.height || 'auto';
     const logoUrl = logo.url || '#';
     
-    // Only render logo if icon source is provided from UE authoring
-    if (!iconSrc) {
-      return '';
-    }
+    // Render logo structure even if icon source is missing
+    // This ensures consistent display between published site and UE authoring
+    const logoContent = iconSrc ? 
+      `<img src="${iconSrc}" alt="${altText}" class="logo-default" width="${width}" height="${height}" />` :
+      `<span class="logo-placeholder" aria-label="${altText}" title="${altText}">${logo.name.toUpperCase()}</span>`;
     
     return `
       <div class="logo-item logo-item--${logo.name}">
         <div class="logo-wrapper">
           <a href="${logoUrl}" aria-label="${altText}" title="${altText}">
-            <img src="${iconSrc}" alt="${altText}" class="logo-default" width="${width}" height="${height}" />
+            ${logoContent}
           </a>
         </div>
       </div>
     `;
-  }).filter(item => item).join('');
+  }).join('');
 
   return `
     <div class="navigation">

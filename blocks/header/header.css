@@ -23,6 +23,7 @@ body:has(.overlap-header) .header-wrapper {
   background-color: var(--color-primary);
   color: var(--color-primary-950);
   padding: 1.25rem 0; /* equivalent to mix.p(5, "y") */
+  max-width: 1200px;
 }
 
 /* Navigation groups */
@@ -67,6 +68,22 @@ body:has(.overlap-header) .header-wrapper {
   position: absolute;
   inset: 0;
   opacity: 0;
+}
+
+.logo-placeholder {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--color-primary-200);
+  color: var(--color-primary-950);
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 0.25rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.logo-placeholder:hover {
+  background-color: var(--color-primary-300);
 }
 
 .logo-item--rog {
