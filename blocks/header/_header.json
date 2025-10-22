@@ -1,247 +1,200 @@
 {
-  "title": "Header",
-  "description": "Header block with logo, navigation, search, cart, and profile functionality",
-  "lastModified": "2024-10-18",
-  "author": "ASUS",
-  "template": {
-    "logoAlt": "ASUS Logo",
-    "logoUrl": "/",
-    "logos": [
-      {
-        "name": "asus",
-        "icon": "/icons/logo-asus.svg",
-        "altText": "ASUS Logo",
-        "width": "87",
-        "height": "20"
-      },
-      {
-        "name": "rog",
-        "icon": "/icons/logo-rog.svg",
-        "altText": "ROG Logo",
-        "width": "135",
-        "height": "26"
-      },
-      {
-        "name": "gaming",
-        "icon": "/icons/gaming_pc_logo.svg",
-        "altText": "Gaming PC Custom Builder Logo",
-        "width": "104",
-        "height": "22"
+  "definitions": [
+  {
+    "title": "Header",
+    "id": "header",
+    "plugins": {
+      "xwalk": {
+        "page": {
+          "resourceType": "core/franklin/components/block/v1/block",
+          "template": {
+            "name": "Header",
+            "model": "header"
+          }
+        }
       }
-    ],
-    "navigationItems": [
+    }
+  }
+  ],
+  "models": [
+    {
+    "id": "header",
+    "fields": [
       {
-        "linkText": "All Desktops",
-        "linkUrl": "/product-listing.html"
+        "component": "text",
+        "valueType": "string",
+        "name": "asusLogoAltText",
+        "label": "ASUS Logo Alt Text",
+        "description": "Alternative text for the ASUS logo"
       },
       {
-        "linkText": "Help Me Choose",
-        "linkUrl": "/help-me-choose.html"
+        "component": "aem-content",
+        "name": "asusLogoUrl",
+        "label": "ASUS Logo URL",
+        "description": "URL the ASUS logo should link to"
       },
       {
-        "linkText": "News & Articles",
-        "linkUrl": "/news-articles.html"
-      }
-    ],
-    "showSearch": true,
-    "showProfile": true,
-    "showCart": true,
-    "searchPlaceholder": "Enter keywords",
-    "searchIcon": "/icons/search.svg",
-    "cartIcon": "/icons/cart.svg",
-    "profileIcon": "/icons/profile.svg",
-    "hamburgerIcon": "/icons/hamburger.svg",
-    "closeIcon": "/icons/close.svg",
-    "arrowLeftIcon": "/icons/arrow-left.svg",
-    "arrowRightIcon": "/icons/arrow-right.svg",
-    "profileMenuItems": [
-      {
-        "linkText": "Login",
-        "linkUrl": "#"
+        "component": "reference",
+        "name": "asusLogoImage",
+        "label": "ASUS Logo Image",
+        "description": "Select ASUS logo image from DAM",
+        "multi": false
       },
       {
-        "linkText": "My Account",
-        "linkUrl": "#"
+        "component": "text",
+        "valueType": "string",
+        "name": "rogLogoAltText",
+        "label": "ROG Logo Alt Text",
+        "description": "Alternative text for the ROG logo"
       },
       {
-        "linkText": "Product Registration",
-        "linkUrl": "#"
+        "component": "aem-content",
+        "name": "rogLogoUrl",
+        "label": "ROG Logo URL",
+        "description": "URL the ROG logo should link to"
       },
       {
-        "linkText": "Check My Order",
-        "linkUrl": "#"
+        "component": "reference",
+        "name": "rogLogoImage",
+        "label": "ROG Logo Image",
+        "description": "Select ROG logo image from DAM",
+        "multi": false
       },
       {
-        "linkText": "My Wishlist",
-        "linkUrl": "#"
+        "component": "text",
+        "valueType": "string",
+        "name": "gamingPcLogoAltText",
+        "label": "Gaming PC Logo Alt Text",
+        "description": "Alternative text for the Gaming PC logo"
       },
       {
-        "linkText": "Sign out",
-        "linkUrl": "#"
+        "component": "aem-content",
+        "name": "gamingPcLogoUrl",
+        "label": "Gaming PC Logo URL",
+        "description": "URL the Gaming PC logo should link to"
+      },
+      {
+        "component": "reference",
+        "name": "gamingPcLogoImage",
+        "label": "Gaming PC Logo Image",
+        "description": "Select Gaming PC logo image from DAM",
+        "multi": false
+      },
+      {
+        "component": "textarea",
+        "name": "navLinks",
+        "label": "Navigation Links",
+        "description": "Enter navigation links in format: Link Text|URL (one per line)",
+        "valueType": "string"
+      },
+      {
+        "component": "boolean",
+        "name": "showSearch",
+        "label": "Show Search Icon",
+        "description": "Display the search icon in the header",
+        "value": true
+      },
+      {
+        "component": "boolean",
+        "name": "showProfile",
+        "label": "Show Profile Icon",
+        "description": "Display the profile icon in the header",
+        "value": true
+      },
+      {
+        "component": "boolean",
+        "name": "showCart",
+        "label": "Show Cart Icon",
+        "description": "Display the cart icon in the header",
+        "value": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "searchPlaceholder",
+        "label": "Mobile Search Placeholder",
+        "description": "Placeholder text for mobile search input",
+        "value": "Enter keywords"
+      },
+      {
+        "component": "reference",
+        "name": "searchIcon",
+        "label": "Search Icon",
+        "description": "Select search icon from DAM",
+        "multi": false,
+        "value": "/icons/search.svg"
+      },
+      {
+        "component": "reference",
+        "name": "cartIcon",
+        "label": "Cart Icon",
+        "description": "Select cart icon from DAM",
+        "multi": false,
+        "value": "/icons/cart.svg"
+      },
+      {
+        "component": "reference",
+        "name": "profileIcon",
+        "label": "Profile Icon",
+        "description": "Select profile icon from DAM",
+        "multi": false,
+        "value": "/icons/profile.svg"
+      },
+      {
+        "component": "reference",
+        "name": "hamburgerIcon",
+        "label": "Hamburger Menu Icon",
+        "description": "Select hamburger menu icon from DAM",
+        "multi": false,
+        "value": "/icons/hamburger.svg"
+      },
+      {
+        "component": "reference",
+        "name": "closeIcon",
+        "label": "Close Icon",
+        "description": "Select close icon from DAM",
+        "multi": false,
+        "value": "/icons/close.svg"
+      },
+      {
+        "component": "reference",
+        "name": "arrowLeftIcon",
+        "label": "Left Arrow Icon",
+        "description": "Select left arrow icon from DAM",
+        "multi": false,
+        "value": "/icons/arrow-left.svg"
+      },
+      {
+        "component": "reference",
+        "name": "arrowRightIcon",
+        "label": "Right Arrow Icon",
+        "description": "Select right arrow icon from DAM",
+        "multi": false,
+        "value": "/icons/arrow-right.svg"
+      },
+      {
+        "component": "container",
+        "name": "profileMenuItems",
+        "label": "Profile Menu Items",
+        "description": "Items in the profile dropdown menu",
+        "multi": true,
+        "fields": [
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "linkText",
+            "label": "Menu Item Text",
+            "description": "Display text for the profile menu item"
+          },
+          {
+            "component": "aem-content",
+            "name": "linkUrl",
+            "label": "Menu Item URL",
+            "description": "URL for the profile menu item"
+          }
+        ]
       }
     ]
-  },
-  "fields": [
-    {
-      "name": "logoAlt",
-      "type": "text",
-      "required": false,
-      "default": "ASUS Logo",
-      "description": "Alt text for the main logo"
-    },
-    {
-      "name": "logoUrl",
-      "type": "text",
-      "required": false,
-      "default": "/",
-      "description": "URL for logo link"
-    },
-    {
-      "name": "logos",
-      "type": "array",
-      "required": false,
-      "description": "Logo variants for different brands",
-      "fields": [
-        {
-          "name": "name",
-          "type": "select",
-          "options": ["asus", "rog", "gaming"],
-          "description": "Logo variant name"
-        },
-        {
-          "name": "icon",
-          "type": "media",
-          "required": false,
-          "description": "Select logo from DAM"
-        },
-        {
-          "name": "altText",
-          "type": "text",
-          "required": false,
-          "description": "Alternative text for the logo"
-        },
-        {
-          "name": "width",
-          "type": "text",
-          "required": false,
-          "description": "Logo width"
-        },
-        {
-          "name": "height",
-          "type": "text",
-          "required": false,
-          "description": "Logo height"
-        }
-      ]
-    },
-    {
-      "name": "navigationItems",
-      "type": "array",
-      "required": false,
-      "description": "Main navigation menu items",
-      "fields": [
-        {
-          "name": "linkText",
-          "type": "text"
-        },
-        {
-          "name": "linkUrl",
-          "type": "text"
-        }
-      ]
-    },
-    {
-      "name": "showSearch",
-      "type": "boolean",
-      "required": false,
-      "default": true,
-      "description": "Show search functionality"
-    },
-    {
-      "name": "showProfile",
-      "type": "boolean",
-      "required": false,
-      "default": true,
-      "description": "Show profile menu"
-    },
-    {
-      "name": "showCart",
-      "type": "boolean",
-      "required": false,
-      "default": true,
-      "description": "Show shopping cart"
-    },
-    {
-      "name": "searchPlaceholder",
-      "type": "text",
-      "required": false,
-      "default": "Enter keywords",
-      "description": "Search input placeholder text"
-    },
-    {
-      "name": "searchIcon",
-      "type": "media",
-      "required": false,
-      "description": "Select search icon from DAM",
-      "default": "/icons/search.svg"
-    },
-    {
-      "name": "cartIcon",
-      "type": "media",
-      "required": false,
-      "description": "Select cart icon from DAM",
-      "default": "/icons/cart.svg"
-    },
-    {
-      "name": "profileIcon",
-      "type": "media",
-      "required": false,
-      "description": "Select profile icon from DAM",
-      "default": "/icons/profile.svg"
-    },
-    {
-      "name": "hamburgerIcon",
-      "type": "media",
-      "required": false,
-      "description": "Select hamburger menu icon from DAM",
-      "default": "/icons/hamburger.svg"
-    },
-    {
-      "name": "closeIcon",
-      "type": "media",
-      "required": false,
-      "description": "Select close icon from DAM",
-      "default": "/icons/close.svg"
-    },
-    {
-      "name": "arrowLeftIcon",
-      "type": "media",
-      "required": false,
-      "description": "Select left arrow icon from DAM",
-      "default": "/icons/arrow-left.svg"
-    },
-    {
-      "name": "arrowRightIcon",
-      "type": "media",
-      "required": false,
-      "description": "Select right arrow icon from DAM",
-      "default": "/icons/arrow-right.svg"
-    },
-    {
-      "name": "profileMenuItems",
-      "type": "array",
-      "required": false,
-      "description": "Profile dropdown menu items",
-      "fields": [
-        {
-          "name": "linkText",
-          "type": "text"
-        },
-        {
-          "name": "linkUrl",
-          "type": "text"
-        }
-      ]
-    }
+  }
   ]
 }
