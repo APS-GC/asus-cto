@@ -2,15 +2,9 @@
   "mappings": [
     "/content/ROG/:/",
     "/content/ROG/configuration:/.helix/config.json",
-    "/content/ROG/metadata:/metadata.json",
-
-    "/content/asus-cto/:/asus-cto/",
-    "/content/asus-cto/configuration:/.helix/config.json",
-    "/content/asus-cto/metadata:/metadata.json"
-
+    "/content/ROG/metadata:/metadata.json"
   ],
   "includes": [
-    "/content/ROG/",
-    "/content/asus-cto/"
+    "/content/ROG/"
   ]
 }
