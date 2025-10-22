@@ -1054,10 +1054,10 @@
         "multi": false
       },
       {
-        "component": "textarea",
+        "component": "richtext",
         "name": "navLinks",
         "label": "Navigation Links",
-        "description": "Enter navigation links in format: Link Text|URL (one per line)",
+        "description": "Enter navigation links using rich text editor",
         "valueType": "string"
       },
       {
