@@ -1005,12 +1005,84 @@ p,
   --container-mobile-width: 375px;
 }
 
-/* Base Grid Container */
+/* ========================================================================== 
+ * Container System - Aligned with webpack/scss structure
+ * Based on webpack container variables and responsive design principles
+ * ========================================================================== */
+
+/* Base Container - Mobile First Approach */
 .container {
   width: 100%;
-  max-width: var(--container-max-width);
+  max-width: var(--container);
   margin: 0 auto;
-  padding: 0 var(--grid-margin-mobile);
+  padding: 0 var(--spacing-4); /* 1rem - 16px padding on mobile */
+}
+
+/* Container for main content areas */
+main.container {
+  padding: var(--spacing-2) var(--spacing-4); /* 0.5rem 1rem - matches webpack container_main.scss */
+}
+
+/* ========================================================================== 
+ * Container Responsive Breakpoints - Following webpack structure
+ * ========================================================================== */
+
+/* Small screens and up (576px) */
+@media (min-width: 36rem) {
+  .container {
+    padding: 0 var(--spacing-6); /* 1.5rem - 24px padding */
+  }
+  
+  main.container {
+    padding: var(--spacing-3) var(--spacing-6); /* 0.75rem 1.5rem */
+  }
+}
+
+/* Medium screens and up (768px) */
+@media (min-width: 48rem) {
+  .container {
+    padding: 0 var(--spacing-8); /* 2rem - 32px padding */
+  }
+  
+  main.container {
+    padding: var(--spacing-4) var(--spacing-8); /* 1rem 2rem */
+  }
+}
+
+/* Large screens and up (1024px) */
+@media (min-width: 64rem) {
+  .container {
+    max-width: var(--container-xl); /* 1240px */
+    padding: 0 var(--spacing-10); /* 2.5rem - 40px padding */
+  }
+  
+  main.container {
+    padding: var(--spacing-5) var(--spacing-10); /* 1.25rem 2.5rem */
+  }
+}
+
+/* Extra large screens and up (1280px) */
+@media (min-width: 80rem) {
+  .container {
+    max-width: var(--container-xl); /* 1240px - constrained width */
+    padding: 0 var(--spacing-12); /* 3rem - 48px padding */
+  }
+  
+  main.container {
+    padding: var(--spacing-6) var(--spacing-12); /* 1.5rem 3rem */
+  }
+}
+
+/* XXL screens and up (1536px) */
+@media (min-width: 96rem) {
+  .container {
+    max-width: var(--container-xxl); /* 1440px - maximum width */
+    padding: 0 var(--spacing-16); /* 4rem - 64px padding */
+  }
+  
+  main.container {
+    padding: var(--spacing-8) var(--spacing-16); /* 2rem 4rem */
+  }
 }
 
 /* Grid System */

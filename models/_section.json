@@ -250,6 +250,10 @@
             {
               "name": "Centered Content",
               "value": "text-center"
+            },
+            {
+              "name": "Responsive Container",
+              "value": "container"
             }
           ]
         }

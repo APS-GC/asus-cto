@@ -23,7 +23,6 @@ body:has(.overlap-header) .header-wrapper {
   background-color: var(--color-primary);
   color: var(--color-primary-950);
   padding: 1.25rem 0; /* equivalent to mix.p(5, "y") */
-  max-width: 1200px;
 }
 
 /* Navigation groups */
