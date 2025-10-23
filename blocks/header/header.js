@@ -237,10 +237,10 @@ function parseHTMLContent(block) {
         const boolValue = textContent === 'true';
         
         // Map boolean values to appropriate flags based on position
-        if (index >= 12 && index <= 14) { // Adjusted positions after logo processing
-          if (index === 12) parsedData.showSearch = boolValue;
-          if (index === 13) parsedData.showProfile = boolValue;
-          if (index === 14) parsedData.showCart = boolValue;
+        if (index >= 10 && index <= 12) { // Corrected positions after logo processing
+          if (index === 10) parsedData.showSearch = boolValue;
+          if (index === 11) parsedData.showProfile = boolValue;
+          if (index === 12) parsedData.showCart = boolValue;
         }
       }
       
