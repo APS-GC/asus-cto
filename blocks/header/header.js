@@ -1,3 +1,8 @@
+import { getMetadata } from '../../scripts/aem.js';
+import { loadFragment } from '../fragment/fragment.js';
+
+// Global loading state to prevent infinite recursion
+let isLoadingHeaderFragment = false;
 function parseHeaderData(block) {
   // Initialize default data structure - values will come from UE authoring
   const data = {
@@ -75,6 +80,10 @@ function parseHeaderData(block) {
     if (parsedFromHTML.searchIcon) data.searchIcon = parsedFromHTML.searchIcon;
     if (parsedFromHTML.cartIcon) data.cartIcon = parsedFromHTML.cartIcon;
     if (parsedFromHTML.profileIcon) data.profileIcon = parsedFromHTML.profileIcon;
+    if (parsedFromHTML.hamburgerIcon) data.hamburgerIcon = parsedFromHTML.hamburgerIcon;
+    if (parsedFromHTML.closeIcon) data.closeIcon = parsedFromHTML.closeIcon;
+    if (parsedFromHTML.arrowLeftIcon) data.arrowLeftIcon = parsedFromHTML.arrowLeftIcon;
+    if (parsedFromHTML.arrowRightIcon) data.arrowRightIcon = parsedFromHTML.arrowRightIcon;
   }
 
   // Override with Universal Editor model data if available
@@ -146,7 +155,8 @@ function parseHeaderData(block) {
 function parseHTMLContent(block) {
   try {
     // Get all div elements that contain the structured data
-    const contentDivs = block.querySelectorAll('div > p > div');
+    // Structure is: .header.block > div > div (where the inner div contains content)
+    const contentDivs = block.querySelectorAll(':scope > div > div');
     
     if (!contentDivs || contentDivs.length === 0) {
       console.log('No content divs found in HTML structure');
@@ -161,7 +171,11 @@ function parseHTMLContent(block) {
       showCart: true,
       searchIcon: null,
       cartIcon: null,
-      profileIcon: null
+      profileIcon: null,
+      hamburgerIcon: null,
+      closeIcon: null,
+      arrowLeftIcon: null,
+      arrowRightIcon: null
     };
 
     const logoNames = ['asus', 'rog', 'gaming'];
@@ -474,41 +488,134 @@ function buildMobileMenu(navigationItems, showSearch, profileMenuItems, searchPl
   `;
 }
 
-export default function decorate(block) {
-  const data = parseHeaderData(block);
+/**
+ * Loads header fragment from the working fragment URL
+ * @returns {Promise<string|null>} Fragment HTML content or null if not found
+ */
+async function loadHeaderFragment() {
+  // Prevent infinite recursion by checking loading state
+  if (isLoadingHeaderFragment) {
+    console.log('Header fragment loading already in progress, preventing recursion');
+    return null;
+  }
+  
+  try {
+    isLoadingHeaderFragment = true;
+    const headerMeta = getMetadata('header');
+    const headerFragmentPath = headerMeta ? new URL(headerMeta, window.location).pathname : '/fragments/header';
+    const html = await loadFragment(headerFragmentPath);
+    return processFragmentContent(html);
+  } catch (error) {
+    console.log('Error loading header fragment:', error);
+    return null;
+  } finally {
+    isLoadingHeaderFragment = false;
+  }
+}
 
-  // Create icons object for passing to build functions
-  const icons = {
-    searchIcon: data.searchIcon,
-    cartIcon: data.cartIcon,
-    profileIcon: data.profileIcon,
-    hamburgerIcon: data.hamburgerIcon,
-    closeIcon: data.closeIcon,
-    arrowLeftIcon: data.arrowLeftIcon,
-    arrowRightIcon: data.arrowRightIcon
-  };
 
-  // Create the header structure using parsed data
-  const headerHTML = `
-    <div class="header-wrapper">
-      <header class="experiencefragment">
-        <div class="cmp-experiencefragment">
-          <div class="cmp-container cmp-header container">
-            ${buildLogo(data.logos)}
-            ${buildNavigation(data.navigationItems, data.showSearch, data.showProfile, data.showCart, data.profileMenuItems, icons)}
+/**
+ * Processes fragment content and extracts header block structure
+ * @param {string} html Fragment HTML content
+ * @returns {string|null} Processed header block content
+ */
+function processFragmentContent(html) {
+  try {
+    // Create a temporary DOM to parse the fragment
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    // Look for existing header block (UE authoring data format)
+    const existingHeaderBlock = tempDiv.querySelector('.header.block');
+    if (existingHeaderBlock) {
+      // Check if this is structured authoring data that needs to be processed
+      const contentDivs = existingHeaderBlock.querySelectorAll('div > div');
+      if (contentDivs && contentDivs.length > 0) {
+        // This appears to be structured authoring data, return the block for parsing
+        return existingHeaderBlock.outerHTML;
+      }
+      
+      // Extract the inner header content (skip the outer wrapper) for already processed blocks
+      const innerHeader = existingHeaderBlock.querySelector('.header');
+      if (innerHeader) {
+        return innerHeader.outerHTML;
+      }
+    }
+
+    // Fallback: Look for any header block
+    const headerBlock = tempDiv.querySelector('.header');
+    if (headerBlock) {
+      return headerBlock.outerHTML;
+    }
+
+    return null;
+
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Error processing fragment content:', error);
+    return null;
+  }
+}
+
+export default async function decorate(block) {
+  try {
+    console.log('Starting header decoration...');
+    
+    let data = null;
+    
+    try {
+      // Try to load header from fragment first
+      const fragmentContent = await loadHeaderFragment();
+      if (fragmentContent) {
+        // Populate the header block with fragment content
+        block.innerHTML = fragmentContent;
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('Failed to load header fragment, falling back to default header:', error);
+    }
+    
+    // Parse header data from the current block content (whether from fragment or default)
+    data = parseHeaderData(block);
+
+    // Create icons object for passing to build functions
+    const icons = {
+      searchIcon: data.searchIcon,
+      cartIcon: data.cartIcon,
+      profileIcon: data.profileIcon,
+      hamburgerIcon: data.hamburgerIcon,
+      closeIcon: data.closeIcon,
+      arrowLeftIcon: data.arrowLeftIcon,
+      arrowRightIcon: data.arrowRightIcon
+    };
+
+    // Create the header structure using parsed data
+    const headerHTML = `
+      <div class="header-wrapper">
+        <header class="experiencefragment">
+          <div class="cmp-experiencefragment">
+            <div class="cmp-container cmp-header container">
+              ${buildLogo(data.logos)}
+              ${buildNavigation(data.navigationItems, data.showSearch, data.showProfile, data.showCart, data.profileMenuItems, icons)}
+            </div>
           </div>
-        </div>
-      </header>
-      ${buildMobileMenu(data.navigationItems, data.showSearch, data.profileMenuItems, data.searchPlaceholder, icons)}
-    </div>
-  `;
+        </header>
+        ${buildMobileMenu(data.navigationItems, data.showSearch, data.profileMenuItems, data.searchPlaceholder, icons)}
+      </div>
+    `;
 
-  // Clear existing content and add the header structure
-  block.innerHTML = headerHTML;
-  block.classList.add('experiencefragment');
+    // Clear existing content and add the header structure
+    block.innerHTML = headerHTML;
+    block.classList.add('experiencefragment', 'header-decorated');
 
-  // Add header functionality
-  initializeHeader(block);
+    // Add header functionality
+    initializeHeader(block);
+    
+    console.log('Header decoration completed successfully');
+    
+  } catch (error) {
+    console.error('Error during header decoration:', error);
+  }
 }
 
 function initializeHeader(block) {
