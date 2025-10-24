@@ -1,16 +1,4 @@
-/* CSS Variables for Dark Theme */
-:root {
-  --color-primary-50: #1a1a1a;
-  --color-primary-950: #ffffff;
-  --color-primary-700: #b0b0b0;
-  --color-primary-600: #808080;
-  --color-primary-300: #404040;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --border-radius: 8px;
-  --border-radius-xl: 16px;
-  --gradient-product-card: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
-}
+/* Product Card Block uses global CSS variables from styles.css */
 
 /* Product Card Block Styles */
 .product-card {
@@ -45,19 +33,14 @@
   text-decoration: none;
   font-size: 1rem;
   font-weight: 600;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border: 1px solid var(--color-primary-600);
-  border-radius: var(--border-radius);
   transition: all 0.3s ease;
 }
 
 .product-card-view-all:hover {
-  background: var(--color-primary-950);
-  color: var(--color-primary-50);
-  border-color: var(--color-primary-950);
+  text-decoration: underline;
 }
 
 .view-all-arrow {
@@ -112,14 +95,16 @@
 .cmp-carousel__actions {
   position: absolute;
   top: 0;
+  right: 0;
   transform: translateY(0);
   display: flex;
-  justify-content: space-between;
-  width: 100%;
+  justify-content: flex-end;
+  gap: 0.5rem;
   pointer-events: none;
   z-index: 10;
   height: 40px;
   align-items: center;
+  width: auto;
 }
 
 .cmp-carousel__action {
@@ -144,12 +129,9 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.cmp-carousel__action--previous {
-  margin-left: -22px;
-}
-
+.cmp-carousel__action--previous,
 .cmp-carousel__action--next {
-  margin-right: -22px;
+  margin: 0;
 }
 
 .cmp-carousel__indicators {
@@ -436,22 +418,11 @@
   padding-left: 0.75rem;
   font-size: 0.875rem;
   color: var(--color-primary-700);
-  list-style: none;
 }
 
 .cmp-product-card__spec-item {
-  position: relative;
   margin-bottom: 0.5rem;
-  padding-left: 1rem;
-}
-
-.cmp-product-card__spec-item::before {
-  content: "■";
-  position: absolute;
-  left: 0;
-  color: var(--color-primary-600);
-  font-size: 0.6rem;
-  top: 0.2rem;
+  list-style-type: square;
 }
 
 .cmp-product-card__estore {
@@ -613,27 +584,28 @@
 /* FPS Table Tooltip Styles */
 .tooltip__content {
   position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #2a2a2a;
-  color: white;
+  top: 0;
+  left: 100%;
+  margin-left: 0.5rem;
+  background: white;
+  color: var(--color-primary-950);
   padding: 1rem;
   border-radius: var(--border-radius);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   display: none;
   z-index: 1000;
   min-width: 200px;
+  border: 1px solid var(--color-primary-300);
 }
 
 .tooltip__content::after {
   content: "";
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  left: -5px;
+  transform: translateY(-50%);
   border: 5px solid transparent;
-  border-top-color: #2a2a2a;
+  border-right-color: white;
 }
 
 .cmp-product-card__fps-score:hover + .tooltip__content,
@@ -723,8 +695,27 @@
     max-width: 320px;
   }
   
-  .cmp-carousel__actions {
-    display: none;
+  .cmp-carousel__actions,
+  .cmp-carousel__indicators {
+    display: none !important;
+  }
+  
+  .cmp-carousel__indicators li {
+    display: none !important;
+  }
+  
+  .cmp-carousel__content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    transform: none !important;
+    transition: none;
+  }
+  
+  .cmp-carousel__item {
+    flex: none;
+    opacity: 1 !important;
+    display: block;
   }
 }
 

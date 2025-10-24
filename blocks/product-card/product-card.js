@@ -266,17 +266,24 @@ function initializeCarousel(carousel, products) {
     return window.innerWidth >= 1024;
   }
   
-  // Create indicators
-  products.forEach((_, index) => {
-    const indicator = document.createElement('li');
-    indicator.innerHTML = `<button type="button" role="tab" aria-controls="carousel-item-${index}" aria-selected="${index === 0 ? 'true' : 'false'}" tabindex="${index === 0 ? '0' : '-1'}">${index + 1}</button>`;
-    indicator.addEventListener('click', () => {
-      if (!isDesktop()) {
-        goToSlide(index);
-      }
-    });
-    indicators.appendChild(indicator);
-  });
+  // Create indicators only if not on desktop
+  function createIndicators() {
+    if (!isDesktop()) {
+      // Clear existing indicators first
+      indicators.innerHTML = '';
+      products.forEach((_, index) => {
+        const indicator = document.createElement('li');
+        indicator.innerHTML = `<button type="button" role="tab" aria-controls="carousel-item-${index}" aria-selected="${index === 0 ? 'true' : 'false'}" tabindex="${index === 0 ? '0' : '-1'}">${index + 1}</button>`;
+        indicator.addEventListener('click', () => {
+          goToSlide(index);
+        });
+        indicators.appendChild(indicator);
+      });
+    } else {
+      // Clear indicators on desktop
+      indicators.innerHTML = '';
+    }
+  }
   
   function updateCarousel() {
     // Don't update carousel on desktop
@@ -340,7 +347,10 @@ function initializeCarousel(carousel, products) {
         item.classList.remove('cmp-carousel__item--active');
         item.setAttribute('aria-hidden', 'false');
       });
+      // Clear indicators on desktop
+      indicators.innerHTML = '';
     } else {
+      createIndicators();
       updateCarousel();
       startAutoPlay();
     }
@@ -357,6 +367,7 @@ function initializeCarousel(carousel, products) {
   window.addEventListener('resize', handleResize);
   
   // Initial setup
+  createIndicators();
   handleResize();
 }
 
