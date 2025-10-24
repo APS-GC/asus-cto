@@ -111,13 +111,15 @@
 
 .cmp-carousel__actions {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
+  transform: translateY(0);
   display: flex;
   justify-content: space-between;
   width: 100%;
   pointer-events: none;
   z-index: 10;
+  height: 40px;
+  align-items: center;
 }
 
 .cmp-carousel__action {
@@ -719,6 +721,10 @@
 @media (min-width: 1024px) {
   .cmp-product-card {
     max-width: 320px;
+  }
+  
+  .cmp-carousel__actions {
+    display: none;
   }
 }
 
