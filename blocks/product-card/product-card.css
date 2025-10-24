@@ -25,7 +25,7 @@
 .product-card-footer {
   display: flex;
   justify-content: center;
-  margin-top: 2rem;
+  margin-top: 3rem;
 }
 
 .product-card-view-all {
@@ -382,9 +382,6 @@
   user-select: none;
 }
 
-.cmp-product-card__fps {
-  margin: 1rem 0;
-}
 
 .cmp-product-card__fps-game {
   color: var(--color-primary-700);
@@ -582,13 +579,18 @@
 }
 
 /* FPS Table Tooltip Styles */
+.cmp-product-card__fps {
+  position: relative;
+  margin: 1rem 0;
+}
+
 .tooltip__content {
   position: absolute;
-  top: 0;
-  left: 100%;
-  margin-left: 0.5rem;
+  top: 50%;
+  left: calc(100% + 0.5rem);
+  transform: translateY(-50%);
   background: white;
-  color: var(--color-primary-950);
+  color: #000000;
   padding: 1rem;
   border-radius: var(--border-radius);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
