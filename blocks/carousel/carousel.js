@@ -17,7 +17,32 @@ function parseCarouselConfig(block) {
     slides: []
   };
 
-  // Parse rows from the block
+  // Check if this is UE authoring format (has carousel-slide components as children)
+  const slideElements = block.querySelectorAll('.carousel-slide');
+  
+  if (slideElements.length > 0) {
+    // UE Authoring format - parse carousel-slide components
+    slideElements.forEach((slideElement, index) => {
+      const slide = parseSlideFromUEFormat(slideElement, index);
+      if (slide) {
+        config.slides.push(slide);
+      }
+    });
+    
+    // Check for carousel settings in data attributes or separate elements
+    const settingsElement = block.querySelector('.carousel-settings');
+    if (settingsElement) {
+      const imageAutoplay = settingsElement.dataset.imageAutoplayDuration;
+      const videoAutoplay = settingsElement.dataset.videoAutoplayDuration;
+      
+      if (imageAutoplay) config.imageAutoplayDuration = parseInt(imageAutoplay, 10) * 1000;
+      if (videoAutoplay) config.videoAutoplayDuration = parseInt(videoAutoplay, 10) * 1000;
+    }
+    
+    return config;
+  }
+
+  // Legacy table format for demo compatibility
   const rows = [...block.children];
   
   if (rows.length === 0) return config;
@@ -40,7 +65,7 @@ function parseCarouselConfig(block) {
     rows.shift();
   }
 
-  // Parse slide data
+  // Parse slide data from table format
   rows.forEach((row, index) => {
     const cells = [...row.children];
     if (cells.length >= 6) {
@@ -64,6 +89,77 @@ function parseCarouselConfig(block) {
   });
 
   return config;
+}
+
+/**
+ * Parse slide data from UE format carousel-slide component
+ */
+function parseSlideFromUEFormat(slideElement, index) {
+  // Look for data attributes first (preferred UE approach)
+  const data = slideElement.dataset;
+  
+  if (data.title || data.media) {
+    const slide = {
+      id: `slide-${index}`,
+      title: data.title || '',
+      subtitle: data.subtitle || '',
+      media: data.media || '',
+      mediaAlt: data.mediaAlt || data.alt || '',
+      ctaText: data.ctaText || data.buttonText || '',
+      ctaLocation: data.ctaLocation || 'center',
+      ctaLink: data.ctaLink || data.link || '',
+      openNewTab: data.openNewTab === 'true' || data.newTab === 'true'
+    };
+    
+    // Determine if media is video
+    slide.isVideo = slide.media.match(/\.(mp4|webm|ogg)$/i) !== null;
+    
+    return slide;
+  }
+  
+  // Fallback: try to parse from child elements
+  const titleElement = slideElement.querySelector('.slide-title, h1, h2, h3, h4, h5, h6');
+  const subtitleElement = slideElement.querySelector('.slide-subtitle, .subtitle');
+  const mediaElement = slideElement.querySelector('img, video, .slide-media');
+  const ctaElement = slideElement.querySelector('.cta-button, .button, a');
+  
+  if (titleElement || mediaElement) {
+    const slide = {
+      id: `slide-${index}`,
+      title: titleElement?.textContent?.trim() || '',
+      subtitle: subtitleElement?.textContent?.trim() || '',
+      media: '',
+      mediaAlt: '',
+      ctaText: ctaElement?.textContent?.trim() || '',
+      ctaLocation: slideElement.dataset.ctaLocation || 'center',
+      ctaLink: ctaElement?.href || '',
+      openNewTab: ctaElement?.target === '_blank'
+    };
+    
+    // Extract media information
+    if (mediaElement) {
+      if (mediaElement.tagName === 'IMG') {
+        slide.media = mediaElement.src;
+        slide.mediaAlt = mediaElement.alt;
+        slide.isVideo = false;
+      } else if (mediaElement.tagName === 'VIDEO') {
+        slide.media = mediaElement.src;
+        slide.mediaAlt = mediaElement.getAttribute('aria-label') || '';
+        slide.isVideo = true;
+      } else {
+        // Check for background image or other media
+        const bgImage = window.getComputedStyle(mediaElement).backgroundImage;
+        if (bgImage && bgImage !== 'none') {
+          slide.media = bgImage.slice(4, -1).replace(/"/g, '');
+          slide.isVideo = false;
+        }
+      }
+    }
+    
+    return slide;
+  }
+  
+  return null;
 }
 
 /**
