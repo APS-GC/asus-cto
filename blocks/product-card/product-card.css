@@ -668,7 +668,48 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 675px) {
+  .cmp-product-card {
+    padding: 1.5rem;
+    max-width: none;
+    min-height: auto;
+  }
+  
+  .cmp-product-card__preview-btn {
+    display: none;
+  }
+  
+  .cmp-product-card__title {
+    font-size: 1rem;
+  }
+  
+  .cmp-carousel__action--previous {
+    margin-left: -15px;
+  }
+  
+  .cmp-carousel__action--next {
+    margin-right: -15px;
+  }
+  
+  .cmp-carousel__action {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+  
+  /* Mobile carousel - show one card at a time */
+  .cmp-carousel__item {
+    flex: 0 0 100%;
+    min-width: unset;
+    max-width: 100%;
+  }
+  
+  .cmp-carousel__content {
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 676px) and (max-width: 768px) {
   .cmp-product-card {
     padding: 1.5rem;
     max-width: none;
