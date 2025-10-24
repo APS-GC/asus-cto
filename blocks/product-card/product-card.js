@@ -12,7 +12,7 @@ async function fetchProductData(endpoint = '/mock-api/products', limit = 3) {
           name: 'ROG Strix GT15 Gaming Desktop',
           model: 'G15CF-DB776',
           image: '/content/dam/asus-cto/products/product-1-image-1.webp',
-          imageHover: '/content/dam/eds-enablement-xwalk/asus-cto-sites/product-1-hover.jpg',
+          imageHover: '/content/dam/asus-cto/products/product-2-image-1-hover.webp',
           price: '1299',
           originalPrice: '1599',
           discount: '300',
@@ -228,7 +228,7 @@ function createProductCard(product) {
             <button class="cmp-product-card__estore-icon" data-tooltip-trigger aria-describedby="estore-price-info-${product.id}" data-tooltip-position="top" aria-label="Information about ASUS estore price.">
               <span class="visually-hidden"></span>
             </button>
-            <div class="tooltip__content" id="estore-price-info-${product.id}" role="tooltip">
+            <div class="cmp-product-card__tooltip tooltip__content" id="estore-price-info-${product.id}" role="tooltip">
               ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be
               available on estore and are for reference only.
             </div>
@@ -371,106 +371,136 @@ function initializeCarousel(carousel, products) {
   handleResize();
 }
 
-// Simple tooltip implementation for EDS blocks
+// Enhanced tooltip implementation matching webpack components
 function initializeTooltips(container) {
-  console.log('Initializing simple tooltips for container:', container);
-  
   const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
-  console.log('Found tooltip triggers:', tooltipTriggers.length);
   
   tooltipTriggers.forEach(trigger => {
     const tooltipId = trigger.getAttribute('aria-describedby');
     const tooltip = document.getElementById(tooltipId);
     
     if (!tooltip) {
-      console.warn('Tooltip element not found for ID:', tooltipId);
       return;
     }
     
-    console.log('Setting up tooltip for:', trigger, tooltip);
+    // Move tooltip to body for better positioning
+    if (tooltip.parentElement !== document.body) {
+      document.body.appendChild(tooltip);
+    }
     
-    // Set initial styles
+    // Set accessibility attributes
+    trigger.setAttribute('aria-haspopup', 'dialog');
+    trigger.setAttribute('aria-expanded', 'false');
+    tooltip.setAttribute('role', 'tooltip');
+    tooltip.setAttribute('aria-hidden', 'true');
+    
+    // Initial styles
     tooltip.style.position = 'fixed';
+    tooltip.style.top = '-9999px';
+    tooltip.style.left = '-9999px';
     tooltip.style.zIndex = '99999';
-    tooltip.style.opacity = '0';
-    tooltip.style.visibility = 'hidden';
-    tooltip.style.transition = 'opacity 0.2s ease, visibility 0.2s ease';
-    tooltip.style.pointerEvents = 'none';
     
-    // Position tooltip
-    const position = trigger.getAttribute('data-tooltip-position') || 'top';
+    const position = trigger.getAttribute('data-tooltip-position') || 'auto';
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    const calculateBestPosition = (position, triggerRect, tooltipRect) => {
+      const padding = 13; // 8px spacing + 5px arrow size
+      const viewport = { width: window.innerWidth, height: window.innerHeight };
+      const space = {
+        top: triggerRect.top,
+        bottom: viewport.height - triggerRect.bottom,
+        left: triggerRect.left,
+        right: viewport.width - triggerRect.right,
+      };
+      
+      const strategies = {
+        top: () => ({
+          top: triggerRect.top - tooltipRect.height - padding,
+          left: triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2,
+          currentPosition: 'top',
+        }),
+        bottom: () => ({
+          top: triggerRect.bottom + padding,
+          left: triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2,
+          currentPosition: 'bottom',
+        }),
+        left: () => ({
+          left: triggerRect.left - tooltipRect.width - padding,
+          top: triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2,
+          currentPosition: 'left',
+        }),
+        right: () => ({
+          left: triggerRect.right + padding,
+          top: triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2,
+          currentPosition: 'right',
+        }),
+        auto: () => {
+          const positions = [
+            { valid: space.right > tooltipRect.width + padding, left: triggerRect.right + padding, top: triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2, currentPosition: 'right', priority: space.right },
+            { valid: space.bottom > tooltipRect.height + padding, top: triggerRect.bottom + padding, left: triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2, currentPosition: 'bottom', priority: space.bottom },
+            { valid: space.top > tooltipRect.height + padding, top: triggerRect.top - tooltipRect.height - padding, left: triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2, currentPosition: 'top', priority: space.top },
+            { valid: space.left > tooltipRect.width + padding, left: triggerRect.left - tooltipRect.width - padding, top: triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2, currentPosition: 'left', priority: space.left },
+          ];
+          const valid = positions.filter((p) => p.valid);
+          return valid.length > 0 ? valid.reduce((best, cur) => (cur.priority > best.priority ? cur : best)) : positions[0];
+        },
+      };
+      
+      return strategies[position] ? strategies[position]() : strategies.auto();
+    };
+    
+    const positionTooltip = () => {
+      const triggerRect = trigger.getBoundingClientRect();
+      tooltip.style.visibility = 'hidden';
+      tooltip.classList.add('tooltip--visible');
+      const tooltipRect = tooltip.getBoundingClientRect();
+      const posResult = calculateBestPosition(position, triggerRect, tooltipRect);
+      
+      tooltip.style.top = `${Math.max(13, Math.round(posResult.top))}px`;
+      tooltip.style.left = `${Math.max(13, Math.round(posResult.left))}px`;
+      
+      tooltip.classList.remove('tooltip--position-top', 'tooltip--position-bottom', 'tooltip--position-left', 'tooltip--position-right');
+      tooltip.classList.add(`tooltip--position-${posResult.currentPosition}`);
+      tooltip.style.visibility = '';
+    };
     
     const showTooltip = () => {
-      const triggerRect = trigger.getBoundingClientRect();
-      const tooltipRect = tooltip.getBoundingClientRect();
+      document.querySelectorAll('.tooltip__content.tooltip--visible').forEach(t => {
+        if (t !== tooltip) {
+          t.classList.remove('tooltip--visible');
+          t.setAttribute('aria-hidden', 'true');
+        }
+      });
       
-      let top, left;
-      
-      switch (position) {
-        case 'top':
-          top = triggerRect.top - tooltipRect.height - 10;
-          left = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2);
-          break;
-        case 'bottom':
-          top = triggerRect.bottom + 10;
-          left = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2);
-          break;
-        case 'left':
-          top = triggerRect.top + (triggerRect.height / 2) - (tooltipRect.height / 2);
-          left = triggerRect.left - tooltipRect.width - 10;
-          break;
-        case 'right':
-        default:
-          top = triggerRect.top + (triggerRect.height / 2) - (tooltipRect.height / 2);
-          left = triggerRect.right + 10;
-          break;
-      }
-      
-      // Keep tooltip within viewport
-      const padding = 10;
-      top = Math.max(padding, Math.min(top, window.innerHeight - tooltipRect.height - padding));
-      left = Math.max(padding, Math.min(left, window.innerWidth - tooltipRect.width - padding));
-      
-      tooltip.style.top = `${top}px`;
-      tooltip.style.left = `${left}px`;
-      tooltip.style.opacity = '1';
-      tooltip.style.visibility = 'visible';
-      
-      console.log('Showing tooltip at:', { top, left });
+      setTimeout(() => {
+        positionTooltip();
+        tooltip.setAttribute('aria-hidden', 'false');
+        trigger.setAttribute('aria-expanded', 'true');
+      }, 100);
     };
     
     const hideTooltip = () => {
-      tooltip.style.opacity = '0';
-      tooltip.style.visibility = 'hidden';
-      console.log('Hiding tooltip');
+      tooltip.classList.remove('tooltip--visible');
+      tooltip.setAttribute('aria-hidden', 'true');
+      trigger.setAttribute('aria-expanded', 'false');
     };
     
-    // Event listeners for desktop (hover)
-    trigger.addEventListener('mouseenter', showTooltip);
-    trigger.addEventListener('mouseleave', hideTooltip);
-    
-    // Event listeners for mobile (click/tap)
-    trigger.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (tooltip.style.opacity === '1') {
-        hideTooltip();
-      } else {
-        showTooltip();
-      }
-    });
-    
-    // Event listeners for keyboard accessibility
-    trigger.addEventListener('focus', showTooltip);
-    trigger.addEventListener('blur', hideTooltip);
-    
-    // Hide tooltip when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!trigger.contains(e.target) && !tooltip.contains(e.target)) {
-        hideTooltip();
-      }
-    });
-    
-    console.log('Tooltip setup complete for:', trigger);
+    // Event listeners
+    if (isTouch) {
+      trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isVisible = tooltip.classList.contains('tooltip--visible');
+        if (isVisible) { hideTooltip(); } else { showTooltip(); }
+      });
+      document.addEventListener('click', (e) => {
+        if (!tooltip.contains(e.target) && !trigger.contains(e.target)) { hideTooltip(); }
+      });
+    } else {
+      trigger.addEventListener('mouseenter', showTooltip);
+      trigger.addEventListener('mouseleave', hideTooltip);
+      trigger.addEventListener('focus', showTooltip);
+      trigger.addEventListener('blur', hideTooltip);
+    }
   });
 }
 

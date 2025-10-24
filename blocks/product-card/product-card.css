@@ -382,34 +382,6 @@
   user-select: none;
 }
 
-
-.cmp-product-card__fps-game {
-  color: var(--color-primary-700);
-  margin-bottom: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.cmp-product-card__fps-score {
-  display: inline-block;
-  background: transparent;
-  color: var(--color-primary-950);
-  border: 1px solid var(--color-primary-600);
-  border-radius: var(--border-radius);
-  min-width: 64px;
-  min-height: 24px;
-  text-align: center;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.cmp-product-card__fps-score:hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
-}
-
 .cmp-product-card__specs {
   margin: 1rem 0;
   padding-left: 0.75rem;
@@ -550,17 +522,50 @@
   color: #3b82f6;
 }
 
-/* FPS Table Tooltip Styles */
+/* FPS Section */
 .cmp-product-card__fps {
   position: relative;
   margin: 1rem 0;
+}
+
+.cmp-product-card__fps-game {
+  color: var(--color-primary-700);
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.cmp-product-card__fps-score {
+  display: inline-block;
+  background: transparent;
+  color: var(--color-primary-950);
+  border: 1px solid var(--color-primary-600);
+  border-radius: var(--border-radius);
+  min-width: 64px;
+  min-height: 24px;
+  text-align: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.cmp-product-card__fps-score:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+/* Tooltip System - Based on webpack components */
+[data-tooltip-trigger] {
+  cursor: pointer;
 }
 
 .tooltip__content {
   --tooltip-background: var(--color-primary-950);
   --tooltip-color: var(--color-primary);
   --tooltip-offset: 0;
-  position: absolute;
+  position: fixed;
   background: var(--tooltip-background);
   color: var(--tooltip-color);
   z-index: 99999;
@@ -575,6 +580,8 @@
   box-sizing: border-box;
   padding: 1rem;
   font-size: 0.875rem;
+  top: -9999px;
+  left: -9999px;
 }
 
 .tooltip__content.tooltip--visible {
@@ -582,12 +589,18 @@
   visibility: visible;
 }
 
+/* Tooltip size variations */
+.cmp-product-card__tooltip {
+  max-width: 260px;
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+}
+
 /* Base arrow */
 .tooltip__content::after {
   content: "";
   top: 50%;
   left: -5px;
-  -webkit-transform: translateY(-50%);
   transform: translateY(-50%);
   background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="5" height="12" viewBox="0 0 5 12" fill="none"><path d="M5 0.5C4.97696 0.519444 4.95461 0.540181 4.93304 0.562211L0.275596 5.32028C-0.0918658 5.69568 -0.0918658 6.30432 0.275596 6.67972L4.93304 11.4378C4.95461 11.4598 4.97696 11.4806 5 11.5L5 0.5Z" fill="white"/></svg>') center / contain no-repeat;
   width: 6px;
@@ -595,6 +608,33 @@
   position: absolute;
   z-index: 1;
   pointer-events: none;
+}
+
+/* Arrows by direction */
+.tooltip--position-top::after {
+  bottom: -7px;
+  left: 50%;
+  top: unset;
+  transform: translateX(-50%) rotate(270deg);
+}
+
+.tooltip--position-bottom::after {
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%) rotate(90deg);
+}
+
+.tooltip--position-left::after {
+  top: 50%;
+  right: -5px;
+  left: unset;
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.tooltip--position-right::after {
+  top: 50%;
+  left: -5px;
+  transform: translateY(-50%);
 }
 
 .cmp-product-card__fps-table {
