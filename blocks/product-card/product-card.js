@@ -259,16 +259,29 @@ function initializeCarousel(carousel, products) {
   const indicators = carousel.querySelector('.cmp-carousel__indicators');
   
   let currentIndex = 0;
+  let autoPlayInterval = null;
+  
+  // Check if we're on desktop (1024px+)
+  function isDesktop() {
+    return window.innerWidth >= 1024;
+  }
   
   // Create indicators
   products.forEach((_, index) => {
     const indicator = document.createElement('li');
     indicator.innerHTML = `<button type="button" role="tab" aria-controls="carousel-item-${index}" aria-selected="${index === 0 ? 'true' : 'false'}" tabindex="${index === 0 ? '0' : '-1'}">${index + 1}</button>`;
-    indicator.addEventListener('click', () => goToSlide(index));
+    indicator.addEventListener('click', () => {
+      if (!isDesktop()) {
+        goToSlide(index);
+      }
+    });
     indicators.appendChild(indicator);
   });
   
   function updateCarousel() {
+    // Don't update carousel on desktop
+    if (isDesktop()) return;
+    
     const items = content.querySelectorAll('.cmp-carousel__item');
     const indicatorButtons = indicators.querySelectorAll('button');
     
@@ -286,32 +299,65 @@ function initializeCarousel(carousel, products) {
   }
   
   function goToSlide(index) {
+    if (isDesktop()) return;
     currentIndex = index;
     updateCarousel();
   }
   
   function nextSlide() {
+    if (isDesktop()) return;
     currentIndex = (currentIndex + 1) % products.length;
     updateCarousel();
   }
   
   function prevSlide() {
+    if (isDesktop()) return;
     currentIndex = (currentIndex - 1 + products.length) % products.length;
     updateCarousel();
   }
   
+  function startAutoPlay() {
+    if (!isDesktop() && !autoPlayInterval) {
+      autoPlayInterval = setInterval(nextSlide, 5000);
+    }
+  }
+  
+  function stopAutoPlay() {
+    if (autoPlayInterval) {
+      clearInterval(autoPlayInterval);
+      autoPlayInterval = null;
+    }
+  }
+  
+  function handleResize() {
+    if (isDesktop()) {
+      stopAutoPlay();
+      // Reset transform on desktop
+      content.style.transform = '';
+      // Show all items on desktop
+      const items = content.querySelectorAll('.cmp-carousel__item');
+      items.forEach((item) => {
+        item.classList.remove('cmp-carousel__item--active');
+        item.setAttribute('aria-hidden', 'false');
+      });
+    } else {
+      updateCarousel();
+      startAutoPlay();
+    }
+  }
+  
+  // Event listeners
   prevBtn.addEventListener('click', prevSlide);
   nextBtn.addEventListener('click', nextSlide);
   
-  // Auto-play functionality
-  let autoPlayInterval = setInterval(nextSlide, 5000);
+  carousel.addEventListener('mouseenter', stopAutoPlay);
+  carousel.addEventListener('mouseleave', startAutoPlay);
   
-  carousel.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
-  carousel.addEventListener('mouseleave', () => {
-    autoPlayInterval = setInterval(nextSlide, 5000);
-  });
+  // Listen for window resize
+  window.addEventListener('resize', handleResize);
   
-  updateCarousel();
+  // Initial setup
+  handleResize();
 }
 
 export default async function decorate(block) {
