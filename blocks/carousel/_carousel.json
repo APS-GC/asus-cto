@@ -34,88 +34,102 @@
   "models": [
     {
       "id": "carousel-slide",
- "fields": [
-      {
-        "component": "text",
-        "name": "title",
-        "label": "Title",
-        "required": true
-      },
-      {
-        "component": "text", 
-        "name": "subtitle",
-        "label": "Subtitle"
-      },
-      {
-        "component": "reference",
-        "name": "media",
-        "label": "Media",
-        "multi": false,
-        "required": true
-      },
-      {
-        "component": "text",
-        "name": "mediaAlt",
-        "label": "Media Alt Text",
-        "required": true
-      },
-      {
-        "component": "text",
-        "name": "ctaText",
-        "label": "CTA Button Text"
-      },
-      {
-        "component": "select",
-        "name": "ctaLocation",
-        "label": "CTA Button Location",
-        "options": [
-          {
-            "text": "Center",
-            "value": "center"
-          },
-          {
-            "text": "Top",
-            "value": "top"
-          },
-          {
-            "text": "Bottom", 
-            "value": "bottom"
-          },
-          {
-            "text": "Left",
-            "value": "left"
-          },
-          {
-            "text": "Right",
-            "value": "right"
-          },
-          {
-            "text": "Start Center",
-            "value": "start-center"
-          },
-          {
-            "text": "End Center",
-            "value": "end-center"
-          },
-          {
-            "text": "Center Top",
-            "value": "center-top"
+      "fields": [
+        {
+          "component": "text",
+          "name": "title",
+          "label": "Title",
+          "valueType": "string",
+          "validation": {
+            "required": true
           }
-        ],
-        "value": "center"
-      },
-      {
-        "component": "reference",
-        "name": "ctaLink",
-        "label": "CTA Button Link",
-        "multi": false
-      },
-      {
-        "component": "boolean",
-        "name": "openNewTab",
-        "label": "Open in New Tab"
-      }
-    ]
+        },
+        {
+          "component": "text", 
+          "name": "subtitle",
+          "label": "Subtitle",
+          "valueType": "string"
+        },
+        {
+          "component": "reference",
+          "name": "media",
+          "label": "Media",
+          "multi": false,
+          "valueType": "string",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "component": "text",
+          "name": "mediaAlt",
+          "label": "Media Alt Text",
+          "valueType": "string",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "component": "text",
+          "name": "ctaText",
+          "label": "CTA Button Text",
+          "valueType": "string"
+        },
+        {
+          "component": "select",
+          "name": "ctaLocation",
+          "label": "CTA Button Location",
+          "valueType": "string",
+          "options": [
+            {
+              "name": "Center",
+              "value": "center"
+            },
+            {
+              "name": "Top",
+              "value": "top"
+            },
+            {
+              "name": "Bottom", 
+              "value": "bottom"
+            },
+            {
+              "name": "Left",
+              "value": "left"
+            },
+            {
+              "name": "Right",
+              "value": "right"
+            },
+            {
+              "name": "Start Center",
+              "value": "start-center"
+            },
+            {
+              "name": "End Center",
+              "value": "end-center"
+            },
+            {
+              "name": "Center Top",
+              "value": "center-top"
+            }
+          ],
+          "value": "center"
+        },
+        {
+          "component": "reference",
+          "name": "ctaLink",
+          "label": "CTA Button Link",
+          "multi": false,
+          "valueType": "string"
+        },
+        {
+          "component": "boolean",
+          "name": "openNewTab",
+          "label": "Open in New Tab",
+          "valueType": "boolean"
+        }
+      ]
     }
   ],
   "filters": [

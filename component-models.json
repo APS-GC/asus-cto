@@ -1150,66 +1150,78 @@
         "component": "text",
         "name": "title",
         "label": "Title",
-        "required": true
+        "valueType": "string",
+        "validation": {
+          "required": true
+        }
       },
       {
         "component": "text", 
         "name": "subtitle",
-        "label": "Subtitle"
+        "label": "Subtitle",
+        "valueType": "string"
       },
       {
         "component": "reference",
         "name": "media",
         "label": "Media",
         "multi": false,
-        "required": true
+        "valueType": "string",
+        "validation": {
+          "required": true
+        }
       },
       {
         "component": "text",
         "name": "mediaAlt",
         "label": "Media Alt Text",
-        "required": true
+        "valueType": "string",
+        "validation": {
+          "required": true
+        }
       },
       {
         "component": "text",
         "name": "ctaText",
-        "label": "CTA Button Text"
+        "label": "CTA Button Text",
+        "valueType": "string"
       },
       {
         "component": "select",
         "name": "ctaLocation",
         "label": "CTA Button Location",
+        "valueType": "string",
         "options": [
           {
-            "text": "Center",
+            "name": "Center",
             "value": "center"
           },
           {
-            "text": "Top",
+            "name": "Top",
             "value": "top"
           },
           {
-            "text": "Bottom", 
+            "name": "Bottom", 
             "value": "bottom"
           },
           {
-            "text": "Left",
+            "name": "Left",
             "value": "left"
           },
           {
-            "text": "Right",
+            "name": "Right",
             "value": "right"
           },
           {
-            "text": "Start Center",
+            "name": "Start Center",
             "value": "start-center"
           },
           {
-            "text": "End Center",
+            "name": "End Center",
             "value": "end-center"
           },
           {
-            "text": "Center Top",
+            "name": "Center Top",
             "value": "center-top"
           }
         ],
@@ -1219,12 +1231,14 @@
         "component": "reference",
         "name": "ctaLink",
         "label": "CTA Button Link",
-        "multi": false
+        "multi": false,
+        "valueType": "string"
       },
       {
         "component": "boolean",
         "name": "openNewTab",
-        "label": "Open in New Tab"
+        "label": "Open in New Tab",
+        "valueType": "boolean"
       }
     ]
   }
