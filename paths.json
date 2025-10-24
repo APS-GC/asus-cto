@@ -1,10 +1,16 @@
 {
   "mappings": [
-    "/content/ROG/:/",
+    "/content/ROG/hot-products:/hot-products",
+    "/content/ROG/home:/home",
+    "/content/ROG/:/rog",
+    "/content/asus-cto/language-master/en:/",
     "/content/ROG/configuration:/.helix/config.json",
-    "/content/ROG/metadata:/metadata.json"
+    "/content/ROG/metadata:/metadata.json",
+    "/content/asus-cto/language-master/en/configuration:/.helix/config.json",
+    "/content/asus-cto/language-master/en/metadata:/metadata.json"
   ],
   "includes": [
-    "/content/ROG/"
+    "/content/ROG/",
+    "/content/asus-cto/language-master/en/"
   ]
 }
