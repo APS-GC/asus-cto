@@ -1,176 +1,129 @@
 {
-  "id": "carousel",
-  "fields": [
+  "definitions": [
     {
-      "component": "container",
-      "name": "carousel-settings",
-      "label": "Carousel Settings",
-      "fields": [
-        {
-          "component": "number",
-          "name": "imageAutoplayDuration",
-          "label": "Image Autoplay Duration (seconds)",
-          "value": 5,
-          "validation": {
-            "min": 1,
-            "max": 30
-          }
-        },
-        {
-          "component": "number",
-          "name": "videoAutoplayDuration", 
-          "label": "Video Autoplay Duration (seconds)",
-          "value": 8,
-          "validation": {
-            "min": 1,
-            "max": 60
+      "title": "Carousel",
+      "id": "carousel",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Carousel",
+              "filter": "carousel"
+            }
           }
         }
-      ]
+      }
     },
     {
-      "component": "multifield",
-      "name": "slides",
-      "label": "Hero Banner Slides",
-      "fields": [
-        {
-          "component": "text",
-          "name": "title",
-          "label": "Title",
-          "required": true
-        },
-        {
-          "component": "text", 
-          "name": "subtitle",
-          "label": "Subtitle"
-        },
-        {
-          "component": "reference",
-          "name": "media",
-          "label": "Media",
-          "multi": false,
-          "required": true
-        },
-        {
-          "component": "text",
-          "name": "mediaAlt",
-          "label": "Media Alt Text",
-          "required": true
-        },
-        {
-          "component": "text",
-          "name": "ctaText",
-          "label": "CTA Button Text"
-        },
-        {
-          "component": "select",
-          "name": "ctaLocation",
-          "label": "CTA Button Location",
-          "options": [
-            {
-              "text": "Center",
-              "value": "center"
-            },
-            {
-              "text": "Top",
-              "value": "top"
-            },
-            {
-              "text": "Bottom", 
-              "value": "bottom"
-            },
-            {
-              "text": "Left",
-              "value": "left"
-            },
-            {
-              "text": "Right",
-              "value": "right"
-            },
-            {
-              "text": "Start Center",
-              "value": "start-center"
-            },
-            {
-              "text": "End Center",
-              "value": "end-center"
-            },
-            {
-              "text": "Center Top",
-              "value": "center-top"
+      "title": "Carousel Slide",
+      "id": "carousel-slide",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Carousel Slide",
+              "model": "carousel-slide"
             }
-          ],
-          "value": "center"
-        },
-        {
-          "component": "reference",
-          "name": "ctaLink",
-          "label": "CTA Button Link",
-          "multi": false
-        },
-        {
-          "component": "boolean",
-          "name": "openNewTab",
-          "label": "Open in New Tab"
+          }
         }
-      ]
+      }
     }
   ],
-  "model": {
-    "id": "carousel",
-    "fields": [
+  "models": [
+    {
+      "id": "carousel-slide",
+ "fields": [
       {
-        "id": "carousel-settings",
-        "component": "container",
-        "fields": [
-          {
-            "id": "imageAutoplayDuration",
-            "component": "number"
-          },
-          {
-            "id": "videoAutoplayDuration",
-            "component": "number"
-          }
-        ]
+        "component": "text",
+        "name": "title",
+        "label": "Title",
+        "required": true
       },
       {
-        "id": "slides",
-        "component": "multifield",
-        "fields": [
+        "component": "text", 
+        "name": "subtitle",
+        "label": "Subtitle"
+      },
+      {
+        "component": "reference",
+        "name": "media",
+        "label": "Media",
+        "multi": false,
+        "required": true
+      },
+      {
+        "component": "text",
+        "name": "mediaAlt",
+        "label": "Media Alt Text",
+        "required": true
+      },
+      {
+        "component": "text",
+        "name": "ctaText",
+        "label": "CTA Button Text"
+      },
+      {
+        "component": "select",
+        "name": "ctaLocation",
+        "label": "CTA Button Location",
+        "options": [
           {
-            "id": "title",
-            "component": "text"
+            "text": "Center",
+            "value": "center"
           },
           {
-            "id": "subtitle", 
-            "component": "text"
+            "text": "Top",
+            "value": "top"
           },
           {
-            "id": "media",
-            "component": "reference"
+            "text": "Bottom", 
+            "value": "bottom"
           },
           {
-            "id": "mediaAlt",
-            "component": "text"
+            "text": "Left",
+            "value": "left"
           },
           {
-            "id": "ctaText",
-            "component": "text"
+            "text": "Right",
+            "value": "right"
           },
           {
-            "id": "ctaLocation",
-            "component": "select"
+            "text": "Start Center",
+            "value": "start-center"
           },
           {
-            "id": "ctaLink",
-            "component": "reference"
+            "text": "End Center",
+            "value": "end-center"
           },
           {
-            "id": "openNewTab",
-            "component": "boolean"
+            "text": "Center Top",
+            "value": "center-top"
           }
-        ]
+        ],
+        "value": "center"
+      },
+      {
+        "component": "reference",
+        "name": "ctaLink",
+        "label": "CTA Button Link",
+        "multi": false
+      },
+      {
+        "component": "boolean",
+        "name": "openNewTab",
+        "label": "Open in New Tab"
       }
     ]
-  }
+    }
+  ],
+  "filters": [
+    {
+      "id": "carousel",
+      "components": [
+        "carousel-slide"
+      ]
+    }
+  ]
 }
