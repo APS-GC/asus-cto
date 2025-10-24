@@ -685,25 +685,118 @@
     "id": "carousel",
     "fields": [
       {
-        "component": "reference",
-        "valueType": "string",
-        "name": "image",
-        "label": "Image",
-        "multi": false
+        "component": "container",
+        "name": "carousel-settings",
+        "label": "Carousel Settings",
+        "fields": [
+          {
+            "component": "number",
+            "name": "imageAutoplayDuration",
+            "label": "Image Autoplay Duration (seconds)",
+            "value": 5,
+            "validation": {
+              "min": 1,
+              "max": 30
+            }
+          },
+          {
+            "component": "number",
+            "name": "videoAutoplayDuration", 
+            "label": "Video Autoplay Duration (seconds)",
+            "value": 8,
+            "validation": {
+              "min": 1,
+              "max": 60
+            }
+          }
+        ]
       },
       {
-        "component": "text",
-        "valueType": "string",
-        "name": "imageAlt",
-        "label": "Alt",
-        "value": ""
-      },
-      {
-        "component": "richtext",
-        "name": "text",
-        "value": "",
-        "label": "Text",
-        "valueType": "string"
+        "component": "multifield",
+        "name": "slides",
+        "label": "Hero Banner Slides",
+        "fields": [
+          {
+            "component": "text",
+            "name": "title",
+            "label": "Title",
+            "required": true
+          },
+          {
+            "component": "text", 
+            "name": "subtitle",
+            "label": "Subtitle"
+          },
+          {
+            "component": "reference",
+            "name": "media",
+            "label": "Media",
+            "multi": false,
+            "required": true
+          },
+          {
+            "component": "text",
+            "name": "mediaAlt",
+            "label": "Media Alt Text",
+            "required": true
+          },
+          {
+            "component": "text",
+            "name": "ctaText",
+            "label": "CTA Button Text"
+          },
+          {
+            "component": "select",
+            "name": "ctaLocation",
+            "label": "CTA Button Location",
+            "options": [
+              {
+                "text": "Center",
+                "value": "center"
+              },
+              {
+                "text": "Top",
+                "value": "top"
+              },
+              {
+                "text": "Bottom", 
+                "value": "bottom"
+              },
+              {
+                "text": "Left",
+                "value": "left"
+              },
+              {
+                "text": "Right",
+                "value": "right"
+              },
+              {
+                "text": "Start Center",
+                "value": "start-center"
+              },
+              {
+                "text": "End Center",
+                "value": "end-center"
+              },
+              {
+                "text": "Center Top",
+                "value": "center-top"
+              }
+            ],
+            "value": "center"
+          },
+          {
+            "component": "reference",
+            "name": "ctaLink",
+            "label": "CTA Button Link",
+            "multi": false
+          },
+          {
+            "component": "boolean",
+            "name": "openNewTab",
+            "label": "Open in New Tab"
+          }
+        ]
       }
     ]
   },
