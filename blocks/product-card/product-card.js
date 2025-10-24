@@ -11,7 +11,7 @@ async function fetchProductData(endpoint = '/mock-api/products', limit = 3) {
           id: 'rog-strix-gt15',
           name: 'ROG Strix GT15 Gaming Desktop',
           model: 'G15CF-DB776',
-          image: '/content/dam/eds-enablement-xwalk/asus-cto-sites/product-1.jpg',
+          image: '/content/dam/asus-cto/products/product-1-image-1.webp',
           imageHover: '/content/dam/eds-enablement-xwalk/asus-cto-sites/product-1-hover.jpg',
           price: '1299',
           originalPrice: '1599',
@@ -30,8 +30,8 @@ async function fetchProductData(endpoint = '/mock-api/products', limit = 3) {
           id: 'rog-strix-gt35',
           name: 'ROG Strix GT35 Gaming Desktop',
           model: 'G35CZ-DB796',
-          image: '/content/dam/eds-enablement-xwalk/asus-cto-sites/product-2.jpg',
-          imageHover: '/content/dam/eds-enablement-xwalk/asus-cto-sites/product-2-hover.jpg',
+          image: '/content/dam/asus-cto/products/product-2-image-1.webp',
+          imageHover: '/content/dam/asus-cto/products/product-2-image-1-hover.webp',
           price: '1899',
           originalPrice: '2199',
           discount: '300',
@@ -49,8 +49,8 @@ async function fetchProductData(endpoint = '/mock-api/products', limit = 3) {
           id: 'rog-strix-ga15',
           name: 'ROG Strix GA15 Gaming Desktop',
           model: 'G15DK-DB756',
-          image: '/content/dam/eds-enablement-xwalk/asus-cto-sites/product-3.jpg',
-          imageHover: '/content/dam/eds-enablement-xwalk/asus-cto-sites/product-3-hover.jpg',
+          image: '/content/dam/asus-cto/products/product-3-image-1.webp',
+          imageHover: '/content/dam/asus-cto/products/product-2-image-1.webp',
           price: '999',
           originalPrice: '1299',
           discount: '300',
@@ -371,27 +371,107 @@ function initializeCarousel(carousel, products) {
   handleResize();
 }
 
-// Initialize tooltip functionality
+// Simple tooltip implementation for EDS blocks
 function initializeTooltips(container) {
-  // Check if tooltip manager exists, if not create it
-  if (typeof window.tooltipManager === 'undefined') {
-    // Import and initialize tooltip manager
-    import('../../webpack/components/tooltip/js/_tooltip.js').then(() => {
-      if (window.tooltipManager) {
-        // Register tooltips in the container
-        const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
-        tooltipTriggers.forEach(trigger => {
-          window.tooltipManager.registerTooltip(trigger);
-        });
+  console.log('Initializing simple tooltips for container:', container);
+  
+  const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
+  console.log('Found tooltip triggers:', tooltipTriggers.length);
+  
+  tooltipTriggers.forEach(trigger => {
+    const tooltipId = trigger.getAttribute('aria-describedby');
+    const tooltip = document.getElementById(tooltipId);
+    
+    if (!tooltip) {
+      console.warn('Tooltip element not found for ID:', tooltipId);
+      return;
+    }
+    
+    console.log('Setting up tooltip for:', trigger, tooltip);
+    
+    // Set initial styles
+    tooltip.style.position = 'fixed';
+    tooltip.style.zIndex = '99999';
+    tooltip.style.opacity = '0';
+    tooltip.style.visibility = 'hidden';
+    tooltip.style.transition = 'opacity 0.2s ease, visibility 0.2s ease';
+    tooltip.style.pointerEvents = 'none';
+    
+    // Position tooltip
+    const position = trigger.getAttribute('data-tooltip-position') || 'top';
+    
+    const showTooltip = () => {
+      const triggerRect = trigger.getBoundingClientRect();
+      const tooltipRect = tooltip.getBoundingClientRect();
+      
+      let top, left;
+      
+      switch (position) {
+        case 'top':
+          top = triggerRect.top - tooltipRect.height - 10;
+          left = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2);
+          break;
+        case 'bottom':
+          top = triggerRect.bottom + 10;
+          left = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2);
+          break;
+        case 'left':
+          top = triggerRect.top + (triggerRect.height / 2) - (tooltipRect.height / 2);
+          left = triggerRect.left - tooltipRect.width - 10;
+          break;
+        case 'right':
+        default:
+          top = triggerRect.top + (triggerRect.height / 2) - (tooltipRect.height / 2);
+          left = triggerRect.right + 10;
+          break;
+      }
+      
+      // Keep tooltip within viewport
+      const padding = 10;
+      top = Math.max(padding, Math.min(top, window.innerHeight - tooltipRect.height - padding));
+      left = Math.max(padding, Math.min(left, window.innerWidth - tooltipRect.width - padding));
+      
+      tooltip.style.top = `${top}px`;
+      tooltip.style.left = `${left}px`;
+      tooltip.style.opacity = '1';
+      tooltip.style.visibility = 'visible';
+      
+      console.log('Showing tooltip at:', { top, left });
+    };
+    
+    const hideTooltip = () => {
+      tooltip.style.opacity = '0';
+      tooltip.style.visibility = 'hidden';
+      console.log('Hiding tooltip');
+    };
+    
+    // Event listeners for desktop (hover)
+    trigger.addEventListener('mouseenter', showTooltip);
+    trigger.addEventListener('mouseleave', hideTooltip);
+    
+    // Event listeners for mobile (click/tap)
+    trigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (tooltip.style.opacity === '1') {
+        hideTooltip();
+      } else {
+        showTooltip();
       }
     });
-  } else {
-    // Register tooltips in the container
-    const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
-    tooltipTriggers.forEach(trigger => {
-      window.tooltipManager.registerTooltip(trigger);
+    
+    // Event listeners for keyboard accessibility
+    trigger.addEventListener('focus', showTooltip);
+    trigger.addEventListener('blur', hideTooltip);
+    
+    // Hide tooltip when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!trigger.contains(e.target) && !tooltip.contains(e.target)) {
+        hideTooltip();
+      }
     });
-  }
+    
+    console.log('Tooltip setup complete for:', trigger);
+  });
 }
 
 export default async function decorate(block) {
