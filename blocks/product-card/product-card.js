@@ -228,7 +228,7 @@ function createProductCard(product) {
             <button class="cmp-product-card__estore-icon" data-tooltip-trigger aria-describedby="estore-price-info-${product.id}" data-tooltip-position="top" aria-label="Information about ASUS estore price.">
               <span class="visually-hidden"></span>
             </button>
-            <div class="cmp-product-card__tooltip tooltip__content" id="estore-price-info-${product.id}" role="tooltip">
+            <div class="tooltip__content" id="estore-price-info-${product.id}" role="tooltip">
               ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be
               available on estore and are for reference only.
             </div>
@@ -371,6 +371,29 @@ function initializeCarousel(carousel, products) {
   handleResize();
 }
 
+// Initialize tooltip functionality
+function initializeTooltips(container) {
+  // Check if tooltip manager exists, if not create it
+  if (typeof window.tooltipManager === 'undefined') {
+    // Import and initialize tooltip manager
+    import('../../webpack/components/tooltip/js/_tooltip.js').then(() => {
+      if (window.tooltipManager) {
+        // Register tooltips in the container
+        const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
+        tooltipTriggers.forEach(trigger => {
+          window.tooltipManager.registerTooltip(trigger);
+        });
+      }
+    });
+  } else {
+    // Register tooltips in the container
+    const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
+    tooltipTriggers.forEach(trigger => {
+      window.tooltipManager.registerTooltip(trigger);
+    });
+  }
+}
+
 export default async function decorate(block) {
   // Get configuration from block data
   const config = {};
@@ -453,6 +476,9 @@ export default async function decorate(block) {
     
     // Initialize carousel functionality
     initializeCarousel(container.querySelector('.cmp-carousel'), products);
+    
+    // Initialize tooltips
+    initializeTooltips(container);
     
     // Add instrumentation
     moveInstrumentation(block, container);

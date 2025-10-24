@@ -469,40 +469,7 @@
   opacity: 0.7;
 }
 
-.cmp-product-card__tooltip {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 260px;
-  padding: 0.75rem;
-  background: white;
-  color: var(--color-primary-950);
-  font-size: 0.75rem;
-  border-radius: var(--border-radius);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  display: none;
-  z-index: 1000;
-  border: 1px solid var(--color-primary-300);
-  margin-top: 0.5rem;
-  line-height: 1.4;
-  white-space: normal;
-  word-wrap: break-word;
-}
-
-.cmp-product-card__tooltip::after {
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 5px solid transparent;
-  border-bottom-color: white;
-}
-
-.cmp-product-card__estore-icon-wrapper:hover .cmp-product-card__tooltip {
-  display: block;
-}
+/* Estore tooltip uses the main tooltip system now */
 
 .cmp-product-card__price-block {
   display: flex;
@@ -590,50 +557,44 @@
 }
 
 .tooltip__content {
+  --tooltip-background: var(--color-primary-950);
+  --tooltip-color: var(--color-primary);
+  --tooltip-offset: 0;
   position: absolute;
-  top: 50%;
-  left: calc(100% + 8px);
-  transform: translateY(-50%);
-  background: #ffffff;
-  background-color: #ffffff;
-  color: #000000;
-  padding: 0.75rem;
+  background: var(--tooltip-background);
+  color: var(--tooltip-color);
+  z-index: 99999;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  max-width: 400px;
   border-radius: var(--border-radius);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-  display: none;
-  z-index: 9999;
-  min-width: 200px;
-  border: 1px solid #d1d5db;
-  white-space: nowrap;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+  box-sizing: border-box;
+  padding: 1rem;
+  font-size: 0.875rem;
+}
+
+.tooltip__content.tooltip--visible {
   opacity: 1;
-  backdrop-filter: none;
+  visibility: visible;
 }
 
-.tooltip__content::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: -6px;
-  transform: translateY(-50%);
-  border: 6px solid transparent;
-  border-right-color: #d1d5db;
-  z-index: 1;
-}
-
+/* Base arrow */
 .tooltip__content::after {
   content: "";
-  position: absolute;
   top: 50%;
   left: -5px;
+  -webkit-transform: translateY(-50%);
   transform: translateY(-50%);
-  border: 5px solid transparent;
-  border-right-color: #ffffff;
-  z-index: 2;
-}
-
-.cmp-product-card__fps-score:hover + .tooltip__content,
-.tooltip__content:hover {
-  display: block;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="5" height="12" viewBox="0 0 5 12" fill="none"><path d="M5 0.5C4.97696 0.519444 4.95461 0.540181 4.93304 0.562211L0.275596 5.32028C-0.0918658 5.69568 -0.0918658 6.30432 0.275596 6.67972L4.93304 11.4378C4.95461 11.4598 4.97696 11.4806 5 11.5L5 0.5Z" fill="white"/></svg>') center / contain no-repeat;
+  width: 6px;
+  height: 11px;
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .cmp-product-card__fps-table {
