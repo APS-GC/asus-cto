@@ -1,0 +1,553 @@
+
+/* Carousel Block Styles */
+.block.carousel {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.carousel.panelcontainer {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Carousel Container */
+.cmp-carousel {
+  width: 100%;
+  position: relative;
+  background: #000;
+}
+
+.cmp-carousel__content {
+  position: relative;
+  width: 100%;
+}
+
+/* Swiper Styles */
+.cmp-carousel .swiper {
+  width: 100%;
+  height: 100vh;
+  min-height: 500px;
+}
+
+.cmp-carousel .swiper-wrapper {
+  height: 100%;
+}
+
+.cmp-carousel .swiper-slide {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hero Banner Styles within Carousel */
+.cmp-carousel .hero-banner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Hero Media Wrappers */
+.cmp-carousel .hero-video-wrapper,
+.cmp-carousel .hero-image-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.cmp-carousel .hero-video,
+.cmp-carousel .hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.cmp-carousel .hero-video {
+  background: #000;
+}
+
+/* Hero Content */
+.cmp-carousel .hero-content {
+  position: relative;
+  z-index: 2;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* CTA Position Classes */
+.cmp-carousel .hero-content--top {
+  align-self: flex-start;
+  margin-top: 5rem;
+}
+
+.cmp-carousel .hero-content--bottom {
+  align-self: flex-end;
+  margin-bottom: 5rem;
+}
+
+.cmp-carousel .hero-content--left {
+  text-align: left;
+  margin-left: 5rem;
+  margin-right: auto;
+}
+
+.cmp-carousel .hero-content--right {
+  text-align: right;
+  margin-right: 5rem;
+  margin-left: auto;
+}
+
+.cmp-carousel .hero-content--center {
+  align-self: center;
+}
+
+.cmp-carousel .hero-content--start-center {
+  align-self: center;
+  text-align: left;
+  margin-left: 5rem;
+  margin-right: auto;
+}
+
+.cmp-carousel .hero-content--end-center {
+  align-self: center;
+  text-align: right;
+  margin-right: 5rem;
+  margin-left: auto;
+}
+
+.cmp-carousel .hero-content--center-top {
+  align-self: flex-start;
+  margin-top: 5rem;
+}
+
+/* Typography */
+.cmp-carousel .product-name {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
+}
+
+.cmp-carousel .headline {
+  font-size: 3.5rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  line-height: 1.1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* CTA Button */
+.cmp-carousel .cta-button {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: #ff6b35;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cmp-carousel .cta-button:hover {
+  background: #e55a2b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cmp-carousel .cta-button:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Carousel Footer */
+.cmp-carousel__footer {
+  position: absolute;
+  bottom: 32px !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 32px;
+  width: 100%;
+  z-index: 2;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
+/* Indicators Group */
+.cmp-carousel__indicators-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 32px;
+  width: fit-content;
+  height: 16px;
+}
+
+/* Pagination Indicators */
+.cmp-carousel__indicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-top: -4px;
+  margin-left: -4px;
+}
+
+/* Individual Indicator */
+.cmp-carousel__indicator {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  border-radius: 0;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+}
+
+.cmp-carousel__indicator::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 8px;
+  background-color: transparent;
+  border: 1px solid var(--color-primary-950, #1a1a1a);
+  display: inline-block;
+  opacity: 1;
+  box-sizing: border-box;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.cmp-carousel__indicator:hover::before {
+  background-color: rgba(26, 26, 26, 0.4);
+}
+
+.cmp-carousel__indicator:focus::before {
+  background-color: var(--color-primary-600, #666);
+}
+
+/* Active Indicator State */
+.cmp-carousel__indicator--active {
+  width: 96px;
+  margin: 0 8px;
+  border: 0;
+  overflow: hidden;
+  cursor: default;
+  position: relative;
+}
+
+.cmp-carousel__indicator--active::before {
+  width: 100%;
+  background-color: var(--color-primary-300, #ccc);
+  border: 0;
+}
+
+.cmp-carousel__indicator--active::after {
+  content: "";
+  background-color: var(--color-primary-950, #1a1a1a);
+  border-radius: 8px;
+  transform-origin: left;
+  position: absolute;
+  top: 8px;
+  height: 8px;
+  width: calc(100% * max(0, min(var(--slide-progress, 0), 1)));
+  left: 0px;
+  max-width: 100%;
+}
+
+/* Media Controls */
+.cmp-carousel__media-controls {
+  position: relative;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  gap: 0.5rem;
+  display: none;
+}
+
+.cmp-carousel__media-control {
+  width: 32px;
+  height: 32px;
+  background-color: var(--color-primary-950, #1a1a1a);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+}
+
+.cmp-carousel__media-control:focus {
+  background-color: var(--color-primary-600, #666);
+  outline: 2px solid var(--color-focus-ring, #ff6b35);
+}
+
+/* Autoplay Toggle Button */
+.carousel-autoplay-toggle {
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="9" y="4.66699" width="1.66667" height="6.66667" rx="0.833333" fill="white"/><rect x="5.33398" y="4.66699" width="1.66667" height="6.66667" rx="0.833333" fill="white"/></svg>') center / 16px no-repeat;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  color: var(--color-primary-950, #1a1a1a);
+  padding: 0.25rem;
+  margin-top: -4px;
+}
+
+/* Show media controls only for slides with video */
+.cmp-carousel:has(.swiper-slide-active .hero-video) .cmp-carousel__media-controls {
+  display: flex;
+}
+
+/* Creative Effect Footer Override */
+.cmp-carousel[data-carousel-effect="creative"] .cmp-carousel__footer {
+  position: relative;
+  top: unset;
+  bottom: unset;
+  margin-top: 2rem;
+}
+
+/* State Modifiers */
+/* Autoplay paused state */
+.cmp-carousel:has(.is-autoplay-paused) .carousel-autoplay-toggle {
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 12L9 17.1962L9 6.80385L18 12Z" fill="white"/></svg>');
+}
+
+/* Media Control Play/Pause States */
+.cmp-carousel__media-controls .cmp-carousel__media-control--play-pause {
+  background: url('data:image/svg+xml,<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle data-figma-bg-blur-radius="10" cx="16" cy="16" r="15.5" fill="%23070707" fill-opacity="0.5" stroke="white"/><rect x="11.6002" y="9.99998" width="0.8" height="12" rx="0.4" fill="white" stroke="white" stroke-width="0.8"/><rect x="19.6002" y="9.99998" width="0.8" height="12" rx="0.4" fill="white" stroke="white" stroke-width="0.8"/></svg>');
+}
+
+.cmp-carousel__media-controls.paused .cmp-carousel__media-control--play-pause {
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><circle xmlns="http://www.w3.org/2000/svg" data-figma-bg-blur-radius="10" cx="16" cy="16" r="15.5" fill="%23070707" fill-opacity="0.5" stroke="white"/><path d="M22.5192 15.1362C23.1807 15.5221 23.1807 16.4779 22.5192 16.8638L13.5039 22.1227C12.8372 22.5116 12 22.0308 12 21.259L12 10.741C12 9.96925 12.8372 9.48838 13.5039 9.87726L22.5192 15.1362Z" fill="white"/></svg>');
+}
+
+/* Autoplay disabled state */
+.swiper:not(.is-autoplay-enabled) .cmp-carousel__indicator--active {
+  background-color: var(--color-primary-950, #1a1a1a);
+}
+
+
+/* Navigation Arrows (if needed) */
+.cmp-carousel__actions {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2rem;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.cmp-carousel__action {
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: all;
+}
+
+.cmp-carousel__action:hover {
+  border-color: white;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.cmp-carousel__action--previous::before {
+  content: "←";
+  font-size: 20px;
+}
+
+.cmp-carousel__action--next::before {
+  content: "→";
+  font-size: 20px;
+}
+
+/* Placeholder for empty carousel */
+.carousel-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  background: #f5f5f5;
+  color: #666;
+  font-size: 1.2rem;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .cmp-carousel .swiper {
+    height: 80vh;
+    min-height: 400px;
+  }
+  
+  .cmp-carousel .headline {
+    font-size: 2.5rem;
+  }
+  
+  .cmp-carousel .hero-content--left,
+  .cmp-carousel .hero-content--right,
+  .cmp-carousel .hero-content--start-center,
+  .cmp-carousel .hero-content--end-center {
+    margin-left: 2rem;
+    margin-right: 2rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .cmp-carousel .swiper {
+    height: 70vh;
+    min-height: 350px;
+  }
+  
+  .cmp-carousel .headline {
+    font-size: 2rem;
+  }
+  
+  .cmp-carousel .hero-content {
+    padding: 1rem;
+  }
+  
+  .cmp-carousel__footer {
+    bottom: 1rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  
+  .cmp-carousel__footer .cmp-carousel__media-controls {
+    position: static;
+    right: unset;
+    top: unset;
+    -webkit-transform: none;
+    transform: none;
+    margin-left: auto;
+  }
+  
+  .cmp-carousel .hero-content--top,
+  .cmp-carousel .hero-content--center-top {
+    margin-top: 2rem;
+  }
+  
+  .cmp-carousel .hero-content--bottom {
+    margin-bottom: 2rem;
+  }
+  
+  .cmp-carousel__actions {
+    padding: 0 1rem;
+  }
+  
+  .cmp-carousel__action {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .cmp-carousel[data-carousel-effect="creative"] .cmp-carousel__footer {
+    margin-top: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cmp-carousel .swiper {
+    height: 60vh;
+    min-height: 300px;
+  }
+  
+  .cmp-carousel .headline {
+    font-size: 1.8rem;
+  }
+  
+  .cmp-carousel .product-name {
+    font-size: 1rem;
+  }
+  
+  .cmp-carousel .cta-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .cmp-carousel__media-control,
+  .carousel-autoplay-toggle {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles for accessibility */
+.cmp-carousel__indicator:focus,
+.carousel-autoplay-toggle:focus,
+.cmp-carousel__media-control:focus,
+.cmp-carousel__action:focus {
+  outline: 2px solid #ff6b35;
+  outline-offset: 2px;
+}
+
+/* Swiper overrides */
+.cmp-carousel .swiper-slide {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.cmp-carousel .swiper-slide-active {
+  opacity: 1;
+}
+
+/* Loading states */
+.cmp-carousel .hero-video[data-loading="true"],
+.cmp-carousel .hero-image[data-loading="true"] {
+  filter: blur(5px);
+  transition: filter 0.3s ease;
+}
