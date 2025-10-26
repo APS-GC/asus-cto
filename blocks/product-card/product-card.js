@@ -519,33 +519,62 @@ function getConfigValue(config, hyphenatedKey, camelCaseKey, defaultValue) {
   return config[hyphenatedKey] || config[camelCaseKey] || defaultValue;
 }
 
-// Create authoring mode structure for Universal Editor
-function createAuthoringStructure(config) {
+// Create authoring mode structure for Universal Editor with full visual context
+async function createAuthoringStructure(config) {
   const sectionTitle = getConfigValue(config, 'section-title', 'sectionTitle', 'Hot Products');
   const itemCount = parseInt(getConfigValue(config, 'item-count', 'itemCount', '3'), 10);
   const viewAllLink = getConfigValue(config, 'view-all-link', 'viewAllLink', '/products');
   const viewAllText = getConfigValue(config, 'view-all-text', 'viewAllText', 'View all');
   const apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', '/mock-api/products');
-  const autoplayInterval = parseInt(getConfigValue(config, 'autoplay-interval', 'autoplayInterval', '5000'), 10);
+
+  // Use the same fetchProductData function as the published version
+  const products = await fetchProductData(apiEndpoint, itemCount);
+  
+  // Generate product cards HTML for authoring using the same createProductCard function
+  const productCardsElements = products.map((product, index) => {
+    const productCard = createProductCard(product);
+    return `
+      <div class="cmp-carousel__item ${index === 0 ? 'cmp-carousel__item--active' : ''}" id="carousel-item-${index}" role="tabpanel" aria-hidden="${index !== 0}">
+        ${productCard.outerHTML}
+      </div>
+    `;
+  }).join('');
 
   return `
-    <div>
-        <div data-aue-type="text" data-aue-label="Section Title" data-aue-prop="sectionTitle">${sectionTitle}</div>
-    </div>
-    <div>
-        <div data-aue-type="text" data-aue-label="Item Count" data-aue-prop="itemCount">${itemCount}</div>
-    </div>
-    <div>
-        <div data-aue-type="text" data-aue-label="View All Link" data-aue-prop="viewAllLink">${viewAllLink}</div>
-    </div>
-    <div>
-        <div data-aue-type="text" data-aue-label="View All Text" data-aue-prop="viewAllText">${viewAllText}</div>
-    </div>
-    <div>
-        <div data-aue-type="text" data-aue-label="API Endpoint" data-aue-prop="apiEndpoint">${apiEndpoint}</div>
-    </div>
-    <div>
-        <div data-aue-type="text" data-aue-label="Autoplay Interval" data-aue-prop="autoplayInterval">${autoplayInterval}</div>
+    <div class="product-card-section">
+      <div class="product-card-header">
+        <h2 class="product-card-title" data-aue-type="text" data-aue-label="Section Title" data-aue-prop="sectionTitle">${sectionTitle}</h2>
+      </div>
+      
+      <div class="product-card-carousel">
+        <div class="cmp-carousel" role="group" aria-live="polite" aria-roledescription="carousel">
+          <div class="cmp-carousel__content">
+            ${productCardsElements}
+          </div>
+          
+          <div class="cmp-carousel__actions">
+            <button class="cmp-carousel__action cmp-carousel__action--previous" type="button" aria-label="${getPlaceholder('previous')}">
+              <span class="icon icon--arrow-left">&#8249;</span>
+            </button>
+            <button class="cmp-carousel__action cmp-carousel__action--next" type="button" aria-label="${getPlaceholder('next')}">
+              <span class="icon icon--arrow-right">&#8250;</span>
+            </button>
+          </div>
+          
+          <ol class="cmp-carousel__indicators" role="tablist" aria-label="Choose a slide to display"></ol>
+        </div>
+      </div>
+      
+      <div class="product-card-footer">
+        <a class="product-card-view-all">
+          <span data-aue-type="text" data-aue-label="View All Text" data-aue-prop="viewAllText">${viewAllText}</span> <span class="view-all-arrow">&#8250;</span>
+        </a>
+        <div style="display: none;">
+          <div data-aue-type="text" data-aue-label="View All Link" data-aue-prop="viewAllLink">${viewAllLink}</div>
+          <div data-aue-type="text" data-aue-label="Item Count" data-aue-prop="itemCount">${itemCount}</div>
+          <div data-aue-type="text" data-aue-label="API Endpoint" data-aue-prop="apiEndpoint">${apiEndpoint}</div>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -570,7 +599,14 @@ export default async function decorate(block) {
 
   // If we're in authoring mode, show the editable structure
   if (isAuthoringMode()) {
-    block.innerHTML = createAuthoringStructure(config);
+    block.innerHTML = '<div class="product-card-loading">Loading products...</div>';
+    try {
+      const authoringStructure = await createAuthoringStructure(config);
+      block.innerHTML = authoringStructure;
+    } catch (error) {
+      console.error('Error loading authoring structure:', error);
+      block.innerHTML = '<div class="product-card-error">Error loading authoring view. Please try again later.</div>';
+    }
     return;
   }
   
