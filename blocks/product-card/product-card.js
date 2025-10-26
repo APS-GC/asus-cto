@@ -520,12 +520,44 @@ function getConfigValue(config, hyphenatedKey, camelCaseKey, defaultValue) {
 }
 
 // Create authoring mode structure for Universal Editor with full visual context
-async function createAuthoringStructure(config) {
-  const sectionTitle = getConfigValue(config, 'section-title', 'sectionTitle', 'Hot Products');
-  const itemCount = parseInt(getConfigValue(config, 'item-count', 'itemCount', '3'), 10);
-  const viewAllLink = getConfigValue(config, 'view-all-link', 'viewAllLink', '/products');
-  const viewAllText = getConfigValue(config, 'view-all-text', 'viewAllText', 'View all');
-  const apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', '/mock-api/products');
+async function createAuthoringStructure(config, block = null) {
+  // If block is provided, try to read current values from existing UE fields
+  let sectionTitle = getConfigValue(config, 'section-title', 'sectionTitle', 'Hot Products');
+  let itemCount = parseInt(getConfigValue(config, 'item-count', 'itemCount', '3'), 10);
+  let viewAllLink = getConfigValue(config, 'view-all-link', 'viewAllLink', '/products');
+  let viewAllText = getConfigValue(config, 'view-all-text', 'viewAllText', 'View all');
+  let apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', '/mock-api/products');
+
+  // If block exists, read current values from UE fields (in case they've been edited)
+  if (block) {
+    const existingSectionTitle = block.querySelector('[data-aue-prop="sectionTitle"]');
+    if (existingSectionTitle) {
+      sectionTitle = existingSectionTitle.textContent.trim() || sectionTitle;
+    }
+    
+    const existingItemCount = block.querySelector('[data-aue-prop="itemCount"]');
+    if (existingItemCount) {
+      const newItemCount = parseInt(existingItemCount.textContent.trim(), 10);
+      if (!isNaN(newItemCount) && newItemCount > 0) {
+        itemCount = newItemCount;
+      }
+    }
+    
+    const existingViewAllLink = block.querySelector('[data-aue-prop="viewAllLink"]');
+    if (existingViewAllLink) {
+      viewAllLink = existingViewAllLink.textContent.trim() || viewAllLink;
+    }
+    
+    const existingViewAllText = block.querySelector('[data-aue-prop="viewAllText"]');
+    if (existingViewAllText) {
+      viewAllText = existingViewAllText.textContent.trim() || viewAllText;
+    }
+    
+    const existingApiEndpoint = block.querySelector('[data-aue-prop="apiEndpoint"]');
+    if (existingApiEndpoint) {
+      apiEndpoint = existingApiEndpoint.textContent.trim() || apiEndpoint;
+    }
+  }
 
   // Use the same fetchProductData function as the published version
   const products = await fetchProductData(apiEndpoint, itemCount);
@@ -579,8 +611,8 @@ async function createAuthoringStructure(config) {
   `;
 }
 
-export default async function decorate(block) {
-  // Get configuration from block data
+// Function to parse configuration from block data
+function parseConfig(block) {
   const config = {};
   const rows = [...block.children];
   
@@ -596,17 +628,63 @@ export default async function decorate(block) {
       config[camelCaseKey] = value;
     }
   });
+  
+  return config;
+}
+
+// Function to render authoring mode with event listeners
+async function renderAuthoringMode(block) {
+  const config = parseConfig(block);
+  
+  block.innerHTML = '<div class="product-card-loading">Loading products...</div>';
+  try {
+    const authoringStructure = await createAuthoringStructure(config, block);
+    block.innerHTML = authoringStructure;
+    
+    // Add event listeners for UE field changes
+    const ueFields = block.querySelectorAll('[data-aue-prop]');
+    ueFields.forEach(field => {
+      // Listen for content changes (when UE updates the field)
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'childList' || mutation.type === 'characterData') {
+            // Debounce the re-render to avoid excessive updates
+            clearTimeout(field.updateTimeout);
+            field.updateTimeout = setTimeout(() => {
+              renderAuthoringMode(block);
+            }, 500);
+          }
+        });
+      });
+      
+      observer.observe(field, {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
+      
+      // Also listen for input events
+      field.addEventListener('input', () => {
+        clearTimeout(field.updateTimeout);
+        field.updateTimeout = setTimeout(() => {
+          renderAuthoringMode(block);
+        }, 500);
+      });
+    });
+    
+  } catch (error) {
+    console.error('Error loading authoring structure:', error);
+    block.innerHTML = '<div class="product-card-error">Error loading authoring view. Please try again later.</div>';
+  }
+}
+
+export default async function decorate(block) {
+  // Parse initial configuration
+  const config = parseConfig(block);
 
   // If we're in authoring mode, show the editable structure
   if (isAuthoringMode()) {
-    block.innerHTML = '<div class="product-card-loading">Loading products...</div>';
-    try {
-      const authoringStructure = await createAuthoringStructure(config);
-      block.innerHTML = authoringStructure;
-    } catch (error) {
-      console.error('Error loading authoring structure:', error);
-      block.innerHTML = '<div class="product-card-error">Error loading authoring view. Please try again later.</div>';
-    }
+    await renderAuthoringMode(block);
     return;
   }
   
