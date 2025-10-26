@@ -6,14 +6,14 @@
       "properties": [
         {
           "label": "Section Title",
-          "name": "section-title",
+          "name": "sectionTitle",
           "value": "Hot Products",
           "type": "text",
           "description": "Title displayed above the product cards"
         },
         {
           "label": "Number of Items",
-          "name": "item-count",
+          "name": "itemCount",
           "value": "3",
           "type": "number",
           "description": "Number of product cards to display in the carousel (default: 3)",
@@ -22,28 +22,28 @@
         },
         {
           "label": "View All Link",
-          "name": "view-all-link",
+          "name": "viewAllLink",
           "value": "/products",
           "type": "text",
           "description": "URL for the 'View all' link"
         },
         {
           "label": "View All Text",
-          "name": "view-all-text",
+          "name": "viewAllText",
           "value": "View all",
           "type": "text",
           "description": "Text for the 'View all' link"
         },
         {
           "label": "API Endpoint",
-          "name": "api-endpoint",
+          "name": "apiEndpoint",
           "value": "/mock-api/products",
           "type": "text",
           "description": "GraphQL API endpoint for fetching product data"
         },
         {
           "label": "Auto-play Interval",
-          "name": "autoplay-interval",
+          "name": "autoplayInterval",
           "value": "5000",
           "type": "number",
           "description": "Auto-play interval in milliseconds (0 to disable)",

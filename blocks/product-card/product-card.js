@@ -504,6 +504,52 @@ function initializeTooltips(container) {
   });
 }
 
+// Check if we're in Universal Editor authoring mode
+function isAuthoringMode() {
+  return window.hlx?.rum?.isSelected || 
+         document.body.classList.contains('adobe-ue-edit') ||
+         window.location.search.includes('view-doc-source=true') ||
+         window.location.hostname === 'author-p105462-e991028.adobeaemcloud.com' ||
+         document.querySelector('script[src*="universal-editor"]') !== null ||
+         window.adobeIMS?.isSignedInUser();
+}
+
+// Get configuration value with fallback for both hyphenated and camelCase keys
+function getConfigValue(config, hyphenatedKey, camelCaseKey, defaultValue) {
+  return config[hyphenatedKey] || config[camelCaseKey] || defaultValue;
+}
+
+// Create authoring mode structure for Universal Editor
+function createAuthoringStructure(config) {
+  const sectionTitle = getConfigValue(config, 'section-title', 'sectionTitle', 'Hot Products');
+  const itemCount = parseInt(getConfigValue(config, 'item-count', 'itemCount', '3'), 10);
+  const viewAllLink = getConfigValue(config, 'view-all-link', 'viewAllLink', '/products');
+  const viewAllText = getConfigValue(config, 'view-all-text', 'viewAllText', 'View all');
+  const apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', '/mock-api/products');
+  const autoplayInterval = parseInt(getConfigValue(config, 'autoplay-interval', 'autoplayInterval', '5000'), 10);
+
+  return `
+    <div>
+        <div data-aue-type="text" data-aue-label="Section Title" data-aue-prop="sectionTitle">${sectionTitle}</div>
+    </div>
+    <div>
+        <div data-aue-type="text" data-aue-label="Item Count" data-aue-prop="itemCount">${itemCount}</div>
+    </div>
+    <div>
+        <div data-aue-type="text" data-aue-label="View All Link" data-aue-prop="viewAllLink">${viewAllLink}</div>
+    </div>
+    <div>
+        <div data-aue-type="text" data-aue-label="View All Text" data-aue-prop="viewAllText">${viewAllText}</div>
+    </div>
+    <div>
+        <div data-aue-type="text" data-aue-label="API Endpoint" data-aue-prop="apiEndpoint">${apiEndpoint}</div>
+    </div>
+    <div>
+        <div data-aue-type="text" data-aue-label="Autoplay Interval" data-aue-prop="autoplayInterval">${autoplayInterval}</div>
+    </div>
+  `;
+}
+
 export default async function decorate(block) {
   // Get configuration from block data
   const config = {};
@@ -515,21 +561,33 @@ export default async function decorate(block) {
       const key = cells[0].textContent.trim().toLowerCase().replace(/\s+/g, '-');
       const value = cells[1].textContent.trim();
       config[key] = value;
+      
+      // Also store camelCase version for UE compatibility
+      const camelCaseKey = key.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
+      config[camelCaseKey] = value;
     }
   });
+
+  // If we're in authoring mode, show the editable structure
+  if (isAuthoringMode()) {
+    block.innerHTML = createAuthoringStructure(config);
+    return;
+  }
   
-  // Get configuration values
-  const sectionTitle = config['section-title'] || 'Hot Products';
-  const itemCount = parseInt(config['item-count'] || config['items'] || '3', 10);
-  const viewAllLink = config['view-all-link'] || '/products';
-  const viewAllText = config['view-all-text'] || 'View all';
+  // Get configuration values for published mode using the helper function
+  const sectionTitle = getConfigValue(config, 'section-title', 'sectionTitle', 'Hot Products');
+  const itemCount = parseInt(getConfigValue(config, 'item-count', 'itemCount', '3'), 10);
+  const viewAllLink = getConfigValue(config, 'view-all-link', 'viewAllLink', '/products');
+  const viewAllText = getConfigValue(config, 'view-all-text', 'viewAllText', 'View all');
+  const apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', '/mock-api/products');
+  const autoplayIntervalValue = parseInt(getConfigValue(config, 'autoplay-interval', 'autoplayInterval', '5000'), 10);
   
   // Show loading state
   block.innerHTML = '<div class="product-card-loading">Loading products...</div>';
   
   try {
     // Fetch product data
-    const products = await fetchProductData('/mock-api/products', itemCount);
+    const products = await fetchProductData(apiEndpoint, itemCount);
     
     if (!products || products.length === 0) {
       block.innerHTML = '<div class="product-card-error">No products found.</div>';
