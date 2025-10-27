@@ -477,7 +477,7 @@ function decorateIcons(element, prefix = '') {
  * @param {Element} main The container element
  */
 function decorateSections(main) {
-  main.querySelectorAll(':scope > div:not([data-section-status])').forEach((section) => {
+  main.querySelectorAll(':scope > div:not([data-section-status])').forEach((section, index) => {
     const wrappers = [];
     let defaultContent = false;
     [...section.children].forEach((e) => {
@@ -492,9 +492,21 @@ function decorateSections(main) {
     wrappers.forEach((wrapper) => section.append(wrapper));
     section.classList.add('section');
     section.dataset.sectionStatus = 'initialized';
-    section.style.visibility = 'hidden';
-    section.style.opacity = '0';
-    section.style.transition = 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out';
+    
+    // LCP Optimization: Don't hide the first section to prevent render delay
+    const isFirstSection = index === 0;
+    if (isFirstSection) {
+      // First section remains visible for immediate LCP rendering
+      section.style.visibility = 'visible';
+      section.style.opacity = '1';
+      section.dataset.lcpOptimized = 'true';
+      console.log('LCP Section optimization: First section kept visible for immediate rendering');
+    } else {
+      // Subsequent sections use normal hiding/showing behavior
+      section.style.visibility = 'hidden';
+      section.style.opacity = '0';
+      section.style.transition = 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out';
+    }
 
     // Process section metadata - check multiple sources
     let meta = {};
@@ -772,8 +784,15 @@ async function loadSection(section, loadCallback) {
     }
     if (loadCallback) await loadCallback(section);
     section.dataset.sectionStatus = 'loaded';
-    section.style.visibility = 'visible';
-    section.style.opacity = '1';
+    
+    // LCP Optimization: Skip visibility changes for already-visible LCP sections
+    const isLCPOptimized = section.dataset.lcpOptimized === 'true';
+    if (!isLCPOptimized) {
+      section.style.visibility = 'visible';
+      section.style.opacity = '1';
+    } else {
+      console.log('LCP Section already visible, skipping visibility change to avoid render delay');
+    }
   }
 }
 

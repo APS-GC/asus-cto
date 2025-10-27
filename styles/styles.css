@@ -169,6 +169,22 @@
     rgba(107, 121, 145, 1) 360deg);
 }
 
+/* LCP Font Loading Optimization - Prevent FOIT (Flash of Invisible Text) */
+@font-face {
+  font-family: 'Roboto';
+  font-display: swap; /* Immediate text render with fallback, swap to web font when loaded */
+}
+
+@font-face {
+  font-family: 'TTNormsProMedium';
+  font-display: swap; /* Immediate text render with fallback, swap to web font when loaded */
+}
+
+@font-face {
+  font-family: 'TTNormsProRegular';
+  font-display: swap; /* Immediate text render with fallback, swap to web font when loaded */
+}
+
 /* Base Typography Styles */
 body {
  background-color: var(--color-primary); 
@@ -181,13 +197,24 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   
-  /* Initial state - hidden for smooth appearance */
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  /* LCP Optimization: Start visible to prevent text render blocking */
+  opacity: 1;
+  /* Reduced transition for faster appearance */
+  transition: opacity 0.2s ease-in-out;
 }
 
 /* Appear state - triggered by JavaScript after content loads */
 body.appear {
+  opacity: 1;
+}
+
+/* Fallback for pages with fade-in animation */
+body.fade-in {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+body.fade-in.appear {
   opacity: 1;
 }
 
