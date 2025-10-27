@@ -110,8 +110,6 @@ function getFallbackProductData(limit = 6) {
       discount: '0',
       bazaarvoiceProductId: 'fallback-1',
       benchmarkGame: 'Various Games',
-      fps: 'TBD',
-      specs: ['High Performance Gaming', 'Contact for Details'],
       productUrl: '#',
       productTags: [],
       buyButtonStatus: 'Contact Us',
@@ -131,7 +129,6 @@ function getFallbackProductData(limit = 6) {
       bazaarvoiceProductId: 'fallback-2',
       benchmarkGame: 'Various Games',
       fps: 'TBD',
-      specs: ['High Performance Gaming', 'Contact for Details'],
       productUrl: '#',
       productTags: [],
       buyButtonStatus: 'Contact Us',
@@ -367,6 +364,9 @@ function createProductCard(product) {
   const productUrl = product.productUrl && product.productUrl !== '#' ? product.productUrl : 'pdp.html';
   const buyButtonText = product.buyButtonStatus || getPlaceholder('buy-now');
   
+  // Ensure we always have specs array for consistent structure
+  const specs = product.specs && product.specs.length > 0 ? product.specs : ['High Performance', 'Premium Quality'];
+  
   card.innerHTML = `
     <div class="cmp-product-card__header">
       <div class="cmp-product-card__status">
@@ -407,8 +407,8 @@ function createProductCard(product) {
         </div>
       </div>
 
-      ${(product.benchmarkGame && product.fps) || (product.gamePriority && product.gamePriority.length > 0) ? `
-        <div class="cmp-product-card__fps">
+      <div class="cmp-product-card__fps">
+        ${(product.benchmarkGame && product.fps) || (product.gamePriority && product.gamePriority.length > 0) ? `
           <p class="cmp-product-card__fps-game">
             ${product.benchmarkGame || 'Gaming Performance'}
           </p>
@@ -419,11 +419,11 @@ function createProductCard(product) {
           <div id="fps-details-${product.id}" class="tooltip__content" role="tooltip">
             ${generateFpsTooltip(product)}
           </div>
-        </div>
-      ` : ''}
+        ` : ''}
+      </div>
 
       <ul class="cmp-product-card__specs">
-        ${product.specs.map(spec => `<li class="cmp-product-card__spec-item">${spec}</li>`).join('')}
+        ${specs.map(spec => `<li class="cmp-product-card__spec-item">${spec}</li>`).join('')}
       </ul>
 
       <div class="cmp-product-card__estore">
@@ -680,12 +680,14 @@ function initializeTooltips(container) {
     tooltip.style.zIndex = '99999';
     
     // Ensure tooltip has minimum styling for visibility
-    tooltip.style.maxWidth = tooltip.style.maxWidth || '400px';
-    tooltip.style.padding = tooltip.style.padding || '1rem';
-    tooltip.style.backgroundColor = tooltip.style.backgroundColor || 'var(--color-primary-950, #1a1a1a)';
-    tooltip.style.color = tooltip.style.color || 'var(--color-primary, #ffffff)';
-    tooltip.style.borderRadius = tooltip.style.borderRadius || 'var(--border-radius, 8px)';
-    tooltip.style.fontSize = tooltip.style.fontSize || '0.875rem';
+    tooltip.style.maxWidth = '400px';
+    tooltip.style.padding = '1rem';
+    tooltip.style.backgroundColor = 'white';
+    tooltip.style.color = '#1a1a1a';
+    tooltip.style.border = '1px solid #ccc';
+    tooltip.style.borderRadius = '8px';
+    tooltip.style.fontSize = '0.875rem';
+    tooltip.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
     
     const position = trigger.getAttribute('data-tooltip-position') || 'auto';
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;

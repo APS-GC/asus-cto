@@ -98,7 +98,7 @@
   min-width: 300px;
   height: auto;
   display: flex;
-  min-height: 0;
+  min-height: 600px; /* Minimum height to ensure consistency */
 }
 
 .cmp-carousel__item--active {
@@ -179,14 +179,14 @@
   border-radius: var(--border-radius-xl);
   display: flex;
   flex-direction: column;
-  height: auto !important;
-  padding: 1.5rem 1.5rem 4rem 1.5rem;
+  height: 100%; /* Full height to match container */
+  padding: 1.5rem 1.5rem 2rem 1.5rem;
   gap: 1rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   max-width: 320px;
   margin: 0 auto;
-  min-height: 0 !important;
+  min-height: 550px; /* Minimum height for consistency */
   overflow: visible !important;
 }
 
@@ -199,12 +199,13 @@
   display: flex;
   align-items: flex-start;
   color: var(--color-primary-700);
-  min-height: 40px;
+  min-height: 40px; /* Fixed height for consistency */
   font-size: 0.75rem;
   gap: 1.5rem;
   margin-bottom: 1rem;
   z-index: 10;
   position: relative;
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .cmp-product-card__body {
@@ -214,11 +215,14 @@
   gap: 0.75rem;
   z-index: 10;
   position: relative;
+  min-height: 0; /* Allow flexible sizing within available space */
 }
 
 .cmp-product-card__info {
   display: flex;
   flex-direction: column;
+  min-height: 80px; /* Minimum height for title and model */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .cmp-product-card__status {
@@ -264,9 +268,14 @@
 .cmp-product-card__image {
   position: relative;
   max-width: 200px;
+  height: 200px; /* Fixed height for image container */
   margin: 0 auto 1.5rem;
   border-radius: var(--border-radius);
   overflow: visible;
+  flex-shrink: 0; /* Prevent shrinking */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cmp-product-card__image::before {
@@ -283,12 +292,16 @@
 }
 
 .cmp-image__image {
-  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   position: relative;
   z-index: 1;
   border-radius: var(--border-radius);
   transition: opacity 0.3s ease;
   display: block;
+  object-fit: contain; /* Ensure image fits within container */
 }
 
 .cmp-image__image--hover {
@@ -400,11 +413,22 @@
   padding-left: 0.75rem;
   font-size: 0.875rem;
   color: var(--color-primary-700);
+  min-height: 60px; /* Minimum height for specs section */
+  flex-grow: 1; /* Allow to grow and fill available space */
 }
 
 .cmp-product-card__spec-item {
   margin-bottom: 0.5rem;
   list-style-type: square;
+}
+
+/* Handle empty specs gracefully */
+.cmp-product-card__specs:empty::before {
+  content: "Product specifications available on product page";
+  font-style: italic;
+  opacity: 0.7;
+  list-style: none;
+  padding-left: 0;
 }
 
 .cmp-product-card__estore {
@@ -468,7 +492,9 @@
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
-  margin: 1.5rem 0;
+  margin: 1rem 0;
+  min-height: 40px; /* Consistent height for price section */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .cmp-product-card__price {
@@ -492,11 +518,13 @@
 .cmp-product-card__footer {
   display: flex;
   justify-content: space-between;
-  margin-top: auto;
+  margin-top: auto; /* Push to bottom */
   gap: 0.75rem;
-  flex-shrink: 0;
-  padding-top: 2rem;
-  margin-bottom: 1rem;
+  flex-shrink: 0; /* Never shrink */
+  padding-top: 1rem;
+  margin-bottom: 0;
+  min-height: 60px; /* Consistent footer height */
+  align-items: flex-end; /* Align content to bottom of footer */
 }
 
 .cmp-product-card__buy-button {
@@ -551,6 +579,8 @@
 .cmp-product-card__fps {
   position: relative;
   margin: 1rem 0;
+  min-height: 50px; /* Consistent height even when missing */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .cmp-product-card__fps-game {
@@ -674,7 +704,7 @@
   .cmp-product-card {
     padding: 1.5rem;
     max-width: none;
-    min-height: auto;
+    min-height: 500px; /* Consistent minimum height on mobile */
   }
   
   .cmp-product-card__preview-btn {
@@ -715,7 +745,7 @@
   .cmp-product-card {
     padding: 1.5rem;
     max-width: none;
-    min-height: auto;
+    min-height: 520px; /* Consistent minimum height on small tablet */
   }
   
   .cmp-product-card__preview-btn {
@@ -764,6 +794,7 @@
   /* Desktop: Static grid, no carousel - show only itemCount products */
   .cmp-product-card {
     max-width: 320px;
+    min-height: 580px; /* Ensure consistent minimum height on desktop */
   }
   
   .cmp-carousel__actions,
@@ -782,12 +813,14 @@
     transform: none !important;
     transition: none;
     overflow: visible;
+    align-items: stretch; /* Ensure equal height grid items */
   }
   
   .cmp-carousel__item {
     flex: none;
     opacity: 1 !important;
-    display: block;
+    display: flex; /* Maintain flex for equal height */
+    min-height: 580px; /* Match card minimum height */
   }
   
   /* Hide extra products on desktop beyond itemCount */
