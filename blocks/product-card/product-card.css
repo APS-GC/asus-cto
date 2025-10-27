@@ -581,30 +581,22 @@
   color: #3b82f6;
 }
 
-/* Tooltip System - Based on webpack components */
-[data-tooltip-trigger] {
-  cursor: pointer;
-}
-
+/* Tooltip System - Working hover-based tooltips */
 .tooltip__content {
-  --tooltip-background: var(--color-primary-950);
-  --tooltip-color: var(--color-primary);
-  --tooltip-offset: 0;
   position: fixed;
-  background: var(--tooltip-background);
-  color: var(--tooltip-color);
+  background: white;
+  color: var(--color-primary-950, #1a1a1a);
+  border: 1px solid var(--color-primary-300, #ccc);
+  border-radius: var(--border-radius, 8px);
+  padding: 1rem;
+  font-size: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 99999;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  max-width: 400px;
-  border-radius: var(--border-radius);
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  transform: translate3d(0, 0, 0);
-  will-change: transform, opacity;
-  box-sizing: border-box;
-  padding: 1rem;
-  font-size: 0.875rem;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  max-width: 300px;
   top: -9999px;
   left: -9999px;
 }
@@ -612,54 +604,39 @@
 .tooltip__content.tooltip--visible {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
-/* Tooltip size variations */
+/* Estore tooltip - specific styling */
 .cmp-product-card__tooltip {
-  max-width: 260px;
-  padding: 0.75rem 1rem;
-  font-size: 0.75rem;
-}
-
-/* Base arrow */
-.tooltip__content::after {
-  content: "";
-  top: 50%;
-  left: -5px;
-  transform: translateY(-50%);
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="5" height="12" viewBox="0 0 5 12" fill="none"><path d="M5 0.5C4.97696 0.519444 4.95461 0.540181 4.93304 0.562211L0.275596 5.32028C-0.0918658 5.69568 -0.0918658 6.30432 0.275596 6.67972L4.93304 11.4378C4.95461 11.4598 4.97696 11.4806 5 11.5L5 0.5Z" fill="white"/></svg>') center / contain no-repeat;
-  width: 6px;
-  height: 11px;
   position: absolute;
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* Arrows by direction */
-.tooltip--position-top::after {
-  bottom: -7px;
+  background: white;
+  color: var(--color-primary-950, #1a1a1a);
+  border: 1px solid var(--color-primary-300, #ccc);
+  border-radius: var(--border-radius, 8px);
+  padding: 1rem;
+  font-size: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 260px;
+  z-index: 99999;
+  display: none;
+  top: 100%;
   left: 50%;
-  top: unset;
-  transform: translateX(-50%) rotate(270deg);
+  transform: translateX(-50%);
+  margin-top: 8px;
 }
 
-.tooltip--position-bottom::after {
-  top: -7px;
-  left: 50%;
-  transform: translateX(-50%) rotate(90deg);
+.cmp-product-card__estore-icon-wrapper:hover .cmp-product-card__tooltip {
+  display: block;
 }
 
-.tooltip--position-left::after {
-  top: 50%;
-  right: -5px;
-  left: unset;
-  transform: translateY(-50%) rotate(180deg);
+/* FPS tooltip positioning */
+.cmp-product-card__fps {
+  position: relative;
 }
 
-.tooltip--position-right::after {
-  top: 50%;
-  left: -5px;
-  transform: translateY(-50%);
+.cmp-product-card__fps-score {
+  position: relative;
 }
 
 .cmp-product-card__fps-table {

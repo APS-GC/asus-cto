@@ -431,10 +431,10 @@ function createProductCard(product) {
           <span class="cmp-product-card__estore-label">${getPlaceholder('estore-price')}</span>
 
           <div class="cmp-product-card__estore-icon-wrapper">
-            <button class="cmp-product-card__estore-icon" data-tooltip-trigger aria-describedby="estore-price-info-${product.id}" data-tooltip-position="top" aria-label="Information about ASUS estore price.">
+            <button class="cmp-product-card__estore-icon" aria-label="Information about ASUS estore price.">
               <span class="visually-hidden"></span>
             </button>
-            <div class="cmp-product-card__tooltip tooltip__content" id="estore-price-info-${product.id}" role="tooltip">
+            <div class="cmp-product-card__tooltip">
               ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be
               available on estore and are for reference only.
             </div>
