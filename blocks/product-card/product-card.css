@@ -3,11 +3,15 @@
 /* Product Card Block Styles */
 .product-card {
   margin: 2rem 0;
+  height: auto;
+  min-height: 0;
 }
 
 .product-card-section {
   max-width: 1200px;
   margin: 0 auto;
+  height: auto;
+  min-height: 0;
 }
 
 .product-card-header {
@@ -65,6 +69,8 @@
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
+  height: auto;
+  min-height: 0;
 }
 
 /* Carousel Styles */
@@ -72,12 +78,16 @@
   position: relative;
   overflow: visible;
   border-radius: var(--border-radius);
+  height: auto;
 }
 
 .cmp-carousel__content {
   display: flex;
   gap: 2rem;
   transition: transform 0.3s ease-in-out;
+  width: 100%;
+  height: auto;
+  align-items: stretch;
 }
 
 .cmp-carousel__item {
@@ -86,6 +96,9 @@
   transition: opacity 0.3s ease;
   padding: 0;
   min-width: 300px;
+  height: auto;
+  display: flex;
+  min-height: 0;
 }
 
 .cmp-carousel__item--active {
@@ -166,15 +179,15 @@
   border-radius: var(--border-radius-xl);
   display: flex;
   flex-direction: column;
-  height: 100%;
-  padding: 1.5rem;
+  height: auto !important;
+  padding: 1.5rem 1.5rem 4rem 1.5rem;
   gap: 1rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   max-width: 320px;
   margin: 0 auto;
-  min-height: auto;
-  overflow: visible;
+  min-height: 0 !important;
+  overflow: visible !important;
 }
 
 .cmp-product-card:hover {
@@ -429,16 +442,24 @@
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="%23999999"/><rect x="7.25" y="7" width="1.5" height="5.5" rx="0.75" fill="%23999999"/><rect x="7" y="4" width="2" height="2" rx="1" fill="%23999999"/></svg>');
   background-repeat: no-repeat;
   background-size: contain;
+  background-position: center;
   width: 16px;
   height: 16px;
   border: none;
   border-radius: 50%;
   cursor: pointer;
   transition: opacity 0.3s ease;
+  display: inline-block;
+  flex-shrink: 0;
 }
 
 .cmp-product-card__estore-icon:hover {
   opacity: 0.7;
+}
+
+.cmp-product-card__estore-icon:focus {
+  outline: 2px solid var(--color-primary-600, #3b82f6);
+  outline-offset: 2px;
 }
 
 /* Estore tooltip uses the main tooltip system now */
@@ -473,6 +494,9 @@
   justify-content: space-between;
   margin-top: auto;
   gap: 0.75rem;
+  flex-shrink: 0;
+  padding-top: 2rem;
+  margin-bottom: 1rem;
 }
 
 .cmp-product-card__buy-button {
@@ -481,11 +505,12 @@
   color: #1a1a1a;
   border: none;
   border-radius: var(--border-radius);
-  padding: 0.875rem 1.5rem;
+  padding: 1rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-height: 48px;
 }
 
 .cmp-product-card__buy-button:hover {
@@ -739,15 +764,18 @@
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet: Show configured number of items per slide */
   .product-card-carousel .cmp-carousel__content {
     display: flex;
     gap: 2rem;
+    width: calc(100% * var(--total-slides, 1));
   }
   
   .cmp-carousel__item {
     flex: 0 0 calc(33.333% - 1.333rem);
     opacity: 1;
+    min-width: 280px;
   }
   
   .cmp-carousel__item--active {
@@ -756,6 +784,7 @@
 }
 
 @media (min-width: 1024px) {
+  /* Desktop: Static grid, no carousel - show only itemCount products */
   .cmp-product-card {
     max-width: 320px;
   }
@@ -775,12 +804,18 @@
     gap: 2rem;
     transform: none !important;
     transition: none;
+    overflow: visible;
   }
   
   .cmp-carousel__item {
     flex: none;
     opacity: 1 !important;
     display: block;
+  }
+  
+  /* Hide extra products on desktop beyond itemCount */
+  .cmp-carousel__item:nth-child(n+4) {
+    display: none !important;
   }
 }
 

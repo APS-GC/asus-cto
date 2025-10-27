@@ -9,7 +9,7 @@ function transformProductData(apiProduct) {
     model: apiProduct.modelName,
     image: apiProduct.mainImage,
     imageHover: apiProduct.hoverImage,
-    price: apiProduct.specialPrice,
+    price: apiProduct.specialPrice || apiProduct.price,
     originalPrice: apiProduct.price,
     discount: apiProduct.savedPrice,
     bazaarvoiceProductId: apiProduct.sku,
@@ -26,7 +26,7 @@ function transformProductData(apiProduct) {
 }
 
 // Fetch product data from API with fallback logic
-async function fetchProductData(endpoint = 'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts', limit = 3) {
+async function fetchProductData(endpoint = 'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts', maxProducts = null) {
   const endpoints = [
     endpoint, // Try the provided endpoint first
     'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts', // Fallback to author (working)
@@ -76,10 +76,11 @@ async function fetchProductData(endpoint = 'https://author-p165753-e1767020.adob
       }
       
       console.log(`Successfully fetched data from: ${apiEndpoint}`, data);
-      // Transform API data to component format and limit results
-      return data.results
-        .slice(0, limit)
-        .map(transformProductData);
+      // Transform API data to component format - fetch all products, don't limit here
+      const allProducts = data.results.map(transformProductData);
+      
+      // Only limit if maxProducts is specified (for fallback scenarios)
+      return maxProducts ? allProducts.slice(0, maxProducts) : allProducts;
         
     } catch (error) {
       console.warn(`Error fetching from ${apiEndpoint}:`, error.message);
@@ -92,11 +93,11 @@ async function fetchProductData(endpoint = 'https://author-p165753-e1767020.adob
   
   // If all endpoints fail, return fallback data
   console.error('All API endpoints failed, using fallback data');
-  return getFallbackProductData(limit);
+  return getFallbackProductData(maxProducts || 6);
 }
 
 // Fallback data when API fails
-function getFallbackProductData(limit = 3) {
+function getFallbackProductData(limit = 6) {
   const fallbackProducts = [
     {
       id: 'fallback-1',
@@ -117,12 +118,55 @@ function getFallbackProductData(limit = 3) {
       gamePriority: [],
       timeSpyScore: null,
       quickSpec: null
+    },
+    {
+      id: 'fallback-2',
+      name: 'ASUS Gaming Laptop',
+      model: 'Contact Support',
+      image: '/content/dam/asus-cto/products/fallback-image.webp',
+      imageHover: null,
+      price: 'N/A',
+      originalPrice: 'N/A',
+      discount: '0',
+      bazaarvoiceProductId: 'fallback-2',
+      benchmarkGame: 'Various Games',
+      fps: 'TBD',
+      specs: ['High Performance Gaming', 'Contact for Details'],
+      productUrl: '#',
+      productTags: [],
+      buyButtonStatus: 'Contact Us',
+      gamePriority: [],
+      timeSpyScore: null,
+      quickSpec: null
+    },
+    {
+      id: 'fallback-3',
+      name: 'Gaming Monitor',
+      model: 'Contact Support',
+      image: '/content/dam/asus-cto/products/fallback-image.webp',
+      imageHover: null,
+      price: 'N/A',
+      originalPrice: 'N/A',
+      discount: '0',
+      bazaarvoiceProductId: 'fallback-3',
+      benchmarkGame: 'Various Games',
+      fps: 'TBD',
+      specs: ['High Performance Gaming', 'Contact for Details'],
+      productUrl: '#',
+      productTags: [],
+      buyButtonStatus: 'Contact Us',
+      gamePriority: [],
+      timeSpyScore: null,
+      quickSpec: null
     }
   ];
   
-  return Array(limit).fill(null).map((_, index) => ({
-    ...fallbackProducts[0],
-    id: `fallback-${index + 1}`
+  // Generate at least 6 fallback items to ensure carousel functionality
+  const minItems = Math.max(limit, 6);
+  return Array(minItems).fill(null).map((_, index) => ({
+    ...fallbackProducts[index % fallbackProducts.length],
+    id: `fallback-${index + 1}`,
+    name: `${fallbackProducts[index % fallbackProducts.length].name} ${index + 1}`
   }));
 }
 
@@ -182,8 +226,92 @@ function generateStatusBadges(productTags) {
 
 // Generate enhanced FPS tooltip with multiple games
 function generateFpsTooltip(product) {
-  if (!product.gamePriority || product.gamePriority.length === 0) {
-    // Fallback to simple tooltip
+  console.log('Generating FPS tooltip for product:', product.id, 'Data:', {
+    benchmarkGame: product.benchmarkGame,
+    fps: product.fps,
+    gamePriority: product.gamePriority,
+    timeSpyScore: product.timeSpyScore
+  });
+
+  // Check if we have any FPS data at all
+  if (!product.benchmarkGame && !product.fps && (!product.gamePriority || product.gamePriority.length === 0)) {
+    console.log('FPS Tooltip: No FPS data available, skipping tooltip for product:', product.id);
+    return '';
+  }
+
+  // Fallback to simple tooltip if no rich data available
+  if (!product.gamePriority || !Array.isArray(product.gamePriority) || product.gamePriority.length === 0) {
+    if (product.benchmarkGame && product.fps) {
+      console.log('FPS Tooltip: Using simple fallback content for product:', product.id);
+      return `
+        <table class="cmp-product-card__fps-table">
+          <thead>
+            <tr>
+              <th>Game FPS</th>
+              <th>1080P</th>
+              <th>1440P</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${product.benchmarkGame}</td>
+              <td>${product.fps} FPS</td>
+              <td>--</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+    } else {
+      console.log('FPS Tooltip: No sufficient data for simple tooltip, skipping for product:', product.id);
+      return '';
+    }
+  }
+  
+  // Use API data for rich tooltip
+  try {
+    const gameRows = product.gamePriority.slice(0, 6).map(game => {
+      if (!game || typeof game !== 'object') {
+        console.warn('FPS Tooltip: Invalid game data:', game);
+        return '';
+      }
+      
+      return `
+        <tr>
+          <td>${game.gameTitle || 'Unknown Game'}</td>
+          <td>${game.fullHdFps ? `${game.fullHdFps} FPS` : '--'}</td>
+          <td>${game.quadHdFps ? `${game.quadHdFps} FPS` : '--'}</td>
+        </tr>
+      `;
+    }).filter(row => row !== '').join('');
+    
+    // If no valid game rows, try simple fallback
+    if (!gameRows.trim()) {
+      console.log('FPS Tooltip: No valid game rows, trying simple fallback for product:', product.id);
+      if (product.benchmarkGame && product.fps) {
+        return `
+          <table class="cmp-product-card__fps-table">
+            <thead>
+              <tr>
+                <th>Game FPS</th>
+                <th>1080P</th>
+                <th>1440P</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>${product.benchmarkGame}</td>
+                <td>${product.fps} FPS</td>
+                <td>--</td>
+              </tr>
+            </tbody>
+          </table>
+        `;
+      } else {
+        return '';
+      }
+    }
+    
+    console.log('FPS Tooltip: Using rich content for product:', product.id);
     return `
       <table class="cmp-product-card__fps-table">
         <thead>
@@ -194,44 +322,40 @@ function generateFpsTooltip(product) {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>${product.benchmarkGame}</td>
-            <td>${product.fps} FPS</td>
-            <td>--</td>
-          </tr>
+          ${gameRows}
         </tbody>
       </table>
+      ${product.timeSpyScore ? `
+        <div class="cmp-product-card__fps-benchmark">
+          <small>3DMark Time Spy: ${product.timeSpyScore}</small>
+        </div>
+      ` : ''}
     `;
+  } catch (error) {
+    console.error('FPS Tooltip: Error generating rich tooltip:', error);
+    // Try simple fallback on error
+    if (product.benchmarkGame && product.fps) {
+      return `
+        <table class="cmp-product-card__fps-table">
+          <thead>
+            <tr>
+              <th>Game FPS</th>
+              <th>1080P</th>
+              <th>1440P</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${product.benchmarkGame}</td>
+              <td>${product.fps} FPS</td>
+              <td>--</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+    }
+    return '';
   }
-  
-  // Use API data for rich tooltip
-  const gameRows = product.gamePriority.slice(0, 6).map(game => `
-    <tr>
-      <td>${game.gameTitle}</td>
-      <td>${game.fullHdFps ? `${game.fullHdFps} FPS` : '--'}</td>
-      <td>${game.quadHdFps ? `${game.quadHdFps} FPS` : '--'}</td>
-    </tr>
-  `).join('');
-  
-  return `
-    <table class="cmp-product-card__fps-table">
-      <thead>
-        <tr>
-          <th>Game FPS</th>
-          <th>1080P</th>
-          <th>1440P</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${gameRows}
-      </tbody>
-    </table>
-    ${product.timeSpyScore ? `
-      <div class="cmp-product-card__fps-benchmark">
-        <small>3DMark Time Spy: ${product.timeSpyScore}</small>
-      </div>
-    ` : ''}
-  `;
 }
 
 // Create product card HTML
@@ -283,18 +407,20 @@ function createProductCard(product) {
         </div>
       </div>
 
-      <div class="cmp-product-card__fps">
-        <p class="cmp-product-card__fps-game">
-          ${product.benchmarkGame}
-        </p>
+      ${(product.benchmarkGame && product.fps) || (product.gamePriority && product.gamePriority.length > 0) ? `
+        <div class="cmp-product-card__fps">
+          <p class="cmp-product-card__fps-game">
+            ${product.benchmarkGame || 'Gaming Performance'}
+          </p>
 
-        <button class="cmp-product-card__fps-score" data-tooltip-trigger aria-describedby="fps-details-${product.id}" data-tooltip-position="right">
-            FPS: ${product.fps}
-        </button>
-        <div id="fps-details-${product.id}" class="tooltip__content" role="tooltip">
-          ${generateFpsTooltip(product)}
+          <button class="cmp-product-card__fps-score" data-tooltip-trigger aria-describedby="fps-details-${product.id}" data-tooltip-position="right">
+              FPS: ${product.fps || 'Various'}
+          </button>
+          <div id="fps-details-${product.id}" class="tooltip__content" role="tooltip">
+            ${generateFpsTooltip(product)}
+          </div>
         </div>
-      </div>
+      ` : ''}
 
       <ul class="cmp-product-card__specs">
         ${product.specs.map(spec => `<li class="cmp-product-card__spec-item">${spec}</li>`).join('')}
@@ -332,113 +458,174 @@ function createProductCard(product) {
 }
 
 // Initialize carousel functionality
-function initializeCarousel(carousel, products) {
+function initializeCarousel(carousel, products, itemsToShow = 3, autoplayInterval = 5000) {
   const content = carousel.querySelector('.cmp-carousel__content');
   const prevBtn = carousel.querySelector('.cmp-carousel__action--previous');
   const nextBtn = carousel.querySelector('.cmp-carousel__action--next');
   const indicators = carousel.querySelector('.cmp-carousel__indicators');
   
   let currentIndex = 0;
-  let autoPlayInterval = null;
+  let autoPlayTimer = null;
   
-  // Check if we're on desktop (1024px+)
+  // Check screen sizes
   function isDesktop() {
     return window.innerWidth >= 1024;
   }
   
-  // Create indicators only if not on desktop
-  function createIndicators() {
-    if (!isDesktop()) {
-      // Clear existing indicators first
-      indicators.innerHTML = '';
-      products.forEach((_, index) => {
-        const indicator = document.createElement('li');
-        indicator.innerHTML = `<button type="button" role="tab" aria-controls="carousel-item-${index}" aria-selected="${index === 0 ? 'true' : 'false'}" tabindex="${index === 0 ? '0' : '-1'}">${index + 1}</button>`;
-        indicator.addEventListener('click', () => {
-          goToSlide(index);
-        });
-        indicators.appendChild(indicator);
-      });
+  function isTablet() {
+    return window.innerWidth >= 768 && window.innerWidth < 1024;
+  }
+  
+  function isMobile() {
+    return window.innerWidth < 768;
+  }
+  
+  // Calculate how many slides we need based on device and items to show
+  function getTotalSlides() {
+    if (isDesktop()) {
+      // Desktop: no carousel, static display of itemsToShow products only
+      return 1;
+    } else if (isTablet()) {
+      // Tablet: show itemsToShow at a time, calculate how many sets we need
+      return Math.ceil(products.length / itemsToShow);
     } else {
-      // Clear indicators on desktop
-      indicators.innerHTML = '';
+      // Mobile: show one product at a time
+      return products.length;
     }
   }
   
-  function updateCarousel() {
-    // Don't update carousel on desktop
-    if (isDesktop()) return;
+  // Get products to show for current slide
+  function getProductsForSlide(slideIndex) {
+    if (isDesktop()) {
+      // Desktop: show only first itemsToShow products
+      return products.slice(0, itemsToShow);
+    } else if (isTablet()) {
+      // Tablet: show itemsToShow products per slide
+      const startIndex = slideIndex * itemsToShow;
+      return products.slice(startIndex, startIndex + itemsToShow);
+    } else {
+      // Mobile: show one product at a time
+      return [products[slideIndex]];
+    }
+  }
+  
+  // Create indicators
+  function createIndicators() {
+    const totalSlides = getTotalSlides();
     
-    const items = content.querySelectorAll('.cmp-carousel__item');
+    if (isDesktop() || totalSlides <= 1) {
+      // No indicators needed for desktop or single slide
+      indicators.innerHTML = '';
+      return;
+    }
+    
+    // Clear existing indicators
+    indicators.innerHTML = '';
+    
+    for (let i = 0; i < totalSlides; i++) {
+      const indicator = document.createElement('li');
+      indicator.innerHTML = `<button type="button" role="tab" aria-controls="carousel-slide-${i}" aria-selected="${i === 0 ? 'true' : 'false'}" tabindex="${i === 0 ? '0' : '-1'}">${i + 1}</button>`;
+      indicator.addEventListener('click', () => {
+        goToSlide(i);
+      });
+      indicators.appendChild(indicator);
+    }
+  }
+  
+  // Update carousel display
+  function updateCarousel() {
+    const totalSlides = getTotalSlides();
+    if (totalSlides <= 1) return; // Only skip if there's actually nothing to navigate
+    
     const indicatorButtons = indicators.querySelectorAll('button');
     
-    items.forEach((item, index) => {
-      item.classList.toggle('cmp-carousel__item--active', index === currentIndex);
-      item.setAttribute('aria-hidden', index !== currentIndex);
-    });
-    
+    // Update indicators
     indicatorButtons.forEach((btn, index) => {
       btn.setAttribute('aria-selected', index === currentIndex);
       btn.setAttribute('tabindex', index === currentIndex ? '0' : '-1');
     });
     
-    content.style.transform = `translateX(-${currentIndex * 100}%)`;
+    if (isDesktop() || isTablet()) {
+      // Desktop and Tablet: move by sets of itemsToShow
+      const translatePercent = currentIndex * 100;
+      content.style.transform = `translateX(-${translatePercent}%)`;
+    } else {
+      // Mobile: move by 100% per product
+      content.style.transform = `translateX(-${currentIndex * 100}%)`;
+    }
   }
   
   function goToSlide(index) {
-    if (isDesktop()) return;
-    currentIndex = index;
+    const totalSlides = getTotalSlides();
+    if (totalSlides <= 1) return; // Only skip if there's actually nothing to navigate
+    currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
     updateCarousel();
   }
   
   function nextSlide() {
-    if (isDesktop()) return;
-    currentIndex = (currentIndex + 1) % products.length;
+    const totalSlides = getTotalSlides();
+    if (totalSlides <= 1) return; // Only skip if there's actually nothing to navigate
+    currentIndex = (currentIndex + 1) % totalSlides;
     updateCarousel();
   }
   
   function prevSlide() {
-    if (isDesktop()) return;
-    currentIndex = (currentIndex - 1 + products.length) % products.length;
+    const totalSlides = getTotalSlides();
+    if (totalSlides <= 1) return; // Only skip if there's actually nothing to navigate
+    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
     updateCarousel();
   }
   
   function startAutoPlay() {
-    if (!isDesktop() && !autoPlayInterval) {
-      autoPlayInterval = setInterval(nextSlide, 5000);
+    const totalSlides = getTotalSlides();
+    if (!isDesktop() && !autoPlayTimer && autoplayInterval > 0 && totalSlides > 1) {
+      autoPlayTimer = setInterval(nextSlide, autoplayInterval);
     }
   }
   
   function stopAutoPlay() {
-    if (autoPlayInterval) {
-      clearInterval(autoPlayInterval);
-      autoPlayInterval = null;
+    if (autoPlayTimer) {
+      clearInterval(autoPlayTimer);
+      autoPlayTimer = null;
     }
   }
   
   function handleResize() {
+    const totalSlides = getTotalSlides();
+    
     if (isDesktop()) {
       stopAutoPlay();
       // Reset transform on desktop
       content.style.transform = '';
-      // Show all items on desktop
-      const items = content.querySelectorAll('.cmp-carousel__item');
-      items.forEach((item) => {
-        item.classList.remove('cmp-carousel__item--active');
-        item.setAttribute('aria-hidden', 'false');
-      });
-      // Clear indicators on desktop
-      indicators.innerHTML = '';
+      currentIndex = 0;
     } else {
-      createIndicators();
+      // Reset currentIndex if it's out of bounds after resize
+      if (currentIndex >= totalSlides) {
+        currentIndex = 0;
+      }
       updateCarousel();
       startAutoPlay();
     }
+    
+    createIndicators();
   }
   
   // Event listeners
-  prevBtn.addEventListener('click', prevSlide);
-  nextBtn.addEventListener('click', nextSlide);
+  prevBtn.addEventListener('click', () => {
+    console.log('Previous button clicked. Current index:', currentIndex, 'Total slides:', getTotalSlides(), 'Desktop:', isDesktop(), 'Window width:', window.innerWidth, 'Products:', products.length, 'Items to show:', itemsToShow);
+    stopAutoPlay();
+    prevSlide();
+    // Restart autoplay after manual interaction
+    setTimeout(startAutoPlay, 1000);
+  });
+  
+  nextBtn.addEventListener('click', () => {
+    console.log('Next button clicked. Current index:', currentIndex, 'Total slides:', getTotalSlides(), 'Desktop:', isDesktop(), 'Window width:', window.innerWidth, 'Products:', products.length, 'Items to show:', itemsToShow);
+    stopAutoPlay();
+    nextSlide();
+    // Restart autoplay after manual interaction
+    setTimeout(startAutoPlay, 1000);
+  });
   
   carousel.addEventListener('mouseenter', stopAutoPlay);
   carousel.addEventListener('mouseleave', startAutoPlay);
@@ -455,17 +642,29 @@ function initializeCarousel(carousel, products) {
 function initializeTooltips(container) {
   const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
   
-  tooltipTriggers.forEach(trigger => {
+  console.log(`Initializing ${tooltipTriggers.length} tooltips in container:`, container);
+  
+  tooltipTriggers.forEach((trigger, index) => {
     const tooltipId = trigger.getAttribute('aria-describedby');
     const tooltip = document.getElementById(tooltipId);
     
+    console.log(`Tooltip ${index + 1}: Trigger:`, trigger, 'ID:', tooltipId, 'Content element:', tooltip);
+    
     if (!tooltip) {
+      console.warn(`Tooltip content not found for trigger ${index + 1} with ID: ${tooltipId}`);
+      return;
+    }
+    
+    // Ensure tooltip has content
+    if (!tooltip.innerHTML.trim()) {
+      console.warn(`Tooltip ${index + 1} has empty content:`, tooltip);
       return;
     }
     
     // Move tooltip to body for better positioning
     if (tooltip.parentElement !== document.body) {
       document.body.appendChild(tooltip);
+      console.log(`Moved tooltip ${index + 1} to body`);
     }
     
     // Set accessibility attributes
@@ -479,6 +678,14 @@ function initializeTooltips(container) {
     tooltip.style.top = '-9999px';
     tooltip.style.left = '-9999px';
     tooltip.style.zIndex = '99999';
+    
+    // Ensure tooltip has minimum styling for visibility
+    tooltip.style.maxWidth = tooltip.style.maxWidth || '400px';
+    tooltip.style.padding = tooltip.style.padding || '1rem';
+    tooltip.style.backgroundColor = tooltip.style.backgroundColor || 'var(--color-primary-950, #1a1a1a)';
+    tooltip.style.color = tooltip.style.color || 'var(--color-primary, #ffffff)';
+    tooltip.style.borderRadius = tooltip.style.borderRadius || 'var(--border-radius, 8px)';
+    tooltip.style.fontSize = tooltip.style.fontSize || '0.875rem';
     
     const position = trigger.getAttribute('data-tooltip-position') || 'auto';
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -832,15 +1039,17 @@ export default async function decorate(block) {
   block.innerHTML = '<div class="product-card-loading">Loading products...</div>';
   
   try {
-    // Fetch product data
-    const products = await fetchProductData(apiEndpoint, itemCount);
+    // Fetch ALL product data
+    const allProducts = await fetchProductData(apiEndpoint);
     
-    if (!products || products.length === 0) {
+    if (!allProducts || allProducts.length === 0) {
       block.innerHTML = '<div class="product-card-error">No products found.</div>';
       return;
     }
     
-    // Create main container with title and view all link
+    console.log(`Fetched ${allProducts.length} products total. ItemCount: ${itemCount}. Will show ${itemCount} items at a time through ${allProducts.length} total products`);
+    
+    // Create main container with title and view all link - always use ALL products for carousel
     const container = document.createElement('div');
     container.className = 'product-card-section';
     container.innerHTML = `
@@ -851,7 +1060,7 @@ export default async function decorate(block) {
       <div class="product-card-carousel">
         <div class="cmp-carousel" role="group" aria-live="polite" aria-roledescription="carousel">
           <div class="cmp-carousel__content">
-            ${products.map((product, index) => `
+            ${allProducts.map((product, index) => `
               <div class="cmp-carousel__item ${index === 0 ? 'cmp-carousel__item--active' : ''}" id="carousel-item-${index}" role="tabpanel" aria-hidden="${index !== 0}">
               </div>
             `).join('')}
@@ -877,9 +1086,9 @@ export default async function decorate(block) {
       </div>
     `;
     
-    // Add product cards to carousel items
+    // Add ALL product cards to carousel items
     const carouselItems = container.querySelectorAll('.cmp-carousel__item');
-    products.forEach((product, index) => {
+    allProducts.forEach((product, index) => {
       const productCard = createProductCard(product);
       carouselItems[index].appendChild(productCard);
     });
@@ -888,13 +1097,13 @@ export default async function decorate(block) {
     block.textContent = '';
     block.appendChild(container);
     
-    // Initialize carousel functionality
-    initializeCarousel(container.querySelector('.cmp-carousel'), products);
+    // Initialize carousel functionality with ALL products and let it handle itemCount
+    initializeCarousel(container.querySelector('.cmp-carousel'), allProducts, itemCount, autoplayIntervalValue);
     
     // Initialize tooltips
     initializeTooltips(container);
     
-    // Add instrumentation
+    // Add instrumentation  
     moveInstrumentation(block, container);
     
   } catch (error) {
