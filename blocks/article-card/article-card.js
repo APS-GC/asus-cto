@@ -5,6 +5,11 @@ export default function decorate(block) {
   /* change to ul, li */
   const ul = document.createElement('ul');
   
+  // Global LCP tracking - ensure we optimize the very first article image processed
+  if (!window.asusLCPOptimized) {
+    window.asusLCPOptimized = false;
+  }
+  
   [...block.children].forEach((row, index) => {
     const li = document.createElement('li');
     moveInstrumentation(row, li);
@@ -13,38 +18,52 @@ export default function decorate(block) {
     const articleCard = document.createElement('a');
     articleCard.className = 'article-card-link';
     
-    // Enhanced LCP detection - use multiple strategies with aggressive fallback
+    // AGGRESSIVE LCP optimization - apply to ALL images in first article-card block
+    // AND first few article images globally to ensure we catch the LCP
     let isLCPCandidate = false;
     
-    if (index === 0) {
-      // Strategy 1: Check if this is among the first few images on the page
-      const totalImages = document.querySelectorAll('img[src]').length;
-      const strategy1 = totalImages < 5; // Increased threshold
+    // Check if this is the first article-card block on the page
+    const allArticleBlocks = document.querySelectorAll('.article-card, [class*="article-card"]');
+    const isFirstArticleBlock = allArticleBlocks.length === 0 || allArticleBlocks[0] === block;
+    
+    // Apply LCP optimization to:
+    // 1. All images in the first article-card block
+    // 2. First 2 article images globally
+    const globalArticleImageCount = document.querySelectorAll('.article-card-image img').length;
+    
+    isLCPCandidate = (
+      // Strategy 1: All images in first article block
+      isFirstArticleBlock ||
       
-      // Strategy 2: Check if this block is likely above the fold
-      const blockRect = block.getBoundingClientRect();
-      const isAboveFold = blockRect.top < (window.innerHeight * 0.9); // Increased threshold to 90%
-      const strategy2 = isAboveFold;
+      // Strategy 2: First 2 article images globally (aggressive)
+      globalArticleImageCount < 2 ||
       
-      // Strategy 3: Check if no other eager images exist
-      const existingEagerImages = document.querySelectorAll('img[loading="eager"]');
-      const strategy3 = existingEagerImages.length === 0;
+      // Strategy 3: If no eager images exist yet
+      document.querySelectorAll('img[loading="eager"]').length === 0 ||
       
-      // Strategy 4: Aggressive fallback - if this is the first article image globally
-      const existingArticleImages = document.querySelectorAll('.article-card-image img');
-      const strategy4 = existingArticleImages.length === 0;
+      // Strategy 4: First image in any article block and viewport check
+      (index === 0 && block.getBoundingClientRect().top < window.innerHeight) ||
       
-      isLCPCandidate = strategy1 || strategy2 || strategy3 || strategy4;
-      
-      console.log('Article LCP Detection Strategies:', {
-        index,
-        strategy1: { condition: `totalImages < 5`, value: totalImages, result: strategy1 },
-        strategy2: { condition: `blockTop < 90% viewport`, top: blockRect.top, threshold: window.innerHeight * 0.9, result: strategy2 },
-        strategy3: { condition: `no eager images`, eagerCount: existingEagerImages.length, result: strategy3 },
-        strategy4: { condition: `first article image`, articleImageCount: existingArticleImages.length, result: strategy4 },
-        finalDecision: isLCPCandidate
-      });
+      // Strategy 5: Global fallback - if we haven't optimized any LCP yet
+      (!window.asusLCPOptimized && index === 0)
+    );
+    
+    // Mark as optimized if we're applying LCP optimization
+    if (isLCPCandidate && !window.asusLCPOptimized) {
+      window.asusLCPOptimized = true;
+      console.log('GLOBAL LCP OPTIMIZATION: First article image globally optimized');
     }
+    
+    console.log('AGGRESSIVE Article LCP Detection:', {
+      index,
+      isFirstArticleBlock,
+      globalArticleImageCount,
+      blockPosition: block.getBoundingClientRect().top,
+      viewportHeight: window.innerHeight,
+      eagerImagesCount: document.querySelectorAll('img[loading="eager"]').length,
+      finalDecision: isLCPCandidate,
+      imageSrc: imageCell?.querySelector('img')?.src
+    });
     
     // Process each cell in the row
     const cells = [...row.children];
@@ -87,6 +106,19 @@ export default function decorate(block) {
           const lcpImg = optimizedPic.querySelector('img');
           if (lcpImg) {
             lcpImg.setAttribute('fetchpriority', 'high');
+            
+            // Also add preload link in head for immediate discovery
+            const existingPreload = document.querySelector(`link[href="${lcpImg.src}"]`);
+            if (!existingPreload) {
+              const preloadLink = document.createElement('link');
+              preloadLink.rel = 'preload';
+              preloadLink.as = 'image';
+              preloadLink.href = lcpImg.src;
+              preloadLink.fetchPriority = 'high';
+              document.head.appendChild(preloadLink);
+              console.log('Added preload link for LCP image:', lcpImg.src);
+            }
+            
             console.log('LCP optimization applied to article image:', img.src);
           }
         }
