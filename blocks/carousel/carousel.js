@@ -4,8 +4,8 @@
  */
 
 // Configuration defaults
-const DEFAULT_IMAGE_AUTOPLAY = 5000;
-const DEFAULT_VIDEO_AUTOPLAY = 8000;
+const DEFAULT_IMAGE_AUTOPLAY = 3000;
+const DEFAULT_VIDEO_AUTOPLAY = 3000;
 
 /**
  * Parse carousel configuration from block data
@@ -139,8 +139,7 @@ function generateHeroBannerHTML(slide, config) {
             loop
             muted
             playsinline
-            poster="https://picsum.photos/1920/1080?random=800"
-            src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+            src="${slide.media}"
             data-autoplay-duration="${autoplayDuration}"
           ></video>
         </div>
@@ -176,13 +175,16 @@ function initializeSwiper(carouselElement, config) {
       autoplay: {
         delay: config.imageAutoplayDuration,
         disableOnInteraction: false,
-        pauseOnMouseEnter: true,
+        pauseOnMouseEnter: false,
       },
       pagination: {
         el: '.cmp-carousel__indicators',
         clickable: true,
         bulletClass: 'cmp-carousel__indicator',
         bulletActiveClass: 'cmp-carousel__indicator--active',
+        renderBullet: (index, className) => {
+          return `<li class="${className}" aria-label="Go to slide ${index + 1}" role="tab"></li>`;
+      },
       },
       navigation: {
         nextEl: '.cmp-carousel__action--next',
@@ -219,7 +221,12 @@ function initializeSwiper(carouselElement, config) {
               }
             }
           });
-        }
+        },
+        autoplayTimeLeft(swiper, time, progress) {
+          swiper.pagination.bullets.forEach((bullet, idx) => {
+            bullet.style.setProperty('--slide-progress', idx === swiper.realIndex ? 1 - progress : 0);
+          });
+        },
       }
     });
 
@@ -246,12 +253,15 @@ function initializeSwiper(carouselElement, config) {
 
     if (autoplayToggle) {
       autoplayToggle.addEventListener('click', () => {
+        
         if (swiper.autoplay.running) {
           swiper.autoplay.stop();
+          swiper.el.classList.add('is-autoplay-paused');
           autoplayToggle.setAttribute('aria-label', 'Play');
           carouselElement.setAttribute('aria-live', 'polite');
         } else {
           swiper.autoplay.start();
+          swiper.el.classList.remove('is-autoplay-paused');
           autoplayToggle.setAttribute('aria-label', 'Pause');
           carouselElement.setAttribute('aria-live', 'off');
         }
