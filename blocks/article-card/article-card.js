@@ -5,9 +5,6 @@ export default function decorate(block) {
   /* change to ul, li */
   const ul = document.createElement('ul');
   
-  // Detect if this is the first article block on the page (LCP candidate)
-  const isLCPBlock = block.closest('.section') === document.querySelector('.section');
-  
   [...block.children].forEach((row, index) => {
     const li = document.createElement('li');
     moveInstrumentation(row, li);
@@ -16,8 +13,38 @@ export default function decorate(block) {
     const articleCard = document.createElement('a');
     articleCard.className = 'article-card-link';
     
-    // First article in first section is LCP candidate
-    const isLCPCandidate = isLCPBlock && index === 0;
+    // Enhanced LCP detection - use multiple strategies with aggressive fallback
+    let isLCPCandidate = false;
+    
+    if (index === 0) {
+      // Strategy 1: Check if this is among the first few images on the page
+      const totalImages = document.querySelectorAll('img[src]').length;
+      const strategy1 = totalImages < 5; // Increased threshold
+      
+      // Strategy 2: Check if this block is likely above the fold
+      const blockRect = block.getBoundingClientRect();
+      const isAboveFold = blockRect.top < (window.innerHeight * 0.9); // Increased threshold to 90%
+      const strategy2 = isAboveFold;
+      
+      // Strategy 3: Check if no other eager images exist
+      const existingEagerImages = document.querySelectorAll('img[loading="eager"]');
+      const strategy3 = existingEagerImages.length === 0;
+      
+      // Strategy 4: Aggressive fallback - if this is the first article image globally
+      const existingArticleImages = document.querySelectorAll('.article-card-image img');
+      const strategy4 = existingArticleImages.length === 0;
+      
+      isLCPCandidate = strategy1 || strategy2 || strategy3 || strategy4;
+      
+      console.log('Article LCP Detection Strategies:', {
+        index,
+        strategy1: { condition: `totalImages < 5`, value: totalImages, result: strategy1 },
+        strategy2: { condition: `blockTop < 90% viewport`, top: blockRect.top, threshold: window.innerHeight * 0.9, result: strategy2 },
+        strategy3: { condition: `no eager images`, eagerCount: existingEagerImages.length, result: strategy3 },
+        strategy4: { condition: `first article image`, articleImageCount: existingArticleImages.length, result: strategy4 },
+        finalDecision: isLCPCandidate
+      });
+    }
     
     // Process each cell in the row
     const cells = [...row.children];
