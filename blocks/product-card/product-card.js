@@ -25,38 +25,74 @@ function transformProductData(apiProduct) {
   };
 }
 
-// Fetch product data from API
-async function fetchProductData(endpoint = 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts', limit = 3) {
-  try {
-    const response = await fetch(endpoint, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    
-    if (!data.results || !Array.isArray(data.results)) {
-      throw new Error('Invalid API response format');
-    }
-    
-    // Transform API data to component format and limit results
-    return data.results
-      .slice(0, limit)
-      .map(transformProductData);
+// Fetch product data from API with fallback logic
+async function fetchProductData(endpoint = 'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts', limit = 3) {
+  const endpoints = [
+    endpoint, // Try the provided endpoint first
+    'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts', // Fallback to author (working)
+    'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts' // Try publish as second fallback
+  ];
+  
+  // Remove duplicates and keep order
+  const uniqueEndpoints = [...new Set(endpoints)];
+  
+  for (const apiEndpoint of uniqueEndpoints) {
+    try {
+      console.log(`Attempting to fetch from: ${apiEndpoint}`);
       
-  } catch (error) {
-    console.error('Error fetching product data:', error);
-    
-    // Return fallback data on error
-    return getFallbackProductData(limit);
+      const response = await fetch(apiEndpoint, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          // Add common authentication headers
+          'Cache-Control': 'no-cache'
+        },
+        // Include credentials for author endpoints
+        credentials: apiEndpoint.includes('author') ? 'include' : 'omit',
+        // Handle CORS
+        mode: 'cors'
+      });
+      
+      if (!response.ok) {
+        console.warn(`API endpoint ${apiEndpoint} returned ${response.status}: ${response.statusText}`);
+        continue; // Try next endpoint
+      }
+      
+      // Check if response is actually JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        console.warn(`API endpoint ${apiEndpoint} returned non-JSON content: ${contentType}`);
+        const textResponse = await response.text();
+        console.warn(`Response preview: ${textResponse.substring(0, 200)}...`);
+        continue; // Try next endpoint
+      }
+      
+      const data = await response.json();
+      
+      if (!data.results || !Array.isArray(data.results)) {
+        console.warn(`Invalid API response format from ${apiEndpoint}:`, data);
+        continue; // Try next endpoint
+      }
+      
+      console.log(`Successfully fetched data from: ${apiEndpoint}`, data);
+      // Transform API data to component format and limit results
+      return data.results
+        .slice(0, limit)
+        .map(transformProductData);
+        
+    } catch (error) {
+      console.warn(`Error fetching from ${apiEndpoint}:`, error.message);
+      if (error.message.includes('JSON')) {
+        console.warn('This usually means the endpoint returned HTML instead of JSON (possibly a login page)');
+      }
+      continue; // Try next endpoint
+    }
   }
+  
+  // If all endpoints fail, return fallback data
+  console.error('All API endpoints failed, using fallback data');
+  return getFallbackProductData(limit);
 }
 
 // Fallback data when API fails
@@ -570,7 +606,7 @@ async function createAuthoringStructure(config, block = null) {
   let itemCount = parseInt(getConfigValue(config, 'item-count', 'itemCount', '3'), 10);
   let viewAllLink = getConfigValue(config, 'view-all-link', 'viewAllLink', '/products');
   let viewAllText = getConfigValue(config, 'view-all-text', 'viewAllText', 'View all');
-  let apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts');
+  let apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', 'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts');
 
   // If block exists, read current values from UE fields (in case they've been edited)
   if (block) {
@@ -660,9 +696,24 @@ function parseConfig(block) {
   const config = {};
   const rows = [...block.children];
   
-  rows.forEach(row => {
+  console.log('parseConfig - Total rows:', rows.length); // Debug log
+  
+  // Expected configuration mapping based on _product-card.json order
+  const configMapping = [
+    { key: 'section-title', camelKey: 'sectionTitle', defaultValue: 'Hot Products' },
+    { key: 'item-count', camelKey: 'itemCount', defaultValue: '3' },
+    { key: 'view-all-link', camelKey: 'viewAllLink', defaultValue: '/products' },
+    { key: 'view-all-text', camelKey: 'viewAllText', defaultValue: 'View all' },
+    { key: 'api-endpoint', camelKey: 'apiEndpoint', defaultValue: 'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts' },
+    { key: 'autoplay-interval', camelKey: 'autoplayInterval', defaultValue: '5000' }
+  ];
+  
+  rows.forEach((row, index) => {
     const cells = [...row.children];
+    console.log(`Row ${index} has ${cells.length} cells`); // Debug log
+    
     if (cells.length >= 2) {
+      // Traditional two-column structure (key-value pairs)
       const key = cells[0].textContent.trim().toLowerCase().replace(/\s+/g, '-');
       const value = cells[1].textContent.trim();
       config[key] = value;
@@ -670,9 +721,46 @@ function parseConfig(block) {
       // Also store camelCase version for UE compatibility
       const camelCaseKey = key.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
       config[camelCaseKey] = value;
+      
+      console.log(`Added config (2-cell): ${key} = ${value}`); // Debug log
+    } else if (cells.length === 1) {
+      const cellText = cells[0].textContent.trim();
+      console.log(`Single cell content: "${cellText}"`); // Debug log
+      
+      if (cellText.includes(':')) {
+        // Handle colon-separated key:value pairs
+        const [key, value] = cellText.split(':').map(s => s.trim());
+        if (key && value) {
+          const normalizedKey = key.toLowerCase().replace(/\s+/g, '-');
+          config[normalizedKey] = value;
+          
+          // Also store camelCase version for UE compatibility
+          const camelCaseKey = normalizedKey.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
+          config[camelCaseKey] = value;
+          
+          console.log(`Added config (colon-separated): ${normalizedKey} = ${value}`); // Debug log
+        }
+      } else if (cellText && index < configMapping.length) {
+        // Handle UE single-cell structure - map by row index
+        const mapping = configMapping[index];
+        config[mapping.key] = cellText;
+        config[mapping.camelKey] = cellText;
+        
+        console.log(`Added config (index-mapped): ${mapping.key} = ${cellText}`); // Debug log
+      } else if (!cellText && index < configMapping.length) {
+        // Handle empty cells - use default values
+        const mapping = configMapping[index];
+        config[mapping.key] = mapping.defaultValue;
+        config[mapping.camelKey] = mapping.defaultValue;
+        
+        console.log(`Added config (default): ${mapping.key} = ${mapping.defaultValue}`); // Debug log
+      }
+    } else {
+      console.log(`Row ${index} skipped - no cells or empty row`); // Debug log
     }
   });
   
+  console.log('Final config:', config); // Debug log
   return config;
 }
 
@@ -737,7 +825,7 @@ export default async function decorate(block) {
   const itemCount = parseInt(getConfigValue(config, 'item-count', 'itemCount', '3'), 10);
   const viewAllLink = getConfigValue(config, 'view-all-link', 'viewAllLink', '/products');
   const viewAllText = getConfigValue(config, 'view-all-text', 'viewAllText', 'View all');
-  const apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts');
+  const apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', 'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts');
   const autoplayIntervalValue = parseInt(getConfigValue(config, 'autoplay-interval', 'autoplayInterval', '5000'), 10);
   
   // Show loading state
