@@ -3,6 +3,8 @@
  * Supports authorable hero banner slides with video/image media, CTA buttons, and autoplay settings
  */
 
+import { moveInstrumentation } from '../../scripts/scripts.js';
+
 // Configuration defaults
 const DEFAULT_IMAGE_AUTOPLAY = 3000;
 const DEFAULT_VIDEO_AUTOPLAY = 3000;
@@ -105,7 +107,8 @@ function parseCarouselConfig(block) {
         ctaLocation: cells[4]?.textContent?.trim() || 'center',
         ctaLink: ctaLink,
         openNewTab: cells[6]?.textContent?.toLowerCase().includes('true') || false,
-        isVideo: isVideo
+        isVideo: isVideo,
+        originalRow: row // Store reference to original row for instrumentation
       };
       
       // Debug logging
@@ -123,46 +126,84 @@ function parseCarouselConfig(block) {
 
 
 /**
- * Generate hero banner HTML for a slide
+ * Generate hero banner element for a slide
  */
 function generateHeroBannerHTML(slide, config) {
   const ctaLocationClass = `hero-content--${slide.ctaLocation.toLowerCase()}`;
-  const targetAttr = slide.openNewTab ? 'target="_blank" rel="noopener noreferrer"' : '';
   const autoplayDuration = slide.isVideo ? config.videoAutoplayDuration : config.imageAutoplayDuration;
 
-  return `
-    <div class="hero-banner cmp-hero-banner ${ctaLocationClass}">
-      ${slide.isVideo ? `
-        <div class="hero-video-wrapper">
-          <video
-            class="hero-video"
-            loop
-            muted
-            playsinline
-            data-autoplay-duration="${autoplayDuration}"
-          >
-          <source src="${slide.media}" type="video/mp4">
-          </video>
-        </div>
-      ` : `
-        <div class="hero-image-wrapper">
-          <picture>
-            <img src="${slide.media}" alt="${slide.mediaAlt}" class="hero-image" loading="lazy" />
-          </picture>
-        </div>
-      `}
+  // Create the main hero banner container
+  const heroBanner = document.createElement('div');
+  heroBanner.className = `hero-banner cmp-hero-banner ${ctaLocationClass}`;
 
-      <div class="hero-content">
-        ${slide.subtitle ? `<p class="product-name">${slide.subtitle}</p>` : ''}
-        <h2 class="headline">${slide.title}</h2>
-        ${slide.ctaText && slide.ctaLink ? `
-          <a href="${slide.ctaLink}" class="cta-button btn" ${targetAttr} aria-label="${slide.ctaText} ${slide.subtitle}">
-            ${slide.ctaText}
-          </a>
-        ` : ''}
-      </div>
-    </div>
-  `;
+  // Create media wrapper (video or image)
+  if (slide.isVideo) {
+    const videoWrapper = document.createElement('div');
+    videoWrapper.className = 'hero-video-wrapper';
+    
+    const video = document.createElement('video');
+    video.className = 'hero-video';
+    video.loop = true;
+    video.muted = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('data-autoplay-duration', autoplayDuration);
+    
+    const source = document.createElement('source');
+    source.src = 'https://publish-p165753-e1767020.adobeaemcloud.com/content/dam/ROG/carousel/BigBuckBunny.mp4';
+    source.type = 'video/mp4';
+    
+    video.appendChild(source);
+    videoWrapper.appendChild(video);
+    heroBanner.appendChild(videoWrapper);
+  } else {
+    const imageWrapper = document.createElement('div');
+    imageWrapper.className = 'hero-image-wrapper';
+    
+    const picture = document.createElement('picture');
+    const img = document.createElement('img');
+    img.src = slide.media;
+    img.alt = slide.mediaAlt;
+    img.className = 'hero-image';
+    img.loading = 'lazy';
+    
+    picture.appendChild(img);
+    imageWrapper.appendChild(picture);
+    heroBanner.appendChild(imageWrapper);
+  }
+
+  // Create hero content section
+  const heroContent = document.createElement('div');
+  heroContent.className = 'hero-content';
+
+  if (slide.subtitle) {
+    const productName = document.createElement('p');
+    productName.className = 'product-name';
+    productName.textContent = slide.subtitle;
+    heroContent.appendChild(productName);
+  }
+
+  const headline = document.createElement('h2');
+  headline.className = 'headline';
+  headline.textContent = slide.title;
+  heroContent.appendChild(headline);
+
+  if (slide.ctaText && slide.ctaLink) {
+    const ctaButton = document.createElement('a');
+    ctaButton.href = slide.ctaLink;
+    ctaButton.className = 'cta-button btn';
+    ctaButton.textContent = slide.ctaText;
+    ctaButton.setAttribute('aria-label', `${slide.ctaText} ${slide.subtitle}`);
+    
+    if (slide.openNewTab) {
+      ctaButton.target = '_blank';
+      ctaButton.rel = 'noopener noreferrer';
+    }
+    
+    heroContent.appendChild(ctaButton);
+  }
+
+  heroBanner.appendChild(heroContent);
+  return heroBanner;
 }
 
 /**
@@ -288,60 +329,116 @@ export default function decorate(block) {
   // Generate carousel ID
   const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
   
-  // Generate slides HTML
-  const slidesHTML = config.slides.map((slide, index) => `
-    <div id="${carouselId}-item-${slide.id}-tabpanel" 
-         class="cmp-carousel__item swiper-slide ${index === 0 ? 'cmp-carousel__item--active' : ''}"
-         role="group" 
-         aria-label="Slide ${index + 1} of ${config.slides.length}"
-         data-swiper-slide-index="${index}"
-         ${slide.isVideo ? `data-swiper-autoplay="${config.videoAutoplayDuration}"` : `data-swiper-autoplay="${config.imageAutoplayDuration}"`}>
-      ${generateHeroBannerHTML(slide, config)}
-    </div>
-  `).join('');
+  // Create wrapper elements
+  const carouselWrapper = document.createElement('div');
+  carouselWrapper.className = 'carousel panelcontainer';
+  
+  const carousel = document.createElement('div');
+  carousel.id = carouselId;
+  carousel.className = 'cmp-carousel';
+  carousel.setAttribute('role', 'group');
+  carousel.setAttribute('aria-live', 'off');
+  carousel.setAttribute('aria-roledescription', 'carousel');
+  carousel.setAttribute('data-cmp-delay', config.imageAutoplayDuration);
+  carousel.setAttribute('data-placeholder-text', 'false');
+  carousel.setAttribute('data-loop-slides', 'true');
+  
+  const carouselContent = document.createElement('div');
+  carouselContent.className = 'cmp-carousel__content';
+  
+  const swiper = document.createElement('div');
+  swiper.className = 'swiper swiper-initialized swiper-horizontal swiper-watch-progress swiper-backface-hidden is-autoplay-enabled';
+  
+  const swiperWrapper = document.createElement('div');
+  swiperWrapper.className = 'swiper-wrapper';
+  swiperWrapper.setAttribute('aria-live', 'off');
 
-  // Generate indicators HTML
-  const indicatorsHTML = config.slides.map((slide, index) => `
-    <li class="cmp-carousel__indicator ${index === 0 ? 'cmp-carousel__indicator--active' : ''}"
-        aria-label="Go to slide ${index + 1}"
-        role="tab"
-        tabindex="0"
-        ${index === 0 ? 'aria-current="true"' : ''}></li>
-  `).join('');
+  // Generate slides as DOM elements with moveInstrumentation
+  config.slides.forEach((slide, index) => {
+    const slideElement = document.createElement('div');
+    slideElement.id = `${carouselId}-item-${slide.id}-tabpanel`;
+    slideElement.className = `cmp-carousel__item swiper-slide ${index === 0 ? 'cmp-carousel__item--active' : ''}`;
+    slideElement.setAttribute('role', 'group');
+    slideElement.setAttribute('aria-label', `Slide ${index + 1} of ${config.slides.length}`);
+    slideElement.setAttribute('data-swiper-slide-index', index);
+    slideElement.setAttribute('data-swiper-autoplay', slide.isVideo ? config.videoAutoplayDuration : config.imageAutoplayDuration);
 
-  // Build complete carousel HTML
-  const carouselHTML = `
-    <div class="carousel panelcontainer">
-      <div id="${carouselId}" class="cmp-carousel" role="group" aria-live="off" aria-roledescription="carousel" 
-           data-cmp-delay="${config.imageAutoplayDuration}" data-placeholder-text="false" data-loop-slides="true">
-        <div class="cmp-carousel__content">
-          <div class="swiper swiper-initialized swiper-horizontal swiper-watch-progress swiper-backface-hidden is-autoplay-enabled">
-            <div class="swiper-wrapper" aria-live="off">
-              ${slidesHTML}
-            </div>
-            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
-          </div>
-          
-          <div class="cmp-carousel__footer">
-            <div class="cmp-carousel__indicators-group">
-              <ol class="cmp-carousel__indicators " 
-                  role="tablist" aria-label="Choose a slide to display">
-                ${indicatorsHTML}
-              </ol>
-              <button class="carousel-autoplay-toggle" aria-label="Pause"></button>
-            </div>
-            <div class="cmp-carousel__media-controls">
-              <button class="cmp-carousel__media-control cmp-carousel__media-control--play-pause" 
-                      aria-label="Play ${config.slides[0]?.subtitle || 'media'}"></button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
+    // Move instrumentation from original row to slide element
+    if (slide.originalRow) {
+      moveInstrumentation(slide.originalRow, slideElement);
+    }
+
+    // Generate and append hero banner
+    const heroBanner = generateHeroBannerHTML(slide, config);
+    slideElement.appendChild(heroBanner);
+    
+    swiperWrapper.appendChild(slideElement);
+  });
+
+  const swiperNotification = document.createElement('span');
+  swiperNotification.className = 'swiper-notification';
+  swiperNotification.setAttribute('aria-live', 'assertive');
+  swiperNotification.setAttribute('aria-atomic', 'true');
+
+  swiper.appendChild(swiperWrapper);
+  swiper.appendChild(swiperNotification);
+  carouselContent.appendChild(swiper);
+
+  // Create carousel footer
+  const carouselFooter = document.createElement('div');
+  carouselFooter.className = 'cmp-carousel__footer';
+
+  // Create indicators group
+  const indicatorsGroup = document.createElement('div');
+  indicatorsGroup.className = 'cmp-carousel__indicators-group';
+
+  // Create indicators list
+  const indicatorsList = document.createElement('ol');
+  indicatorsList.className = 'cmp-carousel__indicators';
+  indicatorsList.setAttribute('role', 'tablist');
+  indicatorsList.setAttribute('aria-label', 'Choose a slide to display');
+
+  // Generate indicator elements
+  config.slides.forEach((slide, index) => {
+    const indicator = document.createElement('li');
+    indicator.className = `cmp-carousel__indicator ${index === 0 ? 'cmp-carousel__indicator--active' : ''}`;
+    indicator.setAttribute('aria-label', `Go to slide ${index + 1}`);
+    indicator.setAttribute('role', 'tab');
+    indicator.setAttribute('tabindex', '0');
+    if (index === 0) {
+      indicator.setAttribute('aria-current', 'true');
+    }
+    indicatorsList.appendChild(indicator);
+  });
+
+  // Create autoplay toggle button
+  const autoplayToggle = document.createElement('button');
+  autoplayToggle.className = 'carousel-autoplay-toggle';
+  autoplayToggle.setAttribute('aria-label', 'Pause');
+
+  indicatorsGroup.appendChild(indicatorsList);
+  indicatorsGroup.appendChild(autoplayToggle);
+
+  // Create media controls
+  const mediaControls = document.createElement('div');
+  mediaControls.className = 'cmp-carousel__media-controls';
+
+  const playPauseBtn = document.createElement('button');
+  playPauseBtn.className = 'cmp-carousel__media-control cmp-carousel__media-control--play-pause';
+  playPauseBtn.setAttribute('aria-label', `Play ${config.slides[0]?.subtitle || 'media'}`);
+
+  mediaControls.appendChild(playPauseBtn);
+
+  carouselFooter.appendChild(indicatorsGroup);
+  carouselFooter.appendChild(mediaControls);
+
+  carouselContent.appendChild(carouselFooter);
+  carousel.appendChild(carouselContent);
+  carouselWrapper.appendChild(carousel);
 
   // Replace block content
-  block.innerHTML = carouselHTML;
+  block.textContent = '';
+  block.appendChild(carouselWrapper);
   
   // Initialize carousel functionality
   initializeSwiper(block, config);
