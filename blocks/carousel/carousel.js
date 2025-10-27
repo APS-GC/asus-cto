@@ -139,9 +139,10 @@ function generateHeroBannerHTML(slide, config) {
             loop
             muted
             playsinline
-            src="${slide.media}"
             data-autoplay-duration="${autoplayDuration}"
-          ></video>
+          >
+          <source src="${slide.media}" type="video/mp4">
+          </video>
         </div>
       ` : `
         <div class="hero-image-wrapper">
