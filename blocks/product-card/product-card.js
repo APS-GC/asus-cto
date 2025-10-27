@@ -1,115 +1,93 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
-// Mock GraphQL API function
-async function fetchProductData(endpoint = '/mock-api/products', limit = 3) {
-  // Mock data matching the existing product card template structure
-  const mockData = {
-    data: {
-      products: [
-        {
-          id: 'rog-strix-gt15',
-          name: 'ROG Strix GT15 Gaming Desktop',
-          model: 'G15CF-DB776',
-          image: '/content/dam/asus-cto/products/product-1-image-1.webp',
-          imageHover: '/content/dam/asus-cto/products/product-2-image-1-hover.webp',
-          price: '1299',
-          originalPrice: '1599',
-          discount: '300',
-          bazaarvoiceProductId: 'rog-strix-gt15',
-          benchmarkGame: 'Cyberpunk 2077',
-          fps: '85',
-          specs: [
-            'AMD Ryzen 7 5700G Processor',
-            'NVIDIA GeForce RTX 3060 Ti',
-            '16GB DDR4 RAM',
-            '512GB PCIe SSD + 1TB HDD'
-          ]
-        },
-        {
-          id: 'rog-strix-gt35',
-          name: 'ROG Strix GT35 Gaming Desktop',
-          model: 'G35CZ-DB796',
-          image: '/content/dam/asus-cto/products/product-2-image-1.webp',
-          imageHover: '/content/dam/asus-cto/products/product-2-image-1-hover.webp',
-          price: '1899',
-          originalPrice: '2199',
-          discount: '300',
-          bazaarvoiceProductId: 'rog-strix-gt35',
-          benchmarkGame: 'Call of Duty: Modern Warfare III',
-          fps: '120',
-          specs: [
-            'Intel Core i7-11700KF Processor',
-            'NVIDIA GeForce RTX 3070',
-            '32GB DDR4 RAM',
-            '1TB PCIe SSD'
-          ]
-        },
-        {
-          id: 'rog-strix-ga15',
-          name: 'ROG Strix GA15 Gaming Desktop',
-          model: 'G15DK-DB756',
-          image: '/content/dam/asus-cto/products/product-3-image-1.webp',
-          imageHover: '/content/dam/asus-cto/products/product-2-image-1.webp',
-          price: '999',
-          originalPrice: '1299',
-          discount: '300',
-          bazaarvoiceProductId: 'rog-strix-ga15',
-          benchmarkGame: 'Fortnite Chapter 5',
-          fps: '165',
-          specs: [
-            'AMD Ryzen 5 5600G Processor',
-            'NVIDIA GeForce RTX 3060',
-            '16GB DDR4 RAM',
-            '512GB PCIe SSD'
-          ]
-        },
-        {
-          id: 'rog-strix-ga35',
-          name: 'ROG Strix GA35 Gaming Desktop',
-          model: 'G35DX-DB986',
-          image: '/content/dam/eds-enablement-xwalk/asus-cto-sites/product-4.jpg',
-          imageHover: '/content/dam/eds-enablement-xwalk/asus-cto-sites/product-4-hover.jpg',
-          price: '2299',
-          originalPrice: '2599',
-          discount: '300',
-          bazaarvoiceProductId: 'rog-strix-ga35',
-          benchmarkGame: 'Red Dead Redemption 2',
-          fps: '95',
-          specs: [
-            'AMD Ryzen 9 5900X Processor',
-            'NVIDIA GeForce RTX 3080',
-            '32GB DDR4 RAM',
-            '1TB PCIe SSD + 2TB HDD'
-          ]
-        },
-        {
-          id: 'rog-strix-gt15-white',
-          name: 'ROG Strix GT15 Gaming Desktop (White)',
-          model: 'G15CF-WB776',
-          image: '/content/dam/eds-enablement-xwalk/asus-cto-sites/product-5.jpg',
-          imageHover: '/content/dam/eds-enablement-xwalk/asus-cto-sites/product-5-hover.jpg',
-          price: '1399',
-          originalPrice: '1699',
-          discount: '300',
-          bazaarvoiceProductId: 'rog-strix-gt15-white',
-          benchmarkGame: 'Apex Legends',
-          fps: '144',
-          specs: [
-            'AMD Ryzen 7 5700G Processor',
-            'NVIDIA GeForce RTX 3070',
-            '16GB DDR4 RAM',
-            '1TB PCIe SSD'
-          ]
-        }
-      ]
-    }
+// Transform API response to component format
+function transformProductData(apiProduct) {
+  return {
+    id: apiProduct.sku,
+    name: apiProduct.name,
+    model: apiProduct.modelName,
+    image: apiProduct.mainImage,
+    imageHover: apiProduct.hoverImage,
+    price: apiProduct.specialPrice,
+    originalPrice: apiProduct.price,
+    discount: apiProduct.savedPrice,
+    bazaarvoiceProductId: apiProduct.sku,
+    benchmarkGame: apiProduct.gameTitle,
+    fps: apiProduct.fps,
+    specs: apiProduct.keySpec ? apiProduct.keySpec.map(spec => spec.name) : [],
+    productUrl: apiProduct.urlKey,
+    productTags: apiProduct.productTags || [],
+    buyButtonStatus: apiProduct.buyButtonStatus || 'Buy now',
+    gamePriority: apiProduct.gamePriority || [],
+    timeSpyScore: apiProduct.timeSpyOverallScore,
+    quickSpec: apiProduct.quickSpec ? apiProduct.quickSpec[0] : null
   };
+}
 
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 500));
+// Fetch product data from API
+async function fetchProductData(endpoint = 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts', limit = 3) {
+  try {
+    const response = await fetch(endpoint, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.results || !Array.isArray(data.results)) {
+      throw new Error('Invalid API response format');
+    }
+    
+    // Transform API data to component format and limit results
+    return data.results
+      .slice(0, limit)
+      .map(transformProductData);
+      
+  } catch (error) {
+    console.error('Error fetching product data:', error);
+    
+    // Return fallback data on error
+    return getFallbackProductData(limit);
+  }
+}
+
+// Fallback data when API fails
+function getFallbackProductData(limit = 3) {
+  const fallbackProducts = [
+    {
+      id: 'fallback-1',
+      name: 'ROG Gaming Desktop',
+      model: 'Contact Support',
+      image: '/content/dam/asus-cto/products/fallback-image.webp',
+      imageHover: null,
+      price: 'N/A',
+      originalPrice: 'N/A',
+      discount: '0',
+      bazaarvoiceProductId: 'fallback-1',
+      benchmarkGame: 'Various Games',
+      fps: 'TBD',
+      specs: ['High Performance Gaming', 'Contact for Details'],
+      productUrl: '#',
+      productTags: [],
+      buyButtonStatus: 'Contact Us',
+      gamePriority: [],
+      timeSpyScore: null,
+      quickSpec: null
+    }
+  ];
   
-  return mockData.data.products.slice(0, limit);
+  return Array(limit).fill(null).map((_, index) => ({
+    ...fallbackProducts[0],
+    id: `fallback-${index + 1}`
+  }));
 }
 
 // Get placeholder text
@@ -131,17 +109,108 @@ function getPlaceholder(key) {
   return placeholders[key] || key;
 }
 
+// Generate dynamic status badges based on product tags
+function generateStatusBadges(productTags) {
+  if (!productTags || productTags.length === 0) {
+    return `
+      <span class="cmp-product-card__status-item cmp-product-card__status--in-stock">${getPlaceholder('in-stock')}</span>
+    `;
+  }
+  
+  return productTags.map(tag => {
+    const tagLower = tag.toLowerCase();
+    let statusClass = '';
+    let displayText = '';
+    
+    switch (tagLower) {
+      case 'hot':
+        statusClass = 'cmp-product-card__status--hot';
+        displayText = 'Hot';
+        break;
+      case 'new':
+        statusClass = 'cmp-product-card__status--new';
+        displayText = getPlaceholder('new');
+        break;
+      case 'deal':
+        statusClass = 'cmp-product-card__status--deal';
+        displayText = getPlaceholder('deal');
+        break;
+      default:
+        statusClass = 'cmp-product-card__status--custom';
+        displayText = tag;
+    }
+    
+    return `<span class="cmp-product-card__status-item ${statusClass}">${displayText}</span>`;
+  }).join('') + `<span class="cmp-product-card__status-item cmp-product-card__status--in-stock">${getPlaceholder('in-stock')}</span>`;
+}
+
+// Generate enhanced FPS tooltip with multiple games
+function generateFpsTooltip(product) {
+  if (!product.gamePriority || product.gamePriority.length === 0) {
+    // Fallback to simple tooltip
+    return `
+      <table class="cmp-product-card__fps-table">
+        <thead>
+          <tr>
+            <th>Game FPS</th>
+            <th>1080P</th>
+            <th>1440P</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>${product.benchmarkGame}</td>
+            <td>${product.fps} FPS</td>
+            <td>--</td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+  }
+  
+  // Use API data for rich tooltip
+  const gameRows = product.gamePriority.slice(0, 6).map(game => `
+    <tr>
+      <td>${game.gameTitle}</td>
+      <td>${game.fullHdFps ? `${game.fullHdFps} FPS` : '--'}</td>
+      <td>${game.quadHdFps ? `${game.quadHdFps} FPS` : '--'}</td>
+    </tr>
+  `).join('');
+  
+  return `
+    <table class="cmp-product-card__fps-table">
+      <thead>
+        <tr>
+          <th>Game FPS</th>
+          <th>1080P</th>
+          <th>1440P</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${gameRows}
+      </tbody>
+    </table>
+    ${product.timeSpyScore ? `
+      <div class="cmp-product-card__fps-benchmark">
+        <small>3DMark Time Spy: ${product.timeSpyScore}</small>
+      </div>
+    ` : ''}
+  `;
+}
+
 // Create product card HTML
 function createProductCard(product) {
   const card = document.createElement('div');
   card.className = 'cmp-product-card';
   
+  // Determine the product URL
+  const productUrl = product.productUrl && product.productUrl !== '#' ? product.productUrl : 'pdp.html';
+  const buyButtonText = product.buyButtonStatus || getPlaceholder('buy-now');
+  
   card.innerHTML = `
     <div class="cmp-product-card__header">
       <div class="cmp-product-card__status">
-        <span class="cmp-product-card__status-item cmp-product-card__status--in-stock">${getPlaceholder('in-stock')}</span>
-        <span class="cmp-product-card__status-item cmp-product-card__status--new">${getPlaceholder('new')}</span>
-        <span class="cmp-product-card__status-item cmp-product-card__status--deal">${getPlaceholder('deal')}</span>
+        ${generateStatusBadges(product.productTags)}
       </div>
     </div>
 
@@ -154,10 +223,10 @@ function createProductCard(product) {
 
       <div class="cmp-product-card__info">
         <div class="cmp-product-card__title">
-          <a href="pdp.html" aria-label="${getPlaceholder('buy-now')} ${product.name}">${product.name}</a>
+          <a href="${productUrl}" aria-label="${buyButtonText} ${product.name}" target="${product.productUrl && product.productUrl.startsWith('http') ? '_blank' : '_self'}">${product.name}</a>
         </div>
         <p class="cmp-product-card__model">
-          <a href="pdp.html#product-features">${product.model}</a>
+          <a href="${productUrl}#product-features" target="${product.productUrl && product.productUrl.startsWith('http') ? '_blank' : '_self'}">${product.model}</a>
         </p>
       </div>
 
@@ -166,13 +235,13 @@ function createProductCard(product) {
           <div
             data-bv-show="inline_rating"
             data-bv-product-id="${product.bazaarvoiceProductId}"
-            data-bv-redirect-url="pdp.html#product-reviews"
+            data-bv-redirect-url="${productUrl}#product-reviews"
           ></div>
         </div>
         <div class="cmp-product-card__compare">
           <input type="checkbox" class="cmp-product-card__compare-checkbox" id="compare-${product.id}" data-id="${product.id}"
             data-name="${product.name}" data-model="${product.model}" data-sku="${product.model}" data-image="${product.image}"
-            data-pdp="/product-detail/${product.id}" data-add-to-compare />
+            data-pdp="${productUrl}" data-add-to-compare />
 
           <label for="compare-${product.id}" class="cmp-product-card__compare-label">${getPlaceholder('compare')}</label>
         </div>
@@ -187,32 +256,7 @@ function createProductCard(product) {
             FPS: ${product.fps}
         </button>
         <div id="fps-details-${product.id}" class="tooltip__content" role="tooltip">
-          <table class="cmp-product-card__fps-table">
-            <thead>
-              <tr>
-                <th>Game FPS</th>
-                <th>1080P</th>
-                <th>1440P</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Call of Duty: Modern Warfare III</td>
-                <td>--</td>
-                <td>57 FPS</td>
-              </tr>
-              <tr>
-                <td>Fortnite Chapter 4</td>
-                <td>346 FPS</td>
-                <td>45 FPS</td>
-              </tr>
-              <tr>
-                <td>Red Dead Redemption 2</td>
-                <td>315 FPS</td>
-                <td>--</td>
-              </tr>
-            </tbody>
-          </table>
+          ${generateFpsTooltip(product)}
         </div>
       </div>
 
@@ -238,13 +282,13 @@ function createProductCard(product) {
 
       <div class="cmp-product-card__price-block">
         <span class="cmp-product-card__price">$${product.price}</span>
-        <span class="cmp-product-card__original-price">$${product.originalPrice}</span>
-        <span class="cmp-product-card__discount">${getPlaceholder('save')} $${product.discount}</span>
+        ${product.originalPrice && product.originalPrice !== product.price ? `<span class="cmp-product-card__original-price">$${product.originalPrice}</span>` : ''}
+        ${product.discount && product.discount !== '0' ? `<span class="cmp-product-card__discount">${getPlaceholder('save')} $${product.discount}</span>` : ''}
       </div>
     </div>
 
     <div class="cmp-product-card__footer">
-      <button class="cmp-button cmp-product-card__buy-button btn">${getPlaceholder('buy-now')}</button>
+      <button class="cmp-button cmp-product-card__buy-button btn" onclick="window.open('${productUrl}', '${product.productUrl && product.productUrl.startsWith('http') ? '_blank' : '_self'}')">${buyButtonText}</button>
     </div>
   `;
   
@@ -526,7 +570,7 @@ async function createAuthoringStructure(config, block = null) {
   let itemCount = parseInt(getConfigValue(config, 'item-count', 'itemCount', '3'), 10);
   let viewAllLink = getConfigValue(config, 'view-all-link', 'viewAllLink', '/products');
   let viewAllText = getConfigValue(config, 'view-all-text', 'viewAllText', 'View all');
-  let apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', '/mock-api/products');
+  let apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts');
 
   // If block exists, read current values from UE fields (in case they've been edited)
   if (block) {
@@ -693,7 +737,7 @@ export default async function decorate(block) {
   const itemCount = parseInt(getConfigValue(config, 'item-count', 'itemCount', '3'), 10);
   const viewAllLink = getConfigValue(config, 'view-all-link', 'viewAllLink', '/products');
   const viewAllText = getConfigValue(config, 'view-all-text', 'viewAllText', 'View all');
-  const apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', '/mock-api/products');
+  const apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts');
   const autoplayIntervalValue = parseInt(getConfigValue(config, 'autoplay-interval', 'autoplayInterval', '5000'), 10);
   
   // Show loading state
