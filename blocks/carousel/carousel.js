@@ -169,51 +169,7 @@ function generateHeroBannerHTML(slide, config) {
  * Initialize Swiper carousel
  */
 function initializeSwiper(carouselElement, config) {
-  // Wait for Swiper library to be available
-  const initSwiper = () => {
-    if (typeof window.Swiper === 'undefined') {
-      // Load Swiper CSS first
-      const swiperCSS = document.createElement('link');
-      swiperCSS.rel = 'stylesheet';
-      swiperCSS.href = 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css';
-      swiperCSS.onload = () => {
-        console.log('Swiper CSS loaded successfully');
-        // Load Swiper JS after CSS is loaded
-        const swiperJS = document.createElement('script');
-        swiperJS.src = 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js';
-        swiperJS.onload = () => {
-          console.log('Swiper JS loaded successfully');
-          setupSwiper();
-        };
-        swiperJS.onerror = () => {
-          console.error('Failed to load Swiper JS');
-        };
-        document.head.appendChild(swiperJS);
-      };
-      swiperCSS.onerror = () => {
-        console.error('Failed to load Swiper CSS');
-        // Still try to load JS even if CSS fails
-        const swiperJS = document.createElement('script');
-        swiperJS.src = 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js';
-        swiperJS.onload = () => setupSwiper();
-        document.head.appendChild(swiperJS);
-      };
-      document.head.appendChild(swiperCSS);
-    } else {
-      // Check if CSS is already loaded
-      const existingCSS = document.querySelector('link[href*="swiper"]');
-      if (!existingCSS) {
-        const swiperCSS = document.createElement('link');
-        swiperCSS.rel = 'stylesheet';
-        swiperCSS.href = 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css';
-        swiperCSS.onload = () => setupSwiper();
-        document.head.appendChild(swiperCSS);
-      } else {
-        setupSwiper();
-      }
-    }
-  };
-
+  // Swiper is already loaded via head.html, initialize directly
   const setupSwiper = () => {
     const swiper = new window.Swiper(carouselElement.querySelector('.swiper'), {
       loop: true,
@@ -303,7 +259,7 @@ function initializeSwiper(carouselElement, config) {
     }
   };
 
-  initSwiper();
+  setupSwiper();
 }
 
 /**
@@ -357,7 +313,7 @@ export default function decorate(block) {
           
           <div class="cmp-carousel__footer">
             <div class="cmp-carousel__indicators-group">
-              <ol class="cmp-carousel__indicators swiper-pagination swiper-pagination-clickable swiper-pagination-bullets swiper-pagination-horizontal" 
+              <ol class="cmp-carousel__indicators " 
                   role="tablist" aria-label="Choose a slide to display">
                 ${indicatorsHTML}
               </ol>

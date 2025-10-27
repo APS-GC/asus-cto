@@ -1,3 +1,28 @@
+/* Import Swiper CSS */
+@import url('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
+
+/* Override default Swiper pagination styles */
+.cmp-carousel .swiper-pagination {
+  position: unset !important;
+  text-align: unset !important;
+  transition: unset !important;
+  transform: unset !important;
+  z-index: unset !important;
+  bottom: unset !important;
+  top: unset !important;
+  left: unset !important;
+  width: unset !important;
+}
+
+.cmp-carousel .swiper-horizontal > .swiper-pagination-bullets,
+.cmp-carousel .swiper-pagination-bullets.swiper-pagination-horizontal,
+.cmp-carousel .swiper-pagination-custom,
+.cmp-carousel .swiper-pagination-fraction {
+  bottom: unset !important;
+  top: unset !important;
+  left: unset !important;
+  width: unset !important;
+}
 
 /* Carousel Block Styles */
 .block.carousel {
@@ -48,9 +73,6 @@
   width: 100%;
   height: 100%;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
 }
 
@@ -79,110 +101,137 @@
 
 /* Hero Content */
 .cmp-carousel .hero-content {
-  position: relative;
+  position: absolute;
   z-index: 2;
   color: white;
   text-align: center;
   padding: 2rem;
   max-width: 800px;
-  margin: 0 auto;
+  /* Default center position when no position class is applied */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-/* CTA Position Classes */
-.cmp-carousel .hero-content--top {
-  align-self: flex-start;
-  margin-top: 5rem;
-}
-
-.cmp-carousel .hero-content--bottom {
-  align-self: flex-end;
-  margin-bottom: 5rem;
-}
-
-.cmp-carousel .hero-content--left {
+/* Hero Banner Position Classes */
+.cmp-carousel .hero-banner.hero-content--start-center .hero-content {
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
   text-align: left;
-  margin-left: 5rem;
-  margin-right: auto;
 }
 
-.cmp-carousel .hero-content--right {
-  text-align: right;
-  margin-right: 5rem;
-  margin-left: auto;
+.cmp-carousel .hero-banner.hero-content--center-top .hero-content {
+  top: calc(64px + var(--header-height, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
 }
 
-.cmp-carousel .hero-content--center {
-  align-self: center;
-}
-
-.cmp-carousel .hero-content--start-center {
-  align-self: center;
+.cmp-carousel .hero-banner.hero-content--end-center .hero-content {
+  top: 50%;
+  right: 8%;
+  transform: translateY(-50%);
   text-align: left;
-  margin-left: 5rem;
-  margin-right: auto;
 }
 
-.cmp-carousel .hero-content--end-center {
-  align-self: center;
+.cmp-carousel .hero-banner.hero-content--start-top .hero-content {
+  top: 10%;
+  left: 10%;
+  text-align: left;
+}
+
+.cmp-carousel .hero-banner.hero-content--start-bottom .hero-content {
+  bottom: 10%;
+  left: 10%;
+  text-align: left;
+}
+
+.cmp-carousel .hero-banner.hero-content--center-center .hero-content {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.cmp-carousel .hero-banner.hero-content--center-bottom .hero-content {
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.cmp-carousel .hero-banner.hero-content--end-top .hero-content {
+  top: 10%;
+  right: 8%;
   text-align: right;
-  margin-right: 5rem;
-  margin-left: auto;
 }
 
-.cmp-carousel .hero-content--center-top {
-  align-self: flex-start;
-  margin-top: 5rem;
+.cmp-carousel .hero-banner.hero-content--end-bottom .hero-content {
+  bottom: 10%;
+  right: 8%;
+  text-align: right;
+}
+
+/* Legacy position classes for backward compatibility */
+.cmp-carousel .hero-banner.hero-content--top .hero-content {
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.cmp-carousel .hero-banner.hero-content--bottom .hero-content {
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.cmp-carousel .hero-banner.hero-content--left .hero-content {
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+  text-align: left;
+}
+
+.cmp-carousel .hero-banner.hero-content--right .hero-content {
+  top: 50%;
+  right: 8%;
+  transform: translateY(-50%);
+  text-align: right;
+}
+
+.cmp-carousel .hero-banner.hero-content--center .hero-content {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
 }
 
 /* Typography */
 .cmp-carousel .product-name {
-  font-size: 1.2rem;
-  font-weight: 500;
-  margin-bottom: 1rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  opacity: 0.9;
+  font-family: var(--font-display);
+  font-weight: var(--medium);
+  letter-spacing: 0;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  margin-bottom: 0.5rem;
 }
 
 .cmp-carousel .headline {
-  font-size: 3.5rem;
-  font-weight: bold;
-  margin-bottom: 2rem;
-  line-height: 1.1;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-}
-
-/* CTA Button */
-.cmp-carousel .cta-button {
-  display: inline-block;
-  padding: 1rem 2rem;
-  background: #ff6b35;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  border: none;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.cmp-carousel .cta-button:hover {
-  background: #e55a2b;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.cmp-carousel .cta-button:focus {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
+  font-family: var(--font-display);
+  font-weight: var(--medium);
+  letter-spacing: 0;
+  font-size: 3.25rem;
+  line-height: 3.75rem;
+  margin-bottom: 1.5rem;
 }
 
 /* Carousel Footer */
-.cmp-carousel__footer {
-  position: absolute;
+/* .cmp-carousel__footer {
+  position: relative;
   bottom: 32px !important;
   display: flex;
   justify-content: center;
@@ -190,125 +239,134 @@
   min-height: 32px;
   width: 100%;
   z-index: 2;
-  padding-left: 2.5rem;
-  padding-right: 2.5rem;
-}
+} */
+ 
+    .cmp-carousel__footer{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    position: absolute;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    bottom: 20px;
+    min-height: 32px;
+    width: 100%;
+    z-index: 2
+  }
 
 /* Indicators Group */
 .cmp-carousel__indicators-group {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 32px;
-  width: fit-content;
-  height: 16px;
+    background: rgba(0,0,0,.8);
+    border-radius: 32px;
+    height: 16px;
+    width: fit-content
 }
 
 /* Pagination Indicators */
-.cmp-carousel__indicators {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  margin-top: -4px;
-  margin-left: -4px;
+.cmp-carousel__indicators,.cmp-carousel__indicators-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap
 }
 
 /* Individual Indicator */
+.cmp-carousel__indicators {
+    list-style: none;
+    margin: -4px 0 0 -4px;
+    padding: 0
+}
+
 .cmp-carousel__indicator {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  border-radius: 0;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  background-color: transparent;
-  margin: 0;
-  padding: 0;
+    border-radius: 0;
+    display: flex;
+    height: 24px;
+    width: 24px;
+    align-items: center;
+    background-color: transparent;
+    cursor: pointer;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    position: relative;
 }
 
-.cmp-carousel__indicator::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 8px;
-  background-color: transparent;
-  border: 1px solid var(--color-primary-950, #1a1a1a);
-  display: inline-block;
-  opacity: 1;
-  box-sizing: border-box;
-  position: relative;
-  transition: all 0.3s ease;
+.cmp-carousel__indicator:before {
+    background-color: transparent;
+    border: 1px solid var(--color-primary-950);
+    border-radius: 8px;
+    box-sizing: border-box;
+    content: "";
+    display: inline-block;
+    height: 8px;
+    opacity: 1;
+    position: relative;
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+    width: 8px
 }
 
-.cmp-carousel__indicator:hover::before {
-  background-color: rgba(26, 26, 26, 0.4);
+.cmp-carousel__indicator:hover:before {
+    background-color: hsla(0,0%,100%,.4)
 }
 
-.cmp-carousel__indicator:focus::before {
-  background-color: var(--color-primary-600, #666);
+.cmp-carousel__indicator:focus {
+    outline: 0
 }
 
-/* Active Indicator State */
+.cmp-carousel__indicator:focus:before {
+    outline: 2px solid var(--color-focus-ring)
+}
+
 .cmp-carousel__indicator--active {
-  width: 96px;
-  margin: 0 8px;
-  border: 0;
-  overflow: hidden;
-  cursor: default;
-  position: relative;
+    border: 0;
+    cursor: default;
+    margin: 0 8px;
+    width: 96px
 }
 
-.cmp-carousel__indicator--active::before {
-  width: 100%;
-  background-color: var(--color-primary-300, #ccc);
-  border: 0;
+.cmp-carousel__indicator--active:before {
+    background-color: var(--color-primary-300);
+    border: 0;
+    width: 100%
 }
 
-.cmp-carousel__indicator--active::after {
-  content: "";
-  background-color: var(--color-primary-950, #1a1a1a);
-  border-radius: 8px;
-  transform-origin: left;
-  position: absolute;
-  top: 8px;
-  height: 8px;
-  width: calc(100% * max(0, min(var(--slide-progress, 0), 1)));
-  left: 0px;
-  max-width: 100%;
+.cmp-carousel__indicator--active:after {
+    background-color: var(--color-primary-950);
+    border-radius: 8px;
+    content: "";
+    height: 8px;
+    left: 0;
+    position: absolute;
+    top: 8px;
+    transform-origin: left;
+    width: calc(100%*var(--slide-progress, 0))
 }
 
 /* Media Controls */
 .cmp-carousel__media-controls {
-  position: relative;
-  right: 32px;
+  position: absolute;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
+  z-index: 1000;
   gap: 0.5rem;
   display: none;
 }
 
 .cmp-carousel__media-control {
-  width: 32px;
-  height: 32px;
-  background-color: var(--color-primary-950, #1a1a1a);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: none;
-}
-
-.cmp-carousel__media-control:focus {
-  background-color: var(--color-primary-600, #666);
-  outline: 2px solid var(--color-focus-ring, #ff6b35);
+    border-radius: 50%;
+    display: flex;
+    height: 32px;
+    width: 32px;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    justify-content: center
 }
 
 /* Autoplay Toggle Button */
@@ -424,14 +482,21 @@
   .cmp-carousel .headline {
     font-size: 2.5rem;
   }
+}
+
+/* Hero Banner Responsive Styles (matching webpack hero-banner) */
+@media only screen and (max-width: 79.9375rem) {
+  .cmp-carousel .hero-banner .hero-content .headline {
+    font-size: 1.875rem;
+    line-height: 2.375rem;
+    margin-bottom: 1rem;
+  }
   
-  .cmp-carousel .hero-content--left,
-  .cmp-carousel .hero-content--right,
-  .cmp-carousel .hero-content--start-center,
-  .cmp-carousel .hero-content--end-center {
-    margin-left: 2rem;
-    margin-right: 2rem;
-    text-align: center;
+  .cmp-carousel .hero-banner.hero-content--start-center .hero-content {
+    left: 20px;
+    top: unset;
+    transform: unset;
+    bottom: 76px;
   }
 }
 
