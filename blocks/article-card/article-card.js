@@ -4,13 +4,20 @@ import { moveInstrumentation } from '../../scripts/scripts.js';
 export default function decorate(block) {
   /* change to ul, li */
   const ul = document.createElement('ul');
-  [...block.children].forEach((row) => {
+  
+  // Detect if this is the first article block on the page (LCP candidate)
+  const isLCPBlock = block.closest('.section') === document.querySelector('.section');
+  
+  [...block.children].forEach((row, index) => {
     const li = document.createElement('li');
     moveInstrumentation(row, li);
     
     // Create article card structure
     const articleCard = document.createElement('a');
     articleCard.className = 'article-card-link';
+    
+    // First article in first section is LCP candidate
+    const isLCPCandidate = isLCPBlock && index === 0;
     
     // Process each cell in the row
     const cells = [...row.children];
@@ -44,8 +51,19 @@ export default function decorate(block) {
       // Optimize the image
       const img = picture.querySelector('img');
       if (img) {
-        const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
+        // Use eager loading for LCP candidate, lazy for others
+        const optimizedPic = createOptimizedPicture(img.src, img.alt, isLCPCandidate, [{ width: '750' }]);
         moveInstrumentation(img, optimizedPic.querySelector('img'));
+        
+        // Add fetchpriority="high" for LCP candidate
+        if (isLCPCandidate) {
+          const lcpImg = optimizedPic.querySelector('img');
+          if (lcpImg) {
+            lcpImg.setAttribute('fetchpriority', 'high');
+            console.log('LCP optimization applied to article image:', img.src);
+          }
+        }
+        
         picture.replaceWith(optimizedPic);
       }
     }
