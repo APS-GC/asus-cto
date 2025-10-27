@@ -180,6 +180,15 @@ body {
   letter-spacing: var(--letter-spacing-normal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  /* Initial state - hidden for smooth appearance */
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Appear state - triggered by JavaScript after content loads */
+body.appear {
+  opacity: 1;
 }
 
 /* ========================================================================== 
@@ -1981,7 +1990,7 @@ p,
 
 /* Modal Accessibility */
 .modal[aria-hidden="true"] {
-  display: none;
+  display: hidden;
 }
 
 .modal:focus {

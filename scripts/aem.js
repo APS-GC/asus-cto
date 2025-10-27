@@ -492,7 +492,9 @@ function decorateSections(main) {
     wrappers.forEach((wrapper) => section.append(wrapper));
     section.classList.add('section');
     section.dataset.sectionStatus = 'initialized';
-    section.style.display = 'none';
+    section.style.visibility = 'hidden';
+    section.style.opacity = '0';
+    section.style.transition = 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out';
 
     // Process section metadata - check multiple sources
     let meta = {};
@@ -770,7 +772,8 @@ async function loadSection(section, loadCallback) {
     }
     if (loadCallback) await loadCallback(section);
     section.dataset.sectionStatus = 'loaded';
-    section.style.display = null;
+    section.style.visibility = 'visible';
+    section.style.opacity = '1';
   }
 }
 
