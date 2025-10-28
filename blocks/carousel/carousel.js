@@ -294,14 +294,14 @@ function initializeSwiper(carouselElement, config) {
   const isUE = isUniversalEditor();
   
   // Force apply UE authoring class and attributes for CSS targeting
-  if (isUE) {
-    const carousel = carouselElement.querySelector('.cmp-carousel');
-    if (carousel) {
-      carousel.classList.add('ue-authoring');
-      carousel.setAttribute('data-authoring', 'true');
-      document.body.setAttribute('data-aue-behavior', 'true');
-    }
-  }
+  // if (isUE) {
+  //   const carousel = carouselElement.querySelector('.cmp-carousel');
+  //   if (carousel) {
+  //     carousel.classList.add('ue-authoring');
+  //     carousel.setAttribute('data-authoring', 'true');
+  //     document.body.setAttribute('data-aue-behavior', 'true');
+  //   }
+  // }
   
   // Swiper is already loaded via head.html, initialize directly
   const setupSwiper = () => {
@@ -335,9 +335,6 @@ function initializeSwiper(carouselElement, config) {
         },
         on: {
           slideChange: function() {
-            // Skip autoplay management in UE
-            //if (isUE) return;
-            
             // Update autoplay delay based on current slide media type
             const activeSlide = this.slides[this.activeIndex];
             const video = activeSlide?.querySelector('video');
@@ -354,10 +351,6 @@ function initializeSwiper(carouselElement, config) {
             }
           },
           slideChangeTransitionEnd: function() {
-            // Skip video management in UE authoring
-            //if (isUE) return;
-            
-            // Handle video autoplay
             const activeSlide = this.slides[this.activeIndex];
             const video = activeSlide?.querySelector('video');
             
@@ -376,7 +369,6 @@ function initializeSwiper(carouselElement, config) {
             });
           },
           autoplayTimeLeft(swiper, time, progress) {
-            //if (isUE) return; // Skip in UE authoring
             swiper.pagination.bullets.forEach((bullet, idx) => {
               bullet.style.setProperty('--slide-progress', idx === swiper.realIndex ? 1 - progress : 0);
             });
@@ -390,14 +382,12 @@ function initializeSwiper(carouselElement, config) {
       const playPauseBtn = carouselElement.querySelector('.cmp-carousel__media-control--play-pause');
       const autoplayToggle = carouselElement.querySelector('.carousel-autoplay-toggle');
       
-      //if (playPauseBtn && !isUE) {
       if (playPauseBtn) {
         playPauseBtn.addEventListener('click', () => {
           toggleSliderVideo(playPauseBtn);
         });
       }
 
-      //if (autoplayToggle && !isUE) {
       if (autoplayToggle) {
         autoplayToggle.addEventListener('click', () => {
           const activeSlide = document.querySelector('.swiper-slide-active');
