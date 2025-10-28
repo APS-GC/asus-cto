@@ -1,7 +1,6 @@
 /**
  * Carousel Block with Hero Banner Slides
  * Supports authorable hero banner slides with video/image media, CTA buttons, and autoplay settings
- * UE authoring support
  */
 
 import { moveInstrumentation } from '../../scripts/scripts.js';
@@ -265,11 +264,27 @@ const toggleSliderVideo = (videoPlayPauseBtn) => {
  * Detect if running in Universal Editor environment
  */
 function isUniversalEditor() {
-  return window.location.pathname.includes('/universal-editor') || 
-         window.location.search.includes('editor') ||
-         document.body.classList.contains('editor') ||
-         window.hlx?.sidekickConfig ||
-         document.querySelector('helix-sidekick');
+  // More comprehensive UE detection
+  return (
+    // URL-based detection
+    window.location.pathname.includes('/editor.html') ||
+    window.location.search.includes('editor') ||
+    window.location.search.includes('aue_') ||
+    // DOM-based detection
+    document.body.hasAttribute('data-aue-behavior') ||
+    document.body.classList.contains('editor') ||
+    document.body.classList.contains('aem-authoring-enabled') ||
+    document.querySelector('[data-aue-behavior]') ||
+    document.querySelector('.aem-editor') ||
+    // Framework detection
+    window.hlx?.sidekickConfig ||
+    document.querySelector('helix-sidekick') ||
+    // Context detection
+    window.parent !== window ||
+    // Direct attribute checks
+    document.documentElement.hasAttribute('data-authoring') ||
+    document.documentElement.classList.contains('authoring-mode')
+  );
 }
 
 /**
@@ -278,16 +293,22 @@ function isUniversalEditor() {
 function initializeSwiper(carouselElement, config) {
   const isUE = isUniversalEditor();
   
-  // Add UE authoring class if in Universal Editor
+  // Force apply UE authoring class and attributes for CSS targeting
   if (isUE) {
-    carouselElement.querySelector('.cmp-carousel')?.classList.add('ue-authoring');
+    const carousel = carouselElement.querySelector('.cmp-carousel');
+    if (carousel) {
+      carousel.classList.add('ue-authoring');
+      carousel.setAttribute('data-authoring', 'true');
+      document.body.setAttribute('data-aue-behavior', 'true');
+    }
   }
   
   // Swiper is already loaded via head.html, initialize directly
   const setupSwiper = () => {
     // Check if Swiper is available
     if (!window.Swiper) {
-      console.warn('Swiper not available, carousel will not initialize');
+      console.warn('Swiper not available, activating fallback mode');
+      carouselElement.querySelector('.swiper')?.classList.add('swiper-fallback');
       return;
     }
     
@@ -365,7 +386,7 @@ function initializeSwiper(carouselElement, config) {
 
       const swiper = new window.Swiper(carouselElement.querySelector('.swiper'), swiperConfig);
 
-      // Add media control functionality
+      // Add media control functionality (only if not in UE)
       const playPauseBtn = carouselElement.querySelector('.cmp-carousel__media-control--play-pause');
       const autoplayToggle = carouselElement.querySelector('.carousel-autoplay-toggle');
       
@@ -417,7 +438,8 @@ function initializeSwiper(carouselElement, config) {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', setupSwiper);
   } else {
-    setTimeout(setupSwiper, 100);
+    // Additional delay for UE environments
+    setTimeout(setupSwiper, isUE ? 500 : 100);
   }
 }
 
@@ -549,15 +571,4 @@ export default function decorate(block) {
   
   // Initialize carousel functionality
   initializeSwiper(block, config);
-
-  // Add hero banner click functionality (from original hero-banner.js)
-  // const heroBanners = block.querySelectorAll('.hero-banner');
-  // heroBanners.forEach((heroBanner) => {
-  //   const ctaButton = heroBanner.querySelector('.cta-button');
-  //   if (ctaButton) {
-  //     heroBanner.addEventListener('click', function() {
-  //       ctaButton.click();
-  //     });
-  //   }
-  // });
 }

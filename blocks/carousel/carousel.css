@@ -484,11 +484,59 @@
   border-radius: 8px;
 }
 
+/* UE Authoring Environment Detection and Overrides */
+/* Target common UE iframe and editor contexts */
+body[data-aue-behavior] .cmp-carousel .swiper,
+.aem-authoring-enabled .cmp-carousel .swiper,
+.aem-editor .cmp-carousel .swiper,
+iframe[src*="editor"] .cmp-carousel .swiper,
+[data-authoring="true"] .cmp-carousel .swiper {
+  height: 400px !important;
+  max-height: 400px !important;
+  min-height: 300px !important;
+  overflow: hidden !important;
+}
+
+/* Additional UE specific overrides */
+body[data-aue-behavior] .cmp-carousel,
+.aem-authoring-enabled .cmp-carousel,
+.aem-editor .cmp-carousel,
+iframe[src*="editor"] .cmp-carousel,
+[data-authoring="true"] .cmp-carousel {
+  border: 2px dashed #ccc !important;
+  background: #f8f8f8 !important;
+  height: auto !important;
+  max-height: 450px !important;
+  overflow: hidden !important;
+}
+
+/* Prevent viewport-based heights in authoring */
+body[data-aue-behavior] .cmp-carousel .swiper-slide,
+.aem-authoring-enabled .cmp-carousel .swiper-slide,
+.aem-editor .cmp-carousel .swiper-slide,
+iframe[src*="editor"] .cmp-carousel .swiper-slide,
+[data-authoring="true"] .cmp-carousel .swiper-slide {
+  height: 350px !important;
+  max-height: 350px !important;
+  opacity: 1 !important;
+  transition: none !important;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .cmp-carousel .swiper {
     height: 80vh;
     min-height: 400px;
+  }
+  
+  /* Override responsive rules in UE authoring */
+  body[data-aue-behavior] .cmp-carousel .swiper,
+  .aem-authoring-enabled .cmp-carousel .swiper,
+  .aem-editor .cmp-carousel .swiper,
+  iframe[src*="editor"] .cmp-carousel .swiper,
+  [data-authoring="true"] .cmp-carousel .swiper {
+    height: 350px !important;
+    max-height: 350px !important;
   }
   
   .cmp-carousel .headline {
