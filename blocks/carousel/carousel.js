@@ -314,8 +314,12 @@ function initializeSwiper(carouselElement, config) {
     
     try {
       const swiperConfig = {
-        loop: !isUE, // Disable loop in UE authoring
-        autoplay: isUE ? false : {
+       // loop: !isUE, // Disable loop in UE authoring
+        //autoplay: isUE ? false : {
+        loop: true,
+        autoplay: {
+          delay: config.imageAutoplayDuration,
+          disableOnInteraction: 
           delay: config.imageAutoplayDuration,
           disableOnInteraction: false,
           pauseOnMouseEnter: false,
