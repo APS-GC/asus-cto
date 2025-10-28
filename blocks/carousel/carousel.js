@@ -314,8 +314,6 @@ function initializeSwiper(carouselElement, config) {
     
     try {
       const swiperConfig = {
-        //loop: !isUE, // Disable loop in UE authoring
-        //autoplay: isUE ? false : {
         loop: true, // Disable loop in UE authoring
         autoplay: {
           delay: config.imageAutoplayDuration,
@@ -338,7 +336,7 @@ function initializeSwiper(carouselElement, config) {
         on: {
           slideChange: function() {
             // Skip autoplay management in UE
-            if (isUE) return;
+            //if (isUE) return;
             
             // Update autoplay delay based on current slide media type
             const activeSlide = this.slides[this.activeIndex];
@@ -357,7 +355,7 @@ function initializeSwiper(carouselElement, config) {
           },
           slideChangeTransitionEnd: function() {
             // Skip video management in UE authoring
-            if (isUE) return;
+            //if (isUE) return;
             
             // Handle video autoplay
             const activeSlide = this.slides[this.activeIndex];
@@ -378,7 +376,7 @@ function initializeSwiper(carouselElement, config) {
             });
           },
           autoplayTimeLeft(swiper, time, progress) {
-            if (isUE) return; // Skip in UE authoring
+            //if (isUE) return; // Skip in UE authoring
             swiper.pagination.bullets.forEach((bullet, idx) => {
               bullet.style.setProperty('--slide-progress', idx === swiper.realIndex ? 1 - progress : 0);
             });
