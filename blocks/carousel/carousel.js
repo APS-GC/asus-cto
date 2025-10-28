@@ -441,7 +441,7 @@ function initializeSwiper(carouselElement, config) {
     document.addEventListener('DOMContentLoaded', setupSwiper);
   } else {
     // Additional delay for UE environments
-    //setTimeout(setupSwiper, isUE ? 500 : 100);
+    setTimeout(setupSwiper, isUE ? 500 : 100);
   }
 }
 
