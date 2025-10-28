@@ -207,6 +207,60 @@ function generateHeroBannerHTML(slide, config) {
 }
 
 /**
+ * Manages video playback (play/pause) and handles promises to avoid uncaught errors.
+ * @param {HTMLVideoElement} video - The video element to control.
+ * @param {'play' | 'pause'} action - The action to perform.
+ */
+const manageVideoPlayback = (video, action) => {
+  if (!video) {
+    return;
+  }
+
+  let promise;
+  if (action === 'play') {
+    if (typeof video.play === 'function') {
+      promise = video.play();
+    }
+  } else if (action === 'pause') {
+    if (typeof video.pause === 'function') {
+      promise = video.pause();
+    }
+  } else {
+    console.error('Invalid video action:', action);
+    return;
+  }
+
+  if (promise !== undefined) {
+    promise.catch((e) => console.error(`Video ${action} failed:`, e));
+  }
+};
+
+/**
+ * Toggle video play/pause and manage paused class on media controls
+ */
+const toggleSliderVideo = (videoPlayPauseBtn) => {
+  const activeSlide = document.querySelector('.swiper-slide-active');
+  let activeSlideProdName = document.querySelector('.swiper-slide-active .product-name')?.textContent;
+
+  const activeVideo = activeSlide?.querySelector('video');
+  const mediaControls = document.querySelector('.cmp-carousel__media-controls');
+  
+  if (activeSlide && activeVideo) {
+    if (activeVideo.paused) {
+      manageVideoPlayback(activeVideo, 'play');
+      videoPlayPauseBtn?.setAttribute('aria-label', 'Pause ' + activeSlideProdName);
+      videoPlayPauseBtn?.setAttribute('title', 'Pause ' + activeSlideProdName);
+      mediaControls?.classList.remove('paused');
+    } else {
+      manageVideoPlayback(activeVideo, 'pause');
+      videoPlayPauseBtn?.setAttribute('aria-label', 'Play ' + activeSlideProdName);
+      videoPlayPauseBtn?.setAttribute('title', 'Play ' + activeSlideProdName);
+      mediaControls?.classList.add('paused');
+    }
+  }
+};
+
+/**
  * Initialize Swiper carousel
  */
 function initializeSwiper(carouselElement, config) {
@@ -239,6 +293,10 @@ function initializeSwiper(carouselElement, config) {
           const video = activeSlide?.querySelector('video');
           const newDelay = video ? config.videoAutoplayDuration : config.imageAutoplayDuration;
           
+          // Remove paused class when switching slides
+          const mediaControls = document.querySelector('.cmp-carousel__media-controls');
+          mediaControls?.classList.remove('paused');
+          
           this.autoplay.stop();
           this.params.autoplay.delay = newDelay;
           this.autoplay.start();
@@ -249,9 +307,7 @@ function initializeSwiper(carouselElement, config) {
           const video = activeSlide?.querySelector('video');
           
           if (video) {
-            video.play().catch(() => {
-              // Autoplay failed, which is expected in some browsers
-            });
+            manageVideoPlayback(video, 'play');
           }
           
           // Pause videos in other slides
@@ -259,7 +315,7 @@ function initializeSwiper(carouselElement, config) {
             if (index !== this.activeIndex) {
               const slideVideo = slide.querySelector('video');
               if (slideVideo) {
-                slideVideo.pause();
+                manageVideoPlayback(slideVideo, 'pause');
               }
             }
           });
@@ -278,34 +334,38 @@ function initializeSwiper(carouselElement, config) {
     
     if (playPauseBtn) {
       playPauseBtn.addEventListener('click', () => {
-        const activeSlide = swiper.slides[swiper.activeIndex];
-        const video = activeSlide?.querySelector('video');
-        
-        if (video) {
-          if (video.paused) {
-            video.play();
-            playPauseBtn.setAttribute('aria-label', `Pause ${activeSlide.querySelector('.product-name')?.textContent || 'video'}`);
-          } else {
-            video.pause();
-            playPauseBtn.setAttribute('aria-label', `Play ${activeSlide.querySelector('.product-name')?.textContent || 'video'}`);
-          }
-        }
+        toggleSliderVideo(playPauseBtn);
       });
     }
 
     if (autoplayToggle) {
       autoplayToggle.addEventListener('click', () => {
+        const activeSlide = document.querySelector('.swiper-slide-active');
+        const activeVideo = activeSlide?.querySelector('video');
+        const mediaControls = document.querySelector('.cmp-carousel__media-controls');
+        const isVideoPaused = mediaControls?.classList.contains('paused');
         
         if (swiper.autoplay.running) {
           swiper.autoplay.stop();
           swiper.el.classList.add('is-autoplay-paused');
           autoplayToggle.setAttribute('aria-label', 'Play');
           carouselElement.setAttribute('aria-live', 'polite');
+          
+          // Maintain video pause state when autoplay is paused
+          if (isVideoPaused && activeVideo) {
+            manageVideoPlayback(activeVideo, 'pause');
+            mediaControls?.classList.add('paused');
+          }
         } else {
           swiper.autoplay.start();
           swiper.el.classList.remove('is-autoplay-paused');
           autoplayToggle.setAttribute('aria-label', 'Pause');
           carouselElement.setAttribute('aria-live', 'off');
+          
+          // Resume video if it wasn't manually paused
+          if (!isVideoPaused && activeVideo) {
+            manageVideoPlayback(activeVideo, 'play');
+          }
         }
       });
     }
@@ -444,13 +504,13 @@ export default function decorate(block) {
   initializeSwiper(block, config);
 
   // Add hero banner click functionality (from original hero-banner.js)
-  const heroBanners = block.querySelectorAll('.hero-banner');
-  heroBanners.forEach((heroBanner) => {
-    const ctaButton = heroBanner.querySelector('.cta-button');
-    if (ctaButton) {
-      heroBanner.addEventListener('click', function() {
-        ctaButton.click();
-      });
-    }
-  });
+  // const heroBanners = block.querySelectorAll('.hero-banner');
+  // heroBanners.forEach((heroBanner) => {
+  //   const ctaButton = heroBanner.querySelector('.cta-button');
+  //   if (ctaButton) {
+  //     heroBanner.addEventListener('click', function() {
+  //       ctaButton.click();
+  //     });
+  //   }
+  // });
 }

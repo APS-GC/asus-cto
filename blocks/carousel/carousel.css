@@ -591,13 +591,21 @@
   border: 0;
 }
 
-/* Focus styles for accessibility */
-.cmp-carousel__indicator:focus,
-.carousel-autoplay-toggle:focus,
-.cmp-carousel__media-control:focus,
-.cmp-carousel__action:focus {
-  outline: 2px solid #ff6b35;
+/* Focus styles for accessibility - only show outline for keyboard navigation */
+.cmp-carousel__indicator:focus-visible,
+.carousel-autoplay-toggle:focus-visible,
+.cmp-carousel__media-control:focus-visible,
+.cmp-carousel__action:focus-visible {
+  outline: 2px solid #0066cc;
   outline-offset: 2px;
+}
+
+/* Remove outline on mouse click */
+.cmp-carousel__indicator:focus:not(:focus-visible),
+.carousel-autoplay-toggle:focus:not(:focus-visible),
+.cmp-carousel__media-control:focus:not(:focus-visible),
+.cmp-carousel__action:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Swiper overrides */
