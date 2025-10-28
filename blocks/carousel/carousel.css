@@ -504,8 +504,6 @@ body[data-aue-behavior] .cmp-carousel .swiper-slide,
 .aem-editor .cmp-carousel .swiper-slide,
 iframe[src*="editor"] .cmp-carousel .swiper-slide,
 [data-authoring="true"] .cmp-carousel .swiper-slide {
-  height: 350px !important;
-  max-height: 350px !important;
   opacity: 1 !important;
   transition: none !important;
 }
