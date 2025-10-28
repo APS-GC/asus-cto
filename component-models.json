@@ -1272,6 +1272,53 @@
     ]
   },
   {
+      "id": "top-picks-card",
+      "fields": [
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "image",
+          "label": "Product Image",
+          "description": "Upload or select a product image",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "label",
+          "label": "Product Label/Category",
+          "description": "Small label text (e.g., 'Top picks', 'Featured', etc.)",
+          "value": "Top picks"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "title",
+          "label": "Product Title",
+          "description": "Main product title or name",
+          "value": "",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "ctaLinkName",
+          "label": "CTA Link Name",
+          "description": "Text for the call-to-action button (e.g., 'View configs', 'Learn more')",
+          "value": "View configs"
+        },
+        {
+          "component": "aem-content",
+          "name": "link",
+          "label": "Call-to-Action Link",
+          "description": "Link URL for the call-to-action",
+          "valueType": "string"
+        }
+      ]
+    },
+    {
     "id": "product-card",
     "fields": [
       {
