@@ -293,15 +293,15 @@ function isUniversalEditor() {
 function initializeSwiper(carouselElement, config) {
   const isUE = isUniversalEditor();
   
-  // Force apply UE authoring class and attributes for CSS targeting
-  // if (isUE) {
-  //   const carousel = carouselElement.querySelector('.cmp-carousel');
-  //   if (carousel) {
-  //     carousel.classList.add('ue-authoring');
-  //     carousel.setAttribute('data-authoring', 'true');
-  //     document.body.setAttribute('data-aue-behavior', 'true');
-  //   }
-  // }
+  //Force apply UE authoring class and attributes for CSS targeting
+  if (isUE) {
+    const carousel = carouselElement.querySelector('.cmp-carousel');
+    if (carousel) {
+      carousel.classList.add('ue-authoring');
+      carousel.setAttribute('data-authoring', 'true');
+      document.body.setAttribute('data-aue-behavior', 'true');
+    }
+  }
   
   // Swiper is already loaded via head.html, initialize directly
   const setupSwiper = () => {
