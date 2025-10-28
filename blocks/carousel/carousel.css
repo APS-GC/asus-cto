@@ -2,18 +2,6 @@
 @import url('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
 
 /* Override default Swiper pagination styles */
-.cmp-carousel .swiper-pagination {
-  position: unset !important;
-  text-align: unset !important;
-  transition: unset !important;
-  transform: unset !important;
-  z-index: unset !important;
-  bottom: unset !important;
-  top: unset !important;
-  left: unset !important;
-  width: unset !important;
-}
-
 .cmp-carousel .swiper-horizontal > .swiper-pagination-bullets,
 .cmp-carousel .swiper-pagination-bullets.swiper-pagination-horizontal,
 .cmp-carousel .swiper-pagination-custom,
@@ -58,7 +46,7 @@
 
 /* Regular viewing - use viewport height */
 .cmp-carousel:not(.ue-authoring) .swiper {
-  height: 100vh;
+  height: 80vh;
 }
 
 /* Universal Editor authoring mode - constrained height */
@@ -516,8 +504,8 @@ body[data-aue-behavior] .cmp-carousel .swiper-slide,
 .aem-editor .cmp-carousel .swiper-slide,
 iframe[src*="editor"] .cmp-carousel .swiper-slide,
 [data-authoring="true"] .cmp-carousel .swiper-slide {
-  /* height: 350px !important;
-  max-height: 350px !important; */
+  height: 350px !important;
+  max-height: 350px !important;
   opacity: 1 !important;
   transition: none !important;
 }
@@ -536,54 +524,6 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
   iframe[src*="editor"] .cmp-carousel .swiper,
   [data-authoring="true"] .cmp-carousel .swiper {
     height: 350px !important;
-    max-height: 350px !important;
-  }
-  
-  .cmp-carousel .headline {
-    font-size: 2.5rem;
-  }
-}
-
-/* Hero Banner Responsive Styles (matching webpack hero-banner) */
-@media only screen and (max-width: 79.9375rem) {
-  .cmp-carousel .hero-banner .hero-content .headline {
-    font-size: 1.875rem;
-    line-height: 2.375rem;
-    margin-bottom: 1rem;
-  }
-  
-  .cmp-carousel .hero-banner.hero-content--start-center .hero-content {
-    left: 20px;
-    top: unset;
-    transform: unset;
-    bottom: 76px;
-  }
-}
-
-@media (max-width: 768px) {
-  .cmp-carousel .swiper {
-    height: 70vh;
-    min-height: 350px;
-  }
-  
-  .cmp-carousel .headline {
-    font-size: 2rem;
-  }
-  
-  .cmp-carousel .hero-content {
-    padding: 1rem;
-  }
-  
-  .cmp-carousel__footer {
-    bottom: 1rem;
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
-  }
-  
-  .cmp-carousel__footer .cmp-carousel__media-controls {
-    position: static;
-    right: unset;
-    top: unset;
     -webkit-transform: none;
     transform: none;
     margin-left: auto;
