@@ -1,12 +1,31 @@
 function parseHeaderData(block) {
-  // Default data structure based on the screenshot and webpack template
+  // Initialize default data structure - values will come from UE authoring
   const data = {
-    logoAlt: 'ASUS Logo',
-    logoUrl: '/',
     logos: [
-      { name: 'asus', icon: '/icons/logo-asus.svg', altText: 'ASUS Logo', width: '87', height: '20' },
-      { name: 'rog', icon: '/icons/logo-rog.svg', altText: 'ROG Logo', width: '135', height: '26' },
-      { name: 'gaming', icon: '/icons/gaming_pc_logo.svg', altText: 'Gaming PC Custom Builder Logo', width: '104', height: '22' }
+      { 
+        name: 'asus', 
+        icon: '', 
+        altText: 'ASUS Logo', 
+        url: '#',
+        width: '87', 
+        height: '20' 
+      },
+      { 
+        name: 'rog', 
+        icon: '', 
+        altText: 'ROG Logo', 
+        url: '#',
+        width: '135', 
+        height: '26' 
+      },
+      { 
+        name: 'gaming', 
+        icon: '', 
+        altText: 'Gaming PC Custom Builder Logo', 
+        url: '#',
+        width: '104', 
+        height: '22' 
+      }
     ],
     navigationItems: [
       { linkText: 'All Desktops', linkUrl: '/product-listing.html' },
@@ -25,22 +44,85 @@ function parseHeaderData(block) {
       { linkText: 'Sign out', linkUrl: '#' }
     ],
     searchPlaceholder: 'Enter keywords',
-    searchIcon: '/icons/search.svg',
-    cartIcon: '/icons/cart.svg',
-    profileIcon: '/icons/profile.svg',
-    hamburgerIcon: '/icons/hamburger.svg',
-    closeIcon: '/icons/close.svg',
-    arrowLeftIcon: '/icons/arrow-left.svg',
-    arrowRightIcon: '/icons/arrow-right.svg'
+    searchIcon: '',
+    cartIcon: '',
+    profileIcon: '',
+    hamburgerIcon: '',
+    closeIcon: '',
+    arrowLeftIcon: '',
+    arrowRightIcon: ''
   };
 
-  // Check if block has UE model data or fallback to table parsing
+  // First try to parse from HTML content structure
+  const parsedFromHTML = parseHTMLContent(block);
+  if (parsedFromHTML) {
+    // Merge parsed HTML data with defaults
+    if (parsedFromHTML.logos && parsedFromHTML.logos.length > 0) {
+      data.logos = parsedFromHTML.logos;
+    }
+    if (parsedFromHTML.navigationItems && parsedFromHTML.navigationItems.length > 0) {
+      data.navigationItems = parsedFromHTML.navigationItems;
+    }
+    if (typeof parsedFromHTML.showSearch === 'boolean') {
+      data.showSearch = parsedFromHTML.showSearch;
+    }
+    if (typeof parsedFromHTML.showProfile === 'boolean') {
+      data.showProfile = parsedFromHTML.showProfile;
+    }
+    if (typeof parsedFromHTML.showCart === 'boolean') {
+      data.showCart = parsedFromHTML.showCart;
+    }
+    if (parsedFromHTML.searchIcon) data.searchIcon = parsedFromHTML.searchIcon;
+    if (parsedFromHTML.cartIcon) data.cartIcon = parsedFromHTML.cartIcon;
+    if (parsedFromHTML.profileIcon) data.profileIcon = parsedFromHTML.profileIcon;
+  }
+
+  // Override with Universal Editor model data if available
   if (block.dataset && (block.dataset.model || block.dataset.aueModel)) {
-    // UE model data - will be populated by Universal Editor
     const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {};
     
-    if (modelData.logoAlt) data.logoAlt = modelData.logoAlt;
-    if (modelData.logoUrl) data.logoUrl = modelData.logoUrl;
+    console.log('Universal Editor Model Data:', modelData);
+    
+    // Parse individual logo fields - only use UE authoring values
+    if (modelData.asusLogoImage || modelData.asusLogoAltText || modelData.asusLogoUrl) {
+      data.logos[0] = {
+        name: 'asus',
+        icon: modelData.asusLogoImage || '',
+        altText: modelData.asusLogoAltText || data.logos[0].altText,
+        url: modelData.asusLogoUrl || data.logos[0].url,
+        width: data.logos[0].width,
+        height: data.logos[0].height
+      };
+    }
+    
+    if (modelData.rogLogoImage || modelData.rogLogoAltText || modelData.rogLogoUrl) {
+      data.logos[1] = {
+        name: 'rog',
+        icon: modelData.rogLogoImage || '',
+        altText: modelData.rogLogoAltText || data.logos[1].altText,
+        url: modelData.rogLogoUrl || data.logos[1].url,
+        width: data.logos[1].width,
+        height: data.logos[1].height
+      };
+    }
+    
+    if (modelData.gamingPcLogoImage || modelData.gamingPcLogoAltText || modelData.gamingPcLogoUrl) {
+      data.logos[2] = {
+        name: 'gaming',
+        icon: modelData.gamingPcLogoImage || '',
+        altText: modelData.gamingPcLogoAltText || data.logos[2].altText,
+        url: modelData.gamingPcLogoUrl || data.logos[2].url,
+        width: data.logos[2].width,
+        height: data.logos[2].height
+      };
+    }
+    
+    // Parse navigation links from textarea
+    if (modelData.navLinks) {
+      data.navigationItems = parseNavLinks(modelData.navLinks);
+    }
+    
+    // Parse other fields
     if (modelData.searchPlaceholder) data.searchPlaceholder = modelData.searchPlaceholder;
     if (typeof modelData.showSearch === 'boolean') data.showSearch = modelData.showSearch;
     if (typeof modelData.showProfile === 'boolean') data.showProfile = modelData.showProfile;
@@ -52,106 +134,192 @@ function parseHeaderData(block) {
     if (modelData.closeIcon) data.closeIcon = modelData.closeIcon;
     if (modelData.arrowLeftIcon) data.arrowLeftIcon = modelData.arrowLeftIcon;
     if (modelData.arrowRightIcon) data.arrowRightIcon = modelData.arrowRightIcon;
-    if (modelData.logos && Array.isArray(modelData.logos)) {
-      data.logos = modelData.logos;
-    }
-    if (modelData.navigationItems && Array.isArray(modelData.navigationItems)) {
-      data.navigationItems = modelData.navigationItems;
-    }
     if (modelData.profileMenuItems && Array.isArray(modelData.profileMenuItems)) {
       data.profileMenuItems = modelData.profileMenuItems;
     }
-  } else {
-    // Fallback to table parsing for backwards compatibility
-    const rows = [...block.children];
-    let navigationArray = [];
-    let profileMenuArray = [];
-    
-    rows.forEach((row, index) => {
-      const cells = [...row.children];
-      
-      if (cells.length >= 2) {
-        const field = cells[0].textContent.trim();
-        const value = cells[1].textContent.trim();
-        
-        // Handle simple text fields
-        switch (field) {
-          case 'Logo Alt':
-            data.logoAlt = value;
-            break;
-          case 'Logo URL':
-            data.logoUrl = value;
-            break;
-          case 'Search Placeholder':
-            data.searchPlaceholder = value;
-            break;
-          case 'Show Search':
-            data.showSearch = value.toLowerCase() === 'true';
-            break;
-          case 'Show Profile':
-            data.showProfile = value.toLowerCase() === 'true';
-            break;
-          case 'Show Cart':
-            data.showCart = value.toLowerCase() === 'true';
-            break;
-          default:
-            // Handle complex structured data
-            if (field.startsWith('Nav ')) {
-              // Parse navigation items - format: "Nav Item" | "URL"
-              const linkText = field.replace('Nav ', '');
-              navigationArray.push({ linkText, linkUrl: value });
-            } else if (field.startsWith('Profile ')) {
-              // Parse profile menu items - format: "Profile Item" | "URL"
-              const linkText = field.replace('Profile ', '');
-              profileMenuArray.push({ linkText, linkUrl: value });
-            }
-            break;
-        }
-      } else if (cells.length === 1) {
-        const singleValue = cells[0].textContent.trim();
-        
-        // Handle single-cell rows that might contain structured data
-        if (singleValue.includes('|')) {
-          // Parse pipe-separated data
-          const parts = singleValue.split('|').map(p => p.trim());
-          if (parts.length === 2) {
-            const [key, value] = parts;
-            
-            if (key.startsWith('Nav:')) {
-              const linkText = key.replace('Nav:', '').trim();
-              navigationArray.push({ linkText, linkUrl: value });
-            } else if (key.startsWith('Profile:')) {
-              const linkText = key.replace('Profile:', '').trim();
-              profileMenuArray.push({ linkText, linkUrl: value });
-            }
-          }
-        }
-      }
-    });
-
-    // Update arrays if they have content
-    if (navigationArray.length > 0) {
-      data.navigationItems = navigationArray;
-    }
-    if (profileMenuArray.length > 0) {
-      data.profileMenuItems = profileMenuArray;
-    }
   }
 
+  console.log('Final parsed data:', data);
   return data;
 }
 
-function buildLogo(logoAlt, logoUrl, logos) {
+function parseHTMLContent(block) {
+  try {
+    // Get all div elements that contain the structured data
+    const contentDivs = block.querySelectorAll('div > p > div');
+    
+    if (!contentDivs || contentDivs.length === 0) {
+      console.log('No content divs found in HTML structure');
+      return null;
+    }
+
+    const parsedData = {
+      logos: [],
+      navigationItems: [],
+      showSearch: true,
+      showProfile: true,
+      showCart: true,
+      searchIcon: null,
+      cartIcon: null,
+      profileIcon: null
+    };
+
+    const logoNames = ['asus', 'rog', 'gaming'];
+    
+    // Initialize logos array
+    logoNames.forEach((name, index) => {
+      parsedData.logos[index] = {
+        name: name,
+        icon: '',
+        altText: `${name.toUpperCase()} Logo`,
+        url: '#',
+        width: index === 0 ? '87' : index === 1 ? '135' : '104',
+        height: index === 0 ? '20' : index === 1 ? '26' : '22'
+      };
+    });
+    
+    // Process first 9 divs in groups of 3 for each logo (ASUS, ROG, Gaming)
+    for (let logoIndex = 0; logoIndex < 3; logoIndex++) {
+      const startIndex = logoIndex * 3;
+      const endIndex = startIndex + 3;
+      
+      for (let divIndex = startIndex; divIndex < endIndex && divIndex < contentDivs.length; divIndex++) {
+        const div = contentDivs[divIndex];
+        const textContent = div.textContent?.trim();
+        
+        // Check for picture elements (logo images)
+        const picture = div.querySelector('picture img');
+        if (picture) {
+          const src = picture.getAttribute('src');
+          const width = picture.getAttribute('width');
+          const height = picture.getAttribute('height');
+          
+          if (src) {
+            parsedData.logos[logoIndex].icon = src;
+            if (width) parsedData.logos[logoIndex].width = width;
+            if (height) parsedData.logos[logoIndex].height = height;
+          }
+        }
+        
+        // Check for button containers with links (logo URLs)
+        const buttonContainer = div.querySelector('.button-container a');
+        if (buttonContainer) {
+          const href = buttonContainer.getAttribute('href');
+          if (href) {
+            parsedData.logos[logoIndex].url = href;
+          }
+        }
+        
+        // Check for alt text content
+        if (textContent && (textContent.toLowerCase().includes('logo') || textContent.toLowerCase().includes('alt'))) {
+          parsedData.logos[logoIndex].altText = textContent;
+        }
+      }
+    }
+    
+    // Process remaining divs for navigation and other elements
+    for (let index = 9; index < contentDivs.length; index++) {
+      const div = contentDivs[index];
+      const textContent = div.textContent?.trim();
+      
+      // Check for navigation list
+      const navList = div.querySelector('ul');
+      if (navList) {
+        const navItems = navList.querySelectorAll('li a');
+        parsedData.navigationItems = Array.from(navItems).map(link => ({
+          linkText: link.textContent?.trim() || '',
+          linkUrl: link.getAttribute('href') || '#'
+        }));
+      }
+      
+      // Check for boolean values (show/hide flags)
+      if (textContent === 'true' || textContent === 'false') {
+        const boolValue = textContent === 'true';
+        
+        // Map boolean values to appropriate flags based on position
+        if (index >= 10 && index <= 12) { // Corrected positions after logo processing
+          if (index === 10) parsedData.showSearch = boolValue;
+          if (index === 11) parsedData.showProfile = boolValue;
+          if (index === 12) parsedData.showCart = boolValue;
+        }
+      }
+      
+      // Check for icon images based on specific div indices
+      const picture = div.querySelector('picture img');
+      if (picture) {
+        const src = picture.getAttribute('src');
+        
+        if (src) {
+          // Map icons based on exact div positions
+          if (index === 14) {
+            parsedData.searchIcon = src;
+          } else if (index === 15) {
+            parsedData.cartIcon = src;
+          } else if (index === 16) {
+            parsedData.profileIcon = src;
+          } else if (index === 17) {
+            parsedData.hamburgerIcon = src;
+          } else if (index === 18) {
+            parsedData.closeIcon = src;
+          } else if (index === 19) {
+            parsedData.arrowLeftIcon = src;
+          } else if (index === 20) {
+            parsedData.arrowRightIcon = src;
+          }
+        }
+      }
+    }
+
+    console.log('Parsed data from HTML:', parsedData);
+    return parsedData;
+    
+  } catch (error) {
+    console.error('Error parsing HTML content:', error);
+    return null;
+  }
+}
+
+function parseNavLinks(navLinksText) {
+  if (!navLinksText || typeof navLinksText !== 'string') {
+    return [
+      { linkText: 'All Desktops', linkUrl: '/product-listing.html' },
+      { linkText: 'Help Me Choose', linkUrl: '/help-me-choose.html' },
+      { linkText: 'News & Articles', linkUrl: '/news-articles.html' }
+    ];
+  }
+  
+  return navLinksText.split('\n')
+    .filter(line => line.trim())
+    .map(line => {
+      const [linkText, linkUrl] = line.split('|');
+      return {
+        linkText: linkText?.trim() || '',
+        linkUrl: linkUrl?.trim() || '#'
+      };
+    })
+    .filter(item => item.linkText); // Remove empty entries
+}
+
+function buildLogo(logos) {
   const logoItems = logos.map(logo => {
-    const iconSrc = logo.icon || `/icons/logo-${logo.name}.svg`;
-    const altText = logo.altText || logoAlt;
+    const iconSrc = logo.icon || '';
+    const altText = logo.altText || `${logo.name} Logo`;
     const width = logo.width || 'auto';
     const height = logo.height || 'auto';
+    const logoUrl = logo.url || '#';
+    
+    // Render logo structure even if icon source is missing
+    // This ensures consistent display between published site and UE authoring
+    const logoContent = iconSrc ? 
+      `<img src="${iconSrc}" alt="${altText}" class="logo-default" width="${width}" height="${height}" />` :
+      `<span class="logo-placeholder" aria-label="${altText}" title="${altText}">${logo.name.toUpperCase()}</span>`;
     
     return `
       <div class="logo-item logo-item--${logo.name}">
         <div class="logo-wrapper">
-          <img src="${iconSrc}" alt="${altText}" class="logo-default" width="${width}" height="${height}" />
+          <a href="${logoUrl}" aria-label="${altText}" title="${altText}">
+            ${logoContent}
+          </a>
         </div>
       </div>
     `;
@@ -160,9 +328,9 @@ function buildLogo(logoAlt, logoUrl, logos) {
   return `
     <div class="navigation">
       <nav class="cmp-navigation" itemscope itemtype="http://schema.org/SiteNavigationElement" aria-label="Main Navigation">
-        <a href="${logoUrl}" aria-label="${logoAlt}" title="${logoAlt}" class="cmp-navigation__item--logo">
+        <div class="cmp-navigation__item--logo">
           ${logoItems}
-        </a>
+        </div>
       </nav>
     </div>
   `;
@@ -326,7 +494,7 @@ export default function decorate(block) {
       <header class="experiencefragment">
         <div class="cmp-experiencefragment">
           <div class="cmp-container cmp-header container">
-            ${buildLogo(data.logoAlt, data.logoUrl, data.logos)}
+            ${buildLogo(data.logos)}
             ${buildNavigation(data.navigationItems, data.showSearch, data.showProfile, data.showCart, data.profileMenuItems, icons)}
           </div>
         </div>

@@ -682,32 +682,6 @@
     ]
   },
   {
-    "id": "carousel",
-    "fields": [
-      {
-        "component": "reference",
-        "valueType": "string",
-        "name": "image",
-        "label": "Image",
-        "multi": false
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "imageAlt",
-        "label": "Alt",
-        "value": ""
-      },
-      {
-        "component": "richtext",
-        "name": "text",
-        "value": "",
-        "label": "Text",
-        "valueType": "string"
-      }
-    ]
-  },
-  {
     "id": "feature-product-card",
     "fields": [
       {
@@ -996,95 +970,69 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "logoAlt",
-        "label": "Logo Alt Text",
-        "description": "Alternative text for the logo",
-        "value": "ASUS Logo"
+        "name": "asusLogoAltText",
+        "label": "ASUS Logo Alt Text",
+        "description": "Alternative text for the ASUS logo"
       },
       {
         "component": "aem-content",
-        "name": "logoUrl",
-        "label": "Logo URL",
-        "description": "URL the logo should link to",
-        "value": "/"
+        "name": "asusLogoUrl",
+        "label": "ASUS Logo URL",
+        "description": "URL the ASUS logo should link to"
       },
       {
-        "component": "container",
-        "name": "logos",
-        "label": "Logo Variants",
-        "description": "Different logo variants for different brands",
-        "multi": true,
-        "fields": [
-          {
-            "component": "select",
-            "name": "name",
-            "label": "Logo Variant",
-            "options": [
-              {
-                "name": "ASUS",
-                "value": "asus"
-              },
-              {
-                "name": "ROG",
-                "value": "rog"
-              },
-              {
-                "name": "Gaming PC",
-                "value": "gaming"
-              }
-            ]
-          },
-          {
-            "component": "reference",
-            "name": "icon",
-            "label": "Logo Icon",
-            "description": "Select logo from DAM",
-            "multi": false
-          },
-          {
-            "component": "text",
-            "valueType": "string",
-            "name": "altText",
-            "label": "Logo Alt Text",
-            "description": "Alternative text for the logo"
-          },
-          {
-            "component": "text",
-            "valueType": "string",
-            "name": "width",
-            "label": "Logo Width",
-            "description": "Width of the logo"
-          },
-          {
-            "component": "text",
-            "valueType": "string",
-            "name": "height",
-            "label": "Logo Height",
-            "description": "Height of the logo"
-          }
-        ]
+        "component": "reference",
+        "name": "asusLogoImage",
+        "label": "ASUS Logo Image",
+        "description": "Select ASUS logo image from DAM",
+        "multi": false
       },
       {
-        "component": "container",
-        "name": "navigationItems",
-        "label": "Navigation Items",
-        "description": "Main navigation menu items",
-        "multi": true,
-        "fields": [
-          {
-            "component": "text",
-            "valueType": "string",
-            "name": "linkText",
-            "label": "Link Text",
-            "description": "Display text for the navigation link"
-          },
-          {
-            "component": "aem-content",
-            "name": "linkUrl",
-            "label": "Link URL",
-            "description": "URL for the navigation link"
-          }
-        ]
+        "component": "text",
+        "valueType": "string",
+        "name": "rogLogoAltText",
+        "label": "ROG Logo Alt Text",
+        "description": "Alternative text for the ROG logo"
+      },
+      {
+        "component": "aem-content",
+        "name": "rogLogoUrl",
+        "label": "ROG Logo URL",
+        "description": "URL the ROG logo should link to"
+      },
+      {
+        "component": "reference",
+        "name": "rogLogoImage",
+        "label": "ROG Logo Image",
+        "description": "Select ROG logo image from DAM",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "gamingPcLogoAltText",
+        "label": "Gaming PC Logo Alt Text",
+        "description": "Alternative text for the Gaming PC logo"
+      },
+      {
+        "component": "aem-content",
+        "name": "gamingPcLogoUrl",
+        "label": "Gaming PC Logo URL",
+        "description": "URL the Gaming PC logo should link to"
+      },
+      {
+        "component": "reference",
+        "name": "gamingPcLogoImage",
+        "label": "Gaming PC Logo Image",
+        "description": "Select Gaming PC logo image from DAM",
+        "multi": false
+      },
+      {
+        "component": "richtext",
+        "name": "navLinks",
+        "label": "Navigation Links",
+        "description": "Enter navigation links using rich text editor",
+        "valueType": "string"
       },
       {
         "component": "boolean",
@@ -1192,6 +1140,130 @@
             "description": "URL for the profile menu item"
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "carousel",
+      "fields": [
+      {
+        "component": "number",
+        "name": "imageAutoplayDuration",
+        "label": "Image Autoplay Duration (seconds)",
+        "value": 5,
+        "validation": {
+          "min": 1,
+          "max": 30
+        }
+      },
+      {
+        "component": "number",
+        "name": "videoAutoplayDuration", 
+        "label": "Video Autoplay Duration (seconds)",
+        "value": 8,
+        "validation": {
+          "min": 1,
+          "max": 60
+        }
+      }
+    ]
+  },
+  {
+    "id": "carousel-slide",
+    "fields": [
+      {
+        "component": "text",
+        "name": "title",
+        "label": "Title",
+        "valueType": "string",
+        "validation": {
+          "required": true
+        }
+      },
+      {
+        "component": "text", 
+        "name": "subtitle",
+        "label": "Subtitle",
+        "valueType": "string"
+      },
+      {
+        "component": "reference",
+        "name": "media",
+        "label": "Media",
+        "multi": false,
+        "valueType": "string",
+        "validation": {
+          "required": true
+        }
+      },
+      {
+        "component": "text",
+        "name": "mediaAlt",
+        "label": "Media Alt Text",
+        "valueType": "string",
+        "validation": {
+          "required": true
+        }
+      },
+      {
+        "component": "text",
+        "name": "ctaText",
+        "label": "CTA Button Text",
+        "valueType": "string"
+      },
+      {
+        "component": "select",
+        "name": "ctaLocation",
+        "label": "CTA Button Location",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Center",
+            "value": "center"
+          },
+          {
+            "name": "Top",
+            "value": "top"
+          },
+          {
+            "name": "Bottom", 
+            "value": "bottom"
+          },
+          {
+            "name": "Left",
+            "value": "left"
+          },
+          {
+            "name": "Right",
+            "value": "right"
+          },
+          {
+            "name": "Start Center",
+            "value": "start-center"
+          },
+          {
+            "name": "End Center",
+            "value": "end-center"
+          },
+          {
+            "name": "Center Top",
+            "value": "center-top"
+          }
+        ],
+        "value": "center"
+      },
+      {
+        "component": "aem-content",
+        "name": "ctaLink",
+        "label": "CTA Button Link",
+        "multi": false,
+        "valueType": "string"
+      },
+      {
+        "component": "boolean",
+        "name": "openNewTab",
+        "label": "Open in New Tab",
+        "valueType": "boolean"
       }
     ]
   }

@@ -56,5 +56,11 @@
       "components": [
         "article-card-item"
       ]
+    },
+    {
+      "id": "carousel",
+      "components": [
+        "carousel-slide"
+      ]
     }
 ]
