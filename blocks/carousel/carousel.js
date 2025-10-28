@@ -265,7 +265,7 @@ const toggleSliderVideo = (videoPlayPauseBtn) => {
  * Detect if running in Universal Editor environment
  */
 function isUniversalEditor() {
-  return window.location.pathname.includes('/editor.html') || 
+  return window.location.pathname.includes('/universal-editor') || 
          window.location.search.includes('editor') ||
          document.body.classList.contains('editor') ||
          window.hlx?.sidekickConfig ||
