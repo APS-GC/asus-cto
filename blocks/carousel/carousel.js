@@ -1,6 +1,7 @@
 /**
  * Carousel Block with Hero Banner Slides
  * Supports authorable hero banner slides with video/image media, CTA buttons, and autoplay settings
+ * UE authoring support
  */
 
 import { moveInstrumentation } from '../../scripts/scripts.js';
@@ -261,117 +262,163 @@ const toggleSliderVideo = (videoPlayPauseBtn) => {
 };
 
 /**
+ * Detect if running in Universal Editor environment
+ */
+function isUniversalEditor() {
+  return window.location.pathname.includes('/editor.html') || 
+         window.location.search.includes('editor') ||
+         document.body.classList.contains('editor') ||
+         window.hlx?.sidekickConfig ||
+         document.querySelector('helix-sidekick');
+}
+
+/**
  * Initialize Swiper carousel
  */
 function initializeSwiper(carouselElement, config) {
+  const isUE = isUniversalEditor();
+  
+  // Add UE authoring class if in Universal Editor
+  if (isUE) {
+    carouselElement.querySelector('.cmp-carousel')?.classList.add('ue-authoring');
+  }
+  
   // Swiper is already loaded via head.html, initialize directly
   const setupSwiper = () => {
-    const swiper = new window.Swiper(carouselElement.querySelector('.swiper'), {
-      loop: true,
-      autoplay: {
-        delay: config.imageAutoplayDuration,
-        disableOnInteraction: false,
-        pauseOnMouseEnter: false,
-      },
-      pagination: {
-        el: '.cmp-carousel__indicators',
-        clickable: true,
-        bulletClass: 'cmp-carousel__indicator',
-        bulletActiveClass: 'cmp-carousel__indicator--active',
-        renderBullet: (index, className) => {
-          return `<li class="${className}" aria-label="Go to slide ${index + 1}" role="tab"></li>`;
-      },
-      },
-      navigation: {
-        nextEl: '.cmp-carousel__action--next',
-        prevEl: '.cmp-carousel__action--previous',
-      },
-      on: {
-        slideChange: function() {
-          // Update autoplay delay based on current slide media type
-          const activeSlide = this.slides[this.activeIndex];
-          const video = activeSlide?.querySelector('video');
-          const newDelay = video ? config.videoAutoplayDuration : config.imageAutoplayDuration;
-          
-          // Remove paused class when switching slides
-          const mediaControls = document.querySelector('.cmp-carousel__media-controls');
-          mediaControls?.classList.remove('paused');
-          
-          this.autoplay.stop();
-          this.params.autoplay.delay = newDelay;
-          this.autoplay.start();
-        },
-        slideChangeTransitionEnd: function() {
-          // Handle video autoplay
-          const activeSlide = this.slides[this.activeIndex];
-          const video = activeSlide?.querySelector('video');
-          
-          if (video) {
-            manageVideoPlayback(video, 'play');
-          }
-          
-          // Pause videos in other slides
-          this.slides.forEach((slide, index) => {
-            if (index !== this.activeIndex) {
-              const slideVideo = slide.querySelector('video');
-              if (slideVideo) {
-                manageVideoPlayback(slideVideo, 'pause');
-              }
-            }
-          });
-        },
-        autoplayTimeLeft(swiper, time, progress) {
-          swiper.pagination.bullets.forEach((bullet, idx) => {
-            bullet.style.setProperty('--slide-progress', idx === swiper.realIndex ? 1 - progress : 0);
-          });
-        },
-      }
-    });
-
-    // Add media control functionality
-    const playPauseBtn = carouselElement.querySelector('.cmp-carousel__media-control--play-pause');
-    const autoplayToggle = carouselElement.querySelector('.carousel-autoplay-toggle');
-    
-    if (playPauseBtn) {
-      playPauseBtn.addEventListener('click', () => {
-        toggleSliderVideo(playPauseBtn);
-      });
+    // Check if Swiper is available
+    if (!window.Swiper) {
+      console.warn('Swiper not available, carousel will not initialize');
+      return;
     }
-
-    if (autoplayToggle) {
-      autoplayToggle.addEventListener('click', () => {
-        const activeSlide = document.querySelector('.swiper-slide-active');
-        const activeVideo = activeSlide?.querySelector('video');
-        const mediaControls = document.querySelector('.cmp-carousel__media-controls');
-        const isVideoPaused = mediaControls?.classList.contains('paused');
-        
-        if (swiper.autoplay.running) {
-          swiper.autoplay.stop();
-          swiper.el.classList.add('is-autoplay-paused');
-          autoplayToggle.setAttribute('aria-label', 'Play');
-          carouselElement.setAttribute('aria-live', 'polite');
-          
-          // Maintain video pause state when autoplay is paused
-          if (isVideoPaused && activeVideo) {
-            manageVideoPlayback(activeVideo, 'pause');
-            mediaControls?.classList.add('paused');
-          }
-        } else {
-          swiper.autoplay.start();
-          swiper.el.classList.remove('is-autoplay-paused');
-          autoplayToggle.setAttribute('aria-label', 'Pause');
-          carouselElement.setAttribute('aria-live', 'off');
-          
-          // Resume video if it wasn't manually paused
-          if (!isVideoPaused && activeVideo) {
-            manageVideoPlayback(activeVideo, 'play');
-          }
+    
+    try {
+      const swiperConfig = {
+        loop: !isUE, // Disable loop in UE authoring
+        autoplay: isUE ? false : {
+          delay: config.imageAutoplayDuration,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: false,
+        },
+        pagination: {
+          el: '.cmp-carousel__indicators',
+          clickable: true,
+          bulletClass: 'cmp-carousel__indicator',
+          bulletActiveClass: 'cmp-carousel__indicator--active',
+          renderBullet: (index, className) => {
+            return `<li class="${className}" aria-label="Go to slide ${index + 1}" role="tab"></li>`;
+          },
+        },
+        navigation: {
+          nextEl: '.cmp-carousel__action--next',
+          prevEl: '.cmp-carousel__action--previous',
+        },
+        on: {
+          slideChange: function() {
+            // Skip autoplay management in UE
+            if (isUE) return;
+            
+            // Update autoplay delay based on current slide media type
+            const activeSlide = this.slides[this.activeIndex];
+            const video = activeSlide?.querySelector('video');
+            const newDelay = video ? config.videoAutoplayDuration : config.imageAutoplayDuration;
+            
+            // Remove paused class when switching slides
+            const mediaControls = document.querySelector('.cmp-carousel__media-controls');
+            mediaControls?.classList.remove('paused');
+            
+            if (this.autoplay && this.autoplay.stop) {
+              this.autoplay.stop();
+              this.params.autoplay.delay = newDelay;
+              this.autoplay.start();
+            }
+          },
+          slideChangeTransitionEnd: function() {
+            // Skip video management in UE authoring
+            if (isUE) return;
+            
+            // Handle video autoplay
+            const activeSlide = this.slides[this.activeIndex];
+            const video = activeSlide?.querySelector('video');
+            
+            if (video) {
+              manageVideoPlayback(video, 'play');
+            }
+            
+            // Pause videos in other slides
+            this.slides.forEach((slide, index) => {
+              if (index !== this.activeIndex) {
+                const slideVideo = slide.querySelector('video');
+                if (slideVideo) {
+                  manageVideoPlayback(slideVideo, 'pause');
+                }
+              }
+            });
+          },
+          autoplayTimeLeft(swiper, time, progress) {
+            if (isUE) return; // Skip in UE authoring
+            swiper.pagination.bullets.forEach((bullet, idx) => {
+              bullet.style.setProperty('--slide-progress', idx === swiper.realIndex ? 1 - progress : 0);
+            });
+          },
         }
-      });
+      };
+
+      const swiper = new window.Swiper(carouselElement.querySelector('.swiper'), swiperConfig);
+
+      // Add media control functionality
+      const playPauseBtn = carouselElement.querySelector('.cmp-carousel__media-control--play-pause');
+      const autoplayToggle = carouselElement.querySelector('.carousel-autoplay-toggle');
+      
+      if (playPauseBtn && !isUE) {
+        playPauseBtn.addEventListener('click', () => {
+          toggleSliderVideo(playPauseBtn);
+        });
+      }
+
+      if (autoplayToggle && !isUE) {
+        autoplayToggle.addEventListener('click', () => {
+          const activeSlide = document.querySelector('.swiper-slide-active');
+          const activeVideo = activeSlide?.querySelector('video');
+          const mediaControls = document.querySelector('.cmp-carousel__media-controls');
+          const isVideoPaused = mediaControls?.classList.contains('paused');
+          
+          if (swiper.autoplay && swiper.autoplay.running) {
+            swiper.autoplay.stop();
+            swiper.el.classList.add('is-autoplay-paused');
+            autoplayToggle.setAttribute('aria-label', 'Play');
+            carouselElement.setAttribute('aria-live', 'polite');
+            
+            // Maintain video pause state when autoplay is paused
+            if (isVideoPaused && activeVideo) {
+              manageVideoPlayback(activeVideo, 'pause');
+              mediaControls?.classList.add('paused');
+            }
+          } else if (swiper.autoplay) {
+            swiper.autoplay.start();
+            swiper.el.classList.remove('is-autoplay-paused');
+            autoplayToggle.setAttribute('aria-label', 'Pause');
+            carouselElement.setAttribute('aria-live', 'off');
+            
+            // Resume video if it wasn't manually paused
+            if (!isVideoPaused && activeVideo) {
+              manageVideoPlayback(activeVideo, 'play');
+            }
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error initializing Swiper carousel:', error);
+      // Fallback: show static content
+      carouselElement.querySelector('.swiper')?.classList.add('swiper-fallback');
     }
   };
 
-  setupSwiper();
+  // Delay initialization to ensure DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupSwiper);
+  } else {
+    setTimeout(setupSwiper, 100);
+  }
 }
 
 /**

@@ -52,8 +52,20 @@
 /* Swiper Styles */
 .cmp-carousel .swiper {
   width: 100%;
-  height: 100vh;
+  height: 500px; /* Fixed height for UE compatibility */
   min-height: 500px;
+}
+
+/* Regular viewing - use viewport height */
+.cmp-carousel:not(.ue-authoring) .swiper {
+  height: 100vh;
+}
+
+/* Universal Editor authoring mode - constrained height */
+.cmp-carousel.ue-authoring .swiper {
+  height: 400px;
+  max-height: 400px;
+  overflow: hidden;
 }
 
 .cmp-carousel .swiper-wrapper {
@@ -623,4 +635,31 @@
 .cmp-carousel .hero-image[data-loading="true"] {
   filter: blur(5px);
   transition: filter 0.3s ease;
+}
+
+/* UE Authoring specific styles */
+.cmp-carousel.ue-authoring {
+  border: 2px dashed #ccc;
+  background: #f8f8f8;
+}
+
+.cmp-carousel.ue-authoring .swiper-slide {
+  opacity: 1 !important;
+  transition: none !important;
+}
+
+/* Fallback styles when Swiper fails to initialize */
+.swiper-fallback .swiper-slide {
+  opacity: 1 !important;
+  position: static !important;
+  transform: none !important;
+}
+
+.swiper-fallback .swiper-wrapper {
+  display: block !important;
+  transform: none !important;
+}
+
+.swiper-fallback .swiper-slide:not(:first-child) {
+  display: none;
 }
