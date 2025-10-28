@@ -314,10 +314,10 @@ function initializeSwiper(carouselElement, config) {
     
     try {
       const swiperConfig = {
-        loop: !isUE, // Disable loop in UE authoring
-          autoplay: isUE ? false : {
-          delay: config.imageAutoplayDuration,
-          disableOnInteraction: 
+        //loop: !isUE, // Disable loop in UE authoring
+        //autoplay: isUE ? false : {
+        loop: true, // Disable loop in UE authoring
+        autoplay: {
           delay: config.imageAutoplayDuration,
           disableOnInteraction: false,
           pauseOnMouseEnter: false,
@@ -570,7 +570,7 @@ export default function decorate(block) {
   // Replace block content
   block.textContent = '';
   block.appendChild(carouselWrapper);
-  
-  // Initialize carousel functionality
-  initializeSwiper(block, config);
+
+  // Initialize Swiper carousel
+  initializeSwiper(carouselWrapper, config);
 }
