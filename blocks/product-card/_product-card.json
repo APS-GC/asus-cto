@@ -1,0 +1,56 @@
+{
+  "groups": [
+    {
+      "title": "Product Card Settings",
+      "id": "product-card-settings",
+      "properties": [
+        {
+          "label": "Section Title",
+          "name": "sectionTitle",
+          "value": "Hot Products",
+          "type": "text",
+          "description": "Title displayed above the product cards"
+        },
+        {
+          "label": "Number of Items",
+          "name": "itemCount",
+          "value": "3",
+          "type": "number",
+          "description": "Number of product cards to display in the carousel (default: 3)",
+          "min": 1,
+          "max": 10
+        },
+        {
+          "label": "View All Link",
+          "name": "viewAllLink",
+          "value": "/products",
+          "type": "text",
+          "description": "URL for the 'View all' link"
+        },
+        {
+          "label": "View All Text",
+          "name": "viewAllText",
+          "value": "View all",
+          "type": "text",
+          "description": "Text for the 'View all' link"
+        },
+        {
+          "label": "API Endpoint",
+          "name": "apiEndpoint",
+          "value": "/mock-api/products",
+          "type": "text",
+          "description": "GraphQL API endpoint for fetching product data"
+        },
+        {
+          "label": "Auto-play Interval",
+          "name": "autoplayInterval",
+          "value": "5000",
+          "type": "number",
+          "description": "Auto-play interval in milliseconds (0 to disable)",
+          "min": 0,
+          "max": 15000
+        }
+      ]
+    }
+  ]
+}

@@ -1145,7 +1145,7 @@
   },
   {
     "id": "carousel",
-      "fields": [
+    "fields": [
       {
         "component": "number",
         "name": "imageAutoplayDuration",
@@ -1264,6 +1264,67 @@
         "name": "openNewTab",
         "label": "Open in New Tab",
         "valueType": "boolean"
+      }
+    ]
+  },
+  {
+    "id": "product-card",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "sectionTitle",
+        "label": "Section Title",
+        "description": "Title displayed above the product cards",
+        "value": "Hot Products"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "itemCount",
+        "label": "Number of Items",
+        "description": "Number of product cards to display in the carousel (default: 3)",
+        "value": "3",
+        "validation": {
+          "min": 1,
+          "max": 10
+        }
+      },
+      {
+        "component": "aem-content",
+        "name": "viewAllLink",
+        "label": "View All Link",
+        "description": "URL for the 'View all' link",
+        "valueType": "string",
+        "value": "/products"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "viewAllText",
+        "label": "View All Text",
+        "description": "Text for the 'View all' link",
+        "value": "View all"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "apiEndpoint",
+        "label": "API Endpoint",
+        "description": "GraphQL API endpoint for fetching product data",
+        "value": "/mock-api/products"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "autoplayInterval",
+        "label": "Auto-play Interval",
+        "description": "Auto-play interval in milliseconds (0 to disable)",
+        "value": "5000",
+        "validation": {
+          "min": 0,
+          "max": 15000
+        }
       }
     ]
   }
