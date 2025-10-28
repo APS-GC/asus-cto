@@ -390,13 +390,15 @@ function initializeSwiper(carouselElement, config) {
       const playPauseBtn = carouselElement.querySelector('.cmp-carousel__media-control--play-pause');
       const autoplayToggle = carouselElement.querySelector('.carousel-autoplay-toggle');
       
-      if (playPauseBtn && !isUE) {
+      //if (playPauseBtn && !isUE) {
+      if (playPauseBtn) {
         playPauseBtn.addEventListener('click', () => {
           toggleSliderVideo(playPauseBtn);
         });
       }
 
-      if (autoplayToggle && !isUE) {
+      //if (autoplayToggle && !isUE) {
+      if (autoplayToggle) {
         autoplayToggle.addEventListener('click', () => {
           const activeSlide = document.querySelector('.swiper-slide-active');
           const activeVideo = activeSlide?.querySelector('video');
@@ -439,7 +441,7 @@ function initializeSwiper(carouselElement, config) {
     document.addEventListener('DOMContentLoaded', setupSwiper);
   } else {
     // Additional delay for UE environments
-    setTimeout(setupSwiper, isUE ? 500 : 100);
+    //setTimeout(setupSwiper, isUE ? 500 : 100);
   }
 }
 
