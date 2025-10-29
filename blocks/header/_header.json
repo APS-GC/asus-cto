@@ -174,23 +174,24 @@
       },
       {
         "component": "container",
-        "name": "profileMenuItems",
-        "label": "Profile Menu Items",
-        "description": "Items in the profile dropdown menu",
-        "multi": true,
+        "label": "Button Properties",
+        "name": "buttonProperties",
+        "valueType": "string",
         "fields": [
           {
             "component": "text",
             "valueType": "string",
-            "name": "linkText",
-            "label": "Menu Item Text",
-            "description": "Display text for the profile menu item"
+            "name": "btn-text",
+            "value": "Button",
+            "label": "Button Text"
           },
           {
             "component": "aem-content",
-            "name": "linkUrl",
-            "label": "Menu Item URL",
-            "description": "URL for the profile menu item"
+            "name": "btn-link",
+            "label": "Button Link",
+            "valueType": "string",
+            "rootPath": "",
+            "description": "Path to linked AEM content"
           }
         ]
       }
