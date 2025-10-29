@@ -173,28 +173,12 @@
         "value": "/icons/arrow-right.svg"
       },
       {
-        "component": "container",
-        "label": "Button Properties",
-        "name": "buttonProperties",
+        "component": "richtext",
+        "name": "profileMenu",
+        "value": "",
+        "label": "Profile Menu Items",
         "valueType": "string",
-        "multi": true,
-        "fields": [
-          {
-            "component": "text",
-            "valueType": "string",
-            "name": "btn-text",
-            "value": "Button",
-            "label": "Button Text"
-          },
-          {
-            "component": "aem-content",
-            "name": "btn-link",
-            "label": "Button Link",
-            "valueType": "string",
-            "rootPath": "",
-            "description": "Path to linked AEM content"
-          }
-        ]
+        "required": true
       }
     ]
   }
