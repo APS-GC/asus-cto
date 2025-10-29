@@ -177,6 +177,7 @@
         "label": "Button Properties",
         "name": "buttonProperties",
         "valueType": "string",
+        "multi": true,
         "fields": [
           {
             "component": "text",
