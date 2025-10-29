@@ -972,17 +972,17 @@
     "id": "header",
     "fields": [
       {
+        "component": "aem-content",
+        "name": "asusLogoUrl",
+        "label": "ASUS Logo URL",
+        "description": "URL the ASUS logo should link to"
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "asusLogoAltText",
         "label": "ASUS Logo Alt Text",
         "description": "Alternative text for the ASUS logo"
-      },
-      {
-        "component": "aem-content",
-        "name": "asusLogoUrl",
-        "label": "ASUS Logo URL",
-        "description": "URL the ASUS logo should link to"
       },
       {
         "component": "reference",
@@ -999,12 +999,6 @@
         "description": "Alternative text for the ROG logo"
       },
       {
-        "component": "aem-content",
-        "name": "rogLogoUrl",
-        "label": "ROG Logo URL",
-        "description": "URL the ROG logo should link to"
-      },
-      {
         "component": "reference",
         "name": "rogLogoImage",
         "label": "ROG Logo Image",
@@ -1017,12 +1011,6 @@
         "name": "gamingPcLogoAltText",
         "label": "Gaming PC Logo Alt Text",
         "description": "Alternative text for the Gaming PC logo"
-      },
-      {
-        "component": "aem-content",
-        "name": "gamingPcLogoUrl",
-        "label": "Gaming PC Logo URL",
-        "description": "URL the Gaming PC logo should link to"
       },
       {
         "component": "reference",
