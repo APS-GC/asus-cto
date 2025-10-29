@@ -1127,6 +1127,7 @@
         "component": "container",
         "name": "profileMenuItems",
         "label": "Profile Menu Items",
+        "valueType": "string",
         "description": "Items in the profile dropdown menu",
         "multi": true,
         "fields": [
