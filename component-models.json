@@ -1060,14 +1060,6 @@
         "value": true
       },
       {
-        "component": "text",
-        "valueType": "string",
-        "name": "searchPlaceholder",
-        "label": "Mobile Search Placeholder",
-        "description": "Placeholder text for mobile search input",
-        "value": "Enter keywords"
-      },
-      {
         "component": "reference",
         "name": "searchIcon",
         "label": "Search Icon",
@@ -1128,6 +1120,14 @@
         "name": "profileMenu",
         "value": "",
         "label": "Profile Menu Items",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "profileMenuLogin",
+        "value": "",
+        "label": "Profile Menu Items for Login",
         "valueType": "string",
         "required": true
       }
