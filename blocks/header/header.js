@@ -43,6 +43,10 @@ function parseHeaderData(block) {
       { linkText: 'My Wishlist', linkUrl: '#' },
       { linkText: 'Sign out', linkUrl: '#' }
     ],
+    profileMenuLoggedInItems: [
+      { linkText: 'Login Profile 1', linkUrl: '#' },
+      { linkText: 'Login Profile 2', linkUrl: '#' }
+    ],
     searchPlaceholder: 'Enter keywords',
     searchIcon: '',
     cartIcon: '',
@@ -63,18 +67,12 @@ function parseHeaderData(block) {
     if (parsedFromHTML.navigationItems && parsedFromHTML.navigationItems.length > 0) {
       data.navigationItems = parsedFromHTML.navigationItems;
     }
-    if (typeof parsedFromHTML.showSearch === 'boolean') {
-      data.showSearch = parsedFromHTML.showSearch;
+    if (parsedFromHTML.profileMenuItems && parsedFromHTML.profileMenuItems.length > 0) {
+      data.profileMenuItems = parsedFromHTML.profileMenuItems;
     }
-    if (typeof parsedFromHTML.showProfile === 'boolean') {
-      data.showProfile = parsedFromHTML.showProfile;
+    if (parsedFromHTML.profileMenuLoggedInItems && parsedFromHTML.profileMenuLoggedInItems.length > 0) {
+      data.profileMenuLoggedInItems = parsedFromHTML.profileMenuLoggedInItems;
     }
-    if (typeof parsedFromHTML.showCart === 'boolean') {
-      data.showCart = parsedFromHTML.showCart;
-    }
-    if (parsedFromHTML.searchIcon) data.searchIcon = parsedFromHTML.searchIcon;
-    if (parsedFromHTML.cartIcon) data.cartIcon = parsedFromHTML.cartIcon;
-    if (parsedFromHTML.profileIcon) data.profileIcon = parsedFromHTML.profileIcon;
   }
 
   // Override with Universal Editor model data if available
@@ -148,6 +146,13 @@ function parseHTMLContent(block) {
     // Get all div elements that contain the structured data
     const contentDivs = block.querySelectorAll('div > p > div');
     
+    console.log('HTML parsing debug:', {
+      blockHTML: block.innerHTML.substring(0, 500),
+      contentDivsLength: contentDivs.length,
+      allDivs: block.querySelectorAll('div').length,
+      allPs: block.querySelectorAll('p').length
+    });
+    
     if (!contentDivs || contentDivs.length === 0) {
       console.log('No content divs found in HTML structure');
       return null;
@@ -161,7 +166,13 @@ function parseHTMLContent(block) {
       showCart: true,
       searchIcon: null,
       cartIcon: null,
-      profileIcon: null
+      profileIcon: null,
+      hamburgerIcon: null,
+      closeIcon: null,
+      arrowLeftIcon: null,
+      arrowRightIcon: null,
+      profileMenuItems: [],
+      profileMenuLoggedInItems: []
     };
 
     const logoNames = ['asus', 'rog', 'gaming'];
@@ -178,16 +189,41 @@ function parseHTMLContent(block) {
       };
     });
     
-    // Process first 9 divs in groups of 3 for each logo (ASUS, ROG, Gaming)
-    for (let logoIndex = 0; logoIndex < 3; logoIndex++) {
-      const startIndex = logoIndex * 3;
-      const endIndex = startIndex + 3;
+    // Process divs according to the new mapping:
+    // 1st div > href link for logos
+    // 2nd div > ASUS Logo Alt Text
+    // 3rd div > ASUS Logo Image
+    // 4th div > ROG Logo Alt Text
+    // 5th div > ROG Logo Image
+    // 6th div > Gaming PC Logo Alt Text
+    // 7th div > Gaming PC Logo Image
+    // 8th div > Navigation Links
+    // 9th div > profileMenuItems (always visible)
+    // 10th div > profileMenuLoggedInItems (only visible when user logs in)
+    
+    for (let index = 0; index < contentDivs.length && index < 10; index++) {
+      const div = contentDivs[index];
+      const textContent = div.textContent?.trim();
       
-      for (let divIndex = startIndex; divIndex < endIndex && divIndex < contentDivs.length; divIndex++) {
-        const div = contentDivs[divIndex];
-        const textContent = div.textContent?.trim();
-        
-        // Check for picture elements (logo images)
+      if (index === 0) {
+        // 1st div: href link for logos
+        const buttonContainer = div.querySelector('.button-container a');
+        if (buttonContainer) {
+          const href = buttonContainer.getAttribute('href');
+          if (href) {
+            // Apply the same URL to all logos
+            parsedData.logos.forEach(logo => {
+              logo.url = href;
+            });
+          }
+        }
+      } else if (index === 1) {
+        // 2nd div: ASUS Logo Alt Text
+        if (textContent) {
+          parsedData.logos[0].altText = textContent;
+        }
+      } else if (index === 2) {
+        // 3rd div: ASUS Logo Image
         const picture = div.querySelector('picture img');
         if (picture) {
           const src = picture.getAttribute('src');
@@ -195,77 +231,78 @@ function parseHTMLContent(block) {
           const height = picture.getAttribute('height');
           
           if (src) {
-            parsedData.logos[logoIndex].icon = src;
-            if (width) parsedData.logos[logoIndex].width = width;
-            if (height) parsedData.logos[logoIndex].height = height;
+            parsedData.logos[0].icon = src;
+            if (width) parsedData.logos[0].width = width;
+            if (height) parsedData.logos[0].height = height;
           }
         }
-        
-        // Check for button containers with links (logo URLs)
-        const buttonContainer = div.querySelector('.button-container a');
-        if (buttonContainer) {
-          const href = buttonContainer.getAttribute('href');
-          if (href) {
-            parsedData.logos[logoIndex].url = href;
+      } else if (index === 3) {
+        // 4th div: ROG Logo Alt Text
+        if (textContent) {
+          parsedData.logos[1].altText = textContent;
+        }
+      } else if (index === 4) {
+        // 5th div: ROG Logo Image
+        const picture = div.querySelector('picture img');
+        if (picture) {
+          const src = picture.getAttribute('src');
+          const width = picture.getAttribute('width');
+          const height = picture.getAttribute('height');
+          
+          if (src) {
+            parsedData.logos[1].icon = src;
+            if (width) parsedData.logos[1].width = width;
+            if (height) parsedData.logos[1].height = height;
           }
         }
-        
-        // Check for alt text content
-        if (textContent && (textContent.toLowerCase().includes('logo') || textContent.toLowerCase().includes('alt'))) {
-          parsedData.logos[logoIndex].altText = textContent;
+      } else if (index === 5) {
+        // 6th div: Gaming PC Logo Alt Text
+        if (textContent) {
+          parsedData.logos[2].altText = textContent;
         }
-      }
-    }
-    
-    // Process remaining divs for navigation and other elements
-    for (let index = 9; index < contentDivs.length; index++) {
-      const div = contentDivs[index];
-      const textContent = div.textContent?.trim();
-      
-      // Check for navigation list
-      const navList = div.querySelector('ul');
-      if (navList) {
-        const navItems = navList.querySelectorAll('li a');
-        parsedData.navigationItems = Array.from(navItems).map(link => ({
-          linkText: link.textContent?.trim() || '',
-          linkUrl: link.getAttribute('href') || '#'
-        }));
-      }
-      
-      // Check for boolean values (show/hide flags)
-      if (textContent === 'true' || textContent === 'false') {
-        const boolValue = textContent === 'true';
-        
-        // Map boolean values to appropriate flags based on position
-        if (index >= 10 && index <= 12) { // Corrected positions after logo processing
-          if (index === 10) parsedData.showSearch = boolValue;
-          if (index === 11) parsedData.showProfile = boolValue;
-          if (index === 12) parsedData.showCart = boolValue;
-        }
-      }
-      
-      // Check for icon images based on specific div indices
-      const picture = div.querySelector('picture img');
-      if (picture) {
-        const src = picture.getAttribute('src');
-        
-        if (src) {
-          // Map icons based on exact div positions
-          if (index === 14) {
-            parsedData.searchIcon = src;
-          } else if (index === 15) {
-            parsedData.cartIcon = src;
-          } else if (index === 16) {
-            parsedData.profileIcon = src;
-          } else if (index === 17) {
-            parsedData.hamburgerIcon = src;
-          } else if (index === 18) {
-            parsedData.closeIcon = src;
-          } else if (index === 19) {
-            parsedData.arrowLeftIcon = src;
-          } else if (index === 20) {
-            parsedData.arrowRightIcon = src;
+      } else if (index === 6) {
+        // 7th div: Gaming PC Logo Image
+        const picture = div.querySelector('picture img');
+        if (picture) {
+          const src = picture.getAttribute('src');
+          const width = picture.getAttribute('width');
+          const height = picture.getAttribute('height');
+          
+          if (src) {
+            parsedData.logos[2].icon = src;
+            if (width) parsedData.logos[2].width = width;
+            if (height) parsedData.logos[2].height = height;
           }
+        }
+      } else if (index === 7) {
+        // 8th div: Navigation Links
+        const navList = div.querySelector('ul');
+        if (navList) {
+          const navItems = navList.querySelectorAll('li a');
+          parsedData.navigationItems = Array.from(navItems).map(link => ({
+            linkText: link.textContent?.trim() || '',
+            linkUrl: link.getAttribute('href') || '#'
+          }));
+        }
+      } else if (index === 8) {
+        // 9th div: profileMenuItems (always visible)
+        const profileList = div.querySelector('ul');
+        if (profileList) {
+          const profileItems = profileList.querySelectorAll('li a');
+          parsedData.profileMenuItems = Array.from(profileItems).map(link => ({
+            linkText: link.textContent?.trim() || '',
+            linkUrl: link.getAttribute('href') || '#'
+          }));
+        }
+      } else if (index === 9) {
+        // 10th div: profileMenuLoggedInItems (only visible when user logs in)
+        const loggedInList = div.querySelector('ul');
+        if (loggedInList) {
+          const loggedInItems = loggedInList.querySelectorAll('li a');
+          parsedData.profileMenuLoggedInItems = Array.from(loggedInItems).map(link => ({
+            linkText: link.textContent?.trim() || '',
+            linkUrl: link.getAttribute('href') || '#'
+          }));
         }
       }
     }
@@ -336,7 +373,11 @@ function buildLogo(logos) {
   `;
 }
 
-function buildNavigation(navigationItems, showSearch, showProfile, showCart, profileMenuItems, icons) {
+function buildNavigation(navigationItems, showSearch, showProfile, showCart, profileMenuItems, profileMenuLoggedInItems, icons) {
+  // Check if user is logged in (same logic as in webpack implementation)
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const userName = localStorage.getItem('userName') || 'User Name';
+  
   const navItems = navigationItems.map(item => `
     <li class="cmp-sitenavigation__item">
       <a class="cmp-sitenavigation__item-link" href="${item.linkUrl}">${item.linkText}</a>
@@ -346,12 +387,12 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
   const searchIcon = showSearch ? `
     <li class="cmp-sitenavigation__item cmp-sitenavigation__item--search">
       <a class="cmp-sitenavigation__item-link" href="/" aria-label="Search">
-        <img src="${icons.searchIcon}" alt="Search" class="icon icon--search" />
+        <span class="icon icon--search"></span>
       </a>
     </li>
   ` : '';
 
-  const cartIcon = showCart ? `
+  const cartIcon = (showCart && isLoggedIn) ? `
     <li class="cmp-sitenavigation__item cmp-sitenavigation__item--cart">
       <div class="mini-cart">
         <button 
@@ -362,7 +403,7 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
           aria-expanded="false"
           aria-controls="mini-cart-container"
         >
-          <img src="${icons.cartIcon}" alt="Cart" class="icon icon--cart" />
+          <span class="icon icon--cart"></span>
         </button>
         <div 
           id="mini-cart-container"
@@ -373,7 +414,7 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
           aria-hidden="true"
         >
           <button class="mini-cart__close" aria-label="Close mini cart">
-            <img src="${icons.closeIcon}" alt="Close" class="icon icon--close" />
+            <span class="icon icon--close"></span>
           </button>
           <h4 id="mini-cart-title" class="cart-summary"></h4>
         </div>
@@ -381,22 +422,33 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
     </li>
   ` : '';
 
-  const profileMenuHTML = profileMenuItems.map(item => `
-    <li class="profile-menu__item"><a href="${item.linkUrl}">${item.linkText}</a></li>
+  // Combine profile menu items: existing + logged-in items when logged in
+  const currentProfileMenuItems = isLoggedIn 
+    ? [...profileMenuItems, ...(profileMenuLoggedInItems || [])]
+    : profileMenuItems;
+
+  const profileMenuHTML = currentProfileMenuItems.map((item, index) => `
+    <li class="profile-menu__item" data-menu-index="${index}"><a href="${item.linkUrl}">${item.linkText}</a></li>
   `).join('');
+
+  // Add user name element when logged in
+  const userNameElement = isLoggedIn ? `
+    <li class="profile-menu__user-name" style="white-space: nowrap; font-weight: 600; color: var(--color-primary-950); padding: 8px 16px; border-bottom: 1px solid var(--color-primary-300); margin-bottom: 4px;">${userName}</li>
+  ` : '';
 
   const profileIcon = showProfile ? `
     <li class="cmp-sitenavigation__item cmp-sitenavigation__item--profile">
       <div class="profile-dropdown">
-        <button class="cmp-sitenavigation__item-link profile-toggle logged-in" aria-label="Member Account" aria-expanded="false">
-          <img src="${icons.profileIcon}" alt="Profile" class="icon icon--profile" />
+        <button class="cmp-sitenavigation__item-link profile-toggle ${isLoggedIn ? 'logged-in' : ''}" aria-label="Member Account" aria-expanded="false">
+          <span class="icon icon--profile"></span>
         </button>
         <ul class="profile-menu">
           <li class="profile-menu__header">
             <button class="profile-menu__close" aria-label="Close profile menu">
-              <img src="${icons.closeIcon}" alt="Close" class="icon icon--close" />
+              <span class="icon icon--close"></span>
             </button>
           </li>
+          ${userNameElement}
           ${profileMenuHTML}
         </ul>
       </div>
@@ -415,8 +467,8 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
           ${profileIcon}
           <li class="cmp-sitenavigation__item cmp-sitenavigation__item--menu-toggle">
             <button id="header-hamburger-menu-toggle" class="btn btn-link" aria-label="Toggle Menu">
-              <img src="${icons.hamburgerIcon}" alt="Menu" class="icon icon--hamburger" />
-              <img src="${icons.closeIcon}" alt="Close" class="icon icon--close" />
+              <span class="icon icon--hamburger"></span>
+              <span class="icon icon--close"></span>
             </button>
           </li>
         </ul>
@@ -425,7 +477,10 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
   `;
 }
 
-function buildMobileMenu(navigationItems, showSearch, profileMenuItems, searchPlaceholder, icons) {
+function buildMobileMenu(navigationItems, showSearch, profileMenuItems, profileMenuLoggedInItems, searchPlaceholder, icons) {
+  // Check if user is logged in (same logic as in webpack implementation)
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  
   const mobileNavItems = navigationItems.map(item => `
     <li><a href="${item.linkUrl}" class="px-6">${item.linkText}</a></li>
   `).join('');
@@ -433,14 +488,19 @@ function buildMobileMenu(navigationItems, showSearch, profileMenuItems, searchPl
   const mobileSearch = showSearch ? `
     <li class="px-6">
       <div class="mobile-search">
-        <img src="${icons.searchIcon}" alt="Search" class="icon icon--search" />
+        <span class="icon icon--search"></span>
         <input type="text" placeholder="${searchPlaceholder}" title="${searchPlaceholder}"/>
       </div>
     </li>
   ` : '';
 
-  const mobileProfileItems = profileMenuItems.map(item => `
-    <li><a href="${item.linkUrl}">${item.linkText}</a></li>
+  // Combine profile menu items: existing + logged-in items when logged in (same as desktop)
+  const currentMobileProfileMenuItems = isLoggedIn 
+    ? [...profileMenuItems, ...(profileMenuLoggedInItems || [])]
+    : profileMenuItems;
+
+  const mobileProfileItems = currentMobileProfileMenuItems.map((item, index) => `
+    <li data-mobile-menu-index="${index}"><a href="${item.linkUrl}">${item.linkText}</a></li>
   `).join('');
 
   return `
@@ -452,14 +512,14 @@ function buildMobileMenu(navigationItems, showSearch, profileMenuItems, searchPl
           ${mobileSearch}
           <li class="mobile-account-section">
             <button class="mobile-account-toggle px-6 d-flex-align mobile-account-link" aria-expanded="false">
-              <img src="${icons.profileIcon}" alt="Profile" class="icon icon--profile" />
+              <span class="icon icon--profile"></span>
               <span class="profile">My Account</span>
-              <img src="${icons.arrowRightIcon}" alt="Arrow Right" class="icon icon--arrow-right arrow-icon" />
+              <span class="icon icon--arrow-right arrow-icon"></span>
             </button>
             <div class="mobile-account-submenu">
               <div class="submenu-header">
                 <button class="back-button" aria-label="Back">
-                  <img src="${icons.arrowLeftIcon}" alt="Arrow Left" class="icon icon--arrow-left" />
+                  <span class="icon icon--arrow-left"></span>
                   <span class="submenu-title">My Account</span>
                 </button>
               </div>
@@ -472,6 +532,57 @@ function buildMobileMenu(navigationItems, showSearch, profileMenuItems, searchPl
       </div>
     </div>
   `;
+}
+
+// Mock login function
+function mockLogin() {
+  localStorage.setItem('isLoggedIn', 'true');
+  localStorage.setItem('userName', 'John Doe');
+  console.log('Mock login successful');
+}
+
+// Mock logout function
+function mockLogout() {
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('userName');
+  console.log('Mock logout successful');
+}
+
+// Refresh header function to re-render with current login state
+function refreshHeader(block) {
+  const data = parseHeaderData(block);
+  
+  // Create icons object for passing to build functions
+  const icons = {
+    searchIcon: data.searchIcon,
+    cartIcon: data.cartIcon,
+    profileIcon: data.profileIcon,
+    hamburgerIcon: data.hamburgerIcon,
+    closeIcon: data.closeIcon,
+    arrowLeftIcon: data.arrowLeftIcon,
+    arrowRightIcon: data.arrowRightIcon
+  };
+
+  // Create the header structure using parsed data
+  const headerHTML = `
+    <div class="header-wrapper">
+      <header class="experiencefragment">
+        <div class="cmp-experiencefragment">
+          <div class="cmp-container cmp-header container">
+            ${buildLogo(data.logos)}
+            ${buildNavigation(data.navigationItems, data.showSearch, data.showProfile, data.showCart, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
+          </div>
+        </div>
+      </header>
+      ${buildMobileMenu(data.navigationItems, data.showSearch, data.profileMenuItems, data.profileMenuLoggedInItems, data.searchPlaceholder, icons)}
+    </div>
+  `;
+
+  // Clear existing content and add the header structure
+  block.innerHTML = headerHTML;
+  
+  // Re-initialize header functionality
+  initializeHeader(block);
 }
 
 export default function decorate(block) {
@@ -495,11 +606,11 @@ export default function decorate(block) {
         <div class="cmp-experiencefragment">
           <div class="cmp-container cmp-header container">
             ${buildLogo(data.logos)}
-            ${buildNavigation(data.navigationItems, data.showSearch, data.showProfile, data.showCart, data.profileMenuItems, icons)}
+            ${buildNavigation(data.navigationItems, data.showSearch, data.showProfile, data.showCart, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
           </div>
         </div>
       </header>
-      ${buildMobileMenu(data.navigationItems, data.showSearch, data.profileMenuItems, data.searchPlaceholder, icons)}
+      ${buildMobileMenu(data.navigationItems, data.showSearch, data.profileMenuItems, data.profileMenuLoggedInItems, data.searchPlaceholder, icons)}
     </div>
   `;
 
@@ -512,6 +623,17 @@ export default function decorate(block) {
 }
 
 function initializeHeader(block) {
+  // Get current login state and profile menu data
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const data = parseHeaderData(block);
+  const profileMenuItems = data.profileMenuItems || [];
+  const profileMenuLoggedInItems = data.profileMenuLoggedInItems || [];
+  
+  // Calculate combined menu items for logged-in state
+  const combinedMenuItems = isLoggedIn 
+    ? [...profileMenuItems, ...profileMenuLoggedInItems]
+    : profileMenuItems;
+
   // Mobile menu toggle
   const hamburgerToggle = block.querySelector('#header-hamburger-menu-toggle');
   const mobileMenuOverlay = block.querySelector('#mobile-menu-dialog');
@@ -553,6 +675,81 @@ function initializeHeader(block) {
       profileMenu.classList.remove('show');
     });
   }
+
+  // Mock Login/Logout functionality for desktop profile menu
+  const profileMenuItemElements = block.querySelectorAll('.profile-menu__item[data-menu-index]');
+  
+  console.log('Debug info:', {
+    isLoggedIn,
+    profileMenuItems: profileMenuItems.map(item => item.linkText),
+    profileMenuLoggedInItems: profileMenuLoggedInItems.map(item => item.linkText),
+    combinedMenuItems: combinedMenuItems.map(item => item.linkText),
+    totalElements: profileMenuItemElements.length
+  });
+  
+  profileMenuItemElements.forEach((item, index) => {
+    const link = item.querySelector('a');
+    if (link) {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        console.log('Desktop menu clicked:', { 
+          index, 
+          isLoggedIn, 
+          combinedMenuLength: combinedMenuItems.length, 
+          linkText: link.textContent,
+          isFirstItem: index === 0
+        });
+        
+        if (index === 0) {
+          if (!isLoggedIn) {
+            // First item when not logged in - trigger login
+            console.log('Triggering login');
+            mockLogin();
+            refreshHeader(block);
+          } else {
+            // First item when logged in - trigger logout
+            console.log('Triggering logout (first item when logged in)');
+            mockLogout();
+            refreshHeader(block);
+          }
+        } else {
+          console.log('No action for this menu item');
+        }
+        // For other items, you can add actual navigation logic here
+      });
+    }
+  });
+
+  // Mock Login/Logout functionality for mobile profile menu
+  const mobileProfileMenuItems = block.querySelectorAll('.submenu-items li[data-mobile-menu-index]');
+  mobileProfileMenuItems.forEach((item, index) => {
+    const link = item.querySelector('a');
+    if (link) {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        console.log('Mobile menu clicked:', { index, isLoggedIn, combinedMenuLength: combinedMenuItems.length, linkText: link.textContent });
+        
+        if (index === 0) {
+          if (!isLoggedIn) {
+            // First item when not logged in - trigger login
+            console.log('Triggering mobile login');
+            mockLogin();
+            refreshHeader(block);
+          } else {
+            // First item when logged in - trigger logout
+            console.log('Triggering mobile logout (first item when logged in)');
+            mockLogout();
+            refreshHeader(block);
+          }
+        } else {
+          console.log('No action for this mobile menu item');
+        }
+        // For other items, you can add actual navigation logic here
+      });
+    }
+  });
 
   // Mini cart toggle
   const miniCartToggle = block.querySelector('#mini-cart-toggle');
