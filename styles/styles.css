@@ -4,6 +4,7 @@
  * ========================================================================== */
 
 /* CSS Custom Properties for Colors - Aligned with webpack/scss design system */
+
 :root {
   /* ASUS Brand Colors - Aligned with webpack/scss */
   --color-brand-asus: #0057b7;        /* ASUS Blue */
@@ -197,6 +198,10 @@
 @font-face {
   font-family: 'TTNormsProRegular';
   font-display: swap; /* Immediate text render with fallback, swap to web font when loaded */
+}
+
+*{
+  box-sizing: border-box;
 }
 
 /* Base Typography Styles */
