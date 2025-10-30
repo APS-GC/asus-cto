@@ -393,7 +393,7 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
           aria-hidden="true"
         >
           <button class="mini-cart__close" aria-label="Close mini cart">
-            <span class="icon icon--close"></span>
+            <span class="icon--close"></span>
           </button>
           <div class="cart-content">
             <h4 id="mini-cart-title" class="cart-summary">Your cart is empty.</h4>

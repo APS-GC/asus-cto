@@ -771,6 +771,7 @@ body.mobile-menu-open .icon--hamburger {
     position: absolute;
     top: 100%;
     right: -12px;
+    left: unset;
     width: auto;
     height: auto;
     border: 1px solid var(--color-primary-300);
