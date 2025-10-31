@@ -633,7 +633,7 @@ body.mobile-menu-open .icon--hamburger {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 0 1.5rem;
+  padding: 1.5rem;
   height: 100%;
 }
 
@@ -1014,7 +1014,7 @@ body.mobile-menu-open .icon--hamburger {
 
   /* Enhanced cart content for tablet */
   .cart-content {
-    padding: 1.5rem;
+    padding: 0 1.5rem;
   }
 
   .cart-item__info {

@@ -764,8 +764,7 @@ async function loadHeader(header) {
  */
 async function loadHeaderFragment() {
   const fragmentUrl = '/fragments/head.plain.html';
-  const resp = await fetch(fragmentUrl);
-  try {
+   try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
       const html = await response.text();
