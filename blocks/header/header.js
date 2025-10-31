@@ -48,7 +48,22 @@ function parseHeaderData(block) {
 
   // Override with Universal Editor model data if available
   if (block.dataset && (block.dataset.model || block.dataset.aueModel)) {
-    const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {};
+    let modelData = {};
+    
+    if (block.dataset.aueModel) {
+      try {
+        // Validate that the data is actually JSON before parsing
+        const aueModelData = block.dataset.aueModel.trim();
+        if (aueModelData.startsWith('{') && aueModelData.endsWith('}')) {
+          modelData = JSON.parse(aueModelData);
+        } else {
+          console.warn('Invalid JSON format in aueModel data:', aueModelData);
+        }
+      } catch (error) {
+        console.warn('Failed to parse Universal Editor model data:', block.dataset.aueModel, error);
+        modelData = {};
+      }
+    }
     
     console.log('Universal Editor Model Data:', modelData);
     
@@ -548,7 +563,22 @@ function refreshHeader(block) {
     
     // Still check for Universal Editor model updates
     if (block.dataset && (block.dataset.model || block.dataset.aueModel)) {
-      const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {};
+      let modelData = {};
+      
+      if (block.dataset.aueModel) {
+        try {
+          // Validate that the data is actually JSON before parsing
+          const aueModelData = block.dataset.aueModel.trim();
+          if (aueModelData.startsWith('{') && aueModelData.endsWith('}')) {
+            modelData = JSON.parse(aueModelData);
+          } else {
+            console.warn('Invalid JSON format in aueModel data (refreshHeader):', aueModelData);
+          }
+        } catch (error) {
+          console.warn('Failed to parse Universal Editor model data (refreshHeader):', block.dataset.aueModel, error);
+          modelData = {};
+        }
+      }
       
       // Apply any UE model updates to the stored data
       if (modelData.asusLogoImage || modelData.asusLogoAltText || modelData.asusLogoUrl) {
