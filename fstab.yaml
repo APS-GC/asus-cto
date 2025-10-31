@@ -1,5 +1,0 @@
-mountpoints:
-  /:
-    url: "https://author-p165753-e1767020.adobeaemcloud.com/bin/franklin.delivery/AEM-COMP/asus/main"
-    type: "markup"
-    suffix: ".html"
