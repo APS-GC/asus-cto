@@ -352,7 +352,7 @@ function buildLogo(logos) {
   `;
 }
 
-function buildNavigation(navigationItems, showSearch, showProfile, showCart, profileMenuItems, profileMenuLoggedInItems, icons) {
+function buildNavigation(navigationItems, showProfile, showCart, profileMenuItems, profileMenuLoggedInItems, icons) {
   // Check if user is logged in (same logic as in webpack implementation)
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   const userName = localStorage.getItem('userName') || 'User Name';
@@ -362,14 +362,6 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
       <a class="cmp-sitenavigation__item-link" href="${item.linkUrl}">${item.linkText}</a>
     </li>
   `).join('');
-
-  const searchIcon = showSearch ? `
-    <li class="cmp-sitenavigation__item cmp-sitenavigation__item--search">
-      <a class="cmp-sitenavigation__item-link" href="/" aria-label="Search">
-        <span class="icon icon--search"></span>
-      </a>
-    </li>
-  ` : '';
 
   const cartIcon = showCart ? `
     <li class="cmp-sitenavigation__item cmp-sitenavigation__item--cart">
@@ -393,7 +385,7 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
           aria-hidden="true"
         >
           <button class="mini-cart__close" aria-label="Close mini cart">
-            <span class="icon--close"></span>
+            <span class="mini-cart__close-icon"></span>
           </button>
           <div class="cart-content">
             <h4 id="mini-cart-title" class="cart-summary">Your cart is empty.</h4>
@@ -443,7 +435,6 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
           ${navItems}
         </ul>
         <ul class="cmp-sitenavigation__group cmp-sitenavigation__group--icons">
-          ${searchIcon}
           ${cartIcon}
           ${profileIcon}
           <li class="cmp-sitenavigation__item cmp-sitenavigation__item--menu-toggle">
@@ -458,22 +449,13 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
   `;
 }
 
-function buildMobileMenu(navigationItems, showSearch, profileMenuItems, profileMenuLoggedInItems, searchPlaceholder, icons) {
+function buildMobileMenu(navigationItems, profileMenuItems, profileMenuLoggedInItems, icons) {
   // Check if user is logged in (same logic as in webpack implementation)
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   
   const mobileNavItems = navigationItems.map(item => `
     <li><a href="${item.linkUrl}" class="px-6">${item.linkText}</a></li>
   `).join('');
-
-  const mobileSearch = showSearch ? `
-    <li class="px-6">
-      <div class="mobile-search">
-        <span class="icon icon--search"></span>
-        <input type="text" placeholder="${searchPlaceholder}" title="${searchPlaceholder}"/>
-      </div>
-    </li>
-  ` : '';
 
   // Combine profile menu items: existing + logged-in items when logged in (same as desktop)
   const currentMobileProfileMenuItems = isLoggedIn 
@@ -490,7 +472,6 @@ function buildMobileMenu(navigationItems, showSearch, profileMenuItems, profileM
         <div id="mobile-menu-title" class="sr-only">Mobile Navigation Menu</div>
         <ul class="mobile-menu">
           ${mobileNavItems}
-          ${mobileSearch}
           <li class="mobile-account-section">
             <button class="mobile-account-toggle px-6 d-flex-align mobile-account-link" aria-expanded="false">
               <span class="icon icon--profile"></span>
@@ -602,9 +583,7 @@ function renderCartItem(product) {
 async function renderMiniCartContent(isLoggedIn) {
   if (!isLoggedIn) {
     return `
-      <div class="cart-signin-message">
-        <a href="#" class="cart-signin-link" id="cart-signin-link">Sign in</a> to see if you have any saved items
-      </div>
+      <p class="mini-cart__message"><a href="/">Sign in</a> to see if you have any saved items</p>
     `;
   }
   
@@ -656,7 +635,7 @@ async function updateMiniCartDisplay(block) {
   }
   
   // Clear existing cart content (except title) - use a more comprehensive approach
-  const existingElements = cartContent.querySelectorAll('.cart-signin-message, .cart-empty-message, .cart-items, .cart-subtotal, .cart-actions');
+  const existingElements = cartContent.querySelectorAll('.mini-cart__message, .cart-empty-message, .cart-items, .cart-subtotal, .cart-actions');
   existingElements.forEach(el => el.remove());
   
   // Update cart title and content
@@ -818,11 +797,11 @@ function refreshHeader(block) {
         <div class="cmp-experiencefragment">
           <div class="cmp-container cmp-header container">
             ${buildLogo(data.logos)}
-            ${buildNavigation(data.navigationItems, data.showSearch, data.showProfile, data.showCart, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
+            ${buildNavigation(data.navigationItems, data.showProfile, data.showCart, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
           </div>
         </div>
       </header>
-      ${buildMobileMenu(data.navigationItems, data.showSearch, data.profileMenuItems, data.profileMenuLoggedInItems, data.searchPlaceholder, icons)}
+      ${buildMobileMenu(data.navigationItems, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
     </div>
   `;
 
@@ -858,11 +837,11 @@ export default function decorate(block) {
         <div class="cmp-experiencefragment">
           <div class="cmp-container cmp-header container">
             ${buildLogo(data.logos)}
-            ${buildNavigation(data.navigationItems, data.showSearch, data.showProfile, data.showCart, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
+            ${buildNavigation(data.navigationItems, data.showProfile, data.showCart, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
           </div>
         </div>
       </header>
-      ${buildMobileMenu(data.navigationItems, data.showSearch, data.profileMenuItems, data.profileMenuLoggedInItems, data.searchPlaceholder, icons)}
+      ${buildMobileMenu(data.navigationItems, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
     </div>
   `;
 
