@@ -1,6 +1,7 @@
 {
   "mappings": [
     "/content/ROG/:/",
+    "/content/ROG.resource/fragments/head.plain.html:/fragments/head.plain.html",
     "/content/ROG/configuration:/.helix/config.json",
     "/content/asus-cto/language-master/en:/",
     "/content/asus-cto/language-master/en/configuration:/.helix/config.json",
