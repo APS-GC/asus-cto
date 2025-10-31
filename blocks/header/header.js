@@ -129,17 +129,17 @@ function parseHTMLContent(block) {
     // Get all div elements that contain the structured data
     const contentDivs = block.querySelectorAll('div > p > div');
     
-    console.log('HTML parsing debug:', {
-      blockHTML: block.innerHTML.substring(0, 500),
-      contentDivsLength: contentDivs.length,
-      allDivs: block.querySelectorAll('div').length,
-      allPs: block.querySelectorAll('p').length
-    });
+    // console.log('HTML parsing debug:', {
+    //   blockHTML: block.innerHTML.substring(0, 500),
+    //   contentDivsLength: contentDivs.length,
+    //   allDivs: block.querySelectorAll('div').length,
+    //   allPs: block.querySelectorAll('p').length
+    // });
     
-    if (!contentDivs || contentDivs.length === 0) {
-      console.log('No content divs found in HTML structure');
-      return null;
-    }
+    // if (!contentDivs || contentDivs.length === 0) {
+    //   console.log('No content divs found in HTML structure');
+    //   return null;
+    // }
 
     const parsedData = {
       logos: [],
