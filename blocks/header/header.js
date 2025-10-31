@@ -1,3 +1,6 @@
+import { createOptimizedPicture } from '../../scripts/aem.js';
+import { moveInstrumentation } from '../../scripts/scripts.js';
+
 function parseHeaderData(block) {
   // Initialize empty data structure - values will only come from actual authoring
   const data = {
@@ -128,18 +131,6 @@ function parseHTMLContent(block) {
   try {
     // Get all div elements that contain the structured data
     const contentDivs = block.querySelectorAll('div > p > div');
-    
-    // console.log('HTML parsing debug:', {
-    //   blockHTML: block.innerHTML.substring(0, 500),
-    //   contentDivsLength: contentDivs.length,
-    //   allDivs: block.querySelectorAll('div').length,
-    //   allPs: block.querySelectorAll('p').length
-    // });
-    
-    // if (!contentDivs || contentDivs.length === 0) {
-    //   console.log('No content divs found in HTML structure');
-    //   return null;
-    // }
 
     const parsedData = {
       logos: [],
@@ -327,7 +318,9 @@ function buildLogo(logos) {
     // Render logo structure even if icon source is missing
     // This ensures consistent display between published site and UE authoring
     const logoContent = iconSrc ? 
-      `<img src="${iconSrc}" alt="${altText}" class="logo-default" width="${width}" height="${height}" />` :
+      `<picture>
+        <img src="${iconSrc}" alt="${altText}" class="logo-default" width="${width}" height="${height}" loading="eager" />
+      </picture>` :
       `<span class="logo-placeholder" aria-label="${altText}" title="${altText}">${logo.name.toUpperCase()}</span>`;
     
     return `
@@ -849,8 +842,30 @@ export default function decorate(block) {
   block.innerHTML = headerHTML;
   block.classList.add('experiencefragment');
 
+  // Optimize logo images after HTML is set
+  optimizeLogoImages(block);
+
   // Add header functionality
   initializeHeader(block);
+}
+
+// Function to optimize logo images using createOptimizedPicture
+function optimizeLogoImages(block) {
+  // Find all logo images and optimize them
+  block.querySelectorAll('.logo-wrapper picture > img').forEach((img) => {
+    const optimizedPic = createOptimizedPicture(
+      img.src, 
+      img.alt, 
+      true, // eager loading for logos (above fold)
+      [{ width: '200' }, { width: '400' }] // responsive breakpoints
+    );
+    
+    // Move instrumentation from original to optimized image
+    moveInstrumentation(img, optimizedPic.querySelector('img'));
+    
+    // Replace the original picture with optimized version
+    img.closest('picture').replaceWith(optimizedPic);
+  });
 }
 
 function initializeHeader(block) {
