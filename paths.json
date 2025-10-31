@@ -2,6 +2,7 @@
   "mappings": [
     "/content/ROG/hot-products:/hot-products",
     "/content/ROG/home:/home",
+    "/content/ROG/fragments/:/fragments",
     "/content/ROG/:/rog",
     "/content/asus-cto/language-master/en:/",
     "/content/ROG/configuration:/.helix/config.json",
