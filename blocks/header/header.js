@@ -397,15 +397,6 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
           </button>
           <div class="cart-content">
             <h4 id="mini-cart-title" class="cart-summary">Your cart is empty.</h4>
-            ${!isLoggedIn ? `
-              <div class="cart-signin-message">
-                <a href="#" class="cart-signin-link" id="cart-signin-link">Sign in</a> to see if you have any saved items
-              </div>
-            ` : `
-              <div class="cart-empty-message">
-                <p>Start shopping to add items to your cart</p>
-              </div>
-            `}
           </div>
         </div>
       </div>
@@ -528,7 +519,9 @@ function buildMobileMenu(navigationItems, showSearch, profileMenuItems, profileM
 function mockLogin() {
   localStorage.setItem('isLoggedIn', 'true');
   localStorage.setItem('userName', 'John Doe');
-  console.log('Mock login successful');
+  // Automatically add items to cart for logged-in user
+  localStorage.setItem('hasCartItems', 'true');
+  console.log('Mock login successful - user logged in with items in cart');
 }
 
 // Mock logout function
@@ -536,6 +529,202 @@ function mockLogout() {
   localStorage.removeItem('isLoggedIn');
   localStorage.removeItem('userName');
   console.log('Mock logout successful');
+}
+
+// Mock cart data for testing
+function getMockCartData() {
+  return [
+    {
+      name: 'ASUS ROG Strix G15',
+      image: './blocks/images/cpuImage.png',
+      price: '1299.99',
+      quantity: 1,
+      description: 'Gaming Laptop - AMD Ryzen 7'
+    },
+    {
+      name: 'ASUS TUF Gaming Monitor',
+      image: './blocks/images/cpu2.png',
+      price: '299.99',
+      quantity: 2,
+      description: '27" 144Hz Display'
+    }
+  ];
+}
+
+// Fetch cart products (mock implementation)
+async function fetchCartProducts() {
+  try {
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Check if user has items in cart (mock logic)
+    const hasCartItems = localStorage.getItem('hasCartItems') === 'true';
+    
+    if (hasCartItems) {
+      return getMockCartData();
+    }
+    
+    return [];
+  } catch (err) {
+    console.error('Error loading cart products:', err);
+    return [];
+  }
+}
+
+// Render individual cart items
+function renderCartItem(product) {
+  const { name, image, price, quantity, description } = product;
+  let descriptionHTML = '';
+  if (description) {
+    descriptionHTML = `<small class="product-description">${description}</small>`;
+  }
+  
+  return `
+    <li class="cart-item" role="listitem" tabindex="0" aria-label="${name}">
+      <div class="cart-item__image">
+        <img src="${image}" alt="${name}" loading="lazy">
+      </div>
+      <div class="cart-item__info">
+        <div class="cart-item__details">
+          <h6 class="cart-item__name">${name}</h6>
+          ${descriptionHTML}
+        </div>
+        <div class="cart-item__pricing">
+          <span class="cart-item__quantity" aria-label="Quantity">x${quantity}</span>
+          <span class="cart-item__price" aria-label="Price">$${price}</span>
+        </div>
+      </div>
+    </li>
+  `;
+}
+
+// Render mini cart content based on login status and cart items
+async function renderMiniCartContent(isLoggedIn) {
+  if (!isLoggedIn) {
+    return `
+      <div class="cart-signin-message">
+        <a href="#" class="cart-signin-link" id="cart-signin-link">Sign in</a> to see if you have any saved items
+      </div>
+    `;
+  }
+  
+  const products = await fetchCartProducts();
+  
+  if (!products.length) {
+    return `
+      <div class="cart-empty-message">
+        <p>Start shopping to add items to your cart</p>
+      </div>
+    `;
+  }
+  
+  const cartItemsHtml = products.map(product => renderCartItem(product)).join('');
+  const subtotal = products.reduce((sum, p) => sum + p.quantity * parseFloat(p.price), 0);
+  
+  return `
+    <ul class="cart-items" role="list">
+      ${cartItemsHtml}
+    </ul>
+    <div class="cart-subtotal">
+      <div class="subtotal-row">
+        <span class="subtotal-label">Subtotal</span>
+        <span class="subtotal-amount" aria-live="polite">$${subtotal.toFixed(2)}</span>
+      </div>
+    </div>
+    <div class="cart-actions">
+      <button class="btn btn--primary cart-checkout-btn" aria-label="View Cart and Checkout">
+        View Cart & Checkout
+      </button>
+    </div>
+  `;
+}
+
+// Update mini cart display
+async function updateMiniCartDisplay(block) {
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const hasCartItems = localStorage.getItem('hasCartItems') === 'true';
+  const miniCartContainer = block.querySelector('#mini-cart-container');
+  const cartTitle = block.querySelector('#mini-cart-title');
+  const cartContent = block.querySelector('.cart-content');
+  const miniCartToggle = block.querySelector('#mini-cart-toggle');
+  
+  console.log('updateMiniCartDisplay called:', { isLoggedIn, hasCartItems, miniCartContainer: !!miniCartContainer, cartTitle: !!cartTitle, cartContent: !!cartContent });
+  
+  if (!miniCartContainer || !cartTitle || !cartContent) {
+    console.log('Missing cart elements');
+    return;
+  }
+  
+  // Clear existing cart content (except title) - use a more comprehensive approach
+  const existingElements = cartContent.querySelectorAll('.cart-signin-message, .cart-empty-message, .cart-items, .cart-subtotal, .cart-actions');
+  existingElements.forEach(el => el.remove());
+  
+  // Update cart title and content
+  if (!isLoggedIn) {
+    cartTitle.textContent = 'Your cart is empty.';
+    if (miniCartToggle) {
+      miniCartToggle.removeAttribute('data-cart-count');
+    }
+  } else {
+    const products = await fetchCartProducts();
+    console.log('Fetched products:', products);
+    if (!products.length) {
+      cartTitle.textContent = 'Your cart is empty.';
+      if (miniCartToggle) {
+        miniCartToggle.removeAttribute('data-cart-count');
+      }
+    } else {
+      const totalItems = products.reduce((sum, p) => sum + p.quantity, 0);
+      cartTitle.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''} in cart`;
+      if (miniCartToggle) {
+        miniCartToggle.setAttribute('data-cart-count', totalItems);
+      }
+    }
+  }
+  
+  // Add new content
+  const newContent = await renderMiniCartContent(isLoggedIn);
+  console.log('Generated new content:', newContent);
+  cartContent.insertAdjacentHTML('beforeend', newContent);
+  
+  // Re-attach cart sign-in event listener if needed
+  const newCartSigninLink = cartContent.querySelector('#cart-signin-link');
+  if (newCartSigninLink) {
+    newCartSigninLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('Cart sign-in clicked');
+      mockLogin();
+      refreshHeader(block);
+    });
+  }
+}
+
+// Mock function to add items to cart (for testing)
+function mockAddToCart() {
+  localStorage.setItem('hasCartItems', 'true');
+  console.log('Mock items added to cart');
+}
+
+// Mock function to clear cart (for testing)
+function mockClearCart() {
+  localStorage.removeItem('hasCartItems');
+  console.log('Mock cart cleared');
+}
+
+// Make functions available globally for testing
+if (typeof window !== 'undefined') {
+  window.mockAddToCart = mockAddToCart;
+  window.mockClearCart = mockClearCart;
+  window.mockLogin = mockLogin;
+  window.mockLogout = mockLogout;
+  
+  // Add function to refresh mini cart for testing
+  window.refreshMiniCart = () => {
+    const headerBlock = document.querySelector('.header');
+    if (headerBlock) {
+      updateMiniCartDisplay(headerBlock);
+    }
+  };
 }
 
 // Refresh header function to re-render with current login state
@@ -821,8 +1010,14 @@ function initializeHeader(block) {
   const miniCartContainer = block.querySelector('#mini-cart-container');
   
   if (miniCartToggle && miniCartContainer) {
-    miniCartToggle.addEventListener('click', () => {
+    miniCartToggle.addEventListener('click', async () => {
       const isExpanded = miniCartToggle.getAttribute('aria-expanded') === 'true';
+      
+      if (!isExpanded) {
+        // Update cart content before showing
+        await updateMiniCartDisplay(block);
+      }
+      
       miniCartToggle.setAttribute('aria-expanded', !isExpanded);
       miniCartContainer.setAttribute('aria-hidden', isExpanded);
       miniCartContainer.classList.toggle('show', !isExpanded);
@@ -838,6 +1033,9 @@ function initializeHeader(block) {
       miniCartContainer.classList.remove('show');
     });
   }
+
+  // Initialize mini cart display
+  updateMiniCartDisplay(block);
 
   // Cart sign-in link functionality
   const cartSigninLink = block.querySelector('#cart-signin-link');

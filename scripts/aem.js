@@ -763,8 +763,8 @@ async function loadHeader(header) {
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
 async function loadHeaderFragment() {
-  const fragmentUrl = '/nav';
-  const resp = await fetch(`${fragmentUrl}.plain.html`);
+  const fragmentUrl = './fragments/head.plain.html';
+  const resp = await fetch(fragmentUrl);
   try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
