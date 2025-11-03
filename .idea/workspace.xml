@@ -14,12 +14,14 @@
   "keyToString": {
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
     "dart.analysis.tool.window.visible": "false",
-    "last_opened_file_path": "/Volumes/EasonSSD/Documents/AdobeOffice/Clients/ASUS/aem/cto/source/git/eds/asus-cto/blocks/footer",
+    "last_opened_file_path": "/Volumes/EasonSSD/Documents/AdobeOffice/Clients/ASUS/aem/cto/source/git/eds/asus-cto/blocks/help-me-choose/uifrontend",
     "node.js.selected.package.tslint": "(autodetect)"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/blocks/help-me-choose/uifrontend" />
+      <recent name="$PROJECT_DIR$/blocks/help-me-choose" />
       <recent name="$PROJECT_DIR$/blocks/footer" />
       <recent name="$PROJECT_DIR$/styles" />
     </key>
