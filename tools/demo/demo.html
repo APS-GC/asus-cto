@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEM Header Web Component Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .demo-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .demo-controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .demo-controls button {
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .demo-controls button:hover {
+            background: #0056b3;
+        }
+        
+        .demo-content {
+            min-height: 300px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        
+        .code-block {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>AEM Header Web Component Demo</h1>
+        
+        <div class="demo-section">
+            <h2>Live Header Component</h2>
+            <p>This demonstrates the AEM Header as a web component that can be embedded in any third-party site:</p>
+            
+            <!-- AEM Header Web Component -->
+            <aem-header 
+                fragment-url="/fragments/head.plain.html">
+            </aem-header>
+            
+            <div class="status info" id="status">
+                Loading header component...
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Interactive Controls</h2>
+            <p>Test the web component API:</p>
+            
+            <div class="demo-controls">
+                <button onclick="refreshHeader()">Refresh Header</button>
+                <button onclick="loginUser()">Login User</button>
+                <button onclick="logoutUser()">Logout User</button>
+                <button onclick="updateCart(5)">Add Cart Items (5)</button>
+                <button onclick="updateCart(0)">Clear Cart</button>
+                <button onclick="getConfig()">Get Config</button>
+            </div>
+            
+            <div id="output" class="code-block">
+                Click buttons above to test the web component API...
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Integration Code</h2>
+            <p>To use this header in your third-party site, include:</p>
+            
+            <h3>HTML:</h3>
+            <div class="code-block">
+&lt;!-- Include the web component script --&gt;
+&lt;script src="https://main--asus--aem-comp.aem.live/blocks/header/aem-header.js"&gt;&lt;/script&gt;
+
+&lt;!-- Use the component --&gt;
+&lt;aem-header 
+    fragment-url="https://main--asus--aem-comp.aem.live/nav.plain.html"
+    base-url="https://main--asus--aem-comp.aem.live"&gt;
+&lt;/aem-header&gt;
+            </div>
+            
+            <h3>JavaScript API:</h3>
+            <div class="code-block">
+// Get reference to the header component
+const header = document.querySelector('aem-header');
+
+// Refresh the header
+header.refresh();
+
+// Set user login state
+header.setUserState(true, 'John Doe');
+
+// Update cart count
+header.setCartCount(3);
+
+// Listen for events
+header.addEventListener('aem-header-loaded', (e) => {
+    console.log('Header loaded successfully');
+});
+
+header.addEventListener('aem-header-error', (e) => {
+    console.error('Header error:', e.detail.error);
+});
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>CORS Configuration</h2>
+            <p>For production use, ensure your EDS site has proper CORS headers configured:</p>
+            
+            <div class="code-block">
+# In your EDS project, create/update headers configuration:
+# .hlx/headers.yaml or similar
+
+headers:
+  - key: Access-Control-Allow-Origin
+    value: https://your-third-party-site.com
+  - key: Access-Control-Allow-Methods
+    value: GET, POST, OPTIONS
+  - key: Access-Control-Allow-Headers
+    value: Content-Type, Authorization
+            </div>
+        </div>
+        
+        <div class="demo-content">
+            <h2>Demo Content Area</h2>
+            <p>This area represents the third-party site's content. The header above is completely independent and managed through AEM/EDS.</p>
+            <p>Key benefits:</p>
+            <ul>
+                <li>✅ Centralized header management through Universal Editor</li>
+                <li>✅ Consistent branding across all properties</li>
+                <li>✅ Real-time updates without third-party site deployments</li>
+                <li>✅ Full responsive design and accessibility</li>
+                <li>✅ Event-driven API for integration</li>
+                <li>✅ Fallback rendering for reliability</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Load the AEM Header Web Component -->
+    <script src="../../blocks/header/aem-header.js"></script>
+    
+    <script>
+        // Demo functionality
+        let headerComponent;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            headerComponent = document.querySelector('aem-header');
+            
+            // Listen for header events
+            headerComponent.addEventListener('aem-header-loaded', (e) => {
+                updateStatus('Header loaded successfully!', 'success');
+                log('Header loaded event received');
+            });
+            
+            headerComponent.addEventListener('aem-header-error', (e) => {
+                updateStatus(`Header error: ${e.detail.error}`, 'error');
+                log(`Header error: ${e.detail.error}`);
+            });
+            
+            headerComponent.addEventListener('aem-header-refreshed', (e) => {
+                updateStatus('Header refreshed!', 'success');
+                log('Header refreshed event received');
+            });
+        });
+        
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+        
+        function log(message) {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `[${timestamp}] ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function refreshHeader() {
+            if (headerComponent) {
+                headerComponent.refresh();
+                log('Refresh header called');
+            }
+        }
+        
+        function loginUser() {
+            if (headerComponent) {
+                headerComponent.setUserState(true, 'Demo User');
+                log('User logged in: Demo User');
+            }
+        }
+        
+        function logoutUser() {
+            if (headerComponent) {
+                headerComponent.setUserState(false);
+                log('User logged out');
+            }
+        }
+        
+        function updateCart(count) {
+            if (headerComponent) {
+                headerComponent.setCartCount(count);
+                log(`Cart updated: ${count} items`);
+            }
+        }
+        
+        function getConfig() {
+            if (headerComponent) {
+                const config = headerComponent.getConfig();
+                log(`Current config: ${JSON.stringify(config, null, 2)}`);
+            }
+        }
+        
+        // Simulate some demo interactions
+        setTimeout(() => {
+            log('Demo initialized - try the buttons above!');
+        }, 1000);
+    </script>
+</body>
+</html>
