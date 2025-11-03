@@ -1266,5 +1266,19 @@
         "valueType": "boolean"
       }
     ]
+  },
+  {
+    "id": "help-me-choose",
+    "fields": [
+      {
+        "component": "text",
+        "name": "title",
+        "label": "Title",
+        "valueType": "string",
+        "validation": {
+          "required": true
+        }
+      }
+    ]
   }
 ]
