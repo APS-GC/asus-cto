@@ -31,5 +31,13 @@
         }
       ]
     }
+  ],
+  "filters": [
+    {
+      "id": "section",
+      "components": [
+        "help-me-choose-component"
+      ]
+    }
   ]
 }
