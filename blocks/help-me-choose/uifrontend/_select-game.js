@@ -331,7 +331,7 @@ const initSelectGameForms = (context) => {
 };
 
 // Initialize on initial page load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('asus-cto-DOMContentLoaded', () => {
   initSelectGameForms(document.body);
 
   // Start observing the entire document for changes
