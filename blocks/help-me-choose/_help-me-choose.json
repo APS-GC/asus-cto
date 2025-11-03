@@ -1,14 +1,14 @@
 {
   "definitions": [
     {
-      "title": "Help Me Choose Component",
+      "title": "Help Me Choose",
       "id": "help-me-choose",
       "plugins": {
         "xwalk": {
           "page": {
             "resourceType": "core/franklin/components/block/v1/block",
             "template": {
-              "name": "Help Me Choose Component",
+              "name": "Help Me Choose",
               "model": "help-me-choose"
             }
           }
