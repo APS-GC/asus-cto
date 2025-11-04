@@ -411,7 +411,7 @@ function buildNavigation(navigationItems, showProfile, showCart, profileMenuItem
         <ul class="profile-menu">
           <li class="profile-menu__header">
             <button class="profile-menu__close" aria-label="Close profile menu">
-              <span class="icon--close"></span>
+              <span class="icon icon--close"></span>
             </button>
           </li>
           ${userNameElement}
@@ -889,7 +889,7 @@ function initializeHeader(block) {
       const isExpanded = hamburgerToggle.getAttribute('aria-expanded') === 'true';
       hamburgerToggle.setAttribute('aria-expanded', !isExpanded);
       mobileMenuOverlay.setAttribute('aria-hidden', isExpanded);
-      document.body.classList.toggle('mobile-menu-open', !isExpanded);
+      block.classList.toggle('mm-open', !isExpanded);
     });
   }
 
@@ -1067,7 +1067,7 @@ function initializeHeader(block) {
       if (e.target === mobileMenuOverlay) {
         hamburgerToggle.setAttribute('aria-expanded', 'false');
         mobileMenuOverlay.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('mobile-menu-open');
+        block.classList.remove('mm-open');
       }
     });
   }

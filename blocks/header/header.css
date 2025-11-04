@@ -224,6 +224,9 @@ body:has(.overlap-header) .header-wrapper {
    Mobile Menu
    ========================================================================== */
 
+.header.mm-open .mobile-menu-overlay {
+  display: block;
+}
 .mobile-menu-overlay {
   position: absolute;
   top: 100%;
@@ -415,33 +418,34 @@ body:has(.overlap-header) .header-wrapper {
 }
 
 /* ==========================================================================
-   Menu Toggle States
+   Menu Toggle States * Used*
    ========================================================================== */
 
-body:not(.mobile-menu-open) .icon--close {
+.header:not(.mm-open) .icon--close {
   display: none;
 }
 
-body:not(.mobile-menu-open) .icon--hamburger {
+.header:not(.mm-open) .icon--hamburger {
   display: block;
 }
 
-body.mobile-menu-open {
+.header.mm-open .icon--close {
+  display: block;
+}
+
+.header.mm-open .icon--hamburger {
+  display: none;
+}
+
+/* Prevent body scroll when mobile menu is open */
+.header.mm-open {
+  position: relative;
+}
+
+body:has(.header.mm-open) {
   position: fixed;
   width: 100%;
   overflow: hidden;
-}
-
-body.mobile-menu-open .mobile-menu-overlay {
-  display: flex;
-}
-
-body.mobile-menu-open .icon--close {
-  display: block;
-}
-
-body.mobile-menu-open .icon--hamburger {
-  display: none;
 }
 
 /* ==========================================================================
