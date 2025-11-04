@@ -4,6 +4,7 @@
  * ========================================================================== */
 
 /* CSS Custom Properties for Colors - Aligned with webpack/scss design system */
+
 :root {
   /* ASUS Brand Colors - Aligned with webpack/scss */
   --color-brand-asus: #0057b7;        /* ASUS Blue */
@@ -34,6 +35,20 @@
   --color-border-type: #1a821c;       /* Border type color */
   --color-select-box-highlight: #248dff; /* Select box highlight */
   
+  /* Button System - Moved from webpack/components/button */
+  --btn-bg: var(--color-primary-950);
+  --btn-color: var(--color-primary);
+  --btn-disabled-bg: var(--color-primary-600);
+  --btn-disabled-color: var(--color-primary-800);
+  --btn-hover-bg: var(--color-primary-700);
+  --btn-outline-border: var(--color-primary-950);
+  --btn-outline-disabled-border: var(--color-primary-600);
+  --btn-outline-hover-bg: var(--color-primary-950);
+  --btn-outline-hover-color: var(--color-primary);
+  --btn-link-color: var(--color-primary-950);
+  --btn-link-disabled-color: var(--color-primary-600);
+  --btn-link-hover-color: var(--color-primary-950);
+
   /* Legacy color mappings for backward compatibility */
   --color-white: var(--color-primary-950);
   --color-black: var(--color-primary);
@@ -185,6 +200,10 @@
   font-display: swap; /* Immediate text render with fallback, swap to web font when loaded */
 }
 
+*{
+  box-sizing: border-box;
+}
+
 /* Base Typography Styles */
 body {
  background-color: var(--color-primary); 
@@ -194,8 +213,8 @@ body {
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
   letter-spacing: var(--letter-spacing-normal);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
   
   /* LCP Optimization: Start visible to prevent text render blocking */
   opacity: 1;
@@ -2162,69 +2181,173 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Buttons */
+/* ========================================================================== 
+ * Button System - Moved from webpack/components/button
+ * ========================================================================== */
+
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
-  border: 1px solid transparent;
-  border-radius: var(--radius-md);
-  font-weight: var(--font-weight-medium);
+  border: none;
   text-decoration: none;
   transition: all 0.2s ease;
+  border-radius: 0.5rem;
   cursor: pointer;
+  font-weight: 400;
+  white-space: nowrap;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  gap: 0.75rem;
+  font-family: var(--font-text);
+  font-weight: var(--regular);
+  letter-spacing: 0;
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+}
+.btn:disabled {
+  cursor: not-allowed;
+  background-color: var(--btn-disabled-bg);
+  color: var(--btn-disabled-color);
+}
+.btn:hover:not(:disabled) {
+    background-color: var(--btn-hover-bg)
 }
 
-.btn-primary {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  border-color: var(--color-primary);
+.btn:focus-visible:not(:disabled) {
+    box-shadow: 0 0 0 2px var(--color-focus-ring);
+    outline: solid 2px var(--btn-bg);
+    outline-offset: 2px
 }
-
-.btn-primary:hover {
-  background-color: var(--color-primary-dark);
-  border-color: var(--color-primary-dark);
-  color: var(--color-white);
-  text-decoration: none;
+.btn-sm {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
 }
-
-.btn-secondary {
-  background-color: var(--color-secondary);
-  color: var(--color-white);
-  border-color: var(--color-secondary);
-}
-
-.btn-secondary:hover {
-  background-color: var(--color-secondary-dark);
-  border-color: var(--color-secondary-dark);
-  color: var(--color-white);
-  text-decoration: none;
-}
-
-.btn-outline-primary {
+.btn-outline {
   background-color: transparent;
-  color: var(--color-primary);
-  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 2px var(--btn-outline-border);
+  color: var(--btn-outline-border);
 }
-
-.btn-outline-primary:hover {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  text-decoration: none;
-}
-
-.btn-outline-secondary {
+.btn-outline:disabled {
   background-color: transparent;
-  color: var(--color-secondary);
-  border-color: var(--color-secondary);
+  box-shadow: inset 0 0 0 2px var(--btn-outline-disabled-border);
+  color: var(--btn-outline-disabled-border);
+}
+.btn-outline:hover:not(:disabled), .btn-outline:focus:not(:disabled) {
+  background-color: var(--btn-outline-hover-bg);
+  color: var(--btn-outline-hover-color);
+}
+.btn-link {
+  background-color: transparent;
+  color: var(--btn-link-color);
+  padding: 0;
+  gap: 0.5rem;
+}
+.btn-link:disabled {
+  background-color: transparent;
+  color: var(--btn-link-disabled-color);
+}
+.btn-link:hover:not(:disabled), .btn-link:focus:not(:disabled) {
+  background-color: transparent;
+  color: var(--btn-link-hover-color);
+  text-decoration: underline;
+}
+.btn-link.btn-sm {
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
-.btn-outline-secondary:hover {
-  background-color: var(--color-secondary);
-  color: var(--color-white);
-  text-decoration: none;
+/* ========================================================================== 
+ * Button System - Moved from webpack/components/button
+ * ========================================================================== */
+
+.icon {
+    background-color: currentColor;
+    display: inline-block;
+    height: 1rem;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    width: 1rem
 }
+
+.icon--plus {
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="black" stroke-width="1"/><path d="M5 8H11" stroke="black" stroke-width="1" stroke-linecap="round"/><path d="M8 5L8 11" stroke="black" stroke-width="1" stroke-linecap="round"/></svg>')
+}
+
+.icon--plus-white {
+    color: var(--color-primary-900);
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 8H11" stroke="white" stroke-width="1" stroke-linecap="round"/><path d="M8 5V11" stroke="white" stroke-width="1" stroke-linecap="round"/></svg>')
+}
+
+.icon--info {
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none"><circle cx="8" cy="8.3584" r="6.5" stroke="black" stroke-width="1"/><rect x="7.25" y="7.3584" width="1.5" height="5.5" rx="0.75" fill="black"/><rect x="7" y="4.3584" width="2" height="2" rx="1" fill="black"/></svg>')
+}
+
+.icon--arrow-right {
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M1.75811 13.8672L8.12207 7.50323L1.75811 1.13927" stroke="black" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg>')
+}
+
+.icon--arrow-left {
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="15" viewBox="0 0 10 15" fill="none"><path d="M8.24189 1.13281L1.87793 7.49677L8.24189 13.8607" stroke="black" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg>')
+}
+
+.icon--arrow-bottom {
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none"> <path d="M1.8125 3.95239L6.6875 8.07739L11.5625 3.95239" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>')
+}
+
+.icon--arrow-top {
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="13" viewBox="0 0 12 13" fill="none"><path d="M10.875 7.88965L6 3.76465L1.125 7.88965" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>')
+}
+
+.icon--arrow-wide-right {
+    mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 12 12"><path stroke="%23fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m3.938 10.688 4.124-4.876L3.939.939"/><script/></svg>')
+}
+
+.icon--loader {
+    mask-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' fill='none' viewBox='0 0 48 48'%3E%3Cg clip-path='url(%23a)'%3E%3Cpath stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='4' d='M46 24a22 22 0 1 0-22 22' opacity='.6'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='a'%3E%3Cpath fill='%23fff' d='M0 0h48v48H0z'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E")
+}
+
+.icon--profile {
+    mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 18 18"><circle cx="9" cy="6" r="3.375" stroke="currentColor" stroke-width="1.2"/><path stroke="currentColor" stroke-linejoin="round" stroke-width="1.2" d="M9 9.375a6 6 0 0 0-6 6h12a6 6 0 0 0-6-6Z"/></svg>')
+}
+
+.icon--cart {
+    mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 18 18"><path fill="currentColor" d="M14 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2M7 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.2" d="M2 2.5h2.291l2.209 11h8m-9.209-9h11l-1.709 6.868h-8.51"/></svg>')
+}
+
+.icon--search {
+    mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><circle cx="10.929" cy="10.929" r="8.829" stroke="%23fff" stroke-width="1.2"/><path stroke="%23fff" stroke-linecap="round" stroke-width="1.2" d="m17.411 17.411 4.714 4.714"/></svg>')
+}
+
+.icon--hamburger {
+    mask-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' viewBox='0 0 18 18'%3E%3Cg clip-path='url(%23a)'%3E%3Cmask id='b' width='18' height='18' x='0' y='0' maskUnits='userSpaceOnUse' style='mask-type:luminance'%3E%3Cpath fill='%23fff' d='M0 0h18v18H0z'/%3E%3C/mask%3E%3Cg mask='url(%23b)'%3E%3Cpath stroke='%23fff' stroke-linecap='round' stroke-miterlimit='10' d='M1.5 9h15m-15-5.5h15m-15 11h15'/%3E%3C/g%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='a'%3E%3Cpath fill='%23fff' d='M0 0h18v18H0z'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E")
+}
+
+.icon--close {
+    mask-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' viewBox='0 0 18 18'%3E%3Cpath stroke='%23fff' stroke-linecap='round' stroke-width='1.2' d='M15 3 3 15M3 3l12 12'/%3E%3C/svg%3E")
+}
+
+.icon--bookmark {
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 14.6811L17.8 18.762V3.2H6.2V18.762L12 14.6811ZM4 23V3C4 1.89543 4.89543 1 6 1H18C19.1046 1 20 1.89543 20 3V23L12 17.3711L4 23Z" fill="white"/></svg>')
+}
+
+.icon--info-filled {
+    mask-image: url("data:image/svg+xml;utf8,<svg width='14' height='14' viewBox='0 0 14 14' xmlns='http://www.w3.org/2000/svg'><circle cx='7' cy='7' r='6.5' transform='matrix(-1 8.74228e-08 8.74228e-08 1 14 0)' fill='white' stroke='white'/><rect width='1.5' height='5.5' rx='0.75' transform='matrix(-1 2.62268e-07 2.62268e-07 1 7.75 2.5)' fill='white'/><rect width='2' height='2' rx='1' transform='matrix(-1 2.62268e-07 2.62268e-07 1 8 9)' fill='white'/></svg>")
+}
+
 
 /* Form Elements */
 input,

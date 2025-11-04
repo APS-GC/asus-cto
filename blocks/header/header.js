@@ -1,49 +1,17 @@
+import { createOptimizedPicture } from '../../scripts/aem.js';
+import { moveInstrumentation } from '../../scripts/scripts.js';
+
 function parseHeaderData(block) {
-  // Initialize default data structure - values will come from UE authoring
+  // Initialize empty data structure - values will only come from actual authoring
   const data = {
-    logos: [
-      { 
-        name: 'asus', 
-        icon: '', 
-        altText: 'ASUS Logo', 
-        url: '#',
-        width: '87', 
-        height: '20' 
-      },
-      { 
-        name: 'rog', 
-        icon: '', 
-        altText: 'ROG Logo', 
-        url: '#',
-        width: '135', 
-        height: '26' 
-      },
-      { 
-        name: 'gaming', 
-        icon: '', 
-        altText: 'Gaming PC Custom Builder Logo', 
-        url: '#',
-        width: '104', 
-        height: '22' 
-      }
-    ],
-    navigationItems: [
-      { linkText: 'All Desktops', linkUrl: '/product-listing.html' },
-      { linkText: 'Help Me Choose', linkUrl: '/help-me-choose.html' },
-      { linkText: 'News & Articles', linkUrl: '/news-articles.html' }
-    ],
-    showSearch: true,
-    showProfile: true,
-    showCart: true,
-    profileMenuItems: [
-      { linkText: 'Login', linkUrl: '#' },
-      { linkText: 'My Account', linkUrl: '#' },
-      { linkText: 'Product Registration', linkUrl: '#' },
-      { linkText: 'Check My Order', linkUrl: '#' },
-      { linkText: 'My Wishlist', linkUrl: '#' },
-      { linkText: 'Sign out', linkUrl: '#' }
-    ],
-    searchPlaceholder: 'Enter keywords',
+    logos: [],
+    navigationItems: [],
+    showSearch: false,
+    showProfile: false,
+    showCart: false,
+    profileMenuItems: [],
+    profileMenuLoggedInItems: [],
+    searchPlaceholder: '',
     searchIcon: '',
     cartIcon: '',
     profileIcon: '',
@@ -56,13 +24,20 @@ function parseHeaderData(block) {
   // First try to parse from HTML content structure
   const parsedFromHTML = parseHTMLContent(block);
   if (parsedFromHTML) {
-    // Merge parsed HTML data with defaults
+    // Use parsed HTML data - only populate if actual content exists
     if (parsedFromHTML.logos && parsedFromHTML.logos.length > 0) {
       data.logos = parsedFromHTML.logos;
     }
     if (parsedFromHTML.navigationItems && parsedFromHTML.navigationItems.length > 0) {
       data.navigationItems = parsedFromHTML.navigationItems;
     }
+    if (parsedFromHTML.profileMenuItems && parsedFromHTML.profileMenuItems.length > 0) {
+      data.profileMenuItems = parsedFromHTML.profileMenuItems;
+    }
+    if (parsedFromHTML.profileMenuLoggedInItems && parsedFromHTML.profileMenuLoggedInItems.length > 0) {
+      data.profileMenuLoggedInItems = parsedFromHTML.profileMenuLoggedInItems;
+    }
+    // Set boolean flags from parsed HTML
     if (typeof parsedFromHTML.showSearch === 'boolean') {
       data.showSearch = parsedFromHTML.showSearch;
     }
@@ -72,9 +47,6 @@ function parseHeaderData(block) {
     if (typeof parsedFromHTML.showCart === 'boolean') {
       data.showCart = parsedFromHTML.showCart;
     }
-    if (parsedFromHTML.searchIcon) data.searchIcon = parsedFromHTML.searchIcon;
-    if (parsedFromHTML.cartIcon) data.cartIcon = parsedFromHTML.cartIcon;
-    if (parsedFromHTML.profileIcon) data.profileIcon = parsedFromHTML.profileIcon;
   }
 
   // Override with Universal Editor model data if available
@@ -84,10 +56,20 @@ function parseHeaderData(block) {
     console.log('Universal Editor Model Data:', modelData);
     
     // Parse individual logo fields - only use UE authoring values
+    // Initialize logos array if needed
+    if (data.logos.length === 0) {
+      data.logos = [
+        { name: 'asus', icon: '', altText: 'ASUS Logo', url: '#', width: '87', height: '20' },
+        { name: 'rog', icon: '', altText: 'ROG Logo', url: '#', width: '135', height: '26' },
+        { name: 'gaming', icon: '', altText: 'Gaming PC Custom Builder Logo', url: '#', width: '104', height: '22' }
+      ];
+    }
+    
     if (modelData.asusLogoImage || modelData.asusLogoAltText || modelData.asusLogoUrl) {
+      if (!data.logos[0]) data.logos[0] = { name: 'asus', icon: '', altText: 'ASUS Logo', url: '#', width: '87', height: '20' };
       data.logos[0] = {
         name: 'asus',
-        icon: modelData.asusLogoImage || '',
+        icon: modelData.asusLogoImage || data.logos[0].icon,
         altText: modelData.asusLogoAltText || data.logos[0].altText,
         url: modelData.asusLogoUrl || data.logos[0].url,
         width: data.logos[0].width,
@@ -96,9 +78,10 @@ function parseHeaderData(block) {
     }
     
     if (modelData.rogLogoImage || modelData.rogLogoAltText || modelData.rogLogoUrl) {
+      if (!data.logos[1]) data.logos[1] = { name: 'rog', icon: '', altText: 'ROG Logo', url: '#', width: '135', height: '26' };
       data.logos[1] = {
         name: 'rog',
-        icon: modelData.rogLogoImage || '',
+        icon: modelData.rogLogoImage || data.logos[1].icon,
         altText: modelData.rogLogoAltText || data.logos[1].altText,
         url: modelData.rogLogoUrl || data.logos[1].url,
         width: data.logos[1].width,
@@ -107,9 +90,10 @@ function parseHeaderData(block) {
     }
     
     if (modelData.gamingPcLogoImage || modelData.gamingPcLogoAltText || modelData.gamingPcLogoUrl) {
+      if (!data.logos[2]) data.logos[2] = { name: 'gaming', icon: '', altText: 'Gaming PC Custom Builder Logo', url: '#', width: '104', height: '22' };
       data.logos[2] = {
         name: 'gaming',
-        icon: modelData.gamingPcLogoImage || '',
+        icon: modelData.gamingPcLogoImage || data.logos[2].icon,
         altText: modelData.gamingPcLogoAltText || data.logos[2].altText,
         url: modelData.gamingPcLogoUrl || data.logos[2].url,
         width: data.logos[2].width,
@@ -146,12 +130,7 @@ function parseHeaderData(block) {
 function parseHTMLContent(block) {
   try {
     // Get all div elements that contain the structured data
-    const contentDivs = block.querySelectorAll('div > p > div');
-    
-    if (!contentDivs || contentDivs.length === 0) {
-      console.log('No content divs found in HTML structure');
-      return null;
-    }
+    const contentDivs = block.querySelectorAll('div > div > div');
 
     const parsedData = {
       logos: [],
@@ -161,7 +140,13 @@ function parseHTMLContent(block) {
       showCart: true,
       searchIcon: null,
       cartIcon: null,
-      profileIcon: null
+      profileIcon: null,
+      hamburgerIcon: null,
+      closeIcon: null,
+      arrowLeftIcon: null,
+      arrowRightIcon: null,
+      profileMenuItems: [],
+      profileMenuLoggedInItems: []
     };
 
     const logoNames = ['asus', 'rog', 'gaming'];
@@ -178,16 +163,41 @@ function parseHTMLContent(block) {
       };
     });
     
-    // Process first 9 divs in groups of 3 for each logo (ASUS, ROG, Gaming)
-    for (let logoIndex = 0; logoIndex < 3; logoIndex++) {
-      const startIndex = logoIndex * 3;
-      const endIndex = startIndex + 3;
+    // Process divs according to the new mapping:
+    // 1st div > href link for logos
+    // 2nd div > ASUS Logo Alt Text
+    // 3rd div > ASUS Logo Image
+    // 4th div > ROG Logo Alt Text
+    // 5th div > ROG Logo Image
+    // 6th div > Gaming PC Logo Alt Text
+    // 7th div > Gaming PC Logo Image
+    // 8th div > Navigation Links
+    // 9th div > profileMenuItems (always visible)
+    // 10th div > profileMenuLoggedInItems (only visible when user logs in)
+    
+    for (let index = 0; index < contentDivs.length && index < 10; index++) {
+      const div = contentDivs[index];
+      const textContent = div.textContent?.trim();
       
-      for (let divIndex = startIndex; divIndex < endIndex && divIndex < contentDivs.length; divIndex++) {
-        const div = contentDivs[divIndex];
-        const textContent = div.textContent?.trim();
-        
-        // Check for picture elements (logo images)
+      if (index === 0) {
+        // 1st div: href link for logos
+        const buttonContainer = div.querySelector('.button-container a');
+        if (buttonContainer) {
+          const href = buttonContainer.getAttribute('href');
+          if (href) {
+            // Apply the same URL to all logos
+            parsedData.logos.forEach(logo => {
+              logo.url = href;
+            });
+          }
+        }
+      } else if (index === 1) {
+        // 2nd div: ASUS Logo Alt Text
+        if (textContent) {
+          parsedData.logos[0].altText = textContent;
+        }
+      } else if (index === 2) {
+        // 3rd div: ASUS Logo Image
         const picture = div.querySelector('picture img');
         if (picture) {
           const src = picture.getAttribute('src');
@@ -195,77 +205,78 @@ function parseHTMLContent(block) {
           const height = picture.getAttribute('height');
           
           if (src) {
-            parsedData.logos[logoIndex].icon = src;
-            if (width) parsedData.logos[logoIndex].width = width;
-            if (height) parsedData.logos[logoIndex].height = height;
+            parsedData.logos[0].icon = src;
+            if (width) parsedData.logos[0].width = width;
+            if (height) parsedData.logos[0].height = height;
           }
         }
-        
-        // Check for button containers with links (logo URLs)
-        const buttonContainer = div.querySelector('.button-container a');
-        if (buttonContainer) {
-          const href = buttonContainer.getAttribute('href');
-          if (href) {
-            parsedData.logos[logoIndex].url = href;
+      } else if (index === 3) {
+        // 4th div: ROG Logo Alt Text
+        if (textContent) {
+          parsedData.logos[1].altText = textContent;
+        }
+      } else if (index === 4) {
+        // 5th div: ROG Logo Image
+        const picture = div.querySelector('picture img');
+        if (picture) {
+          const src = picture.getAttribute('src');
+          const width = picture.getAttribute('width');
+          const height = picture.getAttribute('height');
+          
+          if (src) {
+            parsedData.logos[1].icon = src;
+            if (width) parsedData.logos[1].width = width;
+            if (height) parsedData.logos[1].height = height;
           }
         }
-        
-        // Check for alt text content
-        if (textContent && (textContent.toLowerCase().includes('logo') || textContent.toLowerCase().includes('alt'))) {
-          parsedData.logos[logoIndex].altText = textContent;
+      } else if (index === 5) {
+        // 6th div: Gaming PC Logo Alt Text
+        if (textContent) {
+          parsedData.logos[2].altText = textContent;
         }
-      }
-    }
-    
-    // Process remaining divs for navigation and other elements
-    for (let index = 9; index < contentDivs.length; index++) {
-      const div = contentDivs[index];
-      const textContent = div.textContent?.trim();
-      
-      // Check for navigation list
-      const navList = div.querySelector('ul');
-      if (navList) {
-        const navItems = navList.querySelectorAll('li a');
-        parsedData.navigationItems = Array.from(navItems).map(link => ({
-          linkText: link.textContent?.trim() || '',
-          linkUrl: link.getAttribute('href') || '#'
-        }));
-      }
-      
-      // Check for boolean values (show/hide flags)
-      if (textContent === 'true' || textContent === 'false') {
-        const boolValue = textContent === 'true';
-        
-        // Map boolean values to appropriate flags based on position
-        if (index >= 10 && index <= 12) { // Corrected positions after logo processing
-          if (index === 10) parsedData.showSearch = boolValue;
-          if (index === 11) parsedData.showProfile = boolValue;
-          if (index === 12) parsedData.showCart = boolValue;
-        }
-      }
-      
-      // Check for icon images based on specific div indices
-      const picture = div.querySelector('picture img');
-      if (picture) {
-        const src = picture.getAttribute('src');
-        
-        if (src) {
-          // Map icons based on exact div positions
-          if (index === 14) {
-            parsedData.searchIcon = src;
-          } else if (index === 15) {
-            parsedData.cartIcon = src;
-          } else if (index === 16) {
-            parsedData.profileIcon = src;
-          } else if (index === 17) {
-            parsedData.hamburgerIcon = src;
-          } else if (index === 18) {
-            parsedData.closeIcon = src;
-          } else if (index === 19) {
-            parsedData.arrowLeftIcon = src;
-          } else if (index === 20) {
-            parsedData.arrowRightIcon = src;
+      } else if (index === 6) {
+        // 7th div: Gaming PC Logo Image
+        const picture = div.querySelector('picture img');
+        if (picture) {
+          const src = picture.getAttribute('src');
+          const width = picture.getAttribute('width');
+          const height = picture.getAttribute('height');
+          
+          if (src) {
+            parsedData.logos[2].icon = src;
+            if (width) parsedData.logos[2].width = width;
+            if (height) parsedData.logos[2].height = height;
           }
+        }
+      } else if (index === 7) {
+        // 8th div: Navigation Links
+        const navList = div.querySelector('ul');
+        if (navList) {
+          const navItems = navList.querySelectorAll('li a');
+          parsedData.navigationItems = Array.from(navItems).map(link => ({
+            linkText: link.textContent?.trim() || '',
+            linkUrl: link.getAttribute('href') || '#'
+          }));
+        }
+      } else if (index === 8) {
+        // 9th div: profileMenuItems (always visible)
+        const profileList = div.querySelector('ul');
+        if (profileList) {
+          const profileItems = profileList.querySelectorAll('li a');
+          parsedData.profileMenuItems = Array.from(profileItems).map(link => ({
+            linkText: link.textContent?.trim() || '',
+            linkUrl: link.getAttribute('href') || '#'
+          }));
+        }
+      } else if (index === 9) {
+        // 10th div: profileMenuLoggedInItems (only visible when user logs in)
+        const loggedInList = div.querySelector('ul');
+        if (loggedInList) {
+          const loggedInItems = loggedInList.querySelectorAll('li a');
+          parsedData.profileMenuLoggedInItems = Array.from(loggedInItems).map(link => ({
+            linkText: link.textContent?.trim() || '',
+            linkUrl: link.getAttribute('href') || '#'
+          }));
         }
       }
     }
@@ -281,11 +292,7 @@ function parseHTMLContent(block) {
 
 function parseNavLinks(navLinksText) {
   if (!navLinksText || typeof navLinksText !== 'string') {
-    return [
-      { linkText: 'All Desktops', linkUrl: '/product-listing.html' },
-      { linkText: 'Help Me Choose', linkUrl: '/help-me-choose.html' },
-      { linkText: 'News & Articles', linkUrl: '/news-articles.html' }
-    ];
+    return [];
   }
   
   return navLinksText.split('\n')
@@ -311,7 +318,9 @@ function buildLogo(logos) {
     // Render logo structure even if icon source is missing
     // This ensures consistent display between published site and UE authoring
     const logoContent = iconSrc ? 
-      `<img src="${iconSrc}" alt="${altText}" class="logo-default" width="${width}" height="${height}" />` :
+      `<picture>
+        <img src="${iconSrc}" alt="${altText}" class="logo-default" width="${width}" height="${height}" loading="eager" />
+      </picture>` :
       `<span class="logo-placeholder" aria-label="${altText}" title="${altText}">${logo.name.toUpperCase()}</span>`;
     
     return `
@@ -336,20 +345,16 @@ function buildLogo(logos) {
   `;
 }
 
-function buildNavigation(navigationItems, showSearch, showProfile, showCart, profileMenuItems, icons) {
+function buildNavigation(navigationItems, showProfile, showCart, profileMenuItems, profileMenuLoggedInItems, icons) {
+  // Check if user is logged in (same logic as in webpack implementation)
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const userName = localStorage.getItem('userName') || 'User Name';
+  
   const navItems = navigationItems.map(item => `
     <li class="cmp-sitenavigation__item">
       <a class="cmp-sitenavigation__item-link" href="${item.linkUrl}">${item.linkText}</a>
     </li>
   `).join('');
-
-  const searchIcon = showSearch ? `
-    <li class="cmp-sitenavigation__item cmp-sitenavigation__item--search">
-      <a class="cmp-sitenavigation__item-link" href="/" aria-label="Search">
-        <img src="${icons.searchIcon}" alt="Search" class="icon icon--search" />
-      </a>
-    </li>
-  ` : '';
 
   const cartIcon = showCart ? `
     <li class="cmp-sitenavigation__item cmp-sitenavigation__item--cart">
@@ -362,7 +367,7 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
           aria-expanded="false"
           aria-controls="mini-cart-container"
         >
-          <img src="${icons.cartIcon}" alt="Cart" class="icon icon--cart" />
+          <span class="icon icon--cart"></span>
         </button>
         <div 
           id="mini-cart-container"
@@ -373,30 +378,43 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
           aria-hidden="true"
         >
           <button class="mini-cart__close" aria-label="Close mini cart">
-            <img src="${icons.closeIcon}" alt="Close" class="icon icon--close" />
+            <span class="mini-cart__close-icon"></span>
           </button>
-          <h4 id="mini-cart-title" class="cart-summary"></h4>
+          <div class="cart-content">
+            <h4 id="mini-cart-title" class="cart-summary">Your cart is empty.</h4>
+          </div>
         </div>
       </div>
     </li>
   ` : '';
 
-  const profileMenuHTML = profileMenuItems.map(item => `
-    <li class="profile-menu__item"><a href="${item.linkUrl}">${item.linkText}</a></li>
+  // Combine profile menu items: existing + logged-in items when logged in
+  const currentProfileMenuItems = isLoggedIn 
+    ? [...profileMenuItems, ...(profileMenuLoggedInItems || [])]
+    : profileMenuItems;
+
+  const profileMenuHTML = currentProfileMenuItems.map((item, index) => `
+    <li class="profile-menu__item" data-menu-index="${index}"><a href="${item.linkUrl}">${item.linkText}</a></li>
   `).join('');
+
+  // Add user name element when logged in
+  const userNameElement = isLoggedIn ? `
+    <li class="profile-menu__user-name" style="white-space: nowrap; font-weight: 600; color: var(--color-primary-950); padding: 8px 16px; border-bottom: 1px solid var(--color-primary-300); margin-bottom: 4px;">${userName}</li>
+  ` : '';
 
   const profileIcon = showProfile ? `
     <li class="cmp-sitenavigation__item cmp-sitenavigation__item--profile">
       <div class="profile-dropdown">
-        <button class="cmp-sitenavigation__item-link profile-toggle logged-in" aria-label="Member Account" aria-expanded="false">
-          <img src="${icons.profileIcon}" alt="Profile" class="icon icon--profile" />
+        <button class="cmp-sitenavigation__item-link profile-toggle ${isLoggedIn ? 'logged-in' : ''}" aria-label="Member Account" aria-expanded="false">
+          <span class="icon icon--profile"></span>
         </button>
         <ul class="profile-menu">
           <li class="profile-menu__header">
             <button class="profile-menu__close" aria-label="Close profile menu">
-              <img src="${icons.closeIcon}" alt="Close" class="icon icon--close" />
+              <span class="icon icon--close"></span>
             </button>
           </li>
+          ${userNameElement}
           ${profileMenuHTML}
         </ul>
       </div>
@@ -410,13 +428,12 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
           ${navItems}
         </ul>
         <ul class="cmp-sitenavigation__group cmp-sitenavigation__group--icons">
-          ${searchIcon}
           ${cartIcon}
           ${profileIcon}
           <li class="cmp-sitenavigation__item cmp-sitenavigation__item--menu-toggle">
             <button id="header-hamburger-menu-toggle" class="btn btn-link" aria-label="Toggle Menu">
-              <img src="${icons.hamburgerIcon}" alt="Menu" class="icon icon--hamburger" />
-              <img src="${icons.closeIcon}" alt="Close" class="icon icon--close" />
+              <span class="icon icon--hamburger"></span>
+              <span class="icon icon--close"></span>
             </button>
           </li>
         </ul>
@@ -425,22 +442,21 @@ function buildNavigation(navigationItems, showSearch, showProfile, showCart, pro
   `;
 }
 
-function buildMobileMenu(navigationItems, showSearch, profileMenuItems, searchPlaceholder, icons) {
+function buildMobileMenu(navigationItems, profileMenuItems, profileMenuLoggedInItems, icons) {
+  // Check if user is logged in (same logic as in webpack implementation)
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  
   const mobileNavItems = navigationItems.map(item => `
     <li><a href="${item.linkUrl}" class="px-6">${item.linkText}</a></li>
   `).join('');
 
-  const mobileSearch = showSearch ? `
-    <li class="px-6">
-      <div class="mobile-search">
-        <img src="${icons.searchIcon}" alt="Search" class="icon icon--search" />
-        <input type="text" placeholder="${searchPlaceholder}" title="${searchPlaceholder}"/>
-      </div>
-    </li>
-  ` : '';
+  // Combine profile menu items: existing + logged-in items when logged in (same as desktop)
+  const currentMobileProfileMenuItems = isLoggedIn 
+    ? [...profileMenuItems, ...(profileMenuLoggedInItems || [])]
+    : profileMenuItems;
 
-  const mobileProfileItems = profileMenuItems.map(item => `
-    <li><a href="${item.linkUrl}">${item.linkText}</a></li>
+  const mobileProfileItems = currentMobileProfileMenuItems.map((item, index) => `
+    <li data-mobile-menu-index="${index}"><a href="${item.linkUrl}">${item.linkText}</a></li>
   `).join('');
 
   return `
@@ -449,17 +465,16 @@ function buildMobileMenu(navigationItems, showSearch, profileMenuItems, searchPl
         <div id="mobile-menu-title" class="sr-only">Mobile Navigation Menu</div>
         <ul class="mobile-menu">
           ${mobileNavItems}
-          ${mobileSearch}
           <li class="mobile-account-section">
             <button class="mobile-account-toggle px-6 d-flex-align mobile-account-link" aria-expanded="false">
-              <img src="${icons.profileIcon}" alt="Profile" class="icon icon--profile" />
+              <span class="icon icon--profile"></span>
               <span class="profile">My Account</span>
-              <img src="${icons.arrowRightIcon}" alt="Arrow Right" class="icon icon--arrow-right arrow-icon" />
+              <span class="icon icon--arrow-right arrow-icon"></span>
             </button>
             <div class="mobile-account-submenu">
               <div class="submenu-header">
                 <button class="back-button" aria-label="Back">
-                  <img src="${icons.arrowLeftIcon}" alt="Arrow Left" class="icon icon--arrow-left" />
+                  <span class="icon icon--arrow-left"></span>
                   <span class="submenu-title">My Account</span>
                 </button>
               </div>
@@ -474,8 +489,326 @@ function buildMobileMenu(navigationItems, showSearch, profileMenuItems, searchPl
   `;
 }
 
+// Mock login function
+function mockLogin() {
+  localStorage.setItem('isLoggedIn', 'true');
+  localStorage.setItem('userName', 'John Doe');
+  // Automatically add items to cart for logged-in user
+  localStorage.setItem('hasCartItems', 'true');
+  console.log('Mock login successful - user logged in with items in cart');
+}
+
+// Mock logout function
+function mockLogout() {
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('userName');
+  console.log('Mock logout successful');
+}
+
+// Mock cart data for testing
+function getMockCartData() {
+  return [
+    {
+      name: 'ASUS ROG Strix G15',
+      image: './blocks/images/cpuImage.png',
+      price: '1299.99',
+      quantity: 1,
+      description: 'Gaming Laptop - AMD Ryzen 7'
+    },
+    {
+      name: 'ASUS TUF Gaming Monitor',
+      image: './blocks/images/cpu2.png',
+      price: '299.99',
+      quantity: 2,
+      description: '27" 144Hz Display'
+    }
+  ];
+}
+
+// Fetch cart products (mock implementation)
+async function fetchCartProducts() {
+  try {
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Check if user has items in cart (mock logic)
+    const hasCartItems = localStorage.getItem('hasCartItems') === 'true';
+    
+    if (hasCartItems) {
+      return getMockCartData();
+    }
+    
+    return [];
+  } catch (err) {
+    console.error('Error loading cart products:', err);
+    return [];
+  }
+}
+
+// Render individual cart items
+function renderCartItem(product) {
+  const { name, image, price, quantity, description } = product;
+  let descriptionHTML = '';
+  if (description) {
+    descriptionHTML = `<small class="product-description">${description}</small>`;
+  }
+  
+  return `
+    <li class="cart-item" role="listitem" tabindex="0" aria-label="${name}">
+      <div class="cart-item__image">
+        <img src="${image}" alt="${name}" loading="lazy">
+      </div>
+      <div class="cart-item__info">
+        <div class="cart-item__details">
+          <h6 class="cart-item__name">${name}</h6>
+          ${descriptionHTML}
+        </div>
+        <div class="cart-item__pricing">
+          <span class="cart-item__quantity" aria-label="Quantity">x${quantity}</span>
+          <span class="cart-item__price" aria-label="Price">$${price}</span>
+        </div>
+      </div>
+    </li>
+  `;
+}
+
+// Render mini cart content based on login status and cart items
+async function renderMiniCartContent(isLoggedIn) {
+  if (!isLoggedIn) {
+    return `
+      <p class="mini-cart__message"><a href="/">Sign in</a> to see if you have any saved items</p>
+    `;
+  }
+  
+  const products = await fetchCartProducts();
+  
+  if (!products.length) {
+    return `
+      <div class="cart-empty-message">
+        <p>Start shopping to add items to your cart</p>
+      </div>
+    `;
+  }
+  
+  const cartItemsHtml = products.map(product => renderCartItem(product)).join('');
+  const subtotal = products.reduce((sum, p) => sum + p.quantity * parseFloat(p.price), 0);
+  
+  return `
+    <ul class="cart-items" role="list">
+      ${cartItemsHtml}
+    </ul>
+    <div class="cart-subtotal">
+      <div class="subtotal-row">
+        <span class="subtotal-label">Subtotal</span>
+        <span class="subtotal-amount" aria-live="polite">$${subtotal.toFixed(2)}</span>
+      </div>
+    </div>
+    <div class="cart-actions">
+      <button class="btn btn--primary cart-checkout-btn" aria-label="View Cart and Checkout">
+        View Cart & Checkout
+      </button>
+    </div>
+  `;
+}
+
+// Update mini cart display
+async function updateMiniCartDisplay(block) {
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const hasCartItems = localStorage.getItem('hasCartItems') === 'true';
+  const miniCartContainer = block.querySelector('#mini-cart-container');
+  const cartTitle = block.querySelector('#mini-cart-title');
+  const cartContent = block.querySelector('.cart-content');
+  const miniCartToggle = block.querySelector('#mini-cart-toggle');
+  
+  console.log('updateMiniCartDisplay called:', { isLoggedIn, hasCartItems, miniCartContainer: !!miniCartContainer, cartTitle: !!cartTitle, cartContent: !!cartContent });
+  
+  if (!miniCartContainer || !cartTitle || !cartContent) {
+    console.log('Missing cart elements');
+    return;
+  }
+  
+  // Clear existing cart content (except title) - use a more comprehensive approach
+  const existingElements = cartContent.querySelectorAll('.mini-cart__message, .cart-empty-message, .cart-items, .cart-subtotal, .cart-actions');
+  existingElements.forEach(el => el.remove());
+  
+  // Update cart title and content
+  if (!isLoggedIn) {
+    cartTitle.textContent = 'Your cart is empty.';
+    if (miniCartToggle) {
+      miniCartToggle.removeAttribute('data-cart-count');
+    }
+  } else {
+    const products = await fetchCartProducts();
+    console.log('Fetched products:', products);
+    if (!products.length) {
+      cartTitle.textContent = 'Your cart is empty.';
+      if (miniCartToggle) {
+        miniCartToggle.removeAttribute('data-cart-count');
+      }
+    } else {
+      const totalItems = products.reduce((sum, p) => sum + p.quantity, 0);
+      cartTitle.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''} in cart`;
+      if (miniCartToggle) {
+        miniCartToggle.setAttribute('data-cart-count', totalItems);
+      }
+    }
+  }
+  
+  // Add new content
+  const newContent = await renderMiniCartContent(isLoggedIn);
+  console.log('Generated new content:', newContent);
+  cartContent.insertAdjacentHTML('beforeend', newContent);
+  
+  // Re-attach cart sign-in event listener if needed
+  const newCartSigninLink = cartContent.querySelector('#cart-signin-link');
+  if (newCartSigninLink) {
+    newCartSigninLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('Cart sign-in clicked');
+      mockLogin();
+      refreshHeader(block);
+    });
+  }
+}
+
+// Mock function to add items to cart (for testing)
+function mockAddToCart() {
+  localStorage.setItem('hasCartItems', 'true');
+  console.log('Mock items added to cart');
+}
+
+// Mock function to clear cart (for testing)
+function mockClearCart() {
+  localStorage.removeItem('hasCartItems');
+  console.log('Mock cart cleared');
+}
+
+// Make functions available globally for testing
+if (typeof window !== 'undefined') {
+  window.mockAddToCart = mockAddToCart;
+  window.mockClearCart = mockClearCart;
+  window.mockLogin = mockLogin;
+  window.mockLogout = mockLogout;
+  
+  // Add function to refresh mini cart for testing
+  window.refreshMiniCart = () => {
+    const headerBlock = document.querySelector('.header');
+    if (headerBlock) {
+      updateMiniCartDisplay(headerBlock);
+    }
+  };
+}
+
+// Refresh header function to re-render with current login state
+function refreshHeader(block) {
+  // Use stored original data instead of re-parsing from modified DOM
+  let data;
+  if (block._originalHeaderData) {
+    // Use stored original data as base
+    data = { ...block._originalHeaderData };
+    
+    // Still check for Universal Editor model updates
+    if (block.dataset && (block.dataset.model || block.dataset.aueModel)) {
+      const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {};
+      
+      // Apply any UE model updates to the stored data
+      if (modelData.asusLogoImage || modelData.asusLogoAltText || modelData.asusLogoUrl) {
+        if (!data.logos[0]) data.logos[0] = { name: 'asus', icon: '', altText: 'ASUS Logo', url: '#', width: '87', height: '20' };
+        data.logos[0] = {
+          name: 'asus',
+          icon: modelData.asusLogoImage || data.logos[0].icon,
+          altText: modelData.asusLogoAltText || data.logos[0].altText,
+          url: modelData.asusLogoUrl || data.logos[0].url,
+          width: data.logos[0].width,
+          height: data.logos[0].height
+        };
+      }
+      
+      if (modelData.rogLogoImage || modelData.rogLogoAltText || modelData.rogLogoUrl) {
+        if (!data.logos[1]) data.logos[1] = { name: 'rog', icon: '', altText: 'ROG Logo', url: '#', width: '135', height: '26' };
+        data.logos[1] = {
+          name: 'rog',
+          icon: modelData.rogLogoImage || data.logos[1].icon,
+          altText: modelData.rogLogoAltText || data.logos[1].altText,
+          url: modelData.rogLogoUrl || data.logos[1].url,
+          width: data.logos[1].width,
+          height: data.logos[1].height
+        };
+      }
+      
+      if (modelData.gamingPcLogoImage || modelData.gamingPcLogoAltText || modelData.gamingPcLogoUrl) {
+        if (!data.logos[2]) data.logos[2] = { name: 'gaming', icon: '', altText: 'Gaming PC Custom Builder Logo', url: '#', width: '104', height: '22' };
+        data.logos[2] = {
+          name: 'gaming',
+          icon: modelData.gamingPcLogoImage || data.logos[2].icon,
+          altText: modelData.gamingPcLogoAltText || data.logos[2].altText,
+          url: modelData.gamingPcLogoUrl || data.logos[2].url,
+          width: data.logos[2].width,
+          height: data.logos[2].height
+        };
+      }
+      
+      if (modelData.navLinks) {
+        data.navigationItems = parseNavLinks(modelData.navLinks);
+      }
+      
+      if (modelData.searchPlaceholder) data.searchPlaceholder = modelData.searchPlaceholder;
+      if (typeof modelData.showSearch === 'boolean') data.showSearch = modelData.showSearch;
+      if (typeof modelData.showProfile === 'boolean') data.showProfile = modelData.showProfile;
+      if (typeof modelData.showCart === 'boolean') data.showCart = modelData.showCart;
+      if (modelData.searchIcon) data.searchIcon = modelData.searchIcon;
+      if (modelData.cartIcon) data.cartIcon = modelData.cartIcon;
+      if (modelData.profileIcon) data.profileIcon = modelData.profileIcon;
+      if (modelData.hamburgerIcon) data.hamburgerIcon = modelData.hamburgerIcon;
+      if (modelData.closeIcon) data.closeIcon = modelData.closeIcon;
+      if (modelData.arrowLeftIcon) data.arrowLeftIcon = modelData.arrowLeftIcon;
+      if (modelData.arrowRightIcon) data.arrowRightIcon = modelData.arrowRightIcon;
+      if (modelData.profileMenuItems && Array.isArray(modelData.profileMenuItems)) {
+        data.profileMenuItems = modelData.profileMenuItems;
+      }
+    }
+  } else {
+    // Fallback to parsing if no stored data (shouldn't happen in normal flow)
+    data = parseHeaderData(block);
+  }
+  
+  // Create icons object for passing to build functions
+  const icons = {
+    searchIcon: data.searchIcon,
+    cartIcon: data.cartIcon,
+    profileIcon: data.profileIcon,
+    hamburgerIcon: data.hamburgerIcon,
+    closeIcon: data.closeIcon,
+    arrowLeftIcon: data.arrowLeftIcon,
+    arrowRightIcon: data.arrowRightIcon
+  };
+
+  // Create the header structure using parsed data
+  const headerHTML = `
+    <div class="header-wrapper">
+      <header class="experiencefragment">
+          <div class="cmp-container cmp-header container">
+            ${buildLogo(data.logos)}
+            ${buildNavigation(data.navigationItems, data.showProfile, data.showCart, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
+          </div>
+      </header>
+      ${buildMobileMenu(data.navigationItems, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
+    </div>
+  `;
+
+  // Clear existing content and add the header structure
+  block.innerHTML = headerHTML;
+  
+  // Re-initialize header functionality
+  initializeHeader(block);
+}
+
 export default function decorate(block) {
   const data = parseHeaderData(block);
+
+  // Store original parsed data for use in refreshHeader function
+  // This prevents the need to re-parse from modified DOM during refresh
+  block._originalHeaderData = { ...data };
 
   // Create icons object for passing to build functions
   const icons = {
@@ -495,11 +828,11 @@ export default function decorate(block) {
         <div class="cmp-experiencefragment">
           <div class="cmp-container cmp-header container">
             ${buildLogo(data.logos)}
-            ${buildNavigation(data.navigationItems, data.showSearch, data.showProfile, data.showCart, data.profileMenuItems, icons)}
+            ${buildNavigation(data.navigationItems, data.showProfile, data.showCart, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
           </div>
         </div>
       </header>
-      ${buildMobileMenu(data.navigationItems, data.showSearch, data.profileMenuItems, data.searchPlaceholder, icons)}
+      ${buildMobileMenu(data.navigationItems, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
     </div>
   `;
 
@@ -507,11 +840,46 @@ export default function decorate(block) {
   block.innerHTML = headerHTML;
   block.classList.add('experiencefragment');
 
+  // Optimize logo images after HTML is set
+  optimizeLogoImages(block);
+
   // Add header functionality
   initializeHeader(block);
 }
 
+// Function to optimize logo images using createOptimizedPicture
+function optimizeLogoImages(block) {
+  // Find all logo images and optimize them
+  block.querySelectorAll('.logo-wrapper picture > img').forEach((img) => {
+    const optimizedPic = createOptimizedPicture(
+      img.src, 
+      img.alt, 
+      true, // eager loading for logos (above fold)
+      [{ width: '200' }, { width: '400' }] // responsive breakpoints
+    );
+    
+    // Move instrumentation from original to optimized image
+    moveInstrumentation(img, optimizedPic.querySelector('img'));
+    
+    // Replace the original picture with optimized version
+    img.closest('picture').replaceWith(optimizedPic);
+  });
+}
+
 function initializeHeader(block) {
+  // Get current login state and profile menu data
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  
+  // Use stored original data instead of re-parsing from modified DOM
+  const data = block._originalHeaderData || {};
+  const profileMenuItems = data.profileMenuItems || [];
+  const profileMenuLoggedInItems = data.profileMenuLoggedInItems || [];
+  
+  // Calculate combined menu items for logged-in state
+  const combinedMenuItems = isLoggedIn 
+    ? [...profileMenuItems, ...profileMenuLoggedInItems]
+    : profileMenuItems;
+
   // Mobile menu toggle
   const hamburgerToggle = block.querySelector('#header-hamburger-menu-toggle');
   const mobileMenuOverlay = block.querySelector('#mobile-menu-dialog');
@@ -521,7 +889,7 @@ function initializeHeader(block) {
       const isExpanded = hamburgerToggle.getAttribute('aria-expanded') === 'true';
       hamburgerToggle.setAttribute('aria-expanded', !isExpanded);
       mobileMenuOverlay.setAttribute('aria-hidden', isExpanded);
-      document.body.classList.toggle('mobile-menu-open', !isExpanded);
+      block.classList.toggle('mm-open', !isExpanded);
     });
   }
 
@@ -530,13 +898,14 @@ function initializeHeader(block) {
   const profileMenu = block.querySelector('.profile-menu');
   
   if (profileToggle && profileMenu) {
-    profileToggle.addEventListener('click', () => {
+    profileToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
       const isExpanded = profileToggle.getAttribute('aria-expanded') === 'true';
       profileToggle.setAttribute('aria-expanded', !isExpanded);
       profileMenu.classList.toggle('show', !isExpanded);
     });
 
-    // Close profile menu when clicking outside
+    //Close profile menu when clicking outside
     document.addEventListener('click', (e) => {
       if (!profileToggle.contains(e.target) && !profileMenu.contains(e.target)) {
         profileToggle.setAttribute('aria-expanded', 'false');
@@ -554,13 +923,94 @@ function initializeHeader(block) {
     });
   }
 
+  // Mock Login/Logout functionality for desktop profile menu
+  const profileMenuItemElements = block.querySelectorAll('.profile-menu__item[data-menu-index]');
+  
+  console.log('Debug info:', {
+    isLoggedIn,
+    profileMenuItems: profileMenuItems.map(item => item.linkText),
+    profileMenuLoggedInItems: profileMenuLoggedInItems.map(item => item.linkText),
+    combinedMenuItems: combinedMenuItems.map(item => item.linkText),
+    totalElements: profileMenuItemElements.length
+  });
+  
+  profileMenuItemElements.forEach((item, index) => {
+    const link = item.querySelector('a');
+    if (link) {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        console.log('Desktop menu clicked:', { 
+          index, 
+          isLoggedIn, 
+          combinedMenuLength: combinedMenuItems.length, 
+          linkText: link.textContent,
+          isFirstItem: index === 0
+        });
+        
+        if (index === 0) {
+          if (!isLoggedIn) {
+            // First item when not logged in - trigger login
+            console.log('Triggering login');
+            mockLogin();
+            refreshHeader(block);
+          } else {
+            // First item when logged in - trigger logout
+            console.log('Triggering logout (first item when logged in)');
+            mockLogout();
+            refreshHeader(block);
+          }
+        } else {
+          console.log('No action for this menu item');
+        }
+        // For other items, you can add actual navigation logic here
+      });
+    }
+  });
+
+  // Mock Login/Logout functionality for mobile profile menu
+  const mobileProfileMenuItems = block.querySelectorAll('.submenu-items li[data-mobile-menu-index]');
+  mobileProfileMenuItems.forEach((item, index) => {
+    const link = item.querySelector('a');
+    if (link) {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        console.log('Mobile menu clicked:', { index, isLoggedIn, combinedMenuLength: combinedMenuItems.length, linkText: link.textContent });
+        
+        if (index === 0) {
+          if (!isLoggedIn) {
+            // First item when not logged in - trigger login
+            console.log('Triggering mobile login');
+            mockLogin();
+            refreshHeader(block);
+          } else {
+            // First item when logged in - trigger logout
+            console.log('Triggering mobile logout (first item when logged in)');
+            mockLogout();
+            refreshHeader(block);
+          }
+        } else {
+          console.log('No action for this mobile menu item');
+        }
+        // For other items, you can add actual navigation logic here
+      });
+    }
+  });
+
   // Mini cart toggle
   const miniCartToggle = block.querySelector('#mini-cart-toggle');
   const miniCartContainer = block.querySelector('#mini-cart-container');
   
   if (miniCartToggle && miniCartContainer) {
-    miniCartToggle.addEventListener('click', () => {
+    miniCartToggle.addEventListener('click', async () => {
       const isExpanded = miniCartToggle.getAttribute('aria-expanded') === 'true';
+      
+      if (!isExpanded) {
+        // Update cart content before showing
+        await updateMiniCartDisplay(block);
+      }
+      
       miniCartToggle.setAttribute('aria-expanded', !isExpanded);
       miniCartContainer.setAttribute('aria-hidden', isExpanded);
       miniCartContainer.classList.toggle('show', !isExpanded);
@@ -574,6 +1024,20 @@ function initializeHeader(block) {
       miniCartToggle.setAttribute('aria-expanded', 'false');
       miniCartContainer.setAttribute('aria-hidden', 'true');
       miniCartContainer.classList.remove('show');
+    });
+  }
+
+  // Initialize mini cart display
+  updateMiniCartDisplay(block);
+
+  // Cart sign-in link functionality
+  const cartSigninLink = block.querySelector('#cart-signin-link');
+  if (cartSigninLink) {
+    cartSigninLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('Cart sign-in clicked');
+      mockLogin();
+      refreshHeader(block);
     });
   }
 
@@ -603,7 +1067,7 @@ function initializeHeader(block) {
       if (e.target === mobileMenuOverlay) {
         hamburgerToggle.setAttribute('aria-expanded', 'false');
         mobileMenuOverlay.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('mobile-menu-open');
+        block.classList.remove('mm-open');
       }
     });
   }

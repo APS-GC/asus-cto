@@ -561,6 +561,10 @@
           {
             "name": "Centered Content",
             "value": "text-center"
+          },
+          {
+            "name": "Responsive Container",
+            "value": "container"
           }
         ]
       }
@@ -968,17 +972,17 @@
     "id": "header",
     "fields": [
       {
+        "component": "aem-content",
+        "name": "asusLogoUrl",
+        "label": "ASUS Logo URL",
+        "description": "URL the ASUS logo should link to"
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "asusLogoAltText",
         "label": "ASUS Logo Alt Text",
         "description": "Alternative text for the ASUS logo"
-      },
-      {
-        "component": "aem-content",
-        "name": "asusLogoUrl",
-        "label": "ASUS Logo URL",
-        "description": "URL the ASUS logo should link to"
       },
       {
         "component": "reference",
@@ -995,12 +999,6 @@
         "description": "Alternative text for the ROG logo"
       },
       {
-        "component": "aem-content",
-        "name": "rogLogoUrl",
-        "label": "ROG Logo URL",
-        "description": "URL the ROG logo should link to"
-      },
-      {
         "component": "reference",
         "name": "rogLogoImage",
         "label": "ROG Logo Image",
@@ -1013,12 +1011,6 @@
         "name": "gamingPcLogoAltText",
         "label": "Gaming PC Logo Alt Text",
         "description": "Alternative text for the Gaming PC logo"
-      },
-      {
-        "component": "aem-content",
-        "name": "gamingPcLogoUrl",
-        "label": "Gaming PC Logo URL",
-        "description": "URL the Gaming PC logo should link to"
       },
       {
         "component": "reference",
@@ -1035,111 +1027,20 @@
         "valueType": "string"
       },
       {
-        "component": "boolean",
-        "name": "showSearch",
-        "label": "Show Search Icon",
-        "description": "Display the search icon in the header",
-        "value": true
-      },
-      {
-        "component": "boolean",
-        "name": "showProfile",
-        "label": "Show Profile Icon",
-        "description": "Display the profile icon in the header",
-        "value": true
-      },
-      {
-        "component": "boolean",
-        "name": "showCart",
-        "label": "Show Cart Icon",
-        "description": "Display the cart icon in the header",
-        "value": true
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "searchPlaceholder",
-        "label": "Mobile Search Placeholder",
-        "description": "Placeholder text for mobile search input",
-        "value": "Enter keywords"
-      },
-      {
-        "component": "reference",
-        "name": "searchIcon",
-        "label": "Search Icon",
-        "description": "Select search icon from DAM",
-        "multi": false,
-        "value": "/icons/search.svg"
-      },
-      {
-        "component": "reference",
-        "name": "cartIcon",
-        "label": "Cart Icon",
-        "description": "Select cart icon from DAM",
-        "multi": false,
-        "value": "/icons/cart.svg"
-      },
-      {
-        "component": "reference",
-        "name": "profileIcon",
-        "label": "Profile Icon",
-        "description": "Select profile icon from DAM",
-        "multi": false,
-        "value": "/icons/profile.svg"
-      },
-      {
-        "component": "reference",
-        "name": "hamburgerIcon",
-        "label": "Hamburger Menu Icon",
-        "description": "Select hamburger menu icon from DAM",
-        "multi": false,
-        "value": "/icons/hamburger.svg"
-      },
-      {
-        "component": "reference",
-        "name": "closeIcon",
-        "label": "Close Icon",
-        "description": "Select close icon from DAM",
-        "multi": false,
-        "value": "/icons/close.svg"
-      },
-      {
-        "component": "reference",
-        "name": "arrowLeftIcon",
-        "label": "Left Arrow Icon",
-        "description": "Select left arrow icon from DAM",
-        "multi": false,
-        "value": "/icons/arrow-left.svg"
-      },
-      {
-        "component": "reference",
-        "name": "arrowRightIcon",
-        "label": "Right Arrow Icon",
-        "description": "Select right arrow icon from DAM",
-        "multi": false,
-        "value": "/icons/arrow-right.svg"
-      },
-      {
-        "component": "container",
-        "name": "profileMenuItems",
+        "component": "richtext",
+        "name": "profileMenu",
+        "value": "",
         "label": "Profile Menu Items",
-        "description": "Items in the profile dropdown menu",
-        "multi": true,
-        "fields": [
-          {
-            "component": "text",
-            "valueType": "string",
-            "name": "linkText",
-            "label": "Menu Item Text",
-            "description": "Display text for the profile menu item"
-          },
-          {
-            "component": "aem-content",
-            "name": "linkUrl",
-            "label": "Menu Item URL",
-            "description": "URL for the profile menu item"
-          }
-        ]
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "profileMenuLogin",
+        "value": "",
+        "label": "Profile Menu Items for Login",
+        "valueType": "string",
+        "required": true
       }
     ]
   },
@@ -1268,6 +1169,53 @@
     ]
   },
   {
+      "id": "top-picks-card",
+      "fields": [
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "image",
+          "label": "Product Image",
+          "description": "Upload or select a product image",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "label",
+          "label": "Product Label/Category",
+          "description": "Small label text (e.g., 'Top picks', 'Featured', etc.)",
+          "value": "Top picks"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "title",
+          "label": "Product Title",
+          "description": "Main product title or name",
+          "value": "",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "ctaLinkName",
+          "label": "CTA Link Name",
+          "description": "Text for the call-to-action button (e.g., 'View configs', 'Learn more')",
+          "value": "View configs"
+        },
+        {
+          "component": "aem-content",
+          "name": "link",
+          "label": "Call-to-Action Link",
+          "description": "Link URL for the call-to-action",
+          "valueType": "string"
+        }
+      ]
+    },
+    {
     "id": "product-card",
     "fields": [
       {
