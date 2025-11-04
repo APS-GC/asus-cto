@@ -130,7 +130,7 @@ function parseHeaderData(block) {
 function parseHTMLContent(block) {
   try {
     // Get all div elements that contain the structured data
-    const contentDivs = block.querySelectorAll('div > p > div');
+    const contentDivs = block.querySelectorAll('div > div > div');
 
     const parsedData = {
       logos: [],
@@ -411,7 +411,7 @@ function buildNavigation(navigationItems, showProfile, showCart, profileMenuItem
         <ul class="profile-menu">
           <li class="profile-menu__header">
             <button class="profile-menu__close" aria-label="Close profile menu">
-              <span class="icon icon--close"></span>
+              <span class="icon--close"></span>
             </button>
           </li>
           ${userNameElement}
@@ -787,12 +787,10 @@ function refreshHeader(block) {
   const headerHTML = `
     <div class="header-wrapper">
       <header class="experiencefragment">
-        <div class="cmp-experiencefragment">
           <div class="cmp-container cmp-header container">
             ${buildLogo(data.logos)}
             ${buildNavigation(data.navigationItems, data.showProfile, data.showCart, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
           </div>
-        </div>
       </header>
       ${buildMobileMenu(data.navigationItems, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
     </div>
@@ -900,13 +898,14 @@ function initializeHeader(block) {
   const profileMenu = block.querySelector('.profile-menu');
   
   if (profileToggle && profileMenu) {
-    profileToggle.addEventListener('click', () => {
+    profileToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
       const isExpanded = profileToggle.getAttribute('aria-expanded') === 'true';
       profileToggle.setAttribute('aria-expanded', !isExpanded);
       profileMenu.classList.toggle('show', !isExpanded);
     });
 
-    // Close profile menu when clicking outside
+    //Close profile menu when clicking outside
     document.addEventListener('click', (e) => {
       if (!profileToggle.contains(e.target) && !profileMenu.contains(e.target)) {
         profileToggle.setAttribute('aria-expanded', 'false');

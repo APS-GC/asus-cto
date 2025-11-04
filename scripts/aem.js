@@ -733,6 +733,8 @@ function decorateBlocks(main) {
  * @returns {Promise}
  */
 async function loadHeader(header) {
+  const { loadHeaderFragment } = await import('./scripts.js');
+  
   try {
     // Try to load header from fragment first
     const fragmentContent = await loadHeaderFragment();
@@ -758,61 +760,6 @@ async function loadHeader(header) {
   return loadBlock(headerBlock);
 }
 
-/**
- * Loads header fragment from the working fragment URL
- * @returns {Promise<string|null>} Fragment HTML content or null if not found
- */
-async function loadHeaderFragment() {
-  const fragmentUrl = '/fragments/head.plain.html';
-   try {
-    const response = await fetch(fragmentUrl);
-    if (response.ok) {
-      const html = await response.text();
-      return processFragmentContent(html);
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('Failed to load header fragment:', error);
-  }
-
-  return null;
-}
-
-/**
- * Processes fragment content and extracts header block structure
- * @param {string} html Fragment HTML content
- * @returns {string|null} Processed header block content
- */
-function processFragmentContent(html) {
-  try {
-    // Create a temporary DOM to parse the fragment
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-
-    // Look for existing header block (UE authoring data format)
-    const existingHeaderBlock = tempDiv.querySelector('.header.block');
-    if (existingHeaderBlock) {
-      // Extract the inner header content (skip the outer wrapper)
-      const innerHeader = existingHeaderBlock.querySelector('.header');
-      if (innerHeader) {
-        return innerHeader.outerHTML;
-      }
-    }
-
-    // Fallback: Look for any header block
-    const headerBlock = tempDiv.querySelector('.header');
-    if (headerBlock) {
-      return headerBlock.outerHTML;
-    }
-
-    return null;
-
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('Error processing fragment content:', error);
-    return null;
-  }
-}
 
 /**
  * Loads a block named 'footer' into footer
@@ -903,11 +850,9 @@ export {
   loadCSS,
   loadFooter,
   loadHeader,
-  loadHeaderFragment,
   loadScript,
   loadSection,
   loadSections,
-  processFragmentContent,
   readBlockConfig,
   sampleRUM,
   setup,

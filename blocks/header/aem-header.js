@@ -1,15 +1,18 @@
+import { loadHeaderFragment } from '../../scripts/scripts.js';
+
 /**
  * AEM Header Web Component
  * Encapsulates the header block as a reusable web component for third-party integration
  */
 
-class AEMHeader extends HTMLElement { 
+class AEMHeader extends HTMLElement {
   constructor() {
     super();
     this.fragmentUrl = '';
     this.baseUrl = '';
     this.isLoaded = false;
     this.headerData = null;
+    this.attachShadow({ mode: 'open' });
   }
 
   static get observedAttributes() {
@@ -17,50 +20,19 @@ class AEMHeader extends HTMLElement {
   }
 
   connectedCallback() {
-    this.fragmentUrl = this.getAttribute('fragment-url') || '/fragments/head.plain.html';
-    this.baseUrl = this.getAttribute('base-url') || '';
-    
-    // Set up event listeners for external API
-    this.addEventListener('aem-header', this.handleHeaderEvent.bind(this));
-    
-    // Initialize the header
     this.loadHeader();
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue !== newValue) {
-      switch (name) {
-        case 'fragment-url':
-          this.fragmentUrl = newValue;
-          if (this.isLoaded) this.loadHeader();
-          break;
-        case 'base-url':
-          this.baseUrl = newValue;
-          break;
-        case 'config':
-          try {
-            this.headerData = JSON.parse(newValue);
-            if (this.isLoaded) this.refreshHeader();
-          } catch (e) {
-            console.error('Invalid config JSON:', e);
-          }
-          break;
-      }
-    }
   }
 
   /**
    * Load required CSS and JS assets
    */
   async loadAssets() {
-    const baseUrl = this.baseUrl || window.location.origin;
-    
-    // Load CSS
-    await this.loadCSS(`${baseUrl}/blocks/header/header.css`);
-    await this.loadCSS(`${baseUrl}/styles/styles.css`);
+    // Load CSS into shadow root
+    await this.loadStyles();
     
     // Load core AEM utilities if not already loaded
     if (!window.hlx) {
+      const baseUrl = this.baseUrl || window.location.origin;
       await this.loadScript(`${baseUrl}/scripts/aem.js`);
     }
   }
@@ -68,19 +40,31 @@ class AEMHeader extends HTMLElement {
   /**
    * Load CSS file
    */
-  loadCSS(href) {
+  loadCSS(href, media) {
     return new Promise((resolve, reject) => {
-      if (!document.querySelector(`head > link[href="${href}"]`)) {
+      if (!this.shadowRoot.querySelector(`link[href="${href}"]`)) {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = href;
+        if (media) link.media = media;
         link.onload = resolve;
         link.onerror = reject;
-        document.head.append(link);
+        this.shadowRoot.append(link);
       } else {
         resolve();
       }
     });
+  }
+
+  /**
+   * Load all required styles with CSS variable inheritance for shadow DOM
+   */
+  async loadStyles() {
+    const baseUrl = this.baseUrl || window.location.origin;
+    return Promise.allSettled([
+      this.loadCSS(`${baseUrl}/blocks/header/aem-header.css`),
+      this.loadCSS(`${baseUrl}/blocks/header/header.css`)
+    ]);
   }
 
   /**
@@ -102,63 +86,21 @@ class AEMHeader extends HTMLElement {
   }
 
   /**
-   * Fetch header fragment content
-   */
-  async fetchHeaderFragment() {
-    try {
-      const response = await fetch(this.fragmentUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch header fragment: ${response.status}`);
-      }
-      return await response.text();
-    } catch (error) {
-      console.error('Error fetching header fragment:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Process fragment HTML and extract header block
-   */
-  processFragmentContent(html) {
-    try {
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = html;
-
-      // Look for header block
-      const headerBlock = tempDiv.querySelector('.header.block, .header');
-      if (headerBlock) {
-        return headerBlock.outerHTML;
-      }
-
-      return null;
-    } catch (error) {
-      console.error('Error processing fragment content:', error);
-      return null;
-    }
-  }
-
-  /**
    * Main header loading function
    */
   async loadHeader() {
     try {
-      // Load required assets first
-      await this.loadAssets();
-
-      // Fetch and process header content
-      const fragmentHtml = await this.fetchHeaderFragment();
-      if (!fragmentHtml) {
-        throw new Error('Failed to fetch header fragment');
-      }
-
-      const headerContent = this.processFragmentContent(fragmentHtml);
+      // Use the shared functions from aem.js
+      const headerContent = await loadHeaderFragment();
       if (!headerContent) {
-        throw new Error('Failed to process header fragment content');
+        throw new Error('Failed to load header fragment');
       }
 
-      // Set the header content
-      this.innerHTML = headerContent;
+      // Set the header content (parses HTML string into DOM elements)
+      this.shadowRoot.innerHTML = headerContent;
+
+      // Load required assets after setting content
+      await this.loadAssets();
 
       // Initialize header functionality
       await this.initializeHeaderBlock();
@@ -172,7 +114,7 @@ class AEMHeader extends HTMLElement {
       console.error('Error loading header:', error);
       
       // Clear any existing content
-      this.innerHTML = '';
+      this.shadowRoot.innerHTML = '';
       
       // Dispatch error event for consuming application to handle
       this.dispatchEvent(new CustomEvent('aem-header-error', {
@@ -185,7 +127,7 @@ class AEMHeader extends HTMLElement {
    * Initialize header block functionality
    */
   async initializeHeaderBlock() {
-    const headerBlock = this.querySelector('.header');
+    const headerBlock = this.shadowRoot.querySelector('.header');
     if (!headerBlock) return;
 
     try {
@@ -201,43 +143,6 @@ class AEMHeader extends HTMLElement {
     }
   }
 
-  /**
-   * Render fallback header when fragment loading fails
-   */
-  renderFallbackHeader() {
-    this.innerHTML = `
-      <div class="header-wrapper">
-        <header class="experiencefragment">
-          <div class="cmp-experiencefragment">
-            <div class="cmp-container cmp-header container">
-              <div class="navigation">
-                <nav class="cmp-navigation">
-                  <div class="cmp-navigation__item--logo">
-                    <div class="logo-item logo-item--asus">
-                      <div class="logo-wrapper">
-                        <a href="#" aria-label="ASUS Logo">
-                          <span class="logo-placeholder">ASUS</span>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </nav>
-              </div>
-              <div class="sitenavigation">
-                <nav class="cmp-sitenavigation">
-                  <ul class="cmp-sitenavigation__group cmp-sitenavigation__group--main">
-                    <li class="cmp-sitenavigation__item">
-                      <a class="cmp-sitenavigation__item-link" href="#">Home</a>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-            </div>
-          </div>
-        </header>
-      </div>
-    `;
-  }
 
   /**
    * Handle external events sent to the header
@@ -249,25 +154,6 @@ class AEMHeader extends HTMLElement {
       case 'refresh':
         await this.loadHeader();
         this.dispatchEvent(new CustomEvent('aem-header-refreshed'));
-        break;
-        
-      case 'update-config':
-        if (detail && detail.config) {
-          this.headerData = detail.config;
-          await this.refreshHeader();
-        }
-        break;
-        
-      case 'set-user-state':
-        if (detail && typeof detail.isLoggedIn === 'boolean') {
-          this.updateUserState(detail.isLoggedIn, detail.userName);
-        }
-        break;
-        
-      case 'update-cart':
-        if (detail && typeof detail.itemCount === 'number') {
-          this.updateCartCount(detail.itemCount);
-        }
         break;
         
       default:
@@ -284,93 +170,6 @@ class AEMHeader extends HTMLElement {
     }
   }
 
-  /**
-   * Update user login state
-   */
-  updateUserState(isLoggedIn, userName = '') {
-    if (isLoggedIn) {
-      localStorage.setItem('isLoggedIn', 'true');
-      if (userName) {
-        localStorage.setItem('userName', userName);
-      }
-    } else {
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('userName');
-    }
-
-    // Trigger header refresh to update UI
-    const headerBlock = this.querySelector('.header');
-    if (headerBlock && headerBlock.refreshHeader) {
-      headerBlock.refreshHeader(headerBlock);
-    }
-  }
-
-  /**
-   * Update cart item count
-   */
-  updateCartCount(itemCount) {
-    const cartToggle = this.querySelector('.mini-cart-toggle');
-    if (cartToggle) {
-      if (itemCount > 0) {
-        cartToggle.setAttribute('data-cart-count', itemCount);
-      } else {
-        cartToggle.removeAttribute('data-cart-count');
-      }
-    }
-  }
-
-  /**
-   * Get current header configuration
-   */
-  getConfig() {
-    return {
-      fragmentUrl: this.fragmentUrl,
-      baseUrl: this.baseUrl,
-      isLoaded: this.isLoaded,
-      headerData: this.headerData
-    };
-  }
-
-  /**
-   * Public API methods
-   */
-  
-  // Refresh the header
-  refresh() {
-    this.dispatchEvent(new CustomEvent('aem-header', {
-      detail: { action: 'refresh' }
-    }));
-  }
-
-  // Set user login state
-  setUserState(isLoggedIn, userName = '') {
-    this.dispatchEvent(new CustomEvent('aem-header', {
-      detail: { 
-        action: 'set-user-state', 
-        detail: { isLoggedIn, userName }
-      }
-    }));
-  }
-
-  // Update cart count
-  setCartCount(itemCount) {
-    this.dispatchEvent(new CustomEvent('aem-header', {
-      detail: { 
-        action: 'update-cart', 
-        detail: { itemCount }
-      }
-    }));
-  }
-
-  // Update configuration
-  updateConfig(config) {
-    this.dispatchEvent(new CustomEvent('aem-header', {
-      detail: { 
-        action: 'update-config', 
-        detail: { config }
-      }
-    }));
-  }
 }
 
 // Register the custom element

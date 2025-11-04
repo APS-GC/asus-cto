@@ -99,30 +99,11 @@
             <p>This demonstrates the AEM Header as a web component that can be embedded in any third-party site:</p>
             
             <!-- AEM Header Web Component -->
-            <aem-header 
-                fragment-url="/fragments/head.plain.html">
-            </aem-header>
+            <aem-header >
+            </aem-header>   
             
             <div class="status info" id="status">
                 Loading header component...
-            </div>
-        </div>
-        
-        <div class="demo-section">
-            <h2>Interactive Controls</h2>
-            <p>Test the web component API:</p>
-            
-            <div class="demo-controls">
-                <button onclick="refreshHeader()">Refresh Header</button>
-                <button onclick="loginUser()">Login User</button>
-                <button onclick="logoutUser()">Logout User</button>
-                <button onclick="updateCart(5)">Add Cart Items (5)</button>
-                <button onclick="updateCart(0)">Clear Cart</button>
-                <button onclick="getConfig()">Get Config</button>
-            </div>
-            
-            <div id="output" class="code-block">
-                Click buttons above to test the web component API...
             </div>
         </div>
         
@@ -199,86 +180,6 @@ headers:
             </ul>
         </div>
     </div>
-
-    <!-- Load the AEM Header Web Component -->
-    <script src="../../blocks/header/aem-header.js"></script>
-    
-    <script>
-        // Demo functionality
-        let headerComponent;
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            headerComponent = document.querySelector('aem-header');
-            
-            // Listen for header events
-            headerComponent.addEventListener('aem-header-loaded', (e) => {
-                updateStatus('Header loaded successfully!', 'success');
-                log('Header loaded event received');
-            });
-            
-            headerComponent.addEventListener('aem-header-error', (e) => {
-                updateStatus(`Header error: ${e.detail.error}`, 'error');
-                log(`Header error: ${e.detail.error}`);
-            });
-            
-            headerComponent.addEventListener('aem-header-refreshed', (e) => {
-                updateStatus('Header refreshed!', 'success');
-                log('Header refreshed event received');
-            });
-        });
-        
-        function updateStatus(message, type = 'info') {
-            const status = document.getElementById('status');
-            status.textContent = message;
-            status.className = `status ${type}`;
-        }
-        
-        function log(message) {
-            const output = document.getElementById('output');
-            const timestamp = new Date().toLocaleTimeString();
-            output.innerHTML += `[${timestamp}] ${message}\n`;
-            output.scrollTop = output.scrollHeight;
-        }
-        
-        function refreshHeader() {
-            if (headerComponent) {
-                headerComponent.refresh();
-                log('Refresh header called');
-            }
-        }
-        
-        function loginUser() {
-            if (headerComponent) {
-                headerComponent.setUserState(true, 'Demo User');
-                log('User logged in: Demo User');
-            }
-        }
-        
-        function logoutUser() {
-            if (headerComponent) {
-                headerComponent.setUserState(false);
-                log('User logged out');
-            }
-        }
-        
-        function updateCart(count) {
-            if (headerComponent) {
-                headerComponent.setCartCount(count);
-                log(`Cart updated: ${count} items`);
-            }
-        }
-        
-        function getConfig() {
-            if (headerComponent) {
-                const config = headerComponent.getConfig();
-                log(`Current config: ${JSON.stringify(config, null, 2)}`);
-            }
-        }
-        
-        // Simulate some demo interactions
-        setTimeout(() => {
-            log('Demo initialized - try the buttons above!');
-        }, 1000);
-    </script>
+<script type="module" src="http://localhost:3000/blocks/header/aem-header.js"></script>
 </body>
 </html>
