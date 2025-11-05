@@ -1,4 +1,4 @@
-import { loadHeaderFragment } from '../../scripts/scripts.js';
+import { loadHeaderFragment, processFragmentContent } from '../../scripts/scripts.js';
 
 /**
  * AEM Header Web Component
@@ -23,6 +23,19 @@ class AEMHeader extends HTMLElement {
     this.loadHeader();
   }
 
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'fragment-url') {
+      this.fragmentUrl = newValue;
+    } else if (name === 'base-url') {
+      this.baseUrl = newValue;
+    }
+    
+    // Reload header if already loaded and URL changed
+    if (this.isLoaded && (name === 'fragment-url' || name === 'base-url')) {
+      this.loadHeader();
+    }
+  }
+
   /**
    * Load required CSS and JS assets
    */
@@ -30,7 +43,10 @@ class AEMHeader extends HTMLElement {
     // Load CSS into shadow root
     await this.loadStyles();
     
-    // Load core AEM utilities if not already loaded
+    // Set up window.hlx.codeBasePath BEFORE loading aem.js to ensure icons use correct baseUrl
+    const baseUrl = this.baseUrl || window.location.origin;
+    
+    // Initialize window.hlx if it doesn't exist
     if (!window.hlx) {
       const baseUrl = this.baseUrl || window.location.origin;
       await this.loadScript(`${baseUrl}/scripts/aem.js`);
@@ -86,12 +102,38 @@ class AEMHeader extends HTMLElement {
   }
 
   /**
+   * Load header fragment from custom URL
+   * @returns {Promise<string|null>} Fragment HTML content or null if not found
+   */
+  async loadCustomHeaderFragment() {
+    if (!this.fragmentUrl) {
+      console.warn('Fragment URL not provided, falling back to default');
+      return await loadHeaderFragment();
+    }
+    
+    const baseUrl = this.baseUrl || window.location.origin;
+    const fullFragmentUrl = `${baseUrl}/${this.fragmentUrl}`;
+    
+    try {
+      const response = await fetch(fullFragmentUrl);
+      if (response.ok) {
+        const html = await response.text();
+        return processFragmentContent(html);
+      }
+    } catch (error) {
+      console.log('Failed to load custom header fragment:', error);
+    }
+    
+    return null;
+  }
+
+  /**
    * Main header loading function
    */
   async loadHeader() {
     try {
-      // Use the shared functions from aem.js
-      const headerContent = await loadHeaderFragment();
+      // Use custom fragment loading with baseUrl and fragmentUrl
+      const headerContent = await this.loadCustomHeaderFragment();
       if (!headerContent) {
         throw new Error('Failed to load header fragment');
       }

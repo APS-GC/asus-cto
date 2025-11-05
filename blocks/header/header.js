@@ -900,6 +900,20 @@ function initializeHeader(block) {
   if (profileToggle && profileMenu) {
     profileToggle.addEventListener('click', (e) => {
       e.stopPropagation();
+      
+      // Close mini cart if it's open when profile is clicked
+      const miniCartToggle = block.querySelector('#mini-cart-toggle');
+      const miniCartContainer = block.querySelector('#mini-cart-container');
+      
+      if (miniCartToggle && miniCartContainer) {
+        const isMiniCartExpanded = miniCartToggle.getAttribute('aria-expanded') === 'true';
+        if (isMiniCartExpanded) {
+          miniCartToggle.setAttribute('aria-expanded', 'false');
+          miniCartContainer.setAttribute('aria-hidden', 'true');
+          miniCartContainer.classList.remove('show');
+        }
+      }
+      
       const isExpanded = profileToggle.getAttribute('aria-expanded') === 'true';
       profileToggle.setAttribute('aria-expanded', !isExpanded);
       profileMenu.classList.toggle('show', !isExpanded);
