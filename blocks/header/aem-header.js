@@ -13,6 +13,7 @@ class AEMHeader extends HTMLElement {
     this.isLoaded = false;
     this.headerData = null;
     this.attachShadow({ mode: 'open' });
+    window.asusCto = {};
   }
 
   static get observedAttributes() {
@@ -28,6 +29,9 @@ class AEMHeader extends HTMLElement {
       this.fragmentUrl = newValue;
     } else if (name === 'base-url') {
       this.baseUrl = newValue;
+      if (window.asusCto && !window.asusCto.baseUrl) {
+        window.asusCto.baseUrl = this.baseUrl || window.location.href;
+      }
     }
     
     // Reload header if already loaded and URL changed
@@ -176,7 +180,6 @@ class AEMHeader extends HTMLElement {
       // Import and execute header decoration
       const baseUrl = this.baseUrl || window.location.origin;
       const headerModule = await import(`${baseUrl}/blocks/header/header.js`);
-      
       if (headerModule.default) {
         await headerModule.default(headerBlock);
       }
@@ -228,3 +231,6 @@ if (typeof module !== 'undefined' && module.exports) {
 } else if (typeof define === 'function' && define.amd) {
   define([], function() { return AEMHeader; });
 }
+
+
+ 

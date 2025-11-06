@@ -1,3 +1,4 @@
+import { createOptimizedPictureExternal } from '../../scripts/scripts.js';
 import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
@@ -850,17 +851,35 @@ export default function decorate(block) {
 // Function to optimize logo images using createOptimizedPicture
 function optimizeLogoImages(block) {
   // Find all logo images and optimize them
+  
   block.querySelectorAll('.logo-wrapper picture > img').forEach((img) => {
-    const optimizedPic = createOptimizedPicture(
-      img.src, 
-      img.alt, 
-      true, // eager loading for logos (above fold)
-      [{ width: '200' }, { width: '400' }] // responsive breakpoints
-    );
+    let optimizedPic;
+    
+    // Check if baseUrl is defined and different from current location
+    const baseUrl = window.asusCto?.baseUrl;
+    const shouldUseExternal = baseUrl && baseUrl !== window.location.href;
+    
+    if (shouldUseExternal) {
+      // Use createOptimizedPictureExternal with baseUrl when baseUrl is defined and different
+      optimizedPic = createOptimizedPictureExternal(
+        img.src, 
+        img.alt, 
+        true, // eager loading for logos (above fold)
+        [{ width: '200' }, { width: '400' }], // responsive breakpoints
+        baseUrl
+      );
+    } else {
+      // Use createOptimizedPicture from aem.js when baseUrl is not defined or equals window.location.href
+      optimizedPic = createOptimizedPicture(
+        img.src, 
+        img.alt, 
+        true, // eager loading for logos (above fold)
+        [{ width: '200' }, { width: '400' }] // responsive breakpoints
+      );
+    }
     
     // Move instrumentation from original to optimized image
     moveInstrumentation(img, optimizedPic.querySelector('img'));
-    
     // Replace the original picture with optimized version
     img.closest('picture').replaceWith(optimizedPic);
   });
