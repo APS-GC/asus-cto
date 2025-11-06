@@ -133,6 +133,10 @@ function parseHTMLContent(block) {
     // Get all div elements that contain the structured data
     const contentDivs = block.querySelectorAll('div > div > div');
 
+    // Check if baseUrl is defined and different from current location
+    const baseUrl = window.asusCto?.baseUrl;
+    const shouldUseExternal = baseUrl && baseUrl !== window.location.href;
+
     const parsedData = {
       logos: [],
       navigationItems: [],
@@ -182,13 +186,13 @@ function parseHTMLContent(block) {
       
       if (index === 0) {
         // 1st div: href link for logos
-        const buttonContainer = div.querySelector('.button-container a');
+        const buttonContainer = div.querySelector('a');
         if (buttonContainer) {
           const href = buttonContainer.getAttribute('href');
           if (href) {
-            // Apply the same URL to all logos
+            // Apply the same URL to all logos with baseUrl transformation
             parsedData.logos.forEach(logo => {
-              logo.url = href;
+              logo.url = shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href;
             });
           }
         }
@@ -254,30 +258,39 @@ function parseHTMLContent(block) {
         const navList = div.querySelector('ul');
         if (navList) {
           const navItems = navList.querySelectorAll('li a');
-          parsedData.navigationItems = Array.from(navItems).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.navigationItems = Array.from(navItems).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href
+            };
+          });
         }
       } else if (index === 8) {
         // 9th div: profileMenuItems (always visible)
         const profileList = div.querySelector('ul');
         if (profileList) {
           const profileItems = profileList.querySelectorAll('li a');
-          parsedData.profileMenuItems = Array.from(profileItems).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.profileMenuItems = Array.from(profileItems).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href
+            };
+          });
         }
       } else if (index === 9) {
         // 10th div: profileMenuLoggedInItems (only visible when user logs in)
         const loggedInList = div.querySelector('ul');
         if (loggedInList) {
           const loggedInItems = loggedInList.querySelectorAll('li a');
-          parsedData.profileMenuLoggedInItems = Array.from(loggedInItems).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.profileMenuLoggedInItems = Array.from(loggedInItems).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href
+            };
+          });
         }
       }
     }
@@ -296,13 +309,18 @@ function parseNavLinks(navLinksText) {
     return [];
   }
   
+  // Check if baseUrl is defined and different from current location
+  const baseUrl = window.asusCto?.baseUrl;
+  const shouldUseExternal = baseUrl && baseUrl !== window.location.href;
+  
   return navLinksText.split('\n')
     .filter(line => line.trim())
     .map(line => {
       const [linkText, linkUrl] = line.split('|');
+      const href = linkUrl?.trim() || '#';
       return {
         linkText: linkText?.trim() || '',
-        linkUrl: linkUrl?.trim() || '#'
+        linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href
       };
     })
     .filter(item => item.linkText); // Remove empty entries

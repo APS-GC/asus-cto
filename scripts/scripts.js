@@ -118,7 +118,6 @@ export function createOptimizedPictureExternal(
   baseUrl
 ) {
   let url;
-  console.log(baseUrl);
   if(baseUrl){
     url = new URL(src.replace(window.location.origin, baseUrl));
   }else{
