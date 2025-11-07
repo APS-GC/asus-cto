@@ -8,6 +8,7 @@
 const CUSTOM_EFFECT_NAME = 'creative';
 const CAROUSEL_SELECTOR = '.carousel:has(.cmp-carousel:not([data-init="false"]))';
 
+
 // Initialize Swiper on AEM Carousel
 window.initializeSwiperOnAEMCarousel = (carousel) => {
   const carouselElement = carousel.querySelector('.cmp-carousel');
