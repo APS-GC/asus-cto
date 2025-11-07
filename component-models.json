@@ -1275,5 +1275,70 @@
         }
       }
     ]
+  },  
+  {
+    "id": "footer",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "titleSubscription",
+        "label": "Title For Subscription Section",
+        "description": "Title For Subscription Section"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "placeholder",
+        "label": "Placeholder for Form Field",
+        "description": "Placeholder to Give Email"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "buttonText",
+        "label": "Label For Subscription Button",
+        "description": "Label For Subscription Button"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "socialTitle",
+        "label": "Title for Social Icon Section",
+        "description": "Title for Social Icon Section"
+      },
+      {
+        "component": "reference",
+        "name": "socialIcons",
+        "label": "Social Icons",
+        "description": "Select Social icon image from DAM",
+        "multi": true
+      },
+      {
+        "component": "richtext",
+        "name": "iconLinks",
+        "value": "",
+        "label": "Social Icons Urls",
+        "description": "Add in the same sequence as social icons",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "config",
+        "value": "",
+        "label": "Footer Config Menu",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "copyrightLinks",
+        "value": "",
+        "label": "Copyright Links for Footer",
+        "valueType": "string",
+        "required": true
+      }
+    ]
   }
 ]
