@@ -1,3 +1,4 @@
+
 function parseHeaderData(block) {
   // Initialize default data structure - values will come from UE authoring
   const data = {
