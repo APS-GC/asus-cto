@@ -1,6 +1,4 @@
-// import './uifrontend/_select-game.js';
-
-export default function decorate(block) {
+export default async function decorate(block) {
     block.innerHTML = `<section class="section-with-bottom-spacing">
     <div class="cmp-container container">
       <div class="game-recommendation">
@@ -18,7 +16,7 @@ export default function decorate(block) {
     </div>
 </div>
 
-    <form id="game-selection-form" class="game-form" action="./product-matches.html" aria-label="Game selection form" data-select-game-form="" data-initialized="true">
+    <form id="game-selection-form" class="game-form" action="./product-matches.html" aria-label="Game selection form" data-select-game-form="" data-initialized="false">
       <div id="carousel-4e80c7e13l" class="cmp-carousel" role="group" aria-live="off" aria-roledescription="carousel" data-slides-per-view="auto" data-slides-per-view-tablet="6" data-slides-per-view-desktop="6" data-loop-slides="false">
         <div class="cmp-carousel__content cmp-carousel__content--overflow" aria-atomic="false" aria-live="polite"><div class="swiper swiper-initialized swiper-horizontal swiper-watch-progress swiper-backface-hidden"><div class="swiper-wrapper" id="swiper-wrapper-7e74c24c10f2d0494" aria-live="off"><div class="cmp-carousel__item swiper-slide swiper-slide-visible swiper-slide-fully-visible swiper-slide-active" role="group" aria-label="Slide 1 of 6" tabindex="-1" style="width: 145.333px; margin-right: 8px;">
               <div class="game-item">
@@ -143,5 +141,6 @@ export default function decorate(block) {
     </div>
   </section>`;
 
-    document.dispatchEvent(new Event('asus-cto-DOMContentLoaded'));
+    await import('./uifrontend_select-game.js');
+    document.dispatchEvent(new Event('asus-cto--blocks-help-me-choose'));
 }
