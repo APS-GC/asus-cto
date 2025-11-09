@@ -1,4 +1,4 @@
-import './uifrontend/_footer.js';
+import './uifrontned_footer.js';
 
 export default function decorate(block) {
     block.innerHTML = `<footer class='experiencefragment'>
