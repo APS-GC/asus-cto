@@ -2,6 +2,7 @@ import { createOptimizedPictureExternal } from '../../scripts/scripts.js';
 import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
+
 function parseHeaderData(block) {
   // Initialize empty data structure - values will only come from actual authoring
   const data = {
