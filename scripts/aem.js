@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+
 /* eslint-env browser */
 function sampleRUM(checkpoint, data) {
   // eslint-disable-next-line max-len
@@ -477,7 +478,7 @@ function decorateIcons(element, prefix = '') {
  * @param {Element} main The container element
  */
 function decorateSections(main) {
-  main.querySelectorAll(':scope > div:not([data-section-status])').forEach((section) => {
+  main.querySelectorAll(':scope > div:not([data-section-status])').forEach((section, index) => {
     const wrappers = [];
     let defaultContent = false;
     [...section.children].forEach((e) => {
@@ -492,7 +493,21 @@ function decorateSections(main) {
     wrappers.forEach((wrapper) => section.append(wrapper));
     section.classList.add('section');
     section.dataset.sectionStatus = 'initialized';
-    section.style.display = 'none';
+    
+    // LCP Optimization: Don't hide the first section to prevent render delay
+    const isFirstSection = index === 0;
+    if (isFirstSection) {
+      // First section remains visible for immediate LCP rendering
+      section.style.visibility = 'visible';
+      section.style.opacity = '1';
+      section.dataset.lcpOptimized = 'true';
+      console.log('LCP Section optimization: First section kept visible for immediate rendering');
+    } else {
+      // Subsequent sections use normal hiding/showing behavior
+      section.style.visibility = 'hidden';
+      section.style.opacity = '0';
+      section.style.transition = 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out';
+    }
 
     // Process section metadata - check multiple sources
     let meta = {};
@@ -719,6 +734,8 @@ function decorateBlocks(main) {
  * @returns {Promise}
  */
 async function loadHeader(header) {
+  const { loadHeaderFragment } = await import('./scripts.js');
+  
   try {
     // Try to load header from fragment first
     const fragmentContent = await loadHeaderFragment();
@@ -744,62 +761,6 @@ async function loadHeader(header) {
   return loadBlock(headerBlock);
 }
 
-/**
- * Loads header fragment from the working fragment URL
- * @returns {Promise<string|null>} Fragment HTML content or null if not found
- */
-async function loadHeaderFragment() {
-  const fragmentUrl = './fragments/header.plain.html';
-
-  try {
-    const response = await fetch(fragmentUrl);
-    if (response.ok) {
-      const html = await response.text();
-      return processFragmentContent(html);
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('Failed to load header fragment:', error);
-  }
-
-  return null;
-}
-
-/**
- * Processes fragment content and extracts header block structure
- * @param {string} html Fragment HTML content
- * @returns {string|null} Processed header block content
- */
-function processFragmentContent(html) {
-  try {
-    // Create a temporary DOM to parse the fragment
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-
-    // Look for existing header block (UE authoring data format)
-    const existingHeaderBlock = tempDiv.querySelector('.header.block');
-    if (existingHeaderBlock) {
-      // Extract the inner header content (skip the outer wrapper)
-      const innerHeader = existingHeaderBlock.querySelector('.header');
-      if (innerHeader) {
-        return innerHeader.outerHTML;
-      }
-    }
-
-    // Fallback: Look for any header block
-    const headerBlock = tempDiv.querySelector('.header');
-    if (headerBlock) {
-      return headerBlock.outerHTML;
-    }
-
-    return null;
-
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('Error processing fragment content:', error);
-    return null;
-  }
-}
 
 /**
  * Loads a block named 'footer' into footer
@@ -846,7 +807,15 @@ async function loadSection(section, loadCallback) {
     }
     if (loadCallback) await loadCallback(section);
     section.dataset.sectionStatus = 'loaded';
-    section.style.display = null;
+    
+    // LCP Optimization: Skip visibility changes for already-visible LCP sections
+    const isLCPOptimized = section.dataset.lcpOptimized === 'true';
+    if (!isLCPOptimized) {
+      section.style.visibility = 'visible';
+      section.style.opacity = '1';
+    } else {
+      console.log('LCP Section already visible, skipping visibility change to avoid render delay');
+    }
   }
 }
 
@@ -882,11 +851,9 @@ export {
   loadCSS,
   loadFooter,
   loadHeader,
-  loadHeaderFragment,
   loadScript,
   loadSection,
   loadSections,
-  processFragmentContent,
   readBlockConfig,
   sampleRUM,
   setup,

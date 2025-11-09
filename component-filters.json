@@ -22,7 +22,70 @@
       "footer",
       "article-card",
       "header",
-      "help-me-choose"
+      "product-card"
+    ]
+  },
+  {
+    "id": "richtext",
+    "rte": {
+      "toolbar": {
+        "format": [
+          "bold",
+          "italic"
+        ],
+        "blocks": [
+          "paragraph",
+          "h1",
+          "h2"
+        ],
+        "list": [
+          "bullet_list",
+          "ordered_list"
+        ],
+        "insert": [
+          "link",
+          "unlink"
+        ],
+        "sections": [
+          "format",
+          "blocks",
+          "list",
+          "insert"
+        ]
+      },
+      "actions": {
+        "bold": {
+          "tag": "strong",
+          "shortcut": "Mod-B",
+          "label": "Bold"
+        },
+        "italic": {
+          "tag": "em",
+          "shortcut": "Mod-I"
+        },
+        "bullet_list": {
+          "wrapInParagraphs": true,
+          "label": "Bullet List"
+        },
+        "ordered_list": {
+          "wrapInParagraphs": false
+        },
+        "link": {
+          "hideTarget": false,
+          "shortcut": "Mod-K",
+          "label": "Add Link"
+        },
+        "unlink": {
+          "label": "Remove Link"
+        },
+        "h1": {
+          "shortcut": "Mod-Alt-1",
+          "label": "Main Heading"
+        }
+      }
+    },
+    "components": [
+      "richtext"
     ]
   },
   {
