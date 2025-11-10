@@ -873,7 +873,7 @@ function optimizeLogoImages(block) {
   block.querySelectorAll('.logo-wrapper picture > img').forEach((img) => {
     let optimizedPic;
     
-    // Check if baseUrl is defined and different from current location
+    // Check if baseUrl is defined and different from current loc
     const baseUrl = window.asusCto?.baseUrl;
     const shouldUseExternal = baseUrl && baseUrl !== window.location.href;
     

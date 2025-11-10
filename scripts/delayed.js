@@ -253,5 +253,5 @@
 //   return swiperInstance;
 // };
 
-// // Initialize all carousels
+// // Initialize all carousel
 // document.querySelectorAll(CAROUSEL_SELECTOR).forEach(window.initializeSwiperOnAEMCarousel);
