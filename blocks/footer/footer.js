@@ -352,7 +352,7 @@ function buildSocialIcons(socialLinks, socialLabel) {
     
     // Apply moveInstrumentation if original element exists
     if (link.originalElement) {
-      //moveInstrumentation(link.originalElement, img);
+      moveInstrumentation(link.originalElement, li);
     }
     
     // Build structure
