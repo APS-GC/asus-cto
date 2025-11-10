@@ -4,7 +4,7 @@
 
 // group editable texts in single wrappers if applicable.
 // this script should execute after script.js but before the the universal editor cors script
-// and any block being loaded
+// and any block being load
 
 export function decorateRichtext(container = document) {
   function deleteInstrumentation(element) {
