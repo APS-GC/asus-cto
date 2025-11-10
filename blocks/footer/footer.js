@@ -177,6 +177,68 @@ function parseFooterData(block) {
     data.globalIcon = parsedFromFragment.globalIcon || '/icons/Global.svg';
   }
 
+  // Override with Universal Editor model data if available
+  if (block.dataset && (block.dataset.model || block.dataset.aueModel)) {
+    const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {};
+    
+    console.log('Universal Editor Model Data:', modelData);
+    
+    // Parse newsletter fields from UE model
+    if (modelData.titleSubscription) data.newsletterLabel = modelData.titleSubscription;
+    if (modelData.placeholder) data.newsletterPlaceholder = modelData.placeholder;
+    if (modelData.buttonText) data.newsletterButtonText = modelData.buttonText;
+    if (modelData.socialTitle) data.socialLabel = modelData.socialTitle;
+    
+    // Parse footer columns from UE model
+    const footerColumnsFromModel = [];
+    
+    // First column
+    if (modelData.titleFirstColumn && modelData.config) {
+      const firstColumnLinks = parseRichTextLinks(modelData.config);
+      footerColumnsFromModel.push({
+        columnTitle: modelData.titleFirstColumn,
+        links: firstColumnLinks
+      });
+    }
+    
+    // Second column
+    if (modelData.titleSecondColumn && modelData.configSecondColumn) {
+      const secondColumnLinks = parseRichTextLinks(modelData.configSecondColumn);
+      footerColumnsFromModel.push({
+        columnTitle: modelData.titleSecondColumn,
+        links: secondColumnLinks
+      });
+    }
+    
+    // Third column
+    if (modelData.titleThirdColumn && modelData.configThirdColumn) {
+      const thirdColumnLinks = parseRichTextLinks(modelData.configThirdColumn);
+      footerColumnsFromModel.push({
+        columnTitle: modelData.titleThirdColumn,
+        links: thirdColumnLinks
+      });
+    }
+    
+    // Update footer columns if model data exists
+    if (footerColumnsFromModel.length > 0) {
+      data.footerColumns = footerColumnsFromModel;
+    }
+    
+    // Parse legal links from UE model
+    if (modelData.copyrightLinks) {
+      const legalLinksFromModel = parseRichTextLinks(modelData.copyrightLinks);
+      if (legalLinksFromModel.length > 0) {
+        data.legalLinks = legalLinksFromModel;
+      }
+    }
+    
+    // Parse social icons from UE model (if available as separate items)
+    // This would need to be implemented based on the actual UE model structure for social icons
+    // For now, we'll keep the existing social links from fragment parsing
+  }
+
+  console.log('Final parsed data:', data);
+
   // Process block content for authoring data
   const rows = [...block.children];
   let footerColumnsArray = [];
