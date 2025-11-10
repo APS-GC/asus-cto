@@ -157,7 +157,8 @@ function parseFooterData(block) {
     footerColumns: [],
     globalText: '',
     globalIcon: '',
-    legalLinks: []
+    legalLinks: [],
+    originalRows: [] // Store original rows for instrumentation transfer
   };
 
   // First try to parse from fragment content structure
@@ -186,6 +187,9 @@ function parseFooterData(block) {
   rows.forEach((row, index) => {
     const cells = [...row.children];
     
+    // Store original row for instrumentation transfer
+    data.originalRows.push(row);
+    
     if (cells.length >= 2) {
       const field = cells[0].textContent.trim();
       const value = cells[1].textContent.trim();
@@ -194,21 +198,27 @@ function parseFooterData(block) {
       switch (field) {
         case 'Newsletter Label':
           data.newsletterLabel = value;
+          data.newsletterLabelRow = row;
           break;
         case 'Newsletter Placeholder':
           data.newsletterPlaceholder = value;
+          data.newsletterPlaceholderRow = row;
           break;
         case 'Newsletter Button Text':
           data.newsletterButtonText = value;
+          data.newsletterButtonRow = row;
           break;
         case 'Social Label':
           data.socialLabel = value;
+          data.socialLabelRow = row;
           break;
         case 'Global Text':
           data.globalText = value;
+          data.globalTextRow = row;
           break;
         case 'Global Icon':
           data.globalIcon = value;
+          data.globalIconRow = row;
           break;
         default:
           // Handle complex structured data
@@ -222,11 +232,19 @@ function parseFooterData(block) {
                 linkUrl: linkUrl ? linkUrl.trim() : '#' 
               };
             });
-            footerColumnsArray.push({ columnTitle, links });
+            footerColumnsArray.push({ 
+              columnTitle, 
+              links, 
+              originalRow: row // Store original row for instrumentation
+            });
           } else if (field.startsWith('Legal ')) {
             // Parse legal links - format: "Legal Link Name" | "URL"
             const linkText = field.replace('Legal ', '');
-            legalLinksArray.push({ linkText, linkUrl: value });
+            legalLinksArray.push({ 
+              linkText, 
+              linkUrl: value, 
+              originalRow: row // Store original row for instrumentation
+            });
           } else if (field.startsWith('Social ')) {
             // Parse social links - format: "Social Platform" | "URL|Icon|AltText"
             const platform = field.replace('Social ', '').toLowerCase();
@@ -235,7 +253,8 @@ function parseFooterData(block) {
               platform, 
               url: parts[0] || '#',
               icon: parts[1] || `/icons/social/icon-${platform}.svg`,
-              altText: parts[2] || platform.charAt(0).toUpperCase() + platform.slice(1)
+              altText: parts[2] || platform.charAt(0).toUpperCase() + platform.slice(1),
+              originalRow: row // Store original row for instrumentation
             };
             socialLinksArray.push(socialLink);
           }
@@ -260,10 +279,18 @@ function parseFooterData(block) {
                 linkUrl: linkUrl ? linkUrl.trim() : '#' 
               };
             });
-            footerColumnsArray.push({ columnTitle, links });
+            footerColumnsArray.push({ 
+              columnTitle, 
+              links, 
+              originalRow: row // Store original row for instrumentation
+            });
           } else if (key.startsWith('Legal:')) {
             const linkText = key.replace('Legal:', '').trim();
-            legalLinksArray.push({ linkText, linkUrl: value });
+            legalLinksArray.push({ 
+              linkText, 
+              linkUrl: value, 
+              originalRow: row // Store original row for instrumentation
+            });
           }
         }
       }
@@ -341,18 +368,66 @@ function buildSocialIcons(socialLinks, socialLabel) {
 }
 
 function buildFooterColumns(footerColumns) {
-  return footerColumns.map(column => `
-    <ul class='footer-links__column pl-0'>
-      <li><p class="w-500">${column.columnTitle}</p></li>
-      ${column.links.map(link => `<li><a href='${link.linkUrl}'>${link.linkText}</a></li>`).join('')}
-    </ul>
-  `).join('');
+  const columnsContainer = document.createElement('div');
+  
+  footerColumns.forEach(column => {
+    const ul = document.createElement('ul');
+    ul.className = 'footer-links__column pl-0';
+    
+    // Create title list item
+    const titleLi = document.createElement('li');
+    const titleP = document.createElement('p');
+    titleP.className = 'w-500';
+    titleP.textContent = column.columnTitle;
+    titleLi.appendChild(titleP);
+    ul.appendChild(titleLi);
+    
+    // Apply moveInstrumentation to title if original row exists
+    if (column.originalRow) {
+      moveInstrumentation(column.originalRow, titleP);
+    }
+    
+    // Create link list items
+    column.links.forEach(link => {
+      const linkLi = document.createElement('li');
+      const linkA = document.createElement('a');
+      linkA.href = link.linkUrl;
+      linkA.textContent = link.linkText;
+      
+      // Apply moveInstrumentation to link if original row exists
+      if (column.originalRow) {
+        moveInstrumentation(column.originalRow, linkA);
+      }
+      
+      linkLi.appendChild(linkA);
+      ul.appendChild(linkLi);
+    });
+    
+    columnsContainer.appendChild(ul);
+  });
+  
+  return columnsContainer.innerHTML;
 }
 
 function buildLegalLinks(legalLinks) {
-  return legalLinks.map(link => `
-    <a href='${link.linkUrl}' target="_blank" aria-label="View ${link.linkText} (open a new window)">${link.linkText}</a>
-  `).join('');
+  const linksContainer = document.createElement('div');
+  
+  legalLinks.forEach(link => {
+    const a = document.createElement('a');
+    a.href = link.linkUrl;
+    a.target = '_blank';
+    a.setAttribute('aria-label', `View ${link.linkText} (open a new window)`);
+    a.textContent = link.linkText;
+    
+    // Apply moveInstrumentation if original row exists
+    if (link.originalRow) {
+      moveInstrumentation(link.originalRow, a);
+    }
+    
+    linksContainer.appendChild(a);
+  });
+  
+  return linksContainer.innerHTML;
 }
 
 export default function decorate(block) {
@@ -405,6 +480,30 @@ export default function decorate(block) {
   // Clear existing content and add the footer structure
   block.innerHTML = footerHTML;
   block.classList.add('experiencefragment');
+
+  // Apply moveInstrumentation to newsletter form elements
+  const newsletterLabel = block.querySelector('label[for="newsletter-email"]');
+  const newsletterInput = block.querySelector('#newsletter-email');
+  const newsletterButton = block.querySelector('.newsletter button');
+  const socialLabel = block.querySelector('.text-social');
+  const globalText = block.querySelector('.footer-bottom span');
+
+  // Transfer instrumentation from original rows to form elements
+  if (data.newsletterLabelRow && newsletterLabel) {
+    moveInstrumentation(data.newsletterLabelRow, newsletterLabel);
+  }
+  if (data.newsletterPlaceholderRow && newsletterInput) {
+    moveInstrumentation(data.newsletterPlaceholderRow, newsletterInput);
+  }
+  if (data.newsletterButtonRow && newsletterButton) {
+    moveInstrumentation(data.newsletterButtonRow, newsletterButton);
+  }
+  if (data.socialLabelRow && socialLabel) {
+    moveInstrumentation(data.socialLabelRow, socialLabel);
+  }
+  if (data.globalTextRow && globalText) {
+    moveInstrumentation(data.globalTextRow, globalText);
+  }
 
   // Add newsletter form functionality
   const form = block.querySelector('.newsletter');
