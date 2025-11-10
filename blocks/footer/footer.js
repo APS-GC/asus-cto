@@ -385,7 +385,7 @@ function buildFooterColumns(footerColumns) {
     
     // Apply moveInstrumentation to title if original row exists
     if (column.originalRow) {
-      //moveInstrumentation(column.originalRow, titleP);
+      moveInstrumentation(column.originalRow, titleP);
     }
     
     // Create link list items
@@ -397,7 +397,7 @@ function buildFooterColumns(footerColumns) {
       
       // Apply moveInstrumentation to link if original row exists
       if (column.originalRow) {
-        //moveInstrumentation(column.originalRow, linkA);
+        moveInstrumentation(column.originalRow, linkA);
       }
       
       linkLi.appendChild(linkA);
@@ -422,7 +422,7 @@ function buildLegalLinks(legalLinks) {
     
     // Apply moveInstrumentation if original row exists
     if (link.originalRow) {
-      //moveInstrumentation(link.originalRow, a);
+      moveInstrumentation(link.originalRow, a);
     }
     
     linksContainer.appendChild(a);
@@ -491,19 +491,19 @@ export default function decorate(block) {
 
   // Transfer instrumentation from original rows to form elements
   if (data.newsletterLabelRow && newsletterLabel) {
-    //moveInstrumentation(data.newsletterLabelRow, newsletterLabel);
+    moveInstrumentation(data.newsletterLabelRow, newsletterLabel);
   }
   if (data.newsletterPlaceholderRow && newsletterInput) {
-    //moveInstrumentation(data.newsletterPlaceholderRow, newsletterInput);
+    moveInstrumentation(data.newsletterPlaceholderRow, newsletterInput);
   }
   if (data.newsletterButtonRow && newsletterButton) {
-    //moveInstrumentation(data.newsletterButtonRow, newsletterButton);
+    moveInstrumentation(data.newsletterButtonRow, newsletterButton);
   }
   if (data.socialLabelRow && socialLabel) {
-    //moveInstrumentation(data.socialLabelRow, socialLabel);
+    moveInstrumentation(data.socialLabelRow, socialLabel);
   }
   if (data.globalTextRow && globalText) {
-    //moveInstrumentation(data.globalTextRow, globalText);
+    moveInstrumentation(data.globalTextRow, globalText);
   }
 
   // Add newsletter form functionality
