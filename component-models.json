@@ -1288,6 +1288,14 @@
         "value": "Hot Products"
       },
       {
+        "component": "number",
+        "valueType": "number",
+        "name": "productsToShow",
+        "label": "Products to Show",
+        "description": "Number of products to display in the carousel (default: 3)",
+        "value": 3
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "compareLabel",
@@ -1302,6 +1310,14 @@
         "label": "Buy Now Button Text",
         "description": "Text for the buy now call-to-action button",
         "value": "Buy now"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "quickViewText",
+        "label": "Quick View Button Text",
+        "description": "Text for the quick view button that appears on product image hover",
+        "value": "Quick view"
       },
       {
         "component": "text",

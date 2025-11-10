@@ -185,6 +185,43 @@ async function loadLazy(doc) {
 }
 
 /**
+ * Dynamically load Bazaarvoice script only when needed
+ * This is called from blocks that need ratings functionality
+ * 
+ * @returns {Promise} Resolves when script is loaded
+ */
+export async function loadBazaarvoiceScript() {
+  const BV_SCRIPT_ID = 'bv-script';
+  
+  // TODO: Replace with getConfigValue() when configs are ready
+  // Hardcoded values for now based on current deployment
+  const clientName = 'asustek';
+  const siteId = 'cto_main_site_black';
+  const environment = 'production';
+  const locale = 'en_US';
+  
+  // Check if script already exists in DOM
+  if (document.getElementById(BV_SCRIPT_ID)) {
+    console.log('Bazaarvoice: Script already loaded');
+    return Promise.resolve();
+  }
+
+  console.log('Bazaarvoice: Loading script dynamically');
+
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.id = BV_SCRIPT_ID;
+    script.async = true;
+    script.onload = () => {
+      console.log('Bazaarvoice: Script loaded successfully');
+      resolve();
+    };
+    script.src = `https://apps.bazaarvoice.com/deployments/${clientName}/${siteId}/${environment}/${locale}/bv.js`;
+    document.head.appendChild(script);
+  });
+}
+
+/**
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
