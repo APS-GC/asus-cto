@@ -1,113 +1,109 @@
 /* Top Picks Cards Block - Based on webpack component */
 .top-picks-cards {
-  margin: var(--spacing-32) 0;
+  padding-top: 10px;
 }
 
 .top-picks-cards > ul {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 10px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: var(--spacing-24);
+  gap: var(--spacing-5);
 }
 
 .top-picks-cards .top-picks-card {
+  background-color: var(--color-primary-50);
+  border-radius: 1rem;
+  color: var(--color-primary-950);
   display: grid;
-  grid-template-columns: 120px 1fr;
-  background-color:var(--color-primary-50);
-  border-radius: var(--border-radius-xl);
-  color: #ffffff;
-  align-items: stretch;
-  box-shadow: var(--shadow-normal);
-  padding: 16px;
-  gap: 16px;
-  min-height: 120px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, .08);
+  padding: 2rem;
+  height: 190px
 }
 
-.top-picks-cards .top-picks-card:hover {
+/* .top-picks-cards .top-picks-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
-}
+} */
 
 .top-picks-cards .product-image-wrapper {
-  width: 120px;
-  height: 120px;
-  border-radius: var(--border-radius-sm);
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    border-radius: .375rem;
+    height: auto;
+    position: relative;
+    width: 120px;
 }
 
 .top-picks-cards .product-image-wrapper::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
   background: var(--gradient-product-card);
   border-radius: 100%;
+  content: "";
   filter: blur(32px);
-  z-index: 0;
-  opacity: 0.8;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%
 }
 
 .top-picks-cards .product-image {
-  width: 80%;
-  height: 80%;
-  display: block;
-  object-fit: contain;
-  position: relative;
-  z-index: 1;
-  border-radius: var(--border-radius-sm);
+    display: block;
+    height: auto;
+    object-fit: contain;
+    position: relative;
+    width: 100%;
+    z-index: 1
 }
 
 .top-picks-cards .product-info {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  -ms-flex-item-align: center;
+  align-self: center;
+  gap: .25rem;
   height: 100%;
-  padding: 0;
-  gap: 8px;
+  padding-left: 2.5rem;
 }
 
 .top-picks-cards .label {
-  color: #ffffff;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-regular);
-  line-height: var(--line-height-normal);
+  color: var(--color-primary-950);
+  font-family: var(--font-text);
+  font-size: 0.8125rem;
+  font-weight: var(--regular);
+  letter-spacing: 0.24px;
+  line-height: 1.125rem;
   margin: 0;
-  opacity: 0.8;
 }
 
 .top-picks-cards .title {
   font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.2;
-  margin: 4px 0 0 0;
-  color: #ffffff;
-  flex-grow: 1;
+  font-size: 1.25rem;
+  font-weight: var(--medium);
+  letter-spacing: 0px;
+  line-height: 1.75rem;
+  margin-bottom: 3rem;
 }
 
 .top-picks-cards .cta-wrapper {
-  display: flex;
-  align-items: flex-end;
-  margin-top: auto;
+    display: flex;
+    align-items: flex-end;
+    flex: 1 1 0%;
 }
 
 .top-picks-cards .cta {
-  color: #ffffff;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 400;
-  display: inline-flex;
-  align-items: center;
-  transition: color 0.3s ease;
-  gap: 4px;
+    color: var(--color-primary-950);
+    display: inline-flex;
+    font-family: var(--font-text);
+    font-size: 1rem;
+    font-weight: var(--regular);
+    letter-spacing: 0;
+    line-height: 1.5rem;
+    text-decoration: none;
+    align-items: center;
+    gap: .25rem;
+    transition: color .3s ease;
 }
 
 .top-picks-cards .cta:hover {
@@ -134,6 +130,7 @@
   .top-picks-cards > ul {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
+    padding: 10px;
   }
 
   .top-picks-cards .top-picks-card {
@@ -141,19 +138,7 @@
     grid-template-columns: 84px 1fr;
     gap: 12px;
     min-height: 84px;
-  }
-
-  .top-picks-cards .product-image-wrapper {
-    width: 84px;
-    height: 84px;
-  }
-
-  .top-picks-cards .label {
-    font-size: 12px;
-  }
-
-  .top-picks-cards .title {
-    font-size: 18px;
+    height: 168px;
   }
 }
 
@@ -168,15 +153,24 @@
     grid-template-columns: 72px 1fr;
     gap: 12px;
     min-height: 72px;
-  }
-
-  .top-picks-cards .product-image-wrapper {
-    width: 72px;
-    height: 72px;
+    height: 168px;
   }
 
   .top-picks-cards .title {
-    font-size: 16px;
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: var(--medium);
+    letter-spacing: 0;
+    line-height: 1.625rem;
+  }
+
+  .top-picks-cards .label {
+    font-family: var(--font-text);
+    font-size: .8125rem;
+    font-weight: var(--regular);
+    letter-spacing: 0;
+    letter-spacing: .24px;
+    line-height: 1.125rem;
   }
 
   .top-picks-cards .cta {
@@ -225,25 +219,6 @@
   border-radius: var(--border-radius-xs);
 }
 
-/* Animation for better UX */
-@media (prefers-reduced-motion: no-preference) {
-  .top-picks-cards .top-picks-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .top-picks-cards .cta {
-    transition: color 0.3s ease, text-decoration 0.3s ease;
-  }
-  
-  .top-picks-cards .product-image {
-    transition: transform 0.3s ease;
-  }
-  
-  .top-picks-cards .top-picks-card:hover .product-image {
-    transform: scale(1.02);
-  }
-}
-
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   .top-picks-cards .top-picks-card {
@@ -252,5 +227,30 @@
   
   .top-picks-cards .cta {
     text-decoration: underline;
+  }
+}
+
+
+/*Adding Explicit Container Designs for Top Picks Cards*/
+/*TODO : Apply it Globally and remove from here */
+.top-picks-cards-wrapper {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--spacing-4); 
+}
+
+
+@media (min-width: 48rem) {
+  .top-picks-cards-wrapper {
+    padding: 0 var(--spacing-10); 
+  }
+}
+
+
+@media (min-width: 80rem) {
+  .top-picks-cards-wrapper {
+    max-width: calc(100% - 200px);
+    padding: 0; 
   }
 }

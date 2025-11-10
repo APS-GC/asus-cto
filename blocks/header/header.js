@@ -1,5 +1,7 @@
+import { createOptimizedPictureExternal } from '../../scripts/scripts.js';
 import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
+
 
 function parseHeaderData(block) {
   // Initialize empty data structure - values will only come from actual authoring
@@ -132,6 +134,10 @@ function parseHTMLContent(block) {
     // Get all div elements that contain the structured data
     const contentDivs = block.querySelectorAll('div > div > div');
 
+    // Check if baseUrl is defined and different from current location
+    const baseUrl = window.asusCto?.baseUrl;
+    const shouldUseExternal = baseUrl && baseUrl !== window.location.href;
+
     const parsedData = {
       logos: [],
       navigationItems: [],
@@ -181,13 +187,13 @@ function parseHTMLContent(block) {
       
       if (index === 0) {
         // 1st div: href link for logos
-        const buttonContainer = div.querySelector('.button-container a');
+        const buttonContainer = div.querySelector('a');
         if (buttonContainer) {
           const href = buttonContainer.getAttribute('href');
           if (href) {
-            // Apply the same URL to all logos
+            // Apply the same URL to all logos with baseUrl transformation
             parsedData.logos.forEach(logo => {
-              logo.url = href;
+              logo.url = shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href;
             });
           }
         }
@@ -253,30 +259,39 @@ function parseHTMLContent(block) {
         const navList = div.querySelector('ul');
         if (navList) {
           const navItems = navList.querySelectorAll('li a');
-          parsedData.navigationItems = Array.from(navItems).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.navigationItems = Array.from(navItems).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href
+            };
+          });
         }
       } else if (index === 8) {
         // 9th div: profileMenuItems (always visible)
         const profileList = div.querySelector('ul');
         if (profileList) {
           const profileItems = profileList.querySelectorAll('li a');
-          parsedData.profileMenuItems = Array.from(profileItems).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.profileMenuItems = Array.from(profileItems).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href
+            };
+          });
         }
       } else if (index === 9) {
         // 10th div: profileMenuLoggedInItems (only visible when user logs in)
         const loggedInList = div.querySelector('ul');
         if (loggedInList) {
           const loggedInItems = loggedInList.querySelectorAll('li a');
-          parsedData.profileMenuLoggedInItems = Array.from(loggedInItems).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.profileMenuLoggedInItems = Array.from(loggedInItems).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href
+            };
+          });
         }
       }
     }
@@ -295,13 +310,18 @@ function parseNavLinks(navLinksText) {
     return [];
   }
   
+  // Check if baseUrl is defined and different from current location
+  const baseUrl = window.asusCto?.baseUrl;
+  const shouldUseExternal = baseUrl && baseUrl !== window.location.href;
+  
   return navLinksText.split('\n')
     .filter(line => line.trim())
     .map(line => {
       const [linkText, linkUrl] = line.split('|');
+      const href = linkUrl?.trim() || '#';
       return {
         linkText: linkText?.trim() || '',
-        linkUrl: linkUrl?.trim() || '#'
+        linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href
       };
     })
     .filter(item => item.linkText); // Remove empty entries
@@ -850,17 +870,35 @@ export default function decorate(block) {
 // Function to optimize logo images using createOptimizedPicture
 function optimizeLogoImages(block) {
   // Find all logo images and optimize them
+  
   block.querySelectorAll('.logo-wrapper picture > img').forEach((img) => {
-    const optimizedPic = createOptimizedPicture(
-      img.src, 
-      img.alt, 
-      true, // eager loading for logos (above fold)
-      [{ width: '200' }, { width: '400' }] // responsive breakpoints
-    );
+    let optimizedPic;
+    
+    // Check if baseUrl is defined and different from current location
+    const baseUrl = window.asusCto?.baseUrl;
+    const shouldUseExternal = baseUrl && baseUrl !== window.location.href;
+    
+    if (shouldUseExternal) {
+      // Use createOptimizedPictureExternal with baseUrl when baseUrl is defined and different
+      optimizedPic = createOptimizedPictureExternal(
+        img.src, 
+        img.alt, 
+        true, // eager loading for logos (above fold)
+        [{ width: '200' }, { width: '400' }], // responsive breakpoints
+        baseUrl
+      );
+    } else {
+      // Use createOptimizedPicture from aem.js when baseUrl is not defined or equals window.location.href
+      optimizedPic = createOptimizedPicture(
+        img.src, 
+        img.alt, 
+        true, // eager loading for logos (above fold)
+        [{ width: '200' }, { width: '400' }] // responsive breakpoints
+      );
+    }
     
     // Move instrumentation from original to optimized image
     moveInstrumentation(img, optimizedPic.querySelector('img'));
-    
     // Replace the original picture with optimized version
     img.closest('picture').replaceWith(optimizedPic);
   });
@@ -900,6 +938,20 @@ function initializeHeader(block) {
   if (profileToggle && profileMenu) {
     profileToggle.addEventListener('click', (e) => {
       e.stopPropagation();
+      
+      // Close mini cart if it's open when profile is clicked
+      const miniCartToggle = block.querySelector('#mini-cart-toggle');
+      const miniCartContainer = block.querySelector('#mini-cart-container');
+      
+      if (miniCartToggle && miniCartContainer) {
+        const isMiniCartExpanded = miniCartToggle.getAttribute('aria-expanded') === 'true';
+        if (isMiniCartExpanded) {
+          miniCartToggle.setAttribute('aria-expanded', 'false');
+          miniCartContainer.setAttribute('aria-hidden', 'true');
+          miniCartContainer.classList.remove('show');
+        }
+      }
+      
       const isExpanded = profileToggle.getAttribute('aria-expanded') === 'true';
       profileToggle.setAttribute('aria-expanded', !isExpanded);
       profileMenu.classList.toggle('show', !isExpanded);

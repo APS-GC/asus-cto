@@ -6,6 +6,7 @@
 // this script should execute after script.js but before the the universal editor cors script
 // and any block being loaded
 
+
 export function decorateRichtext(container = document) {
   function deleteInstrumentation(element) {
     delete element.dataset.richtextResource;

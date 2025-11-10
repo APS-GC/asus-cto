@@ -1,3 +1,4 @@
+
 function parseFooterData(block) {
   // Default data structure
   const data = {
