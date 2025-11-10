@@ -128,7 +128,8 @@ function parseFragmentContent(block) {
             url: url,
             icon: picture.getAttribute('src') || '',
             altText: picture.getAttribute('alt') || platform.charAt(0).toUpperCase() + platform.slice(1),
-            originalElement: picture // Store reference to original image element for moveInstrumentation
+            originalElement: picture, // Store reference to original image element for moveInstrumentation
+            actualDiv:div
           });
         }
       }
@@ -335,7 +336,7 @@ function buildSocialIcons(socialLinks, socialLabel) {
     const li = document.createElement('li');
     const a = document.createElement('a');
     const img = document.createElement('img');
-    
+    moveInstrumentation(link.actualDiv,li);
     const altText = link.altText || link.platform.charAt(0).toUpperCase() + link.platform.slice(1);
     
     // Set link attributes
@@ -352,7 +353,7 @@ function buildSocialIcons(socialLinks, socialLabel) {
     
     // Apply moveInstrumentation if original element exists
     if (link.originalElement) {
-      moveInstrumentation(link.originalElement, li);
+      moveInstrumentation(link.originalElement, img);
     }
     
     // Build structure
