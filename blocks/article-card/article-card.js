@@ -5,7 +5,7 @@ export default function decorate(block) {
   /* change to ul, li */
   const ul = document.createElement('ul');
   
-  // Global LCP tracking - ensure we optimize the very first article image proces
+  // Global LCP tracking - ensure we optimize the very first article image processed
   if (!window.asusLCPOptimized) {
     window.asusLCPOptimized = false;
   }
