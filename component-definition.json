@@ -281,7 +281,7 @@
         }
       },
         {
-          "title": "Hero Banner",
+          "title": "Carousel",
           "id": "carousel",
           "plugins": {
             "xwalk": {
@@ -297,14 +297,14 @@
           }
         },
         {
-          "title": "Hero Banner Slide",
+          "title": "Carousel Slide",
           "id": "carousel-slide",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
-                  "name": "Hero Banner Slide",
+                  "name": "Carousel Slide",
                   "model": "carousel-slide"
                 }
               }
