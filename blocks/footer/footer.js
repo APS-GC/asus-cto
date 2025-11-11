@@ -15,7 +15,8 @@ function parseFragmentContent(block) {
       legalLinks: [],
       socialLinks: [],
       globalText: '',
-      globalIcon: ''
+      globalIcon: '',
+      showGlobal: false
     };
 
     // Process divs according to the fragment structure:
@@ -30,7 +31,8 @@ function parseFragmentContent(block) {
     // 9th div: Column 3 Title
     // 10th div: Column 3 Links
     // 11th div: Legal Links
-    // 12th+ divs: Social Media Icons with Images and Links
+    // 12th div: show Global
+    // 13th+ divs: Social Media Icons with Images and Links
     
     for (let index = 0; index < contentDivs.length; index++) {
       const div = contentDivs[index];
@@ -111,15 +113,20 @@ function parseFragmentContent(block) {
             linkUrl: link.getAttribute('href') || '#'
           }));
         }
-      } else if (index >= 11) {
-        // 12th+ divs: Social Media Icons with Images and Links
+      } else if (index === 11) {
+        // 12th div: show Global
+        if (textContent) {
+          parsedData.showGlobal = textContent.toLowerCase() === 'true' || textContent.toLowerCase() === 'yes';
+        }
+      } else if (index >= 12) {
+        // 13th+ divs: Social Media Icons with Images and Links
         // Structure: <div><p><div><picture><img></picture></div><div>URL</div></p></div>
         const picture = div.querySelector('div > picture img');
         const urlDiv = div.querySelectorAll('div')[1] || div.querySelector('a'); // Second div contains the URL
         
         if (picture && urlDiv) {
           const socialPlatforms = ['facebook', 'x', 'instagram', 'tiktok', 'youtube', 'discord', 'twitch', 'thread']; // Map to known platforms
-          const platformIndex = index - 11;
+          const platformIndex = index - 12;
           const platform = socialPlatforms[platformIndex] || `social${platformIndex + 1}`;
           const url = urlDiv.textContent?.trim() || '#';
           
@@ -158,6 +165,7 @@ function parseFooterData(block) {
     footerColumns: [],
     globalText: '',
     globalIcon: '',
+    showGlobal: '', // Default to false
     legalLinks: [],
     originalRows: [] // Store original rows for instrumentation transfer
   };
@@ -175,6 +183,7 @@ function parseFooterData(block) {
     data.socialLinks = parsedFromFragment.socialLinks || [];
     data.globalText = parsedFromFragment.globalText || 'Global/English';
     data.globalIcon = parsedFromFragment.globalIcon || '/icons/Global.svg';
+    data.showGlobal = parsedFromFragment.showGlobal !== undefined ? parsedFromFragment.showGlobal : false;
   }
 
   // Override with Universal Editor model data if available
@@ -232,6 +241,11 @@ function parseFooterData(block) {
       }
     }
     
+    // Parse showGlobal from UE model
+    if (modelData.showGlobal !== undefined) {
+      data.showGlobal = modelData.showGlobal;
+    }
+    
     // Parse social icons from UE model (if available as separate items)
     // This would need to be implemented based on the actual UE model structure for social icons
     // For now, we'll keep the existing social links from fragment parsing
@@ -282,6 +296,10 @@ function parseFooterData(block) {
         case 'Global Icon':
           data.globalIcon = value;
           data.globalIconRow = row;
+          break;
+        case 'Show Global':
+          data.showGlobal = value.toLowerCase() === 'true' || value.toLowerCase() === 'yes';
+          data.showGlobalRow = row;
           break;
         default:
           // Handle complex structured data
@@ -524,7 +542,7 @@ export default function decorate(block) {
       </div>
 
       <div class='footer-bottom'>
-        <span tabindex="0"><img src="${data.globalIcon}" alt="Global">${data.globalText}</span>
+        ${data.showGlobal ? `<span tabindex="0"><img src="${data.globalIcon}" alt="Global">${data.globalText}</span>` : `<span></span>`}
         <nav class='footer-bottom__links' aria-label="Legal links">
           ${buildLegalLinks(data.legalLinks)}
         </nav>
@@ -564,7 +582,7 @@ export default function decorate(block) {
   if (data.socialLabelRow && socialLabel) {
     moveInstrumentation(data.socialLabelRow, socialLabel);
   }
-  if (data.globalTextRow && globalText) {
+  if (data.showGlobal && data.globalTextRow && globalText) {
     moveInstrumentation(data.globalTextRow, globalText);
   }
 
