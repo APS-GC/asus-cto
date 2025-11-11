@@ -52,7 +52,7 @@ export function moveInstrumentation(from, to) {
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
 export async function loadHeaderFragment() {
-  const fragmentUrl = '/fragments/head.plain.html';
+  const fragmentUrl = '/language-master/en/fragments/head.plain.html';
    try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
@@ -62,6 +62,26 @@ export async function loadHeaderFragment() {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.log('Failed to load header fragment:', error);
+  }
+
+  return null;
+}
+
+/**
+ * Loads footer fragment from the working fragment URL
+ * @returns {Promise<string|null>} Fragment HTML content or null if not found
+ */
+export async function loadFooterFragment() {
+  const fragmentUrl = '/language-master/en/fragments/footer.plain.html';
+  try {
+    const response = await fetch(fragmentUrl);
+    if (response.ok) {
+      const html = await response.text();
+      return processFooterFragmentContent(html);
+    }
+  } catch (error) {   
+    // eslint-disable-next-line no-console
+    console.log('Failed to load footer fragment:', error);
   }
 
   return null;
@@ -154,6 +174,41 @@ export function createOptimizedPictureExternal(
   });
 
   return picture;
+}
+/**
+ * Processes footer fragment content and extracts footer block structure
+ * @param {string} html Fragment HTML content
+ * @returns {string|null} Processed footer block content
+ */
+export function processFooterFragmentContent(html) {
+  try {
+    // Create a temporary DOM to parse the fragment
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    // Look for existing footer block (UE authoring data format)
+    const existingFooterBlock = tempDiv.querySelector('.footer.block');
+    if (existingFooterBlock) {
+      // Extract the inner footer content (skip the outer wrapper)
+      const innerFooter = existingFooterBlock.querySelector('.footer');
+      if (innerFooter) {
+        return innerFooter.outerHTML;
+      }
+    }
+
+    // Fallback: Look for any footer block
+    const footerBlock = tempDiv.querySelector('.footer');
+    if (footerBlock) {
+      return footerBlock.outerHTML;
+    }
+
+    return null;
+
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Error processing footer fragment content:', error);
+    return null;
+  }
 }
 
 /**

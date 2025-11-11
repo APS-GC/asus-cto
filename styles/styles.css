@@ -2462,3 +2462,107 @@ select.error {
   will-change: transform;
   transform: translateZ(0);
 }
+input[type=email],input[type=number],input[type=password],input[type=search],input[type=text] {
+    background-color: var(--color-primary-100);
+    border: 1px solid var(--color-primary-600);
+    border-radius: .5rem;
+    color: var(--color-primary-950);
+    font-family: var(--font-text);
+    font-size: 1.125rem;
+    font-weight: var(--regular);
+    letter-spacing: 0;
+    line-height: 1.5rem;
+    outline: none;
+    padding: 7px 16px
+}
+
+input[type=email]:focus-visible,input[type=number]:focus-visible,input[type=password]:focus-visible,input[type=search]:focus-visible,input[type=text]:focus-visible {
+    border-color: var(--color-select-box-highlight);
+    outline: 1px solid var(--color-select-box-highlight)
+}
+
+input[type=email]::-webkit-input-placeholder,input[type=number]::-webkit-input-placeholder,input[type=password]::-webkit-input-placeholder,input[type=search]::-webkit-input-placeholder,input[type=text]::-webkit-input-placeholder {
+    color: var(--color-primary-600)
+}
+
+input[type=email]::-moz-placeholder,input[type=number]::-moz-placeholder,input[type=password]::-moz-placeholder,input[type=search]::-moz-placeholder,input[type=text]::-moz-placeholder {
+    color: var(--color-primary-600)
+}
+
+input[type=email]:-ms-input-placeholder,input[type=number]:-ms-input-placeholder,input[type=password]:-ms-input-placeholder,input[type=search]:-ms-input-placeholder,input[type=text]:-ms-input-placeholder {
+    color: var(--color-primary-600)
+}
+
+input[type=email]::-ms-input-placeholder,input[type=number]::-ms-input-placeholder,input[type=password]::-ms-input-placeholder,input[type=search]::-ms-input-placeholder,input[type=text]::-ms-input-placeholder {
+    color: var(--color-primary-600)
+}
+
+input[type=email]::placeholder,input[type=number]::placeholder,input[type=password]::placeholder,input[type=search]::placeholder,input[type=text]::placeholder {
+    color: var(--color-primary-600)
+}
+
+input[type=checkbox] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    border-radius: 4px;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+    cursor: pointer;
+    height: 16px;
+    margin: 0;
+    position: relative;
+    width: 16px
+}
+
+input[type=checkbox]:before {
+    border: 1px solid var(--color-primary-600);
+    border-radius: 4px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    content: "";
+    display: block;
+    height: 16px;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    width: 16px
+}
+
+input[type=checkbox]:focus-visible {
+    outline: solid 2px var(--color-focus-ring);
+    outline-offset: 2px
+}
+
+input[type=checkbox]:checked {
+    color: var(--color-primary)
+}
+
+input[type=checkbox]:checked:before {
+    background: var(--color-primary-950);
+    border: 1px solid var(--color-primary-950)
+}
+
+input[type=checkbox]:checked:after {
+    background-color: currentColor;
+    content: "";
+    display: block;
+    height: 10px;
+    left: 50%;
+    -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 10 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m.875 5.16 2.87 3.215 5.38-6.75"/></svg>');
+    mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 10 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m.875 5.16 2.87 3.215 5.38-6.75"/></svg>');
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    width: 10px
+}

@@ -1,7 +1,7 @@
 {
   "definitions": [
     {
-      "title": "Top Picks Cards",
+      "title": "Latest creations & Top Picks",
       "id": "top-picks-cards",
       "plugins": {
         "xwalk": {
