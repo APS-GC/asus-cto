@@ -16,7 +16,7 @@ function parseFragmentContent(block) {
       socialLinks: [],
       globalText: '',
       globalIcon: '',
-      showGlobal: false
+      showGlobal: ''
     };
 
     // Process divs according to the fragment structure:
