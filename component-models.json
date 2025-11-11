@@ -1310,7 +1310,7 @@
           "valueType": "number",
           "name": "maxItems",
           "label": "Maximum Items",
-          "defaultValue": 7,
+          "value": 7,
           "description": "Set the maximum number of articles to display (Max: 7)"
         }
     ]
