@@ -1275,5 +1275,31 @@
         }
       }
     ]
+  },
+  {
+    "id": "spacer",
+    "fields": [
+      {
+        "component": "text",
+        "name": "desktop",
+        "label": "Desktop Spacing",
+        "description": "Spacing for desktop (e.g., 28px, 2rem)",
+        "value": "28px"
+      },
+      {
+        "component": "text", 
+        "name": "tablet",
+        "label": "Tablet Spacing",
+        "description": "Spacing for tablet (e.g., 50%, 75%)",
+        "value": "50%"
+      },
+      {
+        "component": "text",
+        "name": "mobile", 
+        "label": "Mobile Spacing",
+        "description": "Spacing for mobile (e.g., 50%, 25%)",
+        "value": "50%"
+      }
+    ]
   }
 ]

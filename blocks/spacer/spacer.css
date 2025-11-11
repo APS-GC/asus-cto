@@ -1,0 +1,206 @@
+/* ========================================================================== 
+ * Spacer Block - EDS Block for Creating Responsive Spacing
+ * Allows authors to specify pixel/rem values for desktop and percentage for mobile/tablet
+ * ========================================================================== */
+
+.spacer {
+  width: 100%;
+  display: block;
+}
+
+.spacer-element {
+  width: 100%;
+  display: block;
+  /* Default mobile spacing - can be overridden by CSS custom properties */
+  height: var(--spacer-mobile, 50%);
+  min-height: 1rem; /* Minimum height to ensure visibility in authoring */
+}
+
+/* ========================================================================== 
+ * Responsive Breakpoints
+ * Mobile: Use percentage-based spacing
+ * Tablet: Use percentage-based spacing  
+ * Desktop: Use pixel/rem-based spacing
+ * ========================================================================== */
+
+/* Mobile First - Default spacing uses mobile values */
+@media (max-width: 767px) {
+  .spacer-element {
+    height: var(--spacer-mobile, 50%);
+  }
+}
+
+/* Tablet - 768px to 1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .spacer-element {
+    height: var(--spacer-tablet, 50%);
+  }
+}
+
+/* Desktop - 1024px and up */
+@media (min-width: 1024px) {
+  .spacer-element {
+    height: var(--spacer-desktop, 28px);
+  }
+}
+
+/* ========================================================================== 
+ * Authoring Mode Support
+ * Provides visual feedback when editing in AEM/EDS authoring environment
+ * ========================================================================== */
+
+/* Show a subtle border in authoring mode for better visibility */
+.spacer-configured .spacer-element {
+  position: relative;
+}
+
+/* Optional: Add visual indicator in authoring mode */
+.spacer-configured .spacer-element::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Show border on hover in authoring mode */
+.spacer-configured:hover .spacer-element::before {
+  opacity: 1;
+}
+
+/* ========================================================================== 
+ * Accessibility and Performance
+ * ========================================================================== */
+
+/* Ensure spacer doesn't interfere with screen readers */
+.spacer-element {
+  aria-hidden: true;
+}
+
+/* Prevent layout shift by ensuring minimum dimensions */
+.spacer-element {
+  min-width: 1px;
+}
+
+/* ========================================================================== 
+ * Utility Classes for Common Spacing Values
+ * Authors can use these predefined classes for quick setup
+ * ========================================================================== */
+
+/* Small spacing variants */
+.spacer.small .spacer-element {
+  --spacer-desktop: 16px;
+  --spacer-tablet: 25%;
+  --spacer-mobile: 25%;
+}
+
+/* Medium spacing variants */
+.spacer.medium .spacer-element {
+  --spacer-desktop: 32px;
+  --spacer-tablet: 50%;
+  --spacer-mobile: 50%;
+}
+
+/* Large spacing variants */
+.spacer.large .spacer-element {
+  --spacer-desktop: 64px;
+  --spacer-tablet: 75%;
+  --spacer-mobile: 75%;
+}
+
+/* Extra large spacing variants */
+.spacer.xlarge .spacer-element {
+  --spacer-desktop: 96px;
+  --spacer-tablet: 100%;
+  --spacer-mobile: 100%;
+}
+
+/* ========================================================================== 
+ * Universal Editor (UE) Support
+ * Provides enhanced editing experience in Universal Editor
+ * ========================================================================== */
+
+/* UE Mode Styling */
+.spacer-ue-mode {
+  position: relative;
+  min-height: 40px;
+}
+
+.spacer-ue-mode .spacer-element {
+  border: 2px dashed #0066cc;
+  background-color: rgba(0, 102, 204, 0.05);
+  position: relative;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* UE Visual Indicator */
+.spacer-ue-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 102, 204, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* UE Hover Effects */
+.spacer-ue-mode:hover .spacer-element {
+  border-color: #0052a3;
+  background-color: rgba(0, 102, 204, 0.1);
+}
+
+.spacer-ue-mode:hover .spacer-ue-indicator {
+  background-color: rgba(0, 82, 163, 0.95);
+}
+
+/* UE Edit State */
+.spacer-ue-mode[data-aue-editing="true"] .spacer-element {
+  border-color: #ff6b35;
+  background-color: rgba(255, 107, 53, 0.1);
+}
+
+.spacer-ue-mode[data-aue-editing="true"] .spacer-ue-indicator {
+  background-color: rgba(255, 107, 53, 0.9);
+}
+
+/* Hide UE indicator in published mode */
+.spacer:not(.spacer-ue-mode) .spacer-ue-indicator {
+  display: none;
+}
+
+/* UE Responsive Preview */
+@media (max-width: 767px) {
+  .spacer-ue-indicator::after {
+    content: " (Mobile)";
+    font-weight: bold;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .spacer-ue-indicator::after {
+    content: " (Tablet)";
+    font-weight: bold;
+  }
+}
+
+@media (min-width: 1024px) {
+  .spacer-ue-indicator::after {
+    content: " (Desktop)";
+    font-weight: bold;
+  }
+}
