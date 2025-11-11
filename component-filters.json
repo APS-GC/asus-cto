@@ -22,7 +22,8 @@
       "footer",
       "article-card",
       "header",
-      "product-card"
+      "product-card",
+      "featured-news-articles"
     ]
   },
   {
@@ -125,6 +126,12 @@
       "id": "carousel",
       "components": [
         "carousel-slide"
+      ]
+    },
+    {
+      "id": "featured-news-articles",
+      "components": [
+        "featured-news-article"
       ]
     }
 ]
