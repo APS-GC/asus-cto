@@ -4,7 +4,6 @@ import { loadHeaderFragment, processFragmentContent } from '../../scripts/script
  * AEM Header Web Component
  * Encapsulates the header block as a reusable web component for third-party integration
  */
-
 class AEMHeader extends HTMLElement {
   constructor() {
     super();
@@ -233,4 +232,3 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 
- 

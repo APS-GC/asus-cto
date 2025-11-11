@@ -12,6 +12,7 @@ import {
   loadCSS,
 } from './aem.js';
 
+
 /**
  * Moves all the attributes from a given elmenet to another given element.
  * @param {Element} from the element to copy attributes from
