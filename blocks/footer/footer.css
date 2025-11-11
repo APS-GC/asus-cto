@@ -156,8 +156,8 @@ footer .social__icons li a {
     display: inline-flex
 }
 
-footer .social__icons li a:active .social_icons-circle, footer .social__icons li a:focus .social_icons-circle, footer .social__icons li a:focus-visible .social_icons-circle, footer .social__icons li a:hover .social_icons-circle {
-    fill: var(--color-primary-500)
+footer .social__icons li a:active img, footer .social__icons li a:focus img, footer .social__icons li a:focus-visible img, footer .social__icons li a:hover img {
+    filter: grayscale(100%) brightness(0.5) contrast(1.2);
 }
 
 footer .social__icons li a:focus-visible {
