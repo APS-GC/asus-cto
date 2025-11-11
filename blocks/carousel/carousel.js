@@ -401,7 +401,7 @@ function initializeSwiper(carouselElement, config) {
             autoplayToggle.setAttribute('aria-label', 'Play');
             carouselElement.setAttribute('aria-live', 'polite');
             
-            // Maintain video pause state when autoplay is paus
+            // Maintain video pause state when autoplay is paused
             if (isVideoPaused && activeVideo) {
               manageVideoPlayback(activeVideo, 'pause');
               mediaControls?.classList.add('paused');

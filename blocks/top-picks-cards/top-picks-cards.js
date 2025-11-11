@@ -10,7 +10,7 @@ export default function decorate(block) {
     li.className = 'top-picks-card';
     moveInstrumentation(row, li);
     
-    // Create the product image wrap
+    // Create the product image wrapper
     const productImageWrapper = document.createElement('div');
     productImageWrapper.className = 'product-image-wrapper';
     
