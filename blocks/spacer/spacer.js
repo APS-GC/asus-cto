@@ -1,7 +1,4 @@
 export default function decorate(block) {
-  // Get the configuration from the block content
-  const rows = [...block.children];
-  
   // Initialize configuration object with defaults
   const config = {
     desktop: '28px', // default desktop spacing
@@ -9,22 +6,16 @@ export default function decorate(block) {
     mobile: '50%'    // default mobile spacing
   };
   
-  // Parse configuration from block content (document-based authoring)
-  rows.forEach((row) => {
-    const cells = [...row.children];
-    if (cells.length >= 2) {
-      const key = cells[0].textContent.trim().toLowerCase();
-      const value = cells[1].textContent.trim();
-      
-      if (key === 'desktop' || key === 'desktop-space') {
-        config.desktop = value;
-      } else if (key === 'tablet' || key === 'tablet-space') {
-        config.tablet = value;
-      } else if (key === 'mobile' || key === 'mobile-space') {
-        config.mobile = value;
-      }
-    }
-  });
+  // Read values from data attributes (Universal Editor)
+  if (block.dataset.desktop) {
+    config.desktop = block.dataset.desktop;
+  }
+  if (block.dataset.tablet) {
+    config.tablet = block.dataset.tablet;
+  }
+  if (block.dataset.mobile) {
+    config.mobile = block.dataset.mobile;
+  }
   
   // Clear the block content
   block.innerHTML = '';
@@ -43,4 +34,7 @@ export default function decorate(block) {
   
   // Add a class to the block for styling
   block.classList.add('spacer-configured');
+  
+  // Debug logging to help troubleshoot
+  console.log('Spacer config:', config);
 }

@@ -57,36 +57,3 @@
 .spacer-element {
   min-width: 1px;
 }
-
-/* ========================================================================== 
- * Utility Classes for Common Spacing Values
- * Authors can use these predefined classes for quick setup
- * ========================================================================== */
-
-/* Small spacing variants */
-.spacer.small .spacer-element {
-  --spacer-desktop: 16px;
-  --spacer-tablet: 25%;
-  --spacer-mobile: 25%;
-}
-
-/* Medium spacing variants */
-.spacer.medium .spacer-element {
-  --spacer-desktop: 32px;
-  --spacer-tablet: 50%;
-  --spacer-mobile: 50%;
-}
-
-/* Large spacing variants */
-.spacer.large .spacer-element {
-  --spacer-desktop: 64px;
-  --spacer-tablet: 75%;
-  --spacer-mobile: 75%;
-}
-
-/* Extra large spacing variants */
-.spacer.xlarge .spacer-element {
-  --spacer-desktop: 96px;
-  --spacer-tablet: 100%;
-  --spacer-mobile: 100%;
-}
