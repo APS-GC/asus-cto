@@ -1,16 +1,18 @@
-import { createOptimizedPicture } from '../../scripts/aem.js';
-import { moveInstrumentation } from '../../scripts/scripts.js';
+import { createOptimizedPicture } from "../../scripts/aem.js";
+import { moveInstrumentation } from "../../scripts/scripts.js";
 
 export default function decorate(block) {
- // 获取block中的所有div元素
-  const divs = block.querySelectorAll(':scope > div');
-  
+  // 获取block中的所有div元素
+  const divs = block.querySelectorAll(":scope > div");
+
   // 提取配置参数
-  const title = divs[0]?.querySelector('div').querySelector('p').textContent?.trim() || 'Featured News Articles';
-  const seeAllText = divs[1]?.textContent?.trim() || 'See all News & Articles';
-  const slidesPerViewDesktop = divs[2]?.textContent?.trim() || '3';
-  const loopSlides = divs[3]?.textContent?.trim().toLowerCase() === 'true';
-  const slidesPerViewMobile = divs[4]?.textContent?.trim() || 'auto';
+  const $title = divs[0]?.querySelector("div").querySelector("p");
+  const title = $title ? $title.textContent?.trim() : "Featured News Articles";
+
+  const $seeAllText = divs[1]?.querySelector("div").querySelector("p");
+  const seeAllText = $seeAllText
+    ? $seeAllText.textContent?.trim()
+    : "See all News & Articles";
 
   // 提取文章项数据（从第5个div开始是文章项）
   const articles = [];
@@ -20,31 +22,28 @@ export default function decorate(block) {
     if (articleData.title) {
       articles.push({
         ...articleData,
-        originalElement: articleDiv // 保存原始元素用于moveInstrumentation
+        originalElement: articleDiv,
       });
     }
   }
 
-  // 生成唯一的carousel ID
-  const carouselId = `carousel-${Date.now().toString(36)}`;
-
   // 创建外层section
-  const section = document.createElement('section');
-  section.className = 'section-with-bottom-spacing';
+  const section = document.createElement("section");
+  section.className = "section-with-bottom-spacing";
 
   // 创建容器
-  const container = document.createElement('div');
-  container.className = 'cmp-container container';
+  const container = document.createElement("div");
+  container.className = "cmp-container container";
   section.appendChild(container);
 
   // 创建carousel容器
-  const carouselContainer = document.createElement('div');
-  carouselContainer.className = 'carousel panelcontainer';
+  const carouselContainer = document.createElement("div");
+  carouselContainer.className = "carousel panelcontainer";
   container.appendChild(carouselContainer);
 
   // 创建section heading
-  const sectionHeading = document.createElement('div');
-  sectionHeading.className = 'section-heading';
+  const sectionHeading = document.createElement("div");
+  sectionHeading.className = "section-heading";
   sectionHeading.innerHTML = `
     <div class="section-heading__text-group">
       <h2 class="section-heading__title">${title}</h2>
@@ -60,62 +59,53 @@ export default function decorate(block) {
   `;
   carouselContainer.appendChild(sectionHeading);
 
-  // 迁移section heading的AEM属性
-  if (divs[0]) {
-    const titleElement = sectionHeading.querySelector('.section-heading__title');
-    moveInstrumentation(divs[0], titleElement);
+  // 迁移title AEM属性
+  if ($title) {
+    const titleElement = sectionHeading.querySelector(
+      ".section-heading__title"
+    );
+    moveInstrumentation($title, titleElement);
   }
 
   // 创建carousel主体
-  const carousel = document.createElement('div');
-  carousel.id = carouselId;
-  carousel.className = 'cmp-carousel';
-  carousel.setAttribute('role', 'group');
-  carousel.setAttribute('aria-live', 'polite');
-  carousel.setAttribute('aria-roledescription', 'carousel');
-  carousel.setAttribute('data-cmp-is', 'carousel');
-  carousel.setAttribute('data-cmp-delay', 'false');
-  carousel.setAttribute('data-slides-per-view', slidesPerViewMobile);
-  carousel.setAttribute('data-slides-per-view-tablet', slidesPerViewDesktop);
-  carousel.setAttribute('data-slides-per-view-desktop', slidesPerViewDesktop);
-  carousel.setAttribute('data-loop-slides', loopSlides);
+  const carousel = document.createElement("div");
+  carousel.className = "cmp-carousel";
   carouselContainer.appendChild(carousel);
 
-  // 迁移carousel配置的AEM属性
-  if (divs[2]) moveInstrumentation(divs[2], carousel); // slides per view
-  if (divs[3]) moveInstrumentation(divs[3], carousel); // loop slides
-  if (divs[4]) moveInstrumentation(divs[4], carousel); // mobile slides
-
   // 创建carousel内容区域
-  const carouselContent = document.createElement('div');
-  carouselContent.className = 'cmp-carousel__content cmp-carousel__content--overflow';
+  const carouselContent = document.createElement("div");
+  carouselContent.className =
+    "cmp-carousel__content cmp-carousel__content--overflow";
   carousel.appendChild(carouselContent);
 
   // 创建文章项
   articles.forEach((article, index) => {
-    const carouselItem = document.createElement('div');
-    carouselItem.id = `${carouselId}-item-${index + 1}-tabpanel`;
-    carouselItem.className = 'cmp-carousel__item';
+    const carouselItem = document.createElement("div");
+    carouselItem.className = "cmp-carousel__item";
     if (index === 0) {
-      carouselItem.classList.add('cmp-carousel__item--active');
+      carouselItem.classList.add("cmp-carousel__item--active");
     }
 
-    const articleCard = document.createElement('a');
-    articleCard.className = 'cmp-article-card';
-    articleCard.href = article.articleLink || './news-details.html';
-    articleCard.setAttribute('aria-label', `Read article: ${article.title}`);
-    
+    const articleCard = document.createElement("a");
+    articleCard.className = "cmp-article-card";
+    articleCard.href = article.articleLink;
+    articleCard.setAttribute("aria-label", `Read article: ${article.title}`);
+
     if (article.articleOpenInNewTab) {
-      articleCard.target = '_blank';
+      articleCard.target = "_blank";
     }
-    
+
     articleCard.innerHTML = `
       <div class="cmp-article-card__image cmp-image">
-        <img class="cmp-image__image" src="${article.image}" alt="${article.imageAlt}" loading="lazy">
+        <img class="cmp-image__image" src="${article.image}" alt="${
+      article.imageAlt
+    }" loading="lazy">
       </div>
       <div class="cmp-article-card__content">
         <p class="cmp-article-card__date">
-          <time datetime="${article.postedDate.split('T')[0]}">${article.postedDate}</time>
+          <time datetime="${article.postedDate.split("T")[0]}">${
+      article.postedDate
+    }</time>
         </p>
         <h3 class="cmp-article-card__title">${article.title}</h3>
         <div class="cmp-article-card__desc">${article.summary}</div>
@@ -126,46 +116,50 @@ export default function decorate(block) {
     carouselContent.appendChild(carouselItem);
 
     // 迁移文章项的AEM属性
-    if (article.originalElement) {
-      moveInstrumentation(article.originalElement, carouselItem);
-    }
+    // if (article.originalElement) {
+    //   moveInstrumentation(article.originalElement, carouselItem);
+    // }
   });
 
   // 创建底部操作区域
-  const sectionActions = document.createElement('div');
-  sectionActions.className = 'section-actions-container';
-  
-  const seeAllLink = document.createElement('a');
-  seeAllLink.className = 'section-actions-btn btn btn-link';
-  seeAllLink.href = '/news-articles.html'; // 这里可以根据需要从配置中获取
-  seeAllLink.target = '_blank';
-  seeAllLink.innerHTML = `${seeAllText} <img src="./clientlib-site/images/icon-arrow.svg" alt="Arrow Right">`;
-  
+  const sectionActions = document.createElement("div");
+  sectionActions.className = "section-actions-container";
+
+  const seeAllLink = document.createElement("a");
+  seeAllLink.className = "section-actions-btn btn btn-link";
+  seeAllLink.href = "/news-articles.html"; // 这里可以根据需要从配置中获取
+  seeAllLink.target = "_blank";
+  seeAllLink.innerHTML = `${seeAllText} <img src="/icons/icon-arrow.svg" alt="Arrow Right">`;
+
   sectionActions.appendChild(seeAllLink);
   section.appendChild(sectionActions);
 
-  // 迁移"See all"链接的AEM属性
-  if (divs[1]) {
-    moveInstrumentation(divs[1], seeAllLink);
+  // 迁移"See all"AEM属性
+  if ($seeAllText) {
+    moveInstrumentation($seeAllText, seeAllLink);
   }
 
   // 清空block并添加新内容
-  block.innerHTML = '';
+  block.innerHTML = "";
   block.appendChild(section);
 
   // 迁移整个block的AEM属性到section
-  moveInstrumentation(block, section);
+  // moveInstrumentation(block, section);
 }
 
 // 从文章div中提取数据
 function extractArticleData(articleDiv) {
-  const title = articleDiv.children[0].textContent?.trim() || '';
-  const summary = articleDiv.children[1].textContent?.trim() || '';
-  const image = articleDiv.children[2].querySelector('img')?.getAttribute('src') || '';
-  const imageAlt = articleDiv.children[3].textContent?.trim() || '';
-  const postedDate = articleDiv.children[4].textContent?.trim() ;
-  const articleLink = articleDiv.children[5].querySelector('div:has(a) a')?.getAttribute('href');
-  const articleOpenInNewTab = articleDiv.children[6].textContent?.trim().toLowerCase() === 'true';
+  const title = articleDiv.children[0].textContent?.trim() || "";
+  const summary = articleDiv.children[1].textContent?.trim() || "";
+  const image =
+    articleDiv.children[2].querySelector("img")?.getAttribute("src") || "";
+  const imageAlt = articleDiv.children[3].textContent?.trim() || "";
+  const postedDate = articleDiv.children[4].textContent?.trim();
+  const articleLink = articleDiv.children[5]
+    .querySelector("div:has(a) a")
+    ?.getAttribute("href");
+  const articleOpenInNewTab =
+    articleDiv.children[6].textContent?.trim().toLowerCase() === "true";
 
   return {
     title,
@@ -174,6 +168,6 @@ function extractArticleData(articleDiv) {
     imageAlt,
     postedDate,
     articleLink,
-    articleOpenInNewTab
+    articleOpenInNewTab,
   };
 }
