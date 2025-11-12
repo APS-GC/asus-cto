@@ -52,7 +52,8 @@ export function moveInstrumentation(from, to) {
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
 export async function loadHeaderFragment() {
-  const fragmentUrl = '/language-master/en/fragments/head.plain.html';
+  //TODO: change this to relative when we base url is changed.
+  const fragmentUrl = '/fragments/head.plain.html';
    try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
@@ -72,7 +73,8 @@ export async function loadHeaderFragment() {
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
 export async function loadFooterFragment() {
-  const fragmentUrl = '/language-master/en/fragments/footer.plain.html';
+  //TODO: change this to relative when we base url is changed.
+  const fragmentUrl = '/fragments/footer.plain.html';
   try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
