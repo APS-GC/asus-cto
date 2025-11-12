@@ -135,7 +135,11 @@ export default function decorate(block) {
   // seeAllLink.insertBefore(seeAllLinkText,seeAllLink.firstChild);
   sectionActions.appendChild(seeAllLink);
   section.appendChild(sectionActions);
-  moveInstrumentation($seeAllText, seeAllLinkText);
+
+  if($seeAllText){
+    moveInstrumentation($seeAllText, seeAllLinkText);
+  }
+  
 
   // 清空block并添加新内容
   block.innerHTML = "";
