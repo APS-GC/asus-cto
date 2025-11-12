@@ -7,7 +7,7 @@ export default function decorate(block) {
 
   // 提取配置参数
   const $title = divs[0]?.querySelector("div").querySelector("p");
-  const title = $title ? $title.textContent?.trim() : "Featured News & Articles";
+  const title = $title ? $title.textContent?.trim() : "Featured News Articles";
 
   const $seeAllText = divs[1]?.querySelector("div").querySelector("p");
   const seeAllText = $seeAllText

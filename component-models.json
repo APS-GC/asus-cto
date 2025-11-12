@@ -1284,7 +1284,7 @@
           "valueType": "string",
           "name": "title",
           "label": "Title",
-          "value": "Featured News & Articles"
+          "value": "Featured News Articles"
         },
         {
           "component": "text",
