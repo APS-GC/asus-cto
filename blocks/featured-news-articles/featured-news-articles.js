@@ -132,8 +132,8 @@ export default function decorate(block) {
   const seeAllLinkText = document.createElement("span");
   seeAllLinkText.innerHTML = seeAllText;
   moveInstrumentation($seeAllText, seeAllLinkText);
-  seeAllLink.innerHTML = `<img src="/icons/icon-arrow.svg" alt="Arrow Right">`;
-  seeAllLink.insertBefore(seeAllLinkText,seeAllLink.firstChild);
+  // seeAllLink.innerHTML = `<img src="/icons/icon-arrow.svg" alt="Arrow Right">`;
+  // seeAllLink.insertBefore(seeAllLinkText,seeAllLink.firstChild);
 
   sectionActions.appendChild(seeAllLink);
   section.appendChild(sectionActions);
