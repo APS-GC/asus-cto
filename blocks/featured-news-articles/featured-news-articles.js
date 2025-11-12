@@ -7,7 +7,7 @@ export default function decorate(block) {
 
   // 提取配置参数
   const $title = divs[0]?.querySelector("div").querySelector("p");
-  const title = $title ? $title.textContent?.trim() : "Featured News Articles";
+  const title = $title ? $title.textContent?.trim() : "Featured News & Articles";
 
   const $seeAllText = divs[1]?.querySelector("div").querySelector("p");
   const seeAllText = $seeAllText
@@ -133,7 +133,7 @@ export default function decorate(block) {
   seeAllLinkText.innerHTML = seeAllText;
   moveInstrumentation($seeAllText, seeAllLinkText);
   seeAllLink.innerHTML = `<img src="/icons/icon-arrow.svg" alt="Arrow Right">`;
-  seeAllLink.insertBefore(seeAllLinkText);
+  seeAllLink.insertBefore(seeAllLinkText,seeAllLink.firstChild);
 
   sectionActions.appendChild(seeAllLink);
   section.appendChild(sectionActions);
