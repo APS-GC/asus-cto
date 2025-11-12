@@ -127,17 +127,16 @@ export default function decorate(block) {
 
   const seeAllLink = document.createElement("a");
   seeAllLink.className = "section-actions-btn btn btn-link";
-  seeAllLink.href = "/news-articles.html"; // 这里可以根据需要从配置中获取
+  seeAllLink.href = "/news-articles.html";
   seeAllLink.target = "_blank";
-  seeAllLink.innerHTML = `${seeAllText} <img src="/icons/icon-arrow.svg" alt="Arrow Right">`;
+  const seeAllLinkText = document.createElement("span");
+  seeAllLinkText.innerHTML = seeAllText;
+  moveInstrumentation($seeAllText, seeAllLinkText);
+  seeAllLink.innerHTML = `<img src="/icons/icon-arrow.svg" alt="Arrow Right">`;
+  seeAllLink.insertBefore(seeAllLinkText);
 
   sectionActions.appendChild(seeAllLink);
   section.appendChild(sectionActions);
-
-  // 迁移"See all"AEM属性
-  if ($seeAllText) {
-    moveInstrumentation($seeAllText, seeAllLink);
-  }
 
   // 清空block并添加新内容
   block.innerHTML = "";
