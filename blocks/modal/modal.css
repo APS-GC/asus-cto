@@ -1,0 +1,123 @@
+body.modal-open {
+  overflow:auto;
+}
+
+.modal dialog::backdrop {
+  background-color: rgb(19 19 19 / 75%);
+}
+
+.modal dialog {
+  overscroll-behavior: none;
+  overflow-y: hidden;
+  position : fixed;
+  width: calc(100vw - var(--spacing-48));
+  max-width: var(--modal-width);
+  max-height: calc(100dvh);
+  padding: 0;
+  border: none;
+  margin: auto;
+  color: inherit;
+  border-radius: var(--border-16);
+}
+
+.modal:has(.email-capture-modal) dialog {
+  background-color: inherit;
+}
+
+.modal dialog:has(.video) {
+  border-radius: unset;
+}
+
+.modal dialog .modal-content {
+  box-sizing: border-box;
+  overflow-y: auto;
+  overscroll-behavior: none;
+  width: 100%;
+
+  /*  Calculating max-height to be inline with figma for small screens. */
+  max-height: calc(100dvh - (2 * var(--spacing-14)));
+}
+
+.modal .close-button {
+  position: absolute;
+  top: var(--spacing-14);
+  right: var(--spacing-14);
+  width: var(--spacing-32);
+  height: var(--spacing-32);
+  min-width: unset;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  background-color: transparent;
+  color: var(--text-color);
+  line-height: 0;
+  z-index: 2;
+  outline: none;
+}
+
+.modal .close-button:focus-visible {
+  outline: auto;
+}
+
+.modal .close-button .icon.icon-close {
+  content: '';
+  width: var(--spacing-32);
+  height: var(--spacing-32);
+  background-color: var(--color-close-button);
+  border-radius: 50%;
+}
+
+.modal .close-button .icon.icon-close::before,
+.modal .close-button .icon.icon-close::after {
+  content: '';
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: var(--spacing-22);
+  height: var(--spacing-2);
+  border-radius: 2px;
+  background-color: currentcolor;
+}
+
+.modal .close-button .icon.icon-close::after {
+  transform: translate(-50%, -50%) rotate(-45deg)
+}
+
+.modal dialog .section {
+  padding: 0;
+  margin: unset;
+}
+
+.modal .no-focus-visible:focus {
+  outline: none ;
+  box-shadow: none;
+}
+
+@media (width >= 1200px) {
+  .modal dialog {
+    width: calc(100vw - var(--spacing-64));
+  }
+  
+  .modal dialog .modal-content {
+    max-height: calc(100dvh);
+  }
+
+  .modal .close-button {
+    width: var(--spacing-44);
+    height: var(--spacing-44);
+  }
+  
+  .modal .close-button .icon.icon-close {
+    width: var(--spacing-40);
+    height: var(--spacing-40);
+  }
+
+  .modal .close-button .icon.icon-close::before,
+  .modal .close-button .icon.icon-close::after {
+    width: var(--spacing-24);
+  }
+}

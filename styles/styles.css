@@ -41,10 +41,10 @@
   --btn-disabled-bg: var(--color-primary-600);
   --btn-disabled-color: var(--color-primary-800);
   --btn-hover-bg: var(--color-primary-700);
-  --btn-outline-border: var(--color-primary-950);
+  --btn-outline-border: var(--color-primary);
   --btn-outline-disabled-border: var(--color-primary-600);
-  --btn-outline-hover-bg: var(--color-primary-950);
-  --btn-outline-hover-color: var(--color-primary);
+  --btn-outline-hover-bg: var(--color-primary);
+  --btn-outline-hover-color: var(--color-primary-950);
   --btn-link-color: var(--color-primary-950);
   --btn-link-disabled-color: var(--color-primary-600);
   --btn-link-hover-color: var(--color-primary-950);
@@ -62,6 +62,7 @@
   --color-gray-700: var(--color-primary-200);
   --color-gray-800: var(--color-primary-100);
   --color-gray-900: var(--color-primary-50);
+  --color-primary-base: var(--color-primary);
   
   /* Legacy status color mappings */
   --color-success-dark: #007e33;
@@ -2310,7 +2311,6 @@ select {
   transition: border-color 0.2s ease;
 }
 
-input:focus,
 textarea:focus,
 select:focus {
   outline: none;

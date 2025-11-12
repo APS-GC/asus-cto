@@ -1,5 +1,8 @@
 import { fetchHotProducts } from '../../scripts/api-service.js';
 import { loadBazaarvoiceScript } from '../../scripts/scripts.js';
+import { createModal } from '../modal/modal.js';
+import { loadCSS } from '../../scripts/aem.js';
+import decorateProductPreview from '../product-preview/product-preview.js';
 
 function initializeTooltips(container) {
     const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
@@ -73,7 +76,13 @@ function createProductCard(product, config) {
     card.className = 'hot-products-card swiper-slide';
 
     // Generate badges HTML from productTags
+    // Add "In Stock" badge by default if not already present
     const badges = product.productTags || [];
+    const hasInStock = badges.some(badge => badge.toLowerCase() === 'in stock');
+    if (!hasInStock) {
+        badges.unshift('In Stock'); // Add "In Stock" at the beginning
+    }
+    
     const badgesHTML = badges.map(badge => {
         let badgeClass = 'hot-products-badge';
         const badgeLower = badge.toLowerCase();
@@ -143,7 +152,7 @@ function createProductCard(product, config) {
         <div class="hot-products-rating">
           <div
             data-bv-show="inline_rating"
-            data-bv-product-id="${product.sku}"
+            data-bv-product-id="${product.externalId || product.sku}"
             data-bv-redirect-url="pdp.html"
           ></div>
         </div>
@@ -318,6 +327,30 @@ function initializeSwiper(section, config) {
     return swiper;
 }
 
+// Handle quick view button click
+async function handleQuickView(product) {
+    console.log('Quick View clicked for:', product.name);
+    
+    // Load product-preview CSS
+    await loadCSS(`${window.hlx.codeBasePath}/blocks/product-preview/product-preview.css`);
+    
+    // Create product-preview block
+    const productPreviewBlock = document.createElement('div');
+    productPreviewBlock.className = 'product-preview';
+    productPreviewBlock.dataset.product = JSON.stringify(product);
+    
+    // Decorate the block
+    await decorateProductPreview(productPreviewBlock);
+    
+    console.log('Product preview block decorated');
+    
+    // Create and show modal
+    const { showModal } = await createModal([productPreviewBlock], false, true);
+    showModal();
+    
+    console.log('Modal opened successfully!');
+}
+
 export default async function decorate(block) {
     const config = parseConfig(block);
 
@@ -397,6 +430,16 @@ export default async function decorate(block) {
             productsToDisplay.forEach(product => {
                 const card = createProductCard(product, config);
                 wrapper.appendChild(card);
+                
+                // Add quick view event listener
+                const quickViewBtn = card.querySelector('.hot-products-quick-view');
+                if (quickViewBtn) {
+                    quickViewBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleQuickView(product);
+                    });
+                }
             });
 
             initializeTooltips(section);
