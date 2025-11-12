@@ -53,7 +53,7 @@ export function moveInstrumentation(from, to) {
  */
 export async function loadHeaderFragment() {
   //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = '/language-master/en/fragments/head.plain.html';
+  const fragmentUrl = '/content/asus-cto/language-master/en/fragments/head.plain.html';
    try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
@@ -74,7 +74,7 @@ export async function loadHeaderFragment() {
  */
 export async function loadFooterFragment() {
   //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = '/language-master/en/fragments/footer.plain.html';
+  const fragmentUrl = '/content/asus-cto/language-master/en/fragments/footer.plain.html';
   try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
