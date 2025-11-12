@@ -131,12 +131,11 @@ export default function decorate(block) {
   seeAllLink.target = "_blank";
   const seeAllLinkText = document.createElement("span");
   seeAllLinkText.innerHTML = seeAllText;
-  moveInstrumentation($seeAllText, seeAllLinkText);
   // seeAllLink.innerHTML = `<img src="/icons/icon-arrow.svg" alt="Arrow Right">`;
   // seeAllLink.insertBefore(seeAllLinkText,seeAllLink.firstChild);
-
   sectionActions.appendChild(seeAllLink);
   section.appendChild(sectionActions);
+  moveInstrumentation($seeAllText, seeAllLinkText);
 
   // 清空block并添加新内容
   block.innerHTML = "";
