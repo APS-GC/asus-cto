@@ -6,7 +6,7 @@ export default function decorate(block) {
   const divs = block.querySelectorAll(':scope > div');
   
   // 提取配置参数
-  const title = divs[0]?.querySelector('div').querySelector('p').textContent?.trim() || 'Featured News & Articles';
+  const title = divs[0]?.querySelector('div').querySelector('p').textContent?.trim() || 'Featured News Articles';
   const seeAllText = divs[1]?.textContent?.trim() || 'See all News & Articles';
   const slidesPerViewDesktop = divs[2]?.textContent?.trim() || '3';
   const loopSlides = divs[3]?.textContent?.trim().toLowerCase() === 'true';
