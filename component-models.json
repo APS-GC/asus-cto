@@ -1360,5 +1360,9 @@
         "value": "/modals/product-preview"
       }
     ]
+  },
+  {
+    "id": "product-preview",
+    "fields": []
   }
 ]
