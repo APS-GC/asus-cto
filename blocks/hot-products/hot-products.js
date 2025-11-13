@@ -1,5 +1,5 @@
 import { fetchHotProducts } from '../../scripts/api-service.js';
-import { loadBazaarvoiceScript } from '../../scripts/scripts.js';
+import { isUniversalEditor, loadBazaarvoiceScript } from '../../scripts/scripts.js';
 import { openModal } from '../modal/modal.js';
 
 function initializeTooltips(container) {
@@ -341,6 +341,7 @@ function initializeSwiper(section, config) {
 // Handle quick view button click
 async function handleQuickView(product, config) {
     const isUE = isUniversalEditor();
+    console.log("🚀 ~ handleQuickView ~ isUE:", isUE)
     if (isUE) return;
     
     // Store product data temporarily for the product-preview block to access
