@@ -3,10 +3,6 @@
  */
 
 import { openModal } from '../modal/modal.js';
-import { isUniversalEditor } from '../../scripts/scripts.js';
-
-// WeakMap to track decoration state (persists even if DOM changes)
-const decoratedBlocks = new WeakMap();
 
 /**
  * Parse configuration from block metadata
@@ -19,24 +15,7 @@ function parseConfig(block) {
     timeSpyScoreModalPath: '/content/asus-cto/language-master/en/modals/time-spy-score'
   };
 
-  // Only parse config if block has table structure (not already decorated)
   const rows = [...block.children];
-  if (rows.length === 0) return config;
-  
-  // Check if first child is a DIV (already decorated) vs a table row structure
-  const firstChild = rows[0];
-  if (firstChild && firstChild.classList.contains('product-preview-topbar')) {
-    // Block already decorated, return stored config or defaults
-    if (block.dataset.config) {
-      try {
-        return JSON.parse(block.dataset.config);
-      } catch (e) {
-        return config;
-      }
-    }
-    return config;
-  }
-
   rows.forEach((row) => {
     const cells = [...row.children];
     if (cells.length >= 2) {
@@ -327,14 +306,6 @@ function createTimeSpyScore(product) {
 }
 
 function initializeGallery(block) {
-  const isUE = isUniversalEditor();
-  
-  // Skip Swiper initialization in Universal Editor to prevent infinite loop
-  if (isUE) {
-    console.log('Product Preview: Skipping Swiper initialization in Universal Editor');
-    return;
-  }
-  
   const mainSwiperEl = block.querySelector('.preview-gallery-main');
   const thumbSwiperEl = block.querySelector('.preview-gallery-thumbs');
 
@@ -407,100 +378,7 @@ function initializeTabs(block) {
 }
 
 export default async function decorate(block) {
-  const isUE = isUniversalEditor();
-  
-  // Guard against infinite loop using multiple checks
-  console.log('Product Preview: Decorate called', {
-    isUE,
-    hasDecorated: block.dataset.decorated,
-    hasTopbar: !!block.querySelector('.product-preview-topbar'),
-    hasBody: !!block.querySelector('.product-preview-body'),
-    isDecorating: block.dataset.decorating,
-    weakMapHas: decoratedBlocks.has(block)
-  });
-  
-  // Check WeakMap first (most reliable)
-  if (decoratedBlocks.has(block)) {
-    console.log('Product Preview: Block already in WeakMap, skipping');
-    return;
-  }
-  
-  // Check if currently being decorated
-  if (block.dataset.decorating === 'true') {
-    console.log('Product Preview: Block currently being decorated, skipping');
-    return;
-  }
-  
-  // Check for already decorated content structure
-  const isAlreadyDecorated = block.dataset.decorated === 'true' 
-    || block.querySelector('.product-preview-topbar') !== null
-    || block.querySelector('.product-preview-body') !== null
-    || block.querySelector('.product-preview-placeholder') !== null;
-    
-  if (isAlreadyDecorated) {
-    console.log('Product Preview: Block already decorated (DOM check), adding to WeakMap');
-    decoratedBlocks.set(block, true);
-    return;
-  }
-  
-  // Mark as being decorated to prevent concurrent decoration attempts
-  console.log('Product Preview: Starting decoration');
-  block.dataset.decorating = 'true';
-  decoratedBlocks.set(block, true);
-  
-  // In Universal Editor, render simplified placeholder to avoid infinite loop
-  // The full product preview is meant to be used in modals, not directly authored
-  if (isUE) {
-    console.log('Product Preview: Rendering UE placeholder');
-    block.textContent = ''; // Clear existing content
-    
-    // Set fixed dimensions on the block itself to prevent iframe expansion
-    block.style.height = '200px';
-    block.style.maxHeight = '200px';
-    block.style.overflow = 'hidden';
-    block.style.display = 'block';
-    block.style.position = 'relative';
-    
-    const placeholder = document.createElement('div');
-    placeholder.className = 'product-preview-placeholder';
-    placeholder.style.cssText = `
-      height: 100%;
-      max-height: 200px;
-      overflow: hidden;
-      position: relative;
-    `;
-    placeholder.innerHTML = `
-      <div style="
-        padding: 3rem;
-        text-align: center;
-        background: #f3f4f6;
-        border: 2px dashed #d1d5db;
-        border-radius: 8px;
-        color: #374151;
-        height: 100%;
-        max-height: 200px;
-        overflow: hidden;
-        box-sizing: border-box;
-      ">
-        <h3 style="margin: 0 0 0.5rem 0; font-size: 1.25rem;">Product Preview Block</h3>
-        <p style="margin: 0; font-size: 0.875rem;">
-          This block displays product details in a modal.<br>
-          It will be populated dynamically when opened from a product card.
-        </p>
-      </div>
-    `;
-    
-    block.appendChild(placeholder);
-    block.classList.add('ue-authoring');
-    block.setAttribute('data-authoring', 'true');
-    block.dataset.decorated = 'true';
-    delete block.dataset.decorating;
-    
-    console.log('Product Preview: UE placeholder rendered');
-    return;
-  }
-  
-  // Parse configuration from block metadata (only in non-UE mode)
+  // Parse configuration from block metadata
   const config = parseConfig(block);
   
   let product = null;
@@ -509,14 +387,9 @@ export default async function decorate(block) {
     // Try to get product data from window object first (set by hot-products)
     if (window.__productPreviewData) {
       product = window.__productPreviewData;
-      // Store in dataset for UE re-decorations, clear from window otherwise
-      if (isUE) {
-        block.dataset.product = JSON.stringify(product);
-      } else {
-        delete window.__productPreviewData;
-      }
+      delete window.__productPreviewData;
     } else if (block.dataset.product) {
-      // Fallback to dataset for backward compatibility or UE re-decorations
+      // Fallback to dataset for backward compatibility
       product = JSON.parse(block.dataset.product);
     }
   } catch (error) {
@@ -524,45 +397,12 @@ export default async function decorate(block) {
   }
   
   if (!product) {
-    console.log('Product Preview: No product data available');
-    
-    // In UE, show a helpful authoring placeholder
-    if (isUE) {
-      block.innerHTML = `
-        <div class="product-preview-placeholder" style="
-          padding: 3rem;
-          text-align: center;
-          background: #f3f4f6;
-          border: 2px dashed #d1d5db;
-          border-radius: 8px;
-          color: #374151;
-        ">
-          <h3 style="margin: 0 0 0.5rem 0; font-size: 1.25rem;">Product Preview Block</h3>
-          <p style="margin: 0; font-size: 0.875rem;">
-            This block requires product data to display.<br>
-            Configure the block properties or use it within a modal opened from a product card.
-          </p>
-        </div>
-      `;
-    } else {
-      block.innerHTML = '<p>Product data not available</p>';
-    }
-    
-    block.dataset.decorated = 'true'; // Mark as decorated even if no data
-    delete block.dataset.decorating;
+    block.innerHTML = '<p>Product data not available</p>';
     return;
   }
   
-  console.log('Product Preview: Rendering with product:', product.name || product.sku);
-  
   // Store config in dataset for event listeners
   block.dataset.config = JSON.stringify(config);
-  
-  // In UE, add authoring class for CSS targeting
-  if (isUE) {
-    block.classList.add('ue-authoring');
-    block.setAttribute('data-authoring', 'true');
-  }
 
   const currentPrice = product.specialPrice || product.price;
   const originalPrice = product.specialPrice ? product.price : null;
@@ -670,20 +510,8 @@ export default async function decorate(block) {
     </div>
   `;
 
-  // Mark block as decorated to prevent infinite loop
-  console.log('Product Preview: Marking as decorated');
-  block.dataset.decorated = 'true';
-  delete block.dataset.decorating;
-  
-  // Initialize gallery and tabs only once
-  if (!isUE || !block.dataset.initialized) {
-    console.log('Product Preview: Initializing gallery and tabs');
-    initializeGallery(block);
-    initializeTabs(block);
-    block.dataset.initialized = 'true';
-  }
-  
-  console.log('Product Preview: Decoration complete');
+  initializeGallery(block);
+  initializeTabs(block);
 
   // Add close button event listener
   const closeButton = block.querySelector('.product-preview-close');
@@ -724,9 +552,5 @@ export default async function decorate(block) {
     });
   }
 
-  // Skip BazaarVoice initialization in Universal Editor
-  if (!isUE && window.BV && window.BV.ui) {
-    window.BV.ui('rr', 'show_reviews');
-  }
 }
 
