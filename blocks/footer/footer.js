@@ -586,18 +586,51 @@ export default function decorate(block) {
     moveInstrumentation(data.globalTextRow, globalText);
   }
 
-  // Add newsletter form functionality
+  // Add newsletter form functionality with triggerSubscribeForm
   const form = block.querySelector('.newsletter');
+  const responseElement = form?.querySelector('.newsletter__response');
+  
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+
+      // Clear previous states
+      form.classList.remove('has--error', 'has--success');
+      if (responseElement) {
+        responseElement.textContent = '';
+      }
+
+      // Validate form
+      if (!form.checkValidity()) {
+        form.classList.add('has--error');
+        if (responseElement) {
+          responseElement.textContent = 'Please enter a valid email address';
+        }
+        return;
+      }
+
       const emailInput = form.querySelector('input[type="email"]');
       if (emailInput && emailInput.value) {
-        // Handle newsletter signup - you can add your logic here
-        console.log('Newsletter signup:', emailInput.value);
-        // Show success message or redirect
-        alert('Thank you for signing up for our newsletter!');
-        emailInput.value = '';
+        const email = emailInput.value.trim();
+        
+        // Check if triggerSubscribeForm is available
+        if (typeof window.triggerSubscribeForm === 'function') {
+          try {
+            window.triggerSubscribeForm(email);
+          } catch (error) {
+            console.error('Error triggering subscribe form:', error);
+            form.classList.add('has--error');
+            if (responseElement) {
+              responseElement.textContent = 'An error occurred. Please try again.';
+            }
+          }
+        } else {
+          console.warn('triggerSubscribeForm function not available');
+          form.classList.add('has--error');
+          if (responseElement) {
+            responseElement.textContent = 'Subscribe service is currently unavailable. Please try again later.';
+          }
+        }
       }
     });
   }
