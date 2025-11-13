@@ -5,6 +5,9 @@
 import { openModal } from '../modal/modal.js';
 import { isUniversalEditor } from '../../scripts/scripts.js';
 
+// WeakMap to track decoration state (persists even if DOM changes)
+const decoratedBlocks = new WeakMap();
+
 /**
  * Parse configuration from block metadata
  * @param {HTMLElement} block - The product preview block element
@@ -16,7 +19,24 @@ function parseConfig(block) {
     timeSpyScoreModalPath: '/content/asus-cto/language-master/en/modals/time-spy-score'
   };
 
+  // Only parse config if block has table structure (not already decorated)
   const rows = [...block.children];
+  if (rows.length === 0) return config;
+  
+  // Check if first child is a DIV (already decorated) vs a table row structure
+  const firstChild = rows[0];
+  if (firstChild && firstChild.classList.contains('product-preview-topbar')) {
+    // Block already decorated, return stored config or defaults
+    if (block.dataset.config) {
+      try {
+        return JSON.parse(block.dataset.config);
+      } catch (e) {
+        return config;
+      }
+    }
+    return config;
+  }
+
   rows.forEach((row) => {
     const cells = [...row.children];
     if (cells.length >= 2) {
@@ -389,11 +409,42 @@ function initializeTabs(block) {
 export default async function decorate(block) {
   const isUE = isUniversalEditor();
   
-  // Guard against infinite loop: Check if block is already decorated
-  if (block.dataset.decorated === 'true') {
-    console.log('Product Preview: Block already decorated, skipping re-decoration');
+  // Guard against infinite loop using multiple checks
+  console.log('Product Preview: Decorate called', {
+    hasDecorated: block.dataset.decorated,
+    hasTopbar: !!block.querySelector('.product-preview-topbar'),
+    hasBody: !!block.querySelector('.product-preview-body'),
+    isDecorating: block.dataset.decorating,
+    weakMapHas: decoratedBlocks.has(block)
+  });
+  
+  // Check WeakMap first (most reliable)
+  if (decoratedBlocks.has(block)) {
+    console.log('Product Preview: Block already in WeakMap, skipping');
     return;
   }
+  
+  // Check if currently being decorated
+  if (block.dataset.decorating === 'true') {
+    console.log('Product Preview: Block currently being decorated, skipping');
+    return;
+  }
+  
+  // Check for already decorated content structure
+  const isAlreadyDecorated = block.dataset.decorated === 'true' 
+    || block.querySelector('.product-preview-topbar') !== null
+    || block.querySelector('.product-preview-body') !== null;
+    
+  if (isAlreadyDecorated) {
+    console.log('Product Preview: Block already decorated (DOM check), adding to WeakMap');
+    decoratedBlocks.set(block, true);
+    return;
+  }
+  
+  // Mark as being decorated to prevent concurrent decoration attempts
+  console.log('Product Preview: Starting decoration');
+  block.dataset.decorating = 'true';
+  decoratedBlocks.set(block, true);
   
   // Parse configuration from block metadata
   const config = parseConfig(block);
@@ -419,10 +470,36 @@ export default async function decorate(block) {
   }
   
   if (!product) {
-    block.innerHTML = '<p>Product data not available</p>';
+    console.log('Product Preview: No product data available');
+    
+    // In UE, show a helpful authoring placeholder
+    if (isUE) {
+      block.innerHTML = `
+        <div class="product-preview-placeholder" style="
+          padding: 3rem;
+          text-align: center;
+          background: #f3f4f6;
+          border: 2px dashed #d1d5db;
+          border-radius: 8px;
+          color: #374151;
+        ">
+          <h3 style="margin: 0 0 0.5rem 0; font-size: 1.25rem;">Product Preview Block</h3>
+          <p style="margin: 0; font-size: 0.875rem;">
+            This block requires product data to display.<br>
+            Configure the block properties or use it within a modal opened from a product card.
+          </p>
+        </div>
+      `;
+    } else {
+      block.innerHTML = '<p>Product data not available</p>';
+    }
+    
     block.dataset.decorated = 'true'; // Mark as decorated even if no data
+    delete block.dataset.decorating;
     return;
   }
+  
+  console.log('Product Preview: Rendering with product:', product.name || product.sku);
   
   // Store config in dataset for event listeners
   block.dataset.config = JSON.stringify(config);
@@ -540,10 +617,19 @@ export default async function decorate(block) {
   `;
 
   // Mark block as decorated to prevent infinite loop
+  console.log('Product Preview: Marking as decorated');
   block.dataset.decorated = 'true';
+  delete block.dataset.decorating;
   
-  initializeGallery(block);
-  initializeTabs(block);
+  // Initialize gallery and tabs only once
+  if (!isUE || !block.dataset.initialized) {
+    console.log('Product Preview: Initializing gallery and tabs');
+    initializeGallery(block);
+    initializeTabs(block);
+    block.dataset.initialized = 'true';
+  }
+  
+  console.log('Product Preview: Decoration complete');
 
   // Add close button event listener
   const closeButton = block.querySelector('.product-preview-close');
