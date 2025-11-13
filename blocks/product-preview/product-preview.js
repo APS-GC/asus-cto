@@ -12,7 +12,8 @@ import { openModal } from '../modal/modal.js';
 function parseConfig(block) {
   const config = {
     fpsDetailsModalPath: '/content/asus-cto/language-master/en/modals/fps-details',
-    timeSpyScoreModalPath: '/content/asus-cto/language-master/en/modals/time-spy-score'
+    timeSpyScoreModalPath: '/content/asus-cto/language-master/en/modals/time-spy-score',
+    dataSourceTooltip: 'All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ.'
   };
 
   const rows = [...block.children];
@@ -24,6 +25,7 @@ function parseConfig(block) {
 
       if (key === 'fpsdetailsmodalpath') config.fpsDetailsModalPath = value;
       if (key === 'timespyscoremodalpath') config.timeSpyScoreModalPath = value;
+      if (key === 'datasourcetooltip') config.dataSourceTooltip = value;
     }
   });
 
@@ -198,7 +200,7 @@ function createImageGallery(product) {
   `;
 }
 
-function createGamePerformance(product) {
+function createGamePerformance(product, config) {
   if (!product.gamePriority || product.gamePriority.length === 0) {
     return '';
   }
@@ -237,7 +239,7 @@ function createGamePerformance(product) {
         <span class="data-from">Data from</span>
         <div class="data-source">
           <img src="./clientlib-site/images/3dmark.webp" alt="3DMark">
-          <button class="btn btn-link btn-tooltip" data-tooltip="All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ." aria-label="3D Mark information">
+          <button class="btn btn-link btn-tooltip" data-tooltip="${config.dataSourceTooltip}" aria-label="3D Mark information">
             <span class="icon icon--info"></span>
           </button>
         </div>
@@ -278,7 +280,7 @@ function createGamePerformance(product) {
   `;
 }
 
-function createTimeSpyScore(product) {
+function createTimeSpyScore(product, config) {
   if (!product.timeSpyOverallScore) return '';
 
   return `
@@ -296,7 +298,7 @@ function createTimeSpyScore(product) {
         <span class="data-from">Data from</span>
         <div class="data-source">
           <img src="./clientlib-site/images/3dmark.webp" alt="3DMark">
-          <button class="btn btn-link btn-tooltip" data-tooltip="All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ." aria-label="3D Mark information">
+          <button class="btn btn-link btn-tooltip" data-tooltip="${config.dataSourceTooltip}" aria-label="3D Mark information">
             <span class="icon icon--info"></span>
           </button>
         </div>
@@ -465,7 +467,7 @@ export default async function decorate(block) {
         <div class="preview-card">
         <div class="preview-left">
           ${createImageGallery(product)}
-          ${createGamePerformance(product)}
+          ${createGamePerformance(product, config)}
         </div>
 
         <div class="preview-right">
