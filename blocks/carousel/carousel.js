@@ -8,6 +8,7 @@ import { moveInstrumentation, isUniversalEditor } from '../../scripts/scripts.js
 // Configuration defaults
 const DEFAULT_IMAGE_AUTOPLAY = 3000;
 const DEFAULT_VIDEO_AUTOPLAY = 3000;
+const pubUrl = 'https://publish-p165753-e1767020.adobeaemcloud.com';
 
 /**
  * Parse carousel configuration from block data
@@ -76,7 +77,7 @@ function parseCarouselConfig(block) {
           }
         } else if (link) {
           // Video or image link
-          media = link.href;
+          media = link.textContent;
           isVideo = media.match(/\.(mp4|webm|ogg)$/i) !== null;
         } else if (textContent) {
           // Direct media path in text content
@@ -149,7 +150,7 @@ function generateHeroBannerHTML(slide, config) {
     video.setAttribute('data-autoplay-duration', autoplayDuration);
     
     const source = document.createElement('source');
-    source.src = 'https://publish-p165753-e1767020.adobeaemcloud.com/content/dam/ROG/carousel/BigBuckBunny.mp4';
+    source.src = pubUrl + slide.media;
     source.type = 'video/mp4';
     
     video.appendChild(source);

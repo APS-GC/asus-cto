@@ -248,5 +248,9 @@ window.dispatchEvent(new Event('delayed-loaded'));
 //   return swiperInstance;
 // };
 
+<<<<<<< HEAD
 // // Initialize all carousels
+=======
+// // Initialize all carousel
+>>>>>>> 1b4bac03a5e2c3df289244af271e3dd47860ba01
 // document.querySelectorAll(CAROUSEL_SELECTOR).forEach(window.initializeSwiperOnAEMCarousel);
