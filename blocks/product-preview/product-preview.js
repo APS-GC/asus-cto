@@ -389,6 +389,12 @@ function initializeTabs(block) {
 export default async function decorate(block) {
   const isUE = isUniversalEditor();
   
+  // Guard against infinite loop: Check if block is already decorated
+  if (block.dataset.decorated === 'true') {
+    console.log('Product Preview: Block already decorated, skipping re-decoration');
+    return;
+  }
+  
   // Parse configuration from block metadata
   const config = parseConfig(block);
   
@@ -414,6 +420,7 @@ export default async function decorate(block) {
   
   if (!product) {
     block.innerHTML = '<p>Product data not available</p>';
+    block.dataset.decorated = 'true'; // Mark as decorated even if no data
     return;
   }
   
@@ -532,6 +539,9 @@ export default async function decorate(block) {
     </div>
   `;
 
+  // Mark block as decorated to prevent infinite loop
+  block.dataset.decorated = 'true';
+  
   initializeGallery(block);
   initializeTabs(block);
 
