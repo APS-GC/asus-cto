@@ -1212,7 +1212,7 @@
         "component": "text",
         "valueType": "string",
         "name": "title",
-        "label": "Section Title",
+        "label": "Title",
         "description": "Title displayed above the hot products section",
         "value": "Select The Game You Play"
       },
