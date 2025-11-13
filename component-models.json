@@ -1208,7 +1208,6 @@
   {
     "id": "help-me-choose",
     "fields": [
-
       {
         "component": "richtext",
         "valueType": "string",
