@@ -1204,5 +1204,24 @@
         }
       }
     ]
+  },
+  {
+    "id": "help-me-choose",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": "Select The Game You Play"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "label": "Description",
+        "value": "We will recommend a plan that suits you most!"
+      }
+    ]
   }
 ]
