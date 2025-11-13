@@ -11,7 +11,8 @@
   --color-brand-rog: #f7323f;         /* ROG Red */
   
   /* Primary Color System - Following webpack/scss structure */
-  --color-primary: #000000;           /* Base black */
+  --color-primary: #000000;            /* Base black */
+  --color-primary-base: #000;          /* Base black */
   --color-primary-50: #16151b;        /* Dark/Grey03 */
   --color-primary-100: #181818;       /* Dark/Grey02, Light/Grey07 */
   --color-primary-200: #262626;       /* Dark/Grey04, Light/Grey06 */
@@ -689,7 +690,6 @@ p,
 /* Focus visible styles for better accessibility */
 :focus-visible {
   outline: 2px solid var(--color-border-focus);
-  outline-offset: 2px;
 }
 
 /* ========================================================================== 
@@ -1065,41 +1065,33 @@ p,
  * Based on webpack container variables and responsive design principles
  * ========================================================================== */
 
-/* Base Container - Mobile First Approach */
 .container {
-  width: 100%;
-  max-width: var(--container);
   margin: 0 auto;
-  padding: 0 var(--spacing-4); /* 1rem - 16px padding on mobile */
+  max-width: 100%;
+  padding: 0 20px
 }
 
-/* ========================================================================== 
- * Container Responsive Breakpoints - Following webpack structure
- * ========================================================================== */
-
-
-/* Medium screens and up (768px) */
-@media (min-width: 48rem) {
+@media only screen and (min-width:45.6875rem) {
   .container {
-    padding: 0 var(--spacing-10); /* 2rem - 32px padding */
-  }
-  
-  main.container {
-    padding: var(--spacing-4) var(--spacing-8); /* 1rem 2rem */
+    padding: 0 40px
   }
 }
 
-/* Extra large screens and up (1280px) */
-@media (min-width: 80rem) {
+@media only screen and (min-width:80rem) {
   .container {
-    max-width: calc(100% - 200px);
-    padding: 0; 
-  }
-  
-  main.container {
-    padding: var(--spacing-6) var(--spacing-12); /* 1.5rem 3rem */
+    max-width: 1240px;
+    padding: 0
   }
 }
+
+@media only screen and (max-width:45.625rem) {
+  .container-mobile-full {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0
+  }
+}
+
 /* Grid System */
 .grid {
   display: grid;
@@ -1107,6 +1099,7 @@ p,
   gap: var(--grid-gutter-mobile);
   width: 100%;
 }
+
 
 /* Grid Items */
 .grid-item {
