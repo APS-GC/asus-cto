@@ -22,7 +22,8 @@
       "footer",
       "article-card",
       "header",
-      "product-card"
+      "product-card",
+      "help-me-choose"
     ]
   },
   {
@@ -131,6 +132,12 @@
       "id": "footer",
       "components": [
         "footer-icon"
+      ]
+    },
+    {
+      "id": "help-me-choose",
+      "components": [
+        "help-me-choose"
       ]
     }
 ]

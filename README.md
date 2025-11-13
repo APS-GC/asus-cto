@@ -20,7 +20,7 @@ Furthremore, we encourage you to watch the recordings of any of our previous pre
 
 - nodejs 18.3.x or newer
 - AEM Cloud Service release 2024.8 or newer (>= `17465`)
- 
+
 ## Installation
 
 ```sh

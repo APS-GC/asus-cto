@@ -1204,5 +1204,26 @@
         }
       }
     ]
+  },
+  {
+    "id": "help-me-choose",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Section Title",
+        "description": "Title displayed above the hot products section",
+        "value": "Select The Game You Play"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description",
+        "label": "Description",
+        "description": "Text for the product description",
+        "value": "We will recommend a plan that suits you most!"
+      }
+    ]
   }
 ]
