@@ -454,8 +454,21 @@ export default async function decorate(block) {
     console.log('Product Preview: Rendering UE placeholder');
     block.textContent = ''; // Clear existing content
     
+    // Set fixed dimensions on the block itself to prevent iframe expansion
+    block.style.height = '200px';
+    block.style.maxHeight = '200px';
+    block.style.overflow = 'hidden';
+    block.style.display = 'block';
+    block.style.position = 'relative';
+    
     const placeholder = document.createElement('div');
     placeholder.className = 'product-preview-placeholder';
+    placeholder.style.cssText = `
+      height: 100%;
+      max-height: 200px;
+      overflow: hidden;
+      position: relative;
+    `;
     placeholder.innerHTML = `
       <div style="
         padding: 3rem;
@@ -464,6 +477,10 @@ export default async function decorate(block) {
         border: 2px dashed #d1d5db;
         border-radius: 8px;
         color: #374151;
+        height: 100%;
+        max-height: 200px;
+        overflow: hidden;
+        box-sizing: border-box;
       ">
         <h3 style="margin: 0 0 0.5rem 0; font-size: 1.25rem;">Product Preview Block</h3>
         <p style="margin: 0; font-size: 0.875rem;">
