@@ -1208,21 +1208,20 @@
   {
     "id": "help-me-choose",
     "fields": [
+
       {
-        "component": "text",
-        "valueType": "string",
+        "component": "richtext",
         "name": "title",
+        "value": "",
         "label": "Title",
-        "description": "Title displayed above the hot products section1",
-        "value": "Select The Game You Play1"
+        "valueType": "string"
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "description",
         "label": "Description",
-        "description": "Text for the product description1",
-        "value": "We will recommend a plan that suits you most!1"
+        "value": ""
       }
     ]
   }
