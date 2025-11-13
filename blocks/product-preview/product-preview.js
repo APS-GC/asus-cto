@@ -411,6 +411,7 @@ export default async function decorate(block) {
   
   // Guard against infinite loop using multiple checks
   console.log('Product Preview: Decorate called', {
+    isUE,
     hasDecorated: block.dataset.decorated,
     hasTopbar: !!block.querySelector('.product-preview-topbar'),
     hasBody: !!block.querySelector('.product-preview-body'),
@@ -433,7 +434,8 @@ export default async function decorate(block) {
   // Check for already decorated content structure
   const isAlreadyDecorated = block.dataset.decorated === 'true' 
     || block.querySelector('.product-preview-topbar') !== null
-    || block.querySelector('.product-preview-body') !== null;
+    || block.querySelector('.product-preview-body') !== null
+    || block.querySelector('.product-preview-placeholder') !== null;
     
   if (isAlreadyDecorated) {
     console.log('Product Preview: Block already decorated (DOM check), adding to WeakMap');
@@ -446,7 +448,42 @@ export default async function decorate(block) {
   block.dataset.decorating = 'true';
   decoratedBlocks.set(block, true);
   
-  // Parse configuration from block metadata
+  // In Universal Editor, render simplified placeholder to avoid infinite loop
+  // The full product preview is meant to be used in modals, not directly authored
+  if (isUE) {
+    console.log('Product Preview: Rendering UE placeholder');
+    block.textContent = ''; // Clear existing content
+    
+    const placeholder = document.createElement('div');
+    placeholder.className = 'product-preview-placeholder';
+    placeholder.innerHTML = `
+      <div style="
+        padding: 3rem;
+        text-align: center;
+        background: #f3f4f6;
+        border: 2px dashed #d1d5db;
+        border-radius: 8px;
+        color: #374151;
+      ">
+        <h3 style="margin: 0 0 0.5rem 0; font-size: 1.25rem;">Product Preview Block</h3>
+        <p style="margin: 0; font-size: 0.875rem;">
+          This block displays product details in a modal.<br>
+          It will be populated dynamically when opened from a product card.
+        </p>
+      </div>
+    `;
+    
+    block.appendChild(placeholder);
+    block.classList.add('ue-authoring');
+    block.setAttribute('data-authoring', 'true');
+    block.dataset.decorated = 'true';
+    delete block.dataset.decorating;
+    
+    console.log('Product Preview: UE placeholder rendered');
+    return;
+  }
+  
+  // Parse configuration from block metadata (only in non-UE mode)
   const config = parseConfig(block);
   
   let product = null;
