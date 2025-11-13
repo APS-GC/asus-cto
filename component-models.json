@@ -1350,6 +1350,14 @@
         "description": "URL for the 'View all' link",
         "valueType": "string",
         "value": "#"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "productPreviewModalPath",
+        "label": "Product Preview Modal Path",
+        "description": "Path to the product preview modal content page (default: /modals/product-preview)",
+        "value": "/modals/product-preview"
       }
     ]
   }

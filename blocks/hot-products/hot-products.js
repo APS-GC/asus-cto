@@ -255,7 +255,8 @@ function parseConfig(block) {
         estoreTooltip: 'ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.',
         viewAllText: 'View all',
         viewAllLink: '#',
-        productsToShow: 3
+        productsToShow: 3,
+        productPreviewModalPath: '/modals/product-preview'
     };
 
     const rows = [...block.children];
@@ -273,6 +274,7 @@ function parseConfig(block) {
             if (key === 'estoretooltip' || key === 'estorepricetooltip') config.estoreTooltip = value;
             if (key === 'viewalltext') config.viewAllText = value;
             if (key === 'viewalllink') config.viewAllLink = value;
+            if (key === 'productpreviewmodalpath') config.productPreviewModalPath = value;
             if (key === 'productstoshow' || key === 'maxproducts' || key === 'productcount') {
                 const count = parseInt(value, 10);
                 if (!isNaN(count) && count > 0) {
@@ -339,7 +341,7 @@ function initializeSwiper(section, config) {
 }
 
 // Handle quick view button click
-async function handleQuickView(product) {
+async function handleQuickView(product, config) {
     console.log('Quick View clicked for:', product.name);
     
     // Load product-preview CSS
@@ -349,6 +351,7 @@ async function handleQuickView(product) {
     const productPreviewBlock = document.createElement('div');
     productPreviewBlock.className = 'product-preview';
     productPreviewBlock.dataset.product = JSON.stringify(product);
+    productPreviewBlock.dataset.modalPath = config.productPreviewModalPath;
     
     // Decorate the block
     await decorateProductPreview(productPreviewBlock);
@@ -448,7 +451,7 @@ export default async function decorate(block) {
                     quickViewBtn.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        handleQuickView(product);
+                        handleQuickView(product, config);
                     });
                 }
             });
