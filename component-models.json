@@ -1217,7 +1217,7 @@
         "value": "Select The Game You Play"
       },
       {
-        "component": "text",
+        "component": "richtext",
         "valueType": "string",
         "name": "description",
         "label": "Description",
