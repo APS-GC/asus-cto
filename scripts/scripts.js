@@ -48,6 +48,23 @@ export function moveInstrumentation(from, to) {
 }
 
 /**
+ * Detect if running in Universal Editor environment
+ * @returns {boolean} True if running in Universal Editor
+ */
+export function isUniversalEditor() {
+  return (
+    window.location.pathname.includes('/editor.html') ||
+    window.location.search.includes('editor') ||
+    window.location.search.includes('aue_') ||
+    document.body.hasAttribute('data-aue-behavior') ||
+    document.body.classList.contains('editor') ||
+    document.body.classList.contains('aem-authoring-enabled') ||
+    document.querySelector('[data-aue-resource]') !== null ||
+    window.hlx?.aemRoot !== undefined
+  );
+}
+
+/**
  * Loads header fragment from the working fragment URL
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */

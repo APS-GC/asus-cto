@@ -3,6 +3,7 @@
  */
 
 import { openModal } from '../modal/modal.js';
+import { isUniversalEditor } from '../../scripts/scripts.js';
 
 /**
  * Get modal path
@@ -289,6 +290,14 @@ function createTimeSpyScore(product) {
 }
 
 function initializeGallery(block) {
+  const isUE = isUniversalEditor();
+  
+  // Skip Swiper initialization in Universal Editor to prevent infinite loop
+  if (isUE) {
+    console.log('Product Preview: Skipping Swiper initialization in Universal Editor');
+    return;
+  }
+  
   const mainSwiperEl = block.querySelector('.preview-gallery-main');
   const thumbSwiperEl = block.querySelector('.preview-gallery-thumbs');
 
@@ -361,10 +370,21 @@ function initializeTabs(block) {
 }
 
 export default async function decorate(block) {
+  const isUE = isUniversalEditor();
   let product = null;
   
   try {
-    if (block.dataset.product) {
+    // Try to get product data from window object first (set by hot-products)
+    if (window.__productPreviewData) {
+      product = window.__productPreviewData;
+      // Store in dataset for UE re-decorations, clear from window otherwise
+      if (isUE) {
+        block.dataset.product = JSON.stringify(product);
+      } else {
+        delete window.__productPreviewData;
+      }
+    } else if (block.dataset.product) {
+      // Fallback to dataset for backward compatibility or UE re-decorations
       product = JSON.parse(block.dataset.product);
     }
   } catch (error) {
@@ -374,6 +394,12 @@ export default async function decorate(block) {
   if (!product) {
     block.innerHTML = '<p>Product data not available</p>';
     return;
+  }
+  
+  // In UE, add authoring class for CSS targeting
+  if (isUE) {
+    block.classList.add('ue-authoring');
+    block.setAttribute('data-authoring', 'true');
   }
 
   const currentPrice = product.specialPrice || product.price;
@@ -520,7 +546,8 @@ export default async function decorate(block) {
     });
   }
 
-  if (window.BV && window.BV.ui) {
+  // Skip BazaarVoice initialization in Universal Editor
+  if (!isUE && window.BV && window.BV.ui) {
     window.BV.ui('rr', 'show_reviews');
   }
 }

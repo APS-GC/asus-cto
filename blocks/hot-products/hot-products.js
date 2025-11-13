@@ -1,8 +1,6 @@
 import { fetchHotProducts } from '../../scripts/api-service.js';
 import { loadBazaarvoiceScript } from '../../scripts/scripts.js';
-import { createModal } from '../modal/modal.js';
-import { loadCSS } from '../../scripts/aem.js';
-import decorateProductPreview from '../product-preview/product-preview.js';
+import { openModal } from '../modal/modal.js';
 
 function initializeTooltips(container) {
     const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
@@ -256,7 +254,7 @@ function parseConfig(block) {
         viewAllText: 'View all',
         viewAllLink: '#',
         productsToShow: 3,
-        productPreviewModalPath: '/modals/product-preview'
+        productPreviewModalPath: '/content/asus-cto/language-master/en/modals/product-preview'
     };
 
     const rows = [...block.children];
@@ -344,25 +342,14 @@ function initializeSwiper(section, config) {
 async function handleQuickView(product, config) {
     console.log('Quick View clicked for:', product.name);
     
-    // Load product-preview CSS
-    await loadCSS(`${window.hlx.codeBasePath}/blocks/product-preview/product-preview.css`);
+    // Store product data temporarily for the product-preview block to access
+    window.__productPreviewData = product;
     
-    // Create product-preview block
-    const productPreviewBlock = document.createElement('div');
-    productPreviewBlock.className = 'product-preview';
-    productPreviewBlock.dataset.product = JSON.stringify(product);
-    productPreviewBlock.dataset.modalPath = config.productPreviewModalPath;
+    // Get modal path from config
+    const modalPath = config.productPreviewModalPath || '/modals/product-preview';
     
-    // Decorate the block
-    await decorateProductPreview(productPreviewBlock);
-    
-    console.log('Product preview block decorated');
-    
-    // Create and show modal
-    const { showModal } = await createModal([productPreviewBlock], false, true);
-    showModal();
-    
-    console.log('Modal opened successfully!');
+    // Open modal with the authored page
+    await openModal(modalPath);
 }
 
 export default async function decorate(block) {
