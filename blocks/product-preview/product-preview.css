@@ -877,3 +877,59 @@
         transform: rotate(180deg);
     }
 }
+
+.product-preview.ue-authoring {
+    border: 2px dashed #ccc;
+    background: #f8f8f8;
+    padding: 1rem;
+    min-height: 200px;
+}
+
+.product-preview.ue-authoring .preview-gallery-main,
+.product-preview.ue-authoring .preview-gallery-thumbs {
+    pointer-events: none;
+}
+
+.product-preview.ue-authoring .swiper-slide {
+    opacity: 1 !important;
+    transition: none !important;
+}
+
+body[data-aue-behavior] .product-preview,
+.aem-authoring-enabled .product-preview,
+.aem-editor .product-preview,
+iframe[src*="editor"] .product-preview,
+[data-authoring="true"] .product-preview {
+    border: 2px dashed #ccc !important;
+    background: #f8f8f8 !important;
+    padding: 1rem !important;
+    min-height: 200px !important;
+}
+
+body[data-aue-behavior] .product-preview .preview-gallery-main,
+body[data-aue-behavior] .product-preview .preview-gallery-thumbs,
+.aem-authoring-enabled .product-preview .preview-gallery-main,
+.aem-authoring-enabled .product-preview .preview-gallery-thumbs,
+.aem-editor .product-preview .preview-gallery-main,
+.aem-editor .product-preview .preview-gallery-thumbs,
+iframe[src*="editor"] .product-preview .preview-gallery-main,
+iframe[src*="editor"] .product-preview .preview-gallery-thumbs,
+[data-authoring="true"] .product-preview .preview-gallery-main,
+[data-authoring="true"] .product-preview .preview-gallery-thumbs {
+    pointer-events: none !important;
+}
+
+body[data-aue-behavior] .product-preview .swiper-slide,
+.aem-authoring-enabled .product-preview .swiper-slide,
+.aem-editor .product-preview .swiper-slide,
+iframe[src*="editor"] .product-preview .swiper-slide,
+[data-authoring="true"] .product-preview .swiper-slide {
+    opacity: 1 !important;
+    transition: none !important;
+}
+
+.swiper-fallback .swiper-slide {
+    opacity: 1 !important;
+    position: static !important;
+    transform: none !important;
+}

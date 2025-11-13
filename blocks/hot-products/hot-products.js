@@ -341,7 +341,6 @@ function initializeSwiper(section, config) {
 // Handle quick view button click
 async function handleQuickView(product, config) {
     const isUE = isUniversalEditor();
-    console.log("🚀 ~ handleQuickView ~ isUE:", isUE)
     if (isUE) return;
     
     // Store product data temporarily for the product-preview block to access

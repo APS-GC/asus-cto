@@ -371,8 +371,6 @@ function initializeTabs(block) {
 
 export default async function decorate(block) {
   const isUE = isUniversalEditor();
-  if (isUE) return;
-  
   let product = null;
   
   try {
