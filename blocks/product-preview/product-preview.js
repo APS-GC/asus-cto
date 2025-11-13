@@ -6,12 +6,29 @@ import { openModal } from '../modal/modal.js';
 import { isUniversalEditor } from '../../scripts/scripts.js';
 
 /**
- * Get modal path
- * @param {string} modalName - Name of the modal (e.g., 'fps-details', 'time-spy-score')
- * @returns {string} - Path to modal content
+ * Parse configuration from block metadata
+ * @param {HTMLElement} block - The product preview block element
+ * @returns {Object} Configuration object
  */
-function getModalPath(modalName) {
-  return `/modals/${modalName}`;
+function parseConfig(block) {
+  const config = {
+    fpsDetailsModalPath: '/content/asus-cto/language-master/en/modals/fps-details',
+    timeSpyScoreModalPath: '/content/asus-cto/language-master/en/modals/time-spy-score'
+  };
+
+  const rows = [...block.children];
+  rows.forEach((row) => {
+    const cells = [...row.children];
+    if (cells.length >= 2) {
+      const key = cells[0].textContent.trim().toLowerCase().replace(/\s+/g, '');
+      const value = cells[1].textContent.trim();
+
+      if (key === 'fpsdetailsmodalpath') config.fpsDetailsModalPath = value;
+      if (key === 'timespyscoremodalpath') config.timeSpyScoreModalPath = value;
+    }
+  });
+
+  return config;
 }
 
 /**
@@ -371,6 +388,10 @@ function initializeTabs(block) {
 
 export default async function decorate(block) {
   const isUE = isUniversalEditor();
+  
+  // Parse configuration from block metadata
+  const config = parseConfig(block);
+  
   let product = null;
   
   try {
@@ -395,6 +416,9 @@ export default async function decorate(block) {
     block.innerHTML = '<p>Product data not available</p>';
     return;
   }
+  
+  // Store config in dataset for event listeners
+  block.dataset.config = JSON.stringify(config);
   
   // In UE, add authoring class for CSS targeting
   if (isUE) {
@@ -526,7 +550,9 @@ export default async function decorate(block) {
   const fpsInfoButton = block.querySelector('.fps-info');
   if (fpsInfoButton) {
     fpsInfoButton.addEventListener('click', async () => {
-      await openModal(getModalPath('fps-details'));
+      const blockConfig = JSON.parse(block.dataset.config || '{}');
+      const fpsModalPath = blockConfig.fpsDetailsModalPath || '/content/asus-cto/language-master/en/modals/fps-details';
+      await openModal(fpsModalPath);
     });
   }
 
@@ -537,7 +563,9 @@ export default async function decorate(block) {
       const scoreStr = timeSpyScoreButton.dataset.score;
       const score = parseInt(scoreStr, 10);
       console.log('Time Spy Score button clicked. Raw score:', scoreStr, 'Parsed score:', score);
-      await openModal(getModalPath('time-spy-score'));
+      const blockConfig = JSON.parse(block.dataset.config || '{}');
+      const timeSpyModalPath = blockConfig.timeSpyScoreModalPath || '/content/asus-cto/language-master/en/modals/time-spy-score';
+      await openModal(timeSpyModalPath);
       if (score && !isNaN(score)) {
         injectTimeSpyScore(score);
       } else {

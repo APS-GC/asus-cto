@@ -1292,6 +1292,23 @@
   },
   {
     "id": "product-preview",
-    "fields": []
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fpsDetailsModalPath",
+        "label": "FPS Details Modal Path",
+        "description": "Path to the FPS details modal content page (default: /content/asus-cto/language-master/en/modals/fps-details)",
+        "value": "/content/asus-cto/language-master/en/modals/fps-details"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "timeSpyScoreModalPath",
+        "label": "Time Spy Score Modal Path",
+        "description": "Path to the Time Spy Score modal content page (default: /content/asus-cto/language-master/en/modals/time-spy-score)",
+        "value": "/content/asus-cto/language-master/en/modals/time-spy-score"
+      }
+    ]
   }
 ]
