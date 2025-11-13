@@ -1213,16 +1213,16 @@
         "valueType": "string",
         "name": "title",
         "label": "Title",
-        "description": "Title displayed above the hot products section",
-        "value": "Select The Game You Play"
+        "description": "Title displayed above the hot products section1",
+        "value": "Select The Game You Play1"
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "description",
         "label": "Description",
-        "description": "Text for the product description",
-        "value": "We will recommend a plan that suits you most!"
+        "description": "Text for the product description1",
+        "value": "We will recommend a plan that suits you most!1"
       }
     ]
   }
