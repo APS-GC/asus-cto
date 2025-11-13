@@ -141,10 +141,10 @@ function createProductCard(product, config) {
 
       <div class="hot-products-info">
         <span class="hot-products-title">
-          <a href="pdp.html">${product.name}</a>
+          <a href="${product.urlKey || 'pdp.html'}">${product.name}</a>
         </span>
         <p class="hot-products-model">
-          <a href="pdp.html#features">${product.modelName || ''}</a>
+          <a href="${product.urlKey ? `${product.urlKey}#features` : 'pdp.html#features'}">${product.modelName || ''}</a>
         </p>
       </div>
 
@@ -153,7 +153,7 @@ function createProductCard(product, config) {
           <div
             data-bv-show="inline_rating"
             data-bv-product-id="${product.externalId || product.sku}"
-            data-bv-redirect-url="pdp.html"
+            data-bv-redirect-url="${product.urlKey || 'pdp.html'}"
           ></div>
         </div>
         <div class="hot-products-compare">
@@ -207,7 +207,7 @@ function createProductCard(product, config) {
     </div>
 
     <div class="hot-products-card-footer">
-      <button class="hot-products-buy-button" onclick="window.location.href='pdp.html'">${config.buyNowText}</button>
+      <button class="hot-products-buy-button" data-url="${product.urlKey || 'pdp.html'}">${config.buyNowText}</button>
     </div>
   `;
 
@@ -229,6 +229,17 @@ function createProductCard(product, config) {
     estoreTooltip.setAttribute('role', 'tooltip');
     estoreTooltip.textContent = config.estoreTooltip;
     document.body.appendChild(estoreTooltip);
+
+    // Add Buy Now button click handler
+    const buyButton = card.querySelector('.hot-products-buy-button');
+    if (buyButton) {
+        buyButton.addEventListener('click', () => {
+            const url = buyButton.dataset.url;
+            if (url) {
+                window.location.href = url;
+            }
+        });
+    }
 
     return card;
 }

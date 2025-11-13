@@ -2,6 +2,135 @@
  * Product Preview Block
  */
 
+import { openModal } from '../modal/modal.js';
+
+/**
+ * Get modal path
+ * @param {string} modalName - Name of the modal (e.g., 'fps-details', 'time-spy-score')
+ * @returns {string} - Path to modal content
+ */
+function getModalPath(modalName) {
+  return `/modals/${modalName}`;
+}
+
+/**
+ * Determine Time Spy Score level based on score value
+ * @param {number} score - The Time Spy Score
+ * @returns {number} - Level number (1-4)
+ */
+function getTimeSpyLevel(score) {
+  if (score >= 9000) return 4;
+  if (score >= 7000) return 3;
+  if (score >= 5000) return 2;
+  if (score >= 2000) return 1;
+  return 1;
+}
+
+/**
+ * Create the Time Spy Score display HTML
+ * @param {number} score - The Time Spy Score
+ * @param {number} level - The calculated level (1-4)
+ * @returns {string} HTML string for score display
+ */
+function createTimeSpyScoreDisplay(score, level) {
+  const levelData = [
+    { number: 1, title: 'Entry Gaming', range: '2000–4999' },
+    { number: 2, title: 'Intermediate Gaming', range: '5000–6999' },
+    { number: 3, title: 'High-Performance Gaming', range: '7000–8999' },
+    { number: 4, title: 'Top-Tier Gaming', range: '9000–10999' }
+  ];
+
+  // Generate progress bars (4 bars for 4 visible levels)
+  const progressBarsHTML = levelData.map((_, index) => {
+    const isActive = index === level - 1 ? ' active' : '';
+    return `<div class="level-bar${isActive}"></div>`;
+  }).join('');
+
+  // Generate level indicators
+  const levelIndicatorsHTML = levelData.map((data, index) => {
+    const isActive = index === level - 1 ? ' active' : '';
+    return `
+      <div class="level-item">
+        <span class="level-badge${isActive}">Level ${data.number}</span>
+        <div class="level-title">${data.title}</div>
+        <div class="level-range">${data.range}</div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <h2 class="time-spy-score-title">3DMark Time Spy Score</h2>
+    <div class="time-spy-score-display">
+      <div class="time-spy-score-value">${score.toLocaleString()}</div>
+      <div class="level-progress">
+        ${progressBarsHTML}
+      </div>
+      <div class="level-indicators">
+        ${levelIndicatorsHTML}
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Inject Time Spy Score display into modal
+ * @param {number} score - The Time Spy Score
+ */
+function injectTimeSpyScore(score) {
+  if (!score || isNaN(score)) {
+    console.warn('Invalid Time Spy Score:', score);
+    return;
+  }
+
+  const level = getTimeSpyLevel(score);
+  
+  // Wait for modal content to be fully loaded
+  const checkAndInject = () => {
+    // Get all modals and find the most recently opened one (last in DOM)
+    const allModals = document.querySelectorAll('.modal');
+    if (allModals.length === 0) {
+      console.warn('No modal found');
+      return;
+    }
+
+    // Get the last modal (most recently opened)
+    const lastModal = allModals[allModals.length - 1];
+    const modalContent = lastModal.querySelector('.modal-content');
+    
+    if (!modalContent) {
+      console.warn('Modal content not found');
+      setTimeout(checkAndInject, 50);
+      return;
+    }
+
+    // Look for the time-spy-modal class
+    const timeSpyContent = modalContent.querySelector('.time-spy-modal');
+    const targetContainer = timeSpyContent || modalContent;
+    
+    // Wait for any content to be loaded
+    if (!targetContainer.children.length) {
+      setTimeout(checkAndInject, 50);
+      return;
+    }
+
+    // Check if score display already exists (by looking for the h2 we'll inject)
+    const existingTitle = targetContainer.querySelector('h2');
+    if (existingTitle && existingTitle.textContent.includes('3DMark Time Spy Score')) {
+      console.log('Score display already injected');
+      return;
+    }
+
+    // Create and inject the score display HTML at the beginning
+    const scoreHTML = createTimeSpyScoreDisplay(score, level);
+    targetContainer.insertAdjacentHTML('afterbegin', scoreHTML);
+    
+    console.log('Injected Time Spy Score:', score, 'Level:', level);
+  };
+
+  // Start checking after a short delay
+  setTimeout(checkAndInject, 150);
+}
+
 function createImageGallery(product) {
   const images = [];
   
@@ -91,7 +220,7 @@ function createGamePerformance(product) {
         <span class="data-from">Data from</span>
         <div class="data-source">
           <img src="./clientlib-site/images/3dmark.webp" alt="3DMark">
-          <button data-tooltip-trigger="" aria-describedby="preview-time-spy-tooltip" data-tooltip-position="bottom" class="btn btn-link" aria-label="3D Mark information">
+          <button class="btn btn-link btn-tooltip" data-tooltip="All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ." aria-label="3D Mark information">
             <span class="icon icon--info"></span>
           </button>
         </div>
@@ -150,7 +279,7 @@ function createTimeSpyScore(product) {
         <span class="data-from">Data from</span>
         <div class="data-source">
           <img src="./clientlib-site/images/3dmark.webp" alt="3DMark">
-          <button data-tooltip-trigger="" aria-describedby="preview-time-spy-tooltip" data-tooltip-position="bottom" class="btn btn-link" aria-label="3D Mark information">
+          <button class="btn btn-link btn-tooltip" data-tooltip="All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ." aria-label="3D Mark information">
             <span class="icon icon--info"></span>
           </button>
         </div>
@@ -363,6 +492,30 @@ export default async function decorate(block) {
       const dialog = block.closest('dialog');
       if (dialog) {
         dialog.close();
+      }
+    });
+  }
+
+  // Add FPS info button event listener
+  const fpsInfoButton = block.querySelector('.fps-info');
+  if (fpsInfoButton) {
+    fpsInfoButton.addEventListener('click', async () => {
+      await openModal(getModalPath('fps-details'));
+    });
+  }
+
+  // Add Time Spy Score info button event listener
+  const timeSpyScoreButton = block.querySelector('.time-spy-score-btn');
+  if (timeSpyScoreButton) {
+    timeSpyScoreButton.addEventListener('click', async () => {
+      const scoreStr = timeSpyScoreButton.dataset.score;
+      const score = parseInt(scoreStr, 10);
+      console.log('Time Spy Score button clicked. Raw score:', scoreStr, 'Parsed score:', score);
+      await openModal(getModalPath('time-spy-score'));
+      if (score && !isNaN(score)) {
+        injectTimeSpyScore(score);
+      } else {
+        console.error('Invalid score value:', scoreStr);
       }
     });
   }
