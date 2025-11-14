@@ -22,7 +22,9 @@
       "footer",
       "article-card",
       "header",
-      "product-card"
+      "product-card",
+      "hot-products",
+      "product-preview"
     ]
   },
   {
