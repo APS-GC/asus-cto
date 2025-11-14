@@ -242,6 +242,11 @@ body.fade-in.appear {
  * Heading Styles
  * ========================================================================== */
 
+ h1,h2,h3,h4,h5,h6,p {
+    margin: 0;
+    padding: 0
+}
+
 /* Display Headings - Large, impactful text */
 .text-display-1,
 .display-1 {
@@ -344,7 +349,6 @@ p,
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-relaxed);
   letter-spacing: var(--letter-spacing-normal);
-  margin: 0 0 1rem 0;
 }
 
 .text-body-large,
@@ -1119,6 +1123,11 @@ p,
 .col-10 { grid-column: span 10; }
 .col-11 { grid-column: span 11; }
 .col-12 { grid-column: span 12; }
+
+/*used property*/
+.flex{
+  display: flex;
+}
 
 /* Flexbox Grid Alternative */
 .flex-grid {
