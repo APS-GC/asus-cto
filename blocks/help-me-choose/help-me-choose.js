@@ -35,9 +35,8 @@ async function renderHelpMeChoose(block) {
 
   // Fetch products
   const gameList = await fetchGameList();
-  const lowestPrice = gameList?.results?.lowestPrice;
-  const highestPrice = gameList?.results?.highestPrice;
-  console.log("Hello 2", gameList);
+  const lowestPrice = gameList?.results?.lowestPrice || 500;
+  const highestPrice = gameList?.results?.highestPrice || 5000;
   // Build the HTML in a fragment / string, then insert once
   const html = `
     <div class="game-recommendation">
@@ -90,11 +89,11 @@ async function renderHelpMeChoose(block) {
                       <input type="text" class="budget-value" id="budget-min-value" aria-label="Minimum budget" />
                       <div class="budget-separator">to</div>
                       <div class="budget-range-wrapper">
-                          <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="${lowestPrice}" data-max="${highestPrice}" role="slider" data-step="100" aria-label="Budget range slider" aria-valuemax="${highestPrice}" aria-valuemin="${lowestPrice}" aria-orientation="horizontal" aria-valuenow="${lowestPrice}"
+                          <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="500" data-max="5000" role="slider" data-step="100" aria-label="Budget range slider" aria-valuemax="${highestPrice}" aria-valuemin="${lowestPrice}" aria-orientation="horizontal" aria-valuenow="${lowestPrice}"
                           aria-valuetext="Budget range between ${_formatCurrency(lowestPrice)} to ${_formatCurrency(highestPrice)}"></div>
                           <div class="range-labels">
-                              <span>${_formatCurrency(lowestPrice)}</span>
-                              <span>${_formatCurrency(highestPrice)}</span>
+                              <span>$500</span>
+                              <span>$5,000</span>
                           </div>
                       </div>
                       <input type="text" class="budget-value" id="budget-max-value" aria-label="Maximum budget" />
@@ -359,9 +358,11 @@ class SelectGameForm {
       maxValText: this.form.querySelector('#budget-max-value'),
       minBudgetInput: this.form.querySelector('#min-budget'),
       maxBudgetInput: this.form.querySelector('#max-budget'),
+      minBudgetValue: this.form.querySelector('#budget-range').getAttribute('aria-valuenow'),
+      maxBudgetValue: this.form.querySelector('#budget-range').getAttribute('aria-valuemax'),
     };
 
-    this.DEFAULT_BUDGET_RANGE = { min: this.dom.minBudgetInput.value, max: this.dom.maxBudgetInput.value };
+    this.DEFAULT_BUDGET_RANGE = { min: 500, max: 5000 };
     this.DEFAULT_START_BUDGET = { min: this.dom.minBudgetInput.value, max: this.dom.maxBudgetInput.value };
   }
 
@@ -491,7 +492,7 @@ class SelectGameForm {
     setTimeout(() => {
       const slider = this.dom.slider?.noUiSlider;
       if (slider) {
-        slider.set([this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max]);
+        slider.set([this.dom.minBudgetValue, this.dom.maxBudgetValue]);
       }
       this._updateSubmitButtonState(true);
     }, 0);
