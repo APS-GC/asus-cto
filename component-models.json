@@ -1232,7 +1232,7 @@
       {
         "component": "richtext",
         "valueType": "string",
-        "name": "Help me choose",
+        "name": "helpMeChooseButtonText",
         "label": "Help me choose",
         "value": "Help me choose"
       }
