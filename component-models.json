@@ -1221,7 +1221,22 @@
         "name": "description",
         "label": "Description",
         "value": "We will recommend a plan that suits you most!"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "reset",
+        "label": "Reset Description",
+        "value": "Reset"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "Help me choose",
+        "label": "Help me choose",
+        "value": "Help me choose"
       }
+
     ]
   }
 ]
