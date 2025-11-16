@@ -71,7 +71,7 @@ export function isUniversalEditor() {
 export async function loadHeaderFragment() {
   //TODO: change this to relative when we base url is changed.
   const fragmentUrl = '/content/asus-cto/language-master/en/fragments/head.plain.html';
-   try {
+  try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
       const html = await response.text();
@@ -98,7 +98,7 @@ export async function loadFooterFragment() {
       const html = await response.text();
       return processFooterFragmentContent(html);
     }
-  } catch (error) {   
+  } catch (error) {
     // eslint-disable-next-line no-console
     console.log('Failed to load footer fragment:', error);
   }
@@ -158,9 +158,9 @@ export function createOptimizedPictureExternal(
   baseUrl
 ) {
   let url;
-  if(baseUrl){
+  if (baseUrl) {
     url = new URL(src.replace(window.location.origin, baseUrl));
-  }else{
+  } else {
     url = new URL(src, window.location.href);
   }
   const picture = document.createElement('picture');
@@ -321,14 +321,14 @@ async function loadLazy(doc) {
  */
 export async function loadBazaarvoiceScript() {
   const BV_SCRIPT_ID = 'bv-script';
-  
+
   // TODO: Replace with getConfigValue() when configs are ready
   // Hardcoded values for now based on current deployment
   const clientName = 'asustek';
   const siteId = 'cto_main_site_black';
   const environment = 'production';
   const locale = 'en_US';
-  
+
   // Check if script already exists in DOM
   if (document.getElementById(BV_SCRIPT_ID)) {
     console.log('Bazaarvoice: Script already loaded');
@@ -359,6 +359,43 @@ function autolinkModals(doc) {
       openModal(origin.href);
     }
   });
+}
+
+/**
+ * Gets placeholders object.
+ * @param {string} [prefix] Location of placeholders
+ * @returns {object} Window placeholders object
+ */
+// eslint-disable-next-line import/prefer-default-export
+export async function fetchPlaceholders(prefix = 'default') {
+  window.placeholders = window.placeholders || {};
+  if (!window.placeholders[prefix]) {
+    window.placeholders[prefix] = new Promise((resolve) => {
+      fetch(`${prefix === 'default' ? '' : prefix}/placeholders.json`)
+        .then((resp) => {
+          if (resp.ok) {
+            return resp.json();
+          }
+          return {};
+        })
+        .then((json) => {
+          const placeholders = {};
+          json.data
+            .filter((placeholder) => placeholder.Key)
+            .forEach((placeholder) => {
+              placeholders[toCamelCase(placeholder.Key)] = placeholder.Text;
+            });
+          window.placeholders[prefix] = placeholders;
+          resolve(window.placeholders[prefix]);
+        })
+        .catch(() => {
+          // error loading placeholders
+          window.placeholders[prefix] = {};
+          resolve(window.placeholders[prefix]);
+        });
+    });
+  }
+  return window.placeholders[`${prefix}`];
 }
 
 /**

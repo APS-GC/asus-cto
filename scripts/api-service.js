@@ -5,16 +5,15 @@
  */
 
 import { API_URIS } from '../constants/api-constants.js';
+import { getConfigValue } from './configs.js';
 
 /**
  * Get full API endpoint URL
  * @param {string} uri - API URI path
- * @returns {string} - Full endpoint URL
+ * @returns {Promise<string>} - Full endpoint URL
  */
-export function getApiEndpoint(uri) {
-  // TODO: Replace hardcoded base URL with getConfigValue() when configs are ready
-  // const baseUrl = await getConfigValue('api-base-url');
-  const baseUrl = 'https://publish-p165753-e1767020.adobeaemcloud.com';
+export async function getApiEndpoint(uri) {
+  const baseUrl = await getConfigValue('api-endpoint') || 'https://publish-p165753-e1767020.adobeaemcloud.com';
   return baseUrl + uri;
 }
 
@@ -83,7 +82,7 @@ export async function fetchProductData(endpoint, maxProducts = null) {
  * @returns {Promise<Array>} - Array of hot product objects
  */
 export async function fetchHotProducts(maxProducts = null, config = {}) {
-  const endpoint = getApiEndpoint(API_URIS.FETCH_HOT_PRODUCTS, config);
+  const endpoint = await getApiEndpoint(API_URIS.FETCH_HOT_PRODUCTS);
   return fetchProductData(endpoint, maxProducts);
 }
 
