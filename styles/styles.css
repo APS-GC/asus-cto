@@ -11,7 +11,8 @@
   --color-brand-rog: #f7323f;         /* ROG Red */
   
   /* Primary Color System - Following webpack/scss structure */
-  --color-primary: #000000;           /* Base black */
+  --color-primary: #000000;            /* Base black */
+  --color-primary-base: #000;          /* Base black */
   --color-primary-50: #16151b;        /* Dark/Grey03 */
   --color-primary-100: #181818;       /* Dark/Grey02, Light/Grey07 */
   --color-primary-200: #262626;       /* Dark/Grey04, Light/Grey06 */
@@ -41,10 +42,10 @@
   --btn-disabled-bg: var(--color-primary-600);
   --btn-disabled-color: var(--color-primary-800);
   --btn-hover-bg: var(--color-primary-700);
-  --btn-outline-border: var(--color-primary-950);
+  --btn-outline-border: var(--color-primary);
   --btn-outline-disabled-border: var(--color-primary-600);
-  --btn-outline-hover-bg: var(--color-primary-950);
-  --btn-outline-hover-color: var(--color-primary);
+  --btn-outline-hover-bg: var(--color-primary);
+  --btn-outline-hover-color: var(--color-primary-950);
   --btn-link-color: var(--color-primary-950);
   --btn-link-disabled-color: var(--color-primary-600);
   --btn-link-hover-color: var(--color-primary-950);
@@ -62,6 +63,7 @@
   --color-gray-700: var(--color-primary-200);
   --color-gray-800: var(--color-primary-100);
   --color-gray-900: var(--color-primary-50);
+  --color-primary-base: var(--color-primary);
   
   /* Legacy status color mappings */
   --color-success-dark: #007e33;
@@ -241,6 +243,11 @@ body.fade-in.appear {
  * Heading Styles
  * ========================================================================== */
 
+ h1,h2,h3,h4,h5,h6,p {
+    margin: 0;
+    padding: 0
+}
+
 /* Display Headings - Large, impactful text */
 .text-display-1,
 .display-1 {
@@ -343,7 +350,6 @@ p,
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-relaxed);
   letter-spacing: var(--letter-spacing-normal);
-  margin: 0 0 1rem 0;
 }
 
 .text-body-large,
@@ -689,7 +695,6 @@ p,
 /* Focus visible styles for better accessibility */
 :focus-visible {
   outline: 2px solid var(--color-border-focus);
-  outline-offset: 2px;
 }
 
 /* ========================================================================== 
@@ -1065,41 +1070,33 @@ p,
  * Based on webpack container variables and responsive design principles
  * ========================================================================== */
 
-/* Base Container - Mobile First Approach */
 .container {
-  width: 100%;
-  max-width: var(--container);
   margin: 0 auto;
-  padding: 0 var(--spacing-4); /* 1rem - 16px padding on mobile */
+  max-width: 100%;
+  padding: 0 20px
 }
 
-/* ========================================================================== 
- * Container Responsive Breakpoints - Following webpack structure
- * ========================================================================== */
-
-
-/* Medium screens and up (768px) */
-@media (min-width: 48rem) {
+@media only screen and (min-width:45.6875rem) {
   .container {
-    padding: 0 var(--spacing-10); /* 2rem - 32px padding */
-  }
-  
-  main.container {
-    padding: var(--spacing-4) var(--spacing-8); /* 1rem 2rem */
+    padding: 0 40px
   }
 }
 
-/* Extra large screens and up (1280px) */
-@media (min-width: 80rem) {
+@media only screen and (min-width:80rem) {
   .container {
-    max-width: calc(100% - 200px);
-    padding: 0; 
-  }
-  
-  main.container {
-    padding: var(--spacing-6) var(--spacing-12); /* 1.5rem 3rem */
+    max-width: 1240px;
+    padding: 0
   }
 }
+
+@media only screen and (max-width:45.625rem) {
+  .container-mobile-full {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0
+  }
+}
+
 /* Grid System */
 .grid {
   display: grid;
@@ -1107,6 +1104,7 @@ p,
   gap: var(--grid-gutter-mobile);
   width: 100%;
 }
+
 
 /* Grid Items */
 .grid-item {
@@ -1126,6 +1124,11 @@ p,
 .col-10 { grid-column: span 10; }
 .col-11 { grid-column: span 11; }
 .col-12 { grid-column: span 12; }
+
+/*used property*/
+.flex{
+  display: flex;
+}
 
 /* Flexbox Grid Alternative */
 .flex-grid {
@@ -1774,304 +1777,6 @@ p,
   stroke-width: 2px;
 }
 
-/* Modal Content */
-.modal-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-24);
-}
-
-.modal-body {
-  flex: 1;
-}
-
-.modal-body p {
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-relaxed);
-  margin-bottom: var(--spacing-16);
-}
-
-.modal-body p:last-child {
-  margin-bottom: 0;
-}
-
-/* Modal Footer */
-.modal-footer {
-  display: flex;
-  gap: var(--spacing-16);
-  justify-content: flex-end;
-  margin-top: var(--spacing-32);
-}
-
-/* Modal Form Elements */
-.modal-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-16);
-}
-
-.modal-form-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-8);
-}
-
-.modal-form-label {
-  font-family: var(--font-primary);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: inherit;
-}
-
-.modal-form-input {
-  padding: var(--spacing-12) var(--spacing-16);
-  border: 1px solid var(--color-gray-400);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-base);
-  transition: border-color 0.2s ease;
-}
-
-.modal-form-input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(0, 87, 183, 0.1);
-}
-
-.modal-black .modal-form-input {
-  background-color: transparent;
-  border-color: var(--color-gray-400);
-  color: var(--color-white);
-}
-
-.modal-black .modal-form-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* Modal Checkbox */
-.modal-checkbox-group {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-8);
-}
-
-.modal-checkbox {
-  width: 16px;
-  height: 16px;
-  margin-top: 2px;
-}
-
-.modal-checkbox-label {
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-normal);
-  color: inherit;
-}
-
-/* Modal Buttons */
-.modal-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-12) var(--spacing-24);
-  border: 1px solid transparent;
-  border-radius: var(--radius-md);
-  font-family: var(--font-primary);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
-  text-decoration: none;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  min-width: 120px;
-}
-
-.modal-btn-primary {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  border-color: var(--color-primary);
-}
-
-.modal-btn-primary:hover {
-  background-color: var(--color-primary-dark);
-  border-color: var(--color-primary-dark);
-}
-
-.modal-btn-secondary {
-  background-color: transparent;
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.modal-btn-secondary:hover {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-}
-
-.modal-black .modal-btn-secondary {
-  color: var(--color-white);
-  border-color: var(--color-white);
-}
-
-.modal-black .modal-btn-secondary:hover {
-  background-color: var(--color-white);
-  color: var(--color-black);
-}
-
-/* Modal Content Sections */
-.modal-section {
-  margin-bottom: var(--spacing-32);
-}
-
-.modal-section:last-child {
-  margin-bottom: 0;
-}
-
-.modal-section-title {
-  font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-medium);
-  margin-bottom: var(--spacing-16);
-  color: inherit;
-}
-
-/* Modal Product Info */
-.modal-product-info {
-  display: flex;
-  gap: var(--spacing-32);
-  align-items: flex-start;
-}
-
-.modal-product-image {
-  flex-shrink: 0;
-  width: 120px;
-  height: 120px;
-  border-radius: var(--radius-md);
-  object-fit: cover;
-}
-
-.modal-product-details {
-  flex: 1;
-}
-
-.modal-product-title {
-  font-family: var(--font-display);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-medium);
-  margin-bottom: var(--spacing-8);
-  color: inherit;
-}
-
-.modal-product-description {
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-relaxed);
-  color: inherit;
-  opacity: 0.8;
-}
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .modal-white,
-  .modal-black {
-    width: 80%;
-    padding: var(--spacing-40);
-  }
-  
-  .modal-fullscreen {
-    padding: var(--spacing-40);
-  }
-  
-  .modal-white {
-    max-width: 786px;
-  }
-  
-  .modal-product-info {
-    gap: var(--spacing-24);
-  }
-  
-  .modal-product-image {
-    width: 100px;
-    height: 100px;
-  }
-}
-
-@media (max-width: 768px) {
-  .modal-overlay {
-    padding: var(--spacing-20);
-  }
-  
-  .modal-white,
-  .modal-black,
-  .modal-fullscreen {
-    width: calc(100% - 40px);
-    padding: var(--spacing-20);
-  }
-  
-  .modal-white {
-    max-width: none;
-  }
-  
-  .modal-black {
-    max-width: none;
-  }
-  
-  .modal-title {
-    font-size: var(--font-size-xl);
-  }
-  
-  .modal-footer {
-    flex-direction: column;
-    gap: var(--spacing-12);
-  }
-  
-  .modal-btn {
-    width: 100%;
-  }
-  
-  .modal-product-info {
-    flex-direction: column;
-    gap: var(--spacing-16);
-  }
-  
-  .modal-product-image {
-    width: 100%;
-    height: 200px;
-  }
-}
-
-/* Modal Height and Scroll Behavior */
-.modal-overlay.content-fits {
-  align-items: center;
-}
-
-.modal-overlay.content-overflows {
-  align-items: flex-start;
-  padding-top: 100px;
-}
-
-@media (max-width: 1024px) {
-  .modal-overlay.content-overflows {
-    padding-top: 40px;
-  }
-}
-
-@media (max-width: 768px) {
-  .modal-overlay.content-overflows {
-    padding-top: 20px;
-  }
-}
-
-/* Modal Accessibility */
-.modal[aria-hidden="true"] {
-  display: hidden;
-}
-
-.modal:focus {
-  outline: none;
-}
-
-/* Prevent body scroll when modal is open */
-body.modal-open {
-  overflow: hidden;
-}
-
 /* ========================================================================== 
  * Page-Level Background Utilities - Applied to body/page wrapper
  * ========================================================================== */
@@ -2302,7 +2007,6 @@ a:hover {
 
 
 /* Form Elements */
-input,
 textarea,
 select {
   border: 1px solid var(--color-border-primary);
@@ -2311,7 +2015,6 @@ select {
   transition: border-color 0.2s ease;
 }
 
-input:focus,
 textarea:focus,
 select:focus {
   outline: none;
@@ -2323,6 +2026,72 @@ input.error,
 textarea.error,
 select.error {
   border-color: var(--color-border-error);
+}
+
+input[type=checkbox] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: transparent;
+  border-radius: 4px;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  cursor: pointer;
+  height: 16px;
+  margin: 0;
+  position: relative;
+  width: 16px
+}
+
+input[type=checkbox]:before {
+  border: 1px solid var(--color-primary-600);
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: 16px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+  width: 16px
+}
+
+input[type=checkbox]:focus-visible {
+  outline: solid 2px var(--color-focus-ring);
+  outline-offset: 2px
+}
+
+input[type=checkbox]:checked {
+  color: var(--color-primary)
+}
+
+input[type=checkbox]:checked:before {
+  background: var(--color-primary-950);
+  border: 1px solid var(--color-primary-950)
+}
+
+input[type=checkbox]:checked:after {
+  background-color: currentColor;
+  content: "";
+  display: block;
+  height: 10px;
+  left: 50%;
+  -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 10 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m.875 5.16 2.87 3.215 5.38-6.75"/></svg>');
+  mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 10 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m.875 5.16 2.87 3.215 5.38-6.75"/></svg>');
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+  width: 10px
 }
 
 /* Alert/Status Messages */

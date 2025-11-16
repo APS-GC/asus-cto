@@ -48,13 +48,30 @@ export function moveInstrumentation(from, to) {
 }
 
 /**
+ * Detect if running in Universal Editor environment
+ * @returns {boolean} True if running in Universal Editor
+ */
+export function isUniversalEditor() {
+  return (
+    window.location.pathname.includes('/editor.html') ||
+    window.location.search.includes('editor') ||
+    window.location.search.includes('aue_') ||
+    document.body.hasAttribute('data-aue-behavior') ||
+    document.body.classList.contains('editor') ||
+    document.body.classList.contains('aem-authoring-enabled') ||
+    document.querySelector('[data-aue-resource]') !== null ||
+    window.hlx?.aemRoot !== undefined
+  );
+}
+
+/**
  * Loads header fragment from the working fragment URL
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
 export async function loadHeaderFragment() {
   //TODO: change this to relative when we base url is changed.
   const fragmentUrl = '/content/asus-cto/language-master/en/fragments/head.plain.html';
-   try {
+  try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
       const html = await response.text();
@@ -81,7 +98,7 @@ export async function loadFooterFragment() {
       const html = await response.text();
       return processFooterFragmentContent(html);
     }
-  } catch (error) {   
+  } catch (error) {
     // eslint-disable-next-line no-console
     console.log('Failed to load footer fragment:', error);
   }
@@ -141,9 +158,9 @@ export function createOptimizedPictureExternal(
   baseUrl
 ) {
   let url;
-  if(baseUrl){
+  if (baseUrl) {
     url = new URL(src.replace(window.location.origin, baseUrl));
-  }else{
+  } else {
     url = new URL(src, window.location.href);
   }
   const picture = document.createElement('picture');
@@ -281,6 +298,7 @@ async function loadEager(doc) {
  * @param {Element} doc The container element
  */
 async function loadLazy(doc) {
+  autolinkModals(doc);
   const main = doc.querySelector('main');
   await loadSections(main);
 
@@ -293,6 +311,91 @@ async function loadLazy(doc) {
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
+}
+
+/**
+ * Dynamically load Bazaarvoice script only when needed
+ * This is called from blocks that need ratings functionality
+ * 
+ * @returns {Promise} Resolves when script is loaded
+ */
+export async function loadBazaarvoiceScript() {
+  const BV_SCRIPT_ID = 'bv-script';
+
+  // TODO: Replace with getConfigValue() when configs are ready
+  // Hardcoded values for now based on current deployment
+  const clientName = 'asustek';
+  const siteId = 'cto_main_site_black';
+  const environment = 'production';
+  const locale = 'en_US';
+
+  // Check if script already exists in DOM
+  if (document.getElementById(BV_SCRIPT_ID)) {
+    console.log('Bazaarvoice: Script already loaded');
+    return Promise.resolve();
+  }
+
+  console.log('Bazaarvoice: Loading script dynamically');
+
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.id = BV_SCRIPT_ID;
+    script.async = true;
+    script.onload = () => {
+      console.log('Bazaarvoice: Script loaded successfully');
+      resolve();
+    };
+    script.src = `https://apps.bazaarvoice.com/deployments/${clientName}/${siteId}/${environment}/${locale}/bv.js`;
+    document.head.appendChild(script);
+  });
+}
+
+function autolinkModals(doc) {
+  doc.addEventListener('click', async (e) => {
+    const origin = e.target.closest('a');
+    if (origin && origin.href && origin.href.includes('/modals/')) {
+      e.preventDefault();
+      const { openModal } = await import(`${window.hlx.codeBasePath}/blocks/modal/modal.js`);
+      openModal(origin.href);
+    }
+  });
+}
+
+/**
+ * Gets placeholders object.
+ * @param {string} [prefix] Location of placeholders
+ * @returns {object} Window placeholders object
+ */
+// eslint-disable-next-line import/prefer-default-export
+export async function fetchPlaceholders(prefix = 'default') {
+  window.placeholders = window.placeholders || {};
+  if (!window.placeholders[prefix]) {
+    window.placeholders[prefix] = new Promise((resolve) => {
+      fetch(`${prefix === 'default' ? '' : prefix}/placeholders.json`)
+        .then((resp) => {
+          if (resp.ok) {
+            return resp.json();
+          }
+          return {};
+        })
+        .then((json) => {
+          const placeholders = {};
+          json.data
+            .filter((placeholder) => placeholder.Key)
+            .forEach((placeholder) => {
+              placeholders[toCamelCase(placeholder.Key)] = placeholder.Text;
+            });
+          window.placeholders[prefix] = placeholders;
+          resolve(window.placeholders[prefix]);
+        })
+        .catch(() => {
+          // error loading placeholders
+          window.placeholders[prefix] = {};
+          resolve(window.placeholders[prefix]);
+        });
+    });
+  }
+  return window.placeholders[`${prefix}`];
 }
 
 /**

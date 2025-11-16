@@ -7,6 +7,7 @@
 :host {
   /* Primary Color System - Direct values from styles.css */
   --color-primary: #000000;
+  --color-primary-base: #000;
   --color-primary-50: #16151b;
   --color-primary-100: #181818;
   --color-primary-200: #262626;

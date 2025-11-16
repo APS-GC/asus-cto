@@ -3,7 +3,7 @@
  * Supports authorable hero banner slides with video/image media, CTA buttons, and autoplay settings
  */
 
-import { moveInstrumentation } from '../../scripts/scripts.js';
+import { moveInstrumentation, isUniversalEditor } from '../../scripts/scripts.js';
 
 // Configuration defaults
 const DEFAULT_IMAGE_AUTOPLAY = 3000;
@@ -260,33 +260,6 @@ const toggleSliderVideo = (videoPlayPauseBtn) => {
     }
   }
 };
-
-/**
- * Detect if running in Universal Editor environment
- */
-function isUniversalEditor() {
-  // More comprehensive UE detection
-  return (
-    // URL-based detection
-    window.location.pathname.includes('/editor.html') ||
-    window.location.search.includes('editor') ||
-    window.location.search.includes('aue_') ||
-    // DOM-based detection
-    document.body.hasAttribute('data-aue-behavior') ||
-    document.body.classList.contains('editor') ||
-    document.body.classList.contains('aem-authoring-enabled') ||
-    document.querySelector('[data-aue-behavior]') ||
-    document.querySelector('.aem-editor') ||
-    // Framework detection
-    window.hlx?.sidekickConfig ||
-    document.querySelector('helix-sidekick') ||
-    // Context detection
-    window.parent !== window ||
-    // Direct attribute checks
-    document.documentElement.hasAttribute('data-authoring') ||
-    document.documentElement.classList.contains('authoring-mode')
-  );
-}
 
 /**
  * Initialize Swiper carousel

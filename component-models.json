@@ -1206,6 +1206,120 @@
     ]
   },
   {
+    "id": "hot-products",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Section Title",
+        "description": "Title displayed above the hot products section",
+        "value": "Hot Products"
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "productsToShow",
+        "label": "Products to Show",
+        "description": "Number of products to display in the carousel (default: 3)",
+        "value": 3
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "compareLabel",
+        "label": "Compare Label",
+        "description": "Text for the compare checkbox label",
+        "value": "Compare"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "buyNowText",
+        "label": "Buy Now Button Text",
+        "description": "Text for the buy now call-to-action button",
+        "value": "Buy now"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "quickViewText",
+        "label": "Quick View Button Text",
+        "description": "Text for the quick view button that appears on product image hover",
+        "value": "Quick view"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "estoreLabel",
+        "label": "Estore Price Label",
+        "description": "Label text for the estore price section",
+        "value": "ASUS estore price"
+      },
+      {
+        "component": "richtext",
+        "name": "estoreTooltip",
+        "label": "Estore Price Tooltip",
+        "description": "Tooltip content explaining the estore price",
+        "valueType": "string",
+        "value": "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "viewAllText",
+        "label": "View All Link Text",
+        "description": "Text for the 'View all' link at the bottom",
+        "value": "View all"
+      },
+      {
+        "component": "aem-content",
+        "name": "viewAllLink",
+        "label": "View All Link URL",
+        "description": "URL for the 'View all' link",
+        "valueType": "string",
+        "value": "#"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "productPreviewModalPath",
+        "label": "Product Preview Modal Path",
+        "description": "Path to the product preview modal content page (default: /modals/product-preview)",
+        "value": "/modals/product-preview"
+      }
+    ]
+  },
+  {
+    "id": "product-preview",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fpsDetailsModalPath",
+        "label": "FPS Details Modal Path",
+        "description": "Path to the FPS details modal content page (default: /content/asus-cto/language-master/en/modals/fps-details)",
+        "value": "/content/asus-cto/language-master/en/modals/fps-details"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "timeSpyScoreModalPath",
+        "label": "Time Spy Score Modal Path",
+        "description": "Path to the Time Spy Score modal content page (default: /content/asus-cto/language-master/en/modals/time-spy-score)",
+        "value": "/content/asus-cto/language-master/en/modals/time-spy-score"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "dataSourceTooltip",
+        "label": "Data Source Tooltip",
+        "description": "Tooltip text for the data source information icon (default: All FPS performance data presented are theoretical...)",
+        "value": "All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ."
+      }
+    ]
+  },
+  {
     "id": "help-me-choose",
     "fields": [
       {

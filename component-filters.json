@@ -23,6 +23,8 @@
       "article-card",
       "header",
       "product-card",
+      "hot-products",
+      "product-preview",
       "help-me-choose"
     ]
   },
