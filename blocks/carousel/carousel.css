@@ -27,7 +27,6 @@
 
 /* Carousel Container */
 .cmp-carousel {
-  --header-height: 64px;
   width: 100%;
   position: relative;
   background: #000;

@@ -49,6 +49,7 @@
   --btn-link-color: var(--color-primary-950);
   --btn-link-disabled-color: var(--color-primary-600);
   --btn-link-hover-color: var(--color-primary-950);
+  --header-height: 48px; /* Default: Mobile and Tablet */
 
   /* Legacy color mappings for backward compatibility */
   --color-white: var(--color-primary-950);
@@ -202,7 +203,7 @@
   font-display: swap; /* Immediate text render with fallback, swap to web font when loaded */
 }
 
-*{
+* {
   box-sizing: border-box;
 }
 
@@ -237,6 +238,10 @@ body.fade-in {
 
 body.fade-in.appear {
   opacity: 1;
+}
+
+header {
+  min-height: var(--header-height);
 }
 
 /* ========================================================================== 
@@ -623,6 +628,9 @@ p,
     --font-size-4xl: 3rem;      /* 48px */
     --font-size-5xl: 4rem;      /* 64px */
     --font-size-6xl: 5rem;      /* 80px */
+    
+    /* Header height for desktop */
+    --header-height: 64px;
   }
 }
 
