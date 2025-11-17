@@ -219,6 +219,9 @@ body {
   margin: 0;
   padding: 0;
   
+  /* Font loading optimization - reduce CLS from font swaps */
+  font-size-adjust: 0.5;
+  
   /* LCP Optimization: Start visible to prevent text render blocking */
   opacity: 1;
   /* Reduced transition for faster appearance */
@@ -242,6 +245,22 @@ body.fade-in.appear {
 
 header {
   min-height: var(--header-height);
+}
+
+/* ========================================================================== 
+ * Image Optimization - Prevent CLS
+ * ========================================================================== */
+
+/* Ensure all images are responsive and maintain aspect ratio */
+img {
+  height: auto;
+  max-width: 100%;
+  display: block;
+}
+
+/* Prevent CLS for images with width/height attributes */
+img[width][height] {
+  height: auto;
 }
 
 /* ========================================================================== 

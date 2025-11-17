@@ -331,8 +331,9 @@ function buildLogo(logos) {
   const logoItems = logos.map(logo => {
     const iconSrc = logo.icon || '';
     const altText = logo.altText || `${logo.name} Logo`;
-    const width = logo.width || 'auto';
-    const height = logo.height || 'auto';
+    // Ensure explicit dimensions to prevent CLS - use defaults if not provided
+    const width = logo.width || (logo.name === 'asus' ? '87' : logo.name === 'rog' ? '135' : '104');
+    const height = logo.height || (logo.name === 'asus' ? '20' : logo.name === 'rog' ? '26' : '22');
     const logoUrl = logo.url || '#';
     
     // Render logo structure even if icon source is missing
