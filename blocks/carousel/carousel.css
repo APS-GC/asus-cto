@@ -590,17 +590,6 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
   }
 }
 
-@media (max-width: 480px) {
-  
-  .cmp-carousel .headline {
-    font-size: 1.8rem;
-  }
-  
-  .cmp-carousel .cta-button {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-  } 
-}
 
 /* Screen reader only content */
 .sr-only {
