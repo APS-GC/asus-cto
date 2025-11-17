@@ -40,13 +40,13 @@
 /* Swiper Styles */
 .cmp-carousel .swiper {
   width: 100%;
-  height: 500px; /* Fixed height for UE compatibility */
+  /* height: 500px; Fixed height for UE compatibility */
   min-height: 500px;
 }
 
 /* Regular viewing - use viewport height */
 .cmp-carousel:not(.ue-authoring) .swiper {
-  height: 80vh;
+  /* height: 80vh; */
 }
 
 /* Universal Editor authoring mode - constrained height */
@@ -577,7 +577,7 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
 /* Existing carousel responsive rules - maintaining backward compatibility */
 @media (max-width: 1024px) {
   .cmp-carousel .swiper {
-    height: 80vh;
+    /* height: 80vh; */
     min-height: 400px;
   }
   
@@ -618,7 +618,7 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
 
 @media (max-width: 480px) {
   .cmp-carousel .swiper {
-    height: 60vh;
+    /* height: 60vh; */
     min-height: 300px;
   }
   
