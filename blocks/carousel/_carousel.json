@@ -108,39 +108,43 @@
           "valueType": "string",
           "options": [
             {
-              "name": "Center",
-              "value": "center"
-            },
-            {
-              "name": "Top",
-              "value": "top"
-            },
-            {
-              "name": "Bottom", 
-              "value": "bottom"
-            },
-            {
-              "name": "Left",
-              "value": "left"
-            },
-            {
-              "name": "Right",
-              "value": "right"
+              "name": "Start Top",
+              "value": "start-top"
             },
             {
               "name": "Start Center",
               "value": "start-center"
             },
             {
-              "name": "End Center",
-              "value": "end-center"
+              "name": "star bottom",
+              "value": "start-bottom"
             },
             {
               "name": "Center Top",
               "value": "center-top"
+            },
+            {
+              "name": "Center Center",
+              "value": "center-center"
+            },
+            {
+              "name": "Center Bottom",
+              "value": "center-bottom"
+            },
+            {
+              "name": "End Top",
+              "value": "end-top"
+            },
+            {
+              "name": "End Center",
+              "value": "end-center"
+            },
+            {
+              "name": "End Bottom:",
+              "value": "end-bottom"
             }
           ],
-          "value": "center"
+          "value": "center-center"
         },
         {
           "component": "aem-content",
