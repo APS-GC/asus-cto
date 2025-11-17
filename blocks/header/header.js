@@ -136,7 +136,7 @@ function parseHTMLContent(block) {
 
     // Check if baseUrl is defined and different from current location
     const baseUrl = window.asusCto?.baseUrl;
-    const shouldUseExternal = baseUrl && baseUrl !== window.location.href;
+    const shouldUseExternal = baseUrl && baseUrl !== window.location.origin;
 
     const parsedData = {
       logos: [],
@@ -312,7 +312,7 @@ function parseNavLinks(navLinksText) {
   
   // Check if baseUrl is defined and different from current location
   const baseUrl = window.asusCto?.baseUrl;
-  const shouldUseExternal = baseUrl && baseUrl !== window.location.href;
+  const shouldUseExternal = baseUrl && baseUrl !== window.location.origin;
   
   return navLinksText.split('\n')
     .filter(line => line.trim())
@@ -870,7 +870,7 @@ function optimizeLogoImages(block) {
     
     // Check if baseUrl is defined and different from current location
     const baseUrl = window.asusCto?.baseUrl;
-    const shouldUseExternal = baseUrl && baseUrl !== window.location.href;
+    const shouldUseExternal = baseUrl && baseUrl !== window.location.origin;
     
     if (shouldUseExternal) {
       // Use createOptimizedPictureExternal with baseUrl when baseUrl is defined and different

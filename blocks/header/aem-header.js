@@ -13,6 +13,8 @@ class AEMHeader extends HTMLElement {
     this.headerData = null;
     this.attachShadow({ mode: 'open' });
     window.asusCto = {};
+    this.lastLoginState = null;
+    this.storageListener = null;
   }
 
   static get observedAttributes() {
@@ -21,6 +23,7 @@ class AEMHeader extends HTMLElement {
 
   connectedCallback() {
     this.loadHeader();
+    this.setupLoginStateMonitoring();
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -214,6 +217,101 @@ class AEMHeader extends HTMLElement {
     }
   }
 
+  /**
+   * Setup monitoring for login state changes
+   */
+  setupLoginStateMonitoring() {
+    // Track initial login state
+    this.lastLoginState = localStorage.getItem('isLoggedIn');
+    
+    // Listen for storage changes (login/logout events)
+    this.storageListener = (e) => {
+      if (e.key === 'isLoggedIn' || e.key === 'userName') {
+        const currentLoginState = localStorage.getItem('isLoggedIn');
+        if (currentLoginState !== this.lastLoginState) {
+          this.lastLoginState = currentLoginState;
+          console.log('Login state changed, refreshing header...');
+          this.refreshHeader();
+        }
+      }
+    };
+    
+    window.addEventListener('storage', this.storageListener);
+    
+    // Also listen for storage changes in same window
+    this.setupSameWindowStorageListener();
+  }
+
+  /**
+   * Setup monitoring for storage changes in same window
+   */
+  setupSameWindowStorageListener() {
+    // Override localStorage methods to detect changes in same window
+    const originalSetItem = localStorage.setItem;
+    const originalRemoveItem = localStorage.removeItem;
+    
+    const checkLoginStateChange = () => {
+      const currentLoginState = localStorage.getItem('isLoggedIn');
+      if (currentLoginState !== this.lastLoginState) {
+        this.lastLoginState = currentLoginState;
+        console.log('Login state changed (same window), refreshing header...');
+        setTimeout(() => this.refreshHeader(), 100); // Small delay to ensure state is fully updated
+      }
+    };
+    
+    localStorage.setItem = function(key, value) {
+      const result = originalSetItem.call(this, key, value);
+      if (key === 'isLoggedIn' || key === 'userName') {
+        checkLoginStateChange();
+      }
+      return result;
+    };
+    
+    localStorage.removeItem = function(key) {
+      const result = originalRemoveItem.call(this, key);
+      if (key === 'isLoggedIn' || key === 'userName') {
+        checkLoginStateChange();
+      }
+      return result;
+    };
+  }
+
+  /**
+   * Public API: Set user state (for external integration)
+   */
+  setUserState(isLoggedIn, userName = '') {
+    const currentState = localStorage.getItem('isLoggedIn');
+    const newState = isLoggedIn ? 'true' : null;
+    
+    if (newState !== currentState) {
+      if (isLoggedIn) {
+        localStorage.setItem('isLoggedIn', 'true');
+        if (userName) {
+          localStorage.setItem('userName', userName);
+        }
+      } else {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userName');
+      }
+    }
+  }
+
+  /**
+   * Public API: Trigger manual refresh
+   */
+  triggerRefresh() {
+    return this.refreshHeader();
+  }
+
+  /**
+   * Cleanup event listeners when component is removed
+   */
+  disconnectedCallback() {
+    if (this.storageListener) {
+      window.removeEventListener('storage', this.storageListener);
+    }
+  }
+
 }
 
 // Register the custom element
@@ -230,5 +328,3 @@ if (typeof module !== 'undefined' && module.exports) {
 } else if (typeof define === 'function' && define.amd) {
   define([], function() { return AEMHeader; });
 }
-
-
