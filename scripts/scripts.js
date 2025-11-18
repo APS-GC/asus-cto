@@ -1,5 +1,4 @@
 import {
-  loadFooter,
   decorateButtons,
   decorateIcons,
   decorateSections,
@@ -393,7 +392,6 @@ function autolinkModals(doc) {
  * @returns {Promise}
  */
 async function loadHeader(header) {
-  const { loadHeaderFragment } = await import('./scripts.js');
   
   try {
     // Try to load header from fragment first
@@ -418,6 +416,38 @@ async function loadHeader(header) {
   header.append(headerBlock);
   decorateBlock(headerBlock);
   return loadBlock(headerBlock);
+}
+
+/**
+ * Loads a block named 'footer' into footer
+ * @param footer footer element
+ * @returns {Promise}
+ */
+async function loadFooter(footer) {
+  
+  try {
+    // Try to load footer from fragment first
+    const fragmentContent = await loadFooterFragment();
+    if (fragmentContent) {
+      const footerBlock = buildBlock('footer', '');
+      
+      // Populate the footer block with fragment content
+      footerBlock.innerHTML = fragmentContent;
+      
+      footer.append(footerBlock);
+      decorateBlock(footerBlock);
+      return loadBlock(footerBlock);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Failed to load footer fragment, falling back to default footer:', error);
+  }
+
+  // Fallback to original footer loading
+  const footerBlock = buildBlock('footer', '');
+  footer.append(footerBlock);
+  decorateBlock(footerBlock);
+  return loadBlock(footerBlock);
 }
 
 /**
