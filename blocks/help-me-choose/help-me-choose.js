@@ -1,5 +1,6 @@
 import { loadScript } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
+import { fetchGameList } from '../../scripts/api-service.js';
 
 /**
  * Decorates the help-me-choose block, initializing the carousel and form.
@@ -120,61 +121,6 @@ async function renderHelpMeChoose(block) {
 
   // Initialize carousel *after* DOM insertion
   initializeSwiperCarousel(block);
-}
-
-/**
- * Fetches a list of games from a specified API endpoint, with fallback options and a timeout.
- * @param {string} [endpoint] - The API endpoint to fetch the game list from.
- * @param {number} [maxProducts] - The maximum number of products to return.
- */
-async function fetchGameList(
-  endpoint = 'https://dummyjson.com/c/ba3b-dd2e-4ba7-b9f0',
-  timeoutMs = 5000
-) {
-  const controller = new AbortController();
-  const signal = controller.signal;
-
-  // Set a timeout to abort the fetch
-  const timeoutId = setTimeout(() => {
-    controller.abort();
-  }, timeoutMs);
-
-  try {
-    console.log(`Attempting to fetch from: ${endpoint}`);
-
-    const response = await fetch(endpoint, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
-      },
-      mode: 'cors',
-      signal,
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`);
-    }
-
-    return await response.json();
-
-  } catch (error) {
-    clearTimeout(timeoutId);
-
-    if (error.name === 'AbortError') {
-      console.warn(`Fetch aborted (timeout after ${timeoutMs} ms)`);
-    } else {
-      console.warn(`Error fetching from ${endpoint}:`, error.message);
-      if (error.message.includes('JSON')) {
-        console.warn('Likely non-JSON response');
-      }
-    }
-
-    return [];  // fallback
-  }
 }
 
 // Helper to load noUiSlider only once
