@@ -25,7 +25,8 @@
       "product-card",
       "hot-products",
       "product-preview",
-      "help-me-choose"
+      "help-me-choose",
+      "our-advantages"
     ]
   },
   {
@@ -112,28 +113,34 @@
       "title"
     ]
   },
-   {
-      "id": "top-picks-cards",
-      "components": [
-        "top-picks-card"
-      ]
-    },
-    {
-      "id": "article-card",
-      "components": [
-        "article-card-item"
-      ]
-    },
-    {
-      "id": "carousel",
-      "components": [
-        "carousel-slide"
-      ]
-    },
-     {
-      "id": "footer",
-      "components": [
-        "footer-icon"
-      ]
-    }
+  {
+    "id": "top-picks-cards",
+    "components": [
+      "top-picks-card"
+    ]
+  },
+  {
+    "id": "article-card",
+    "components": [
+      "article-card-item"
+    ]
+  },
+  {
+    "id": "carousel",
+    "components": [
+      "carousel-slide"
+    ]
+  },
+  {
+    "id": "footer",
+    "components": [
+      "footer-icon"
+    ]
+  },
+  {
+    "id": "our-advantages",
+    "components": [
+      "advantage-card"
+    ]
+  }
 ]
