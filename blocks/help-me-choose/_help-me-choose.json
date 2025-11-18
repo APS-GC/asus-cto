@@ -39,9 +39,9 @@
   ],
   "filters": [
     {
-      "id": "top-picks-cards",
+      "id": "help-me-choose",
       "components": [
-        "top-picks-card"
+        "help-me-choose"
       ]
     }
   ]
