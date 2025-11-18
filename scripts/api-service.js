@@ -92,7 +92,7 @@ export async function fetchHotProducts(maxProducts = null, config = {}) {
  * @param {number} [maxProducts] - The maximum number of products to return.
  */
 export async function fetchGameList(
-  endpoint = 'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/gameList.json?websiteCode=en',
+  endpoint = 'https://mocki.io/v1/7078034c-e68a-4403-b8e2-0e0f8d61dd4f',
   timeoutMs = 5000
 ) {
   const controller = new AbortController();
@@ -112,9 +112,6 @@ export async function fetchGameList(
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
       },
       mode: 'cors',
       signal,
