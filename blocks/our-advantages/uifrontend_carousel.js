@@ -217,7 +217,7 @@ const swiperAutoplayObserver = new IntersectionObserver(
 );
 
 // Initialize Swiper on AEM Carousel
-window.initializeSwiperOnAEMCarousel = (carousel) => {
+window.initializeSwiperOnAEMCarouselOurAdvantage = (carousel) => {
   const carouselElement = carousel.querySelector('.cmp-carousel');
   const {
     slidesPerView = 1,
@@ -520,9 +520,9 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
   return swiperInstance;
 };
 
-document.addEventListener('eds-DOMContentLoaded', () => {
+document.addEventListener('asus-cto-our-advantages', () => {
   // Initialize all carousels
-  document.querySelectorAll(CAROUSEL_SELECTOR).forEach(initializeSwiperOnAEMCarousel);
+  document.querySelectorAll(CAROUSEL_SELECTOR).forEach(initializeSwiperOnAEMCarouselOurAdvantage);
   // Activate gradient animation
   // Added here as we need to delay until the user has interacted with page
   const gradientAnimation = document.querySelectorAll('.gradient-animation');

@@ -1,4 +1,4 @@
-const advantageCardsWrapper = document.querySelector('.advantage-cards-wrapper');
+const advantageCardsWrapper = document.querySelector('.our-advantages-wrapper');
 advantageCardsWrapper.addEventListener('click', function (event) {
   const watchNowBtn = event.target.closest('.cmp-advantage-card__btn');
   const card = watchNowBtn?.closest('.cmp-advantage-card');
