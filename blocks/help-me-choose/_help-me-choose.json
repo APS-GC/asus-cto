@@ -39,7 +39,7 @@
   ],
   "filters": [
     {
-      "id": "help-me-choose",
+      "id": "section",
       "components": [
         "help-me-choose"
       ]
