@@ -1,5 +1,4 @@
 import {
-  loadHeader,
   loadFooter,
   decorateButtons,
   decorateIcons,
@@ -10,6 +9,9 @@ import {
   loadSection,
   loadSections,
   loadCSS,
+  buildBlock,
+  decorateBlock,
+  loadBlock,
 } from './aem.js';
 
 
@@ -359,6 +361,39 @@ function autolinkModals(doc) {
       openModal(origin.href);
     }
   });
+}
+
+/**
+ * Loads a block named 'header' into header
+ * @param {Element} header header element
+ * @returns {Promise}
+ */
+async function loadHeader(header) {
+  const { loadHeaderFragment } = await import('./scripts.js');
+  
+  try {
+    // Try to load header from fragment first
+    const fragmentContent = await loadHeaderFragment();
+    if (fragmentContent) {
+      const headerBlock = buildBlock('header', '');
+      
+      // Populate the header block with fragment content
+      headerBlock.innerHTML = fragmentContent;
+      
+      header.append(headerBlock);
+      decorateBlock(headerBlock);
+      return loadBlock(headerBlock);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Failed to load header fragment, falling back to default header:', error);
+  }
+
+  // Fallback to original header loading
+  const headerBlock = buildBlock('header', '');
+  header.append(headerBlock);
+  decorateBlock(headerBlock);
+  return loadBlock(headerBlock);
 }
 
 /**
