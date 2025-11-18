@@ -1322,5 +1322,24 @@
         "value": "All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ."
       }
     ]
+  },
+  {
+    "id": "help-me-choose",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": "Select The Game You Play"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "label": "Description",
+        "value": "We will recommend a plan that suits you most!"
+      }
+    ]
   }
 ]
