@@ -14,21 +14,17 @@
 }
 
 .top-picks-cards .top-picks-card {
-  background-color: var(--color-primary-50);
-  border-radius: 1rem;
-  color: var(--color-primary-950);
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, .08);
-  padding: 2rem;
-  height: 190px
+    background-color: var(--color-primary-50);
+    border-radius: 1rem;
+    color: var(--color-primary-950);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    box-shadow: 0 4px 20px 0 rgba(0,0,0,.08);
+    padding: 2rem
 }
-
-/* .top-picks-cards .top-picks-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-} */
 
 .top-picks-cards .product-image-wrapper {
     border-radius: .375rem;
@@ -37,63 +33,72 @@
     width: 120px;
 }
 
-.top-picks-cards .product-image-wrapper::before {
-  background: var(--gradient-product-card);
-  border-radius: 100%;
-  content: "";
-  filter: blur(32px);
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%
-}
-
-.top-picks-cards .product-image {
+.top-picks-cards .product-image-wrapper .product-image {
     display: block;
     height: auto;
+    -o-object-fit: contain;
     object-fit: contain;
     position: relative;
     width: 100%;
     z-index: 1
 }
 
+.top-picks-cards .product-image-wrapper:before {
+    background: var(--gradient-product-card);
+    border-radius: 100%;
+    content: "";
+    -webkit-filter: blur(32px);
+    filter: blur(32px);
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%
+}
+
 .top-picks-cards .product-info {
-  display: flex;
-  flex-direction: column;
-  -ms-flex-item-align: center;
-  align-self: center;
-  gap: .25rem;
-  height: 100%;
-  padding-left: 2.5rem;
-}
-
-.top-picks-cards .label {
-  color: var(--color-primary-950);
-  font-family: var(--font-text);
-  font-size: 0.8125rem;
-  font-weight: var(--regular);
-  letter-spacing: 0.24px;
-  line-height: 1.125rem;
-  margin: 0;
-}
-
-.top-picks-cards .title {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: var(--medium);
-  letter-spacing: 0px;
-  line-height: 1.75rem;
-  margin-bottom: 3rem;
-}
-
-.top-picks-cards .cta-wrapper {
     display: flex;
-    align-items: flex-end;
-    flex: 1 1 0%;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-item-align: center;
+    align-self: center;
+    gap: .25rem;
+    height: 100%;
+    padding-left: 2.5rem
 }
 
-.top-picks-cards .cta {
+.top-picks-cards .product-info .label {
+    color: var(--color-primary-950);
+    font-family: var(--font-text);
+    font-size: .8125rem;
+    font-weight: var(--regular);
+    letter-spacing: 0;
+    letter-spacing: .24px;
+    line-height: 1.125rem
+}
+
+.top-picks-cards .product-info .title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: var(--medium);
+    letter-spacing: 0;
+    line-height: 1.75rem;
+    margin-bottom: 3rem
+}
+
+.top-picks-cards .product-info .cta-wrapper {
+    -webkit-box-flex: 1;
+    display: flex;
+    -ms-flex: 1;
+    flex: 1;
+    -webkit-box-align: end;
+    -ms-flex-align: end;
+    align-items: flex-end
+}
+
+.top-picks-cards .product-info .cta {
     color: var(--color-primary-950);
     display: inline-flex;
     font-family: var(--font-text);
@@ -104,109 +109,57 @@
     text-decoration: none;
     align-items: center;
     gap: .25rem;
-    transition: color .3s ease;
+    transition: color .3s ease
 }
 
-.top-picks-cards .cta:hover {
-  color: #cccccc;
-  text-decoration: underline;
+.top-picks-cards .product-info .cta .icon {
+    height: 12px;
+    width: 12px
 }
 
-.top-picks-cards .icon--arrow-wide-right {
-  width: 12px;
-  height: 12px;
-  display: inline-block;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
+.top-picks-cards .product-info .cta:hover {
+    color: var(--btn-link-hover-color);
+    text-decoration: underline
 }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
+@media only screen and (max-width: 63.9375rem) {
   .top-picks-cards {
-    margin: 24px 0;
     min-height: 172px;
   }
 
   .top-picks-cards > ul {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 10px;
+      padding: 4px;
   }
+    .top-picks-cards .top-picks-card {
+        padding:1.25rem
+    }
 
-  .top-picks-cards .top-picks-card {
-    padding: 12px;
-    grid-template-columns: 84px 1fr;
-    gap: 12px;
-    min-height: 84px;
-    height: 168px;
-  }
-}
+    .top-picks-cards .product-image-wrapper {
+        width: 84px;
+        -ms-flex-item-align: start;
+        align-self: flex-start
+    }
 
-@media (max-width: 768px) {
-  .top-picks-cards > ul {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
+    .top-picks-cards .product-info {
+        padding-left: 1rem;
+    }
 
-  .top-picks-cards .top-picks-card {
-    padding: 12px;
-    grid-template-columns: 72px 1fr;
-    gap: 12px;
-    min-height: 72px;
-    height: 168px;
-  }
+    .top-picks-cards .product-info .label {
+        font-family: var(--font-text);
+        font-size: .8125rem;
+        font-weight: var(--regular);
+        letter-spacing: 0;
+        letter-spacing: .24px;
+        line-height: 1.125rem
+    }
 
-  .top-picks-cards .title {
-    font-family: var(--font-display);
-    font-size: 1.125rem;
-    font-weight: var(--medium);
-    letter-spacing: 0;
-    line-height: 1.625rem;
-  }
-
-  .top-picks-cards .label {
-    font-family: var(--font-text);
-    font-size: .8125rem;
-    font-weight: var(--regular);
-    letter-spacing: 0;
-    letter-spacing: .24px;
-    line-height: 1.125rem;
-  }
-
-  .top-picks-cards .cta {
-    font-size: 12px;
-  }
-}
-
-/* Dark theme variant */
-.top-picks-cards.dark .top-picks-card {
-  background-color: var(--color-primary-100);
-  color: var(--color-primary-950);
-}
-
-.top-picks-cards.dark .label,
-.top-picks-cards.dark .title,
-.top-picks-cards.dark .cta {
-  color: var(--color-primary-950);
-}
-
-/* Light theme variant */
-.top-picks-cards.light .top-picks-card {
-  background-color: var(--color-primary-950);
-  color: var(--color-primary);
-  box-shadow: var(--shadow-normal);
-}
-
-.top-picks-cards.light .label,
-.top-picks-cards.light .title,
-.top-picks-cards.light .cta {
-  color: var(--color-primary);
-}
-
-.top-picks-cards.light .cta:hover {
-  color: var(--color-primary-300);
+    .top-picks-cards .product-info .title {
+        font-family: var(--font-display);
+        font-size: 1.125rem;
+        font-weight: var(--medium);
+        letter-spacing: 0;
+        line-height: 1.625rem
+    }
 }
 
 /* Accessibility improvements */
