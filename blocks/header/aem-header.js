@@ -32,7 +32,7 @@ class AEMHeader extends HTMLElement {
     } else if (name === 'base-url') {
       this.baseUrl = newValue;
       if (window.asusCto && !window.asusCto.baseUrl) {
-        window.asusCto.baseUrl = this.baseUrl || window.location.href;
+        window.asusCto.baseUrl = this.baseUrl || window.location.origin;
       }
     }
     
