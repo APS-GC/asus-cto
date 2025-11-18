@@ -23,6 +23,7 @@
   width: 100%;
   position: relative;
   overflow: hidden;
+  min-height: var(--carousel-height); /* Reserve space to prevent CLS */
 }
 
 /* Carousel Container */
@@ -61,7 +62,7 @@
 .cmp-carousel .hero-banner,
 .cmp-carousel .cmp-hero-banner {
   width: 100%;
-  height: 777px;
+  height: var(--carousel-height);
   position: relative;
   overflow: hidden;
 }
@@ -483,10 +484,7 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
 /* Responsive Design */
 /* Tablet/Medium screens - migrated from hero-banner responsive design */
 @media only screen and (max-width: 79.9375rem) {
-  .cmp-carousel .hero-banner,
-  .cmp-carousel .cmp-hero-banner {
-    height: 429px;
-  }
+  /* Height now controlled by --carousel-height CSS variable in styles.css */
   
   .cmp-carousel .hero-content .headline {
     font-family: var(--font-display);
@@ -518,10 +516,7 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
 
 /* Mobile screens - migrated from hero-banner responsive design */
 @media only screen and (max-width: 45.625rem) {
-  .cmp-carousel .hero-banner,
-  .cmp-carousel .cmp-hero-banner {
-    height: 548px;
-  }
+  /* Height now controlled by --carousel-height CSS variable in styles.css */
 
   .cmp-carousel .hero-banner:after,
   .cmp-carousel .cmp-hero-banner:after {
