@@ -3,8 +3,8 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  padding-top: 4rem;
-  padding-bottom: 7.5rem;
+  /* padding-top: 4rem;
+  padding-bottom: 7.5rem; */
   text-align: left;
 }
 
@@ -155,8 +155,8 @@
 
 @media (max-width: 1024px) {
   .help-me-choose-container {
-    padding-bottom: 5rem;
-    padding-top: 2rem;
+    padding-bottom: 0;
+    padding-top: 0;
   }
 
   .help-me-choose-container .text-container {
@@ -257,15 +257,15 @@
 }
 
 
-.help-me-choose-container {
+.help-me-choose-container:not(:has(.filter-bar)) {
     margin: 0 auto;
     max-width: 100%;
-    padding: 0 20px
+    padding: 0 20px;
 }
 
 @media only screen and (min-width: 45.6875rem) {
     .help-me-choose-container {
-        padding:0 40px
+        /* padding:0 40px */
     }
 }
 
@@ -2249,7 +2249,7 @@ button.swiper-pagination-bullet {
     /* position: absolute; */
     top: 0;
     width: 100%;
-    padding: 0;
+    padding: 0 1.25rem;
   }
   .filter-bar.open .filters-container {
     flex-direction: column-reverse;
