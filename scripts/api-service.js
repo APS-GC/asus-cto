@@ -92,7 +92,7 @@ export async function fetchHotProducts(maxProducts = null, config = {}) {
  * @param {number} [maxProducts] - The maximum number of products to return.
  */
 export async function fetchGameList(
-  endpoint = 'https://mocki.io/v1/7078034c-e68a-4403-b8e2-0e0f8d61dd4f',
+  endpoint = 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/gameList.json?websiteCode=en',
   timeoutMs = 5000
 ) {
   const controller = new AbortController();
