@@ -1,5 +1,4 @@
-/* Import Swiper CSS */
-@import url('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
+/* Swiper CSS loaded dynamically by swiper-loader.js to prevent duplicate loads */
 
 /* Override default Swiper pagination styles */
 .cmp-carousel .swiper-horizontal > .swiper-pagination-bullets,
