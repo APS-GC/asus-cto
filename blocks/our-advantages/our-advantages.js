@@ -18,6 +18,7 @@ async function renderBlock(block) {
       </div>`);
 
   if(isAuthorEnvironment()) {
+    debugger;
     console.log('block.firstElementChild >', Array.from(block.firstElementChild.firstElementChild.attributes).map((attr) => `${attr.name}="${attr.value}"`).join(' '));
     moveInstrumentation(block.firstElementChild.firstElementChild, mockupHeading.firstElementChild);
   }

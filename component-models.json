@@ -1345,6 +1345,13 @@
   {
     "id": "our-advantages",
     "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": "Our Advantages"
+      }
     ]
   },
   {
