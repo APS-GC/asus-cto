@@ -212,7 +212,8 @@
 
 /* Base Typography Styles */
 body {
- background-color: var(--color-primary); 
+  background-color: var(--color-primary); 
+  color: var(--color-primary-950);
   overflow-x: hidden;
   font-family: var(--font-primary);
   font-weight: var(--font-weight-regular);
@@ -1217,6 +1218,28 @@ p,
 .section-spacing-3xl { gap: var(--section-spacing-3xl); }
 .section-spacing-4xl { gap: var(--section-spacing-4xl); }
 .section-spacing-5xl { gap: var(--section-spacing-5xl); }
+
+.section.section-spacing-top__small {
+  padding-top: 1.25rem;
+}
+
+.section.section-spacing-top {
+  padding-top: 4rem;
+}
+
+.section.section-spacing-bottom {
+  padding-bottom: 120px;
+}
+
+@media only screen and (max-width: 63.9375rem) {
+  .section.section-spacing-top {
+    padding-top: 2rem;
+  }
+
+  .section.section-spacing-bottom {
+    padding-bottom: 2rem;
+  }
+}
 
 /* Margin Utilities - 8px Baseline System */
 .m-0 { margin: 0; }
