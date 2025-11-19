@@ -1,0 +1,58 @@
+{
+  "root": true,
+  "extends": [
+    "airbnb-base"
+  ],
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "requireConfigFile": false,
+    "allowImportExportEverywhere": true,
+    "sourceType": "module",
+    "ecmaVersion": 2022
+  },
+  "env": {
+    "browser": true,
+    "es2022": true
+  },
+  "plugins": [
+    "xwalk"
+  ],
+  "rules": {
+    "import/extensions": [
+      "error",
+      {
+        "js": "always"
+      }
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "no-param-reassign": [
+      "error",
+      {
+        "props": false
+      }
+    ],
+    "prefer-destructuring": "off",
+    "no-restricted-syntax": "off",
+    "no-underscore-dangle": "off",
+    "no-plusplus": "off",
+    "max-len": [
+      "warn",
+      {
+        "code": 120,
+        "ignoreUrls": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreRegExpLiterals": true
+      }
+    ]
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    "webpack/",
+    "scripts/dompurify.min.js"
+  ]
+}
+
