@@ -565,6 +565,14 @@
           {
             "name": "Responsive Container",
             "value": "container"
+          },
+          {
+            "name": "Section Spacing Top (Small)",
+            "value": "section-spacing-top__small"
+          },
+          {
+            "name": "Section Spacing Bottom",
+            "value": "section-spacing-bottom"
           }
         ]
       }
