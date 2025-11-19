@@ -92,7 +92,7 @@ export async function fetchHotProducts(maxProducts = null, config = {}) {
  * @param {number} [maxProducts] - The maximum number of products to return.
  */
 export async function fetchGameList(
-  endpoint = 'https://dummyjson.com/c/ba3b-dd2e-4ba7-b9f0',
+  endpoint = 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/gameList.json?websiteCode=en',
   timeoutMs = 5000
 ) {
   const controller = new AbortController();
