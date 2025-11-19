@@ -30,7 +30,7 @@
     overflow: visible;
 }
 
-.hot-products-wrapper:not(:has(.hot-products-error)) {
+.hot-products-wrapper {
     display: flex;
 }
 
@@ -633,7 +633,6 @@
     padding: 3rem;
     text-align: center;
     grid-column: 1 / -1;
-    width: 100%;
 }
 
 .hot-products-loading {

@@ -3,7 +3,7 @@
  * Supports authorable hero banner slides with video/image media, CTA buttons, and autoplay settings
  */
 
-import { moveInstrumentation, isUniversalEditor, createOptimizedPicture } from '../../scripts/scripts.js';
+import { moveInstrumentation, isUniversalEditor } from '../../scripts/scripts.js';
 import { loadSwiper } from '../../scripts/swiper-loader.js';
 
 // Configuration defaults
@@ -130,10 +130,9 @@ function parseCarouselConfig(block) {
 /**
  * Generate hero banner element for a slide
  */
-function generateHeroBannerHTML(slide, config, index = 0) {
+function generateHeroBannerHTML(slide, config) {
   const ctaLocationClass = `hero-content--${slide.ctaLocation.toLowerCase()}`;
   const autoplayDuration = slide.isVideo ? config.videoAutoplayDuration : config.imageAutoplayDuration;
-  const isFirstSlide = index === 0; // Track first slide for LCP optimization
 
   // Create the main hero banner container
   const heroBanner = document.createElement('div');
@@ -162,26 +161,15 @@ function generateHeroBannerHTML(slide, config, index = 0) {
     const imageWrapper = document.createElement('div');
     imageWrapper.className = 'hero-image-wrapper';
     
-    // Use createOptimizedPicture for responsive images + WebP optimization
-    const optimizedPicture = createOptimizedPicture(
-      slide.media,
-      slide.mediaAlt || 'Hero Banner',
-      isFirstSlide, // eager=true for first slide (LCP optimization!)
-      [
-        { media: '(min-width: 1200px)', width: '2000' }, // Desktop
-        { media: '(min-width: 768px)', width: '1200' },  // Tablet
-        { width: '750' }                                 // Mobile
-      ],
-      isFirstSlide ? 'high' : null // fetchpriority='high' for first slide (LCP boost!)
-    );
+    const picture = document.createElement('picture');
+    const img = document.createElement('img');
+    img.src = slide.media;
+    img.alt = slide.mediaAlt;
+    img.className = 'hero-image';
+    img.loading = 'lazy';
     
-    // Add hero-image class to the img element
-    const img = optimizedPicture.querySelector('img');
-    if (img) {
-      img.className = 'hero-image';
-    }
-    
-    imageWrapper.appendChild(optimizedPicture);
+    picture.appendChild(img);
+    imageWrapper.appendChild(picture);
     heroBanner.appendChild(imageWrapper);
   }
 
@@ -473,7 +461,7 @@ export default function decorate(block) {
     }
 
     // Generate and append hero banner
-    const heroBanner = generateHeroBannerHTML(slide, config, index);
+    const heroBanner = generateHeroBannerHTML(slide, config);
     slideElement.appendChild(heroBanner);
     
     swiperWrapper.appendChild(slideElement);

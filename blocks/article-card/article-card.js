@@ -1,4 +1,5 @@
-import { moveInstrumentation, createOptimizedPicture } from '../../scripts/scripts.js';
+import { createOptimizedPicture } from '../../scripts/aem.js';
+import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   /* change to ul, li */
@@ -96,19 +97,15 @@ export default function decorate(block) {
       // Optimize the image
       const img = picture.querySelector('img');
       if (img) {
-        // Use eager loading and fetchpriority for LCP candidate
-        const optimizedPic = createOptimizedPicture(
-          img.src, 
-          img.alt, 
-          isLCPCandidate, 
-          [{ width: '750' }],
-          isLCPCandidate ? 'high' : null
-        );
+        // Use eager loading for LCP candidate, lazy for others
+        const optimizedPic = createOptimizedPicture(img.src, img.alt, isLCPCandidate, [{ width: '750' }]);
         moveInstrumentation(img, optimizedPic.querySelector('img'));
         
+        // Add fetchpriority="high" for LCP candidate
         if (isLCPCandidate) {
           const lcpImg = optimizedPic.querySelector('img');
           if (lcpImg) {
+            lcpImg.setAttribute('fetchpriority', 'high');
             
             // Also add preload link in head for immediate discovery
             const existingPreload = document.querySelector(`link[href="${lcpImg.src}"]`);
