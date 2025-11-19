@@ -21,23 +21,21 @@
       "id": "help-me-choose",
       "fields": [
         {
-          "component": "text",
+          "component": "richtext",
+          "valueType": "string",
           "name": "title",
           "label": "Title",
+          "value": "Select The Game You Play"
+        },
+        {
+          "component": "richtext",
           "valueType": "string",
-          "validation": {
-            "required": true
-          }
+          "name": "description",
+          "label": "Description",
+          "value": "We will recommend a plan that suits you most!"
         }
       ]
     }
   ],
-  "filters": [
-    {
-      "id": "section",
-      "components": [
-        "help-me-choose"
-      ]
-    }
-  ]
+  "filters": []
 }

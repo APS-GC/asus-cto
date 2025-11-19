@@ -136,7 +136,7 @@ function parseHTMLContent(block) {
 
     // Check if baseUrl is defined and different from current location
     const baseUrl = window.asusCto?.baseUrl;
-    const shouldUseExternal = baseUrl && baseUrl !== window.location.href;
+    const shouldUseExternal = baseUrl && baseUrl !== window.location.origin;
 
     const parsedData = {
       logos: [],
@@ -312,7 +312,7 @@ function parseNavLinks(navLinksText) {
   
   // Check if baseUrl is defined and different from current location
   const baseUrl = window.asusCto?.baseUrl;
-  const shouldUseExternal = baseUrl && baseUrl !== window.location.href;
+  const shouldUseExternal = baseUrl && baseUrl !== window.location.origin;
   
   return navLinksText.split('\n')
     .filter(line => line.trim())
@@ -396,13 +396,12 @@ function buildNavigation(navigationItems, showProfile, showCart, profileMenuItem
           aria-modal="true" 
           aria-labelledby="mini-cart-title" 
           aria-hidden="true"
+          tabindex="-1"
         >
           <button class="mini-cart__close" aria-label="Close mini cart">
             <span class="mini-cart__close-icon"></span>
           </button>
-          <div class="cart-content">
-            <h4 id="mini-cart-title" class="cart-summary">Your cart is empty.</h4>
-          </div>
+          <div id="mini-cart-title" class="cart-summary">Your cart is empty.</div>
         </div>
       </div>
     </li>
@@ -419,7 +418,7 @@ function buildNavigation(navigationItems, showProfile, showCart, profileMenuItem
 
   // Add user name element when logged in
   const userNameElement = isLoggedIn ? `
-    <li class="profile-menu__user-name" style="white-space: nowrap; font-weight: 600; color: var(--color-primary-950); padding: 8px 16px; border-bottom: 1px solid var(--color-primary-300); margin-bottom: 4px;">${userName}</li>
+    <li class="profile-menu__user-name">${userName}</li>
   ` : '';
 
   const profileIcon = showProfile ? `
@@ -530,14 +529,14 @@ function getMockCartData() {
   return [
     {
       name: 'ASUS ROG Strix G15',
-      image: './blocks/images/cpuImage.png',
+      image: '/blocks/images/cpuImage.png',
       price: '1299.99',
       quantity: 1,
       description: 'Gaming Laptop - AMD Ryzen 7'
     },
     {
       name: 'ASUS TUF Gaming Monitor',
-      image: './blocks/images/cpu2.png',
+      image: '/blocks/images/cpu2.png',
       price: '299.99',
       quantity: 2,
       description: '27" 144Hz Display'
@@ -570,22 +569,22 @@ function renderCartItem(product) {
   const { name, image, price, quantity, description } = product;
   let descriptionHTML = '';
   if (description) {
-    descriptionHTML = `<small class="product-description">${description}</small>`;
+    descriptionHTML = `<small>${description}</small>`;
   }
   
   return `
-    <li class="cart-item" role="listitem" tabindex="0" aria-label="${name}">
-      <div class="cart-item__image">
-        <img src="${image}" alt="${name}" loading="lazy">
+    <li class="cart-item flex" role="listitem" tabindex="0" aria-label="${name}">
+      <div class="img-wrapper">
+        <img src="${image}" alt="${name}">
       </div>
-      <div class="cart-item__info">
-        <div class="cart-item__details">
-          <h6 class="cart-item__name">${name}</h6>
+      <div class="product-info-container flex">
+        <div class="product-info">
+          <div class="product-name">${name}</div>
           ${descriptionHTML}
         </div>
-        <div class="cart-item__pricing">
-          <span class="cart-item__quantity" aria-label="Quantity">x${quantity}</span>
-          <span class="cart-item__price" aria-label="Price">$${price}</span>
+        <div class="price-info flex">
+          <strong aria-label="Quantity">x${quantity}</strong>
+          <strong aria-label="Price">$ ${price}</strong>
         </div>
       </div>
     </li>
@@ -614,19 +613,15 @@ async function renderMiniCartContent(isLoggedIn) {
   const subtotal = products.reduce((sum, p) => sum + p.quantity * parseFloat(p.price), 0);
   
   return `
-    <ul class="cart-items" role="list">
+    <ul class="cart-items flex" role="list">
       ${cartItemsHtml}
     </ul>
-    <div class="cart-subtotal">
-      <div class="subtotal-row">
-        <span class="subtotal-label">Subtotal</span>
-        <span class="subtotal-amount" aria-live="polite">$${subtotal.toFixed(2)}</span>
-      </div>
+    <div class="subtotal flex">
+      <p>Subtotal</p>
+      <p class="text-bolder subtotal-amount" aria-live="polite">$ ${subtotal.toFixed(2)}</p>
     </div>
-    <div class="cart-actions">
-      <button class="btn btn--primary cart-checkout-btn" aria-label="View Cart and Checkout">
-        View Cart & Checkout
-      </button>
+    <div class="checkout-btn">
+      <button class="btn" aria-label="View Cart and Checkout">View Cart & Checkout</button>
     </div>
   `;
 }
@@ -637,25 +632,24 @@ async function updateMiniCartDisplay(block) {
   const hasCartItems = localStorage.getItem('hasCartItems') === 'true';
   const miniCartContainer = block.querySelector('#mini-cart-container');
   const cartTitle = block.querySelector('#mini-cart-title');
-  const cartContent = block.querySelector('.cart-content');
   const miniCartToggle = block.querySelector('#mini-cart-toggle');
   
-  console.log('updateMiniCartDisplay called:', { isLoggedIn, hasCartItems, miniCartContainer: !!miniCartContainer, cartTitle: !!cartTitle, cartContent: !!cartContent });
+  console.log('updateMiniCartDisplay called:', { isLoggedIn, hasCartItems, miniCartContainer: !!miniCartContainer, cartTitle: !!cartTitle });
   
-  if (!miniCartContainer || !cartTitle || !cartContent) {
+  if (!miniCartContainer || !cartTitle) {
     console.log('Missing cart elements');
     return;
   }
   
-  // Clear existing cart content (except title) - use a more comprehensive approach
-  const existingElements = cartContent.querySelectorAll('.mini-cart__message, .cart-empty-message, .cart-items, .cart-subtotal, .cart-actions');
+  // Clear existing cart content after title
+  const existingElements = miniCartContainer.querySelectorAll('.mini-cart__message, .cart-empty-message, .cart-items, .subtotal, .checkout-btn');
   existingElements.forEach(el => el.remove());
   
   // Update cart title and content
   if (!isLoggedIn) {
     cartTitle.textContent = 'Your cart is empty.';
     if (miniCartToggle) {
-      miniCartToggle.removeAttribute('data-cart-count');
+      miniCartToggle.removeAttribute('total-items');
     }
   } else {
     const products = await fetchCartProducts();
@@ -663,24 +657,24 @@ async function updateMiniCartDisplay(block) {
     if (!products.length) {
       cartTitle.textContent = 'Your cart is empty.';
       if (miniCartToggle) {
-        miniCartToggle.removeAttribute('data-cart-count');
+        miniCartToggle.removeAttribute('total-items');
       }
     } else {
       const totalItems = products.reduce((sum, p) => sum + p.quantity, 0);
       cartTitle.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''} in cart`;
       if (miniCartToggle) {
-        miniCartToggle.setAttribute('data-cart-count', totalItems);
+        miniCartToggle.setAttribute('total-items', totalItems);
       }
     }
   }
   
-  // Add new content
+  // Add new content after title
   const newContent = await renderMiniCartContent(isLoggedIn);
   console.log('Generated new content:', newContent);
-  cartContent.insertAdjacentHTML('beforeend', newContent);
+  miniCartContainer.insertAdjacentHTML('beforeend', newContent);
   
   // Re-attach cart sign-in event listener if needed
-  const newCartSigninLink = cartContent.querySelector('#cart-signin-link');
+  const newCartSigninLink = miniCartContainer.querySelector('#cart-signin-link');
   if (newCartSigninLink) {
     newCartSigninLink.addEventListener('click', (e) => {
       e.preventDefault();
@@ -876,7 +870,7 @@ function optimizeLogoImages(block) {
     
     // Check if baseUrl is defined and different from current location
     const baseUrl = window.asusCto?.baseUrl;
-    const shouldUseExternal = baseUrl && baseUrl !== window.location.href;
+    const shouldUseExternal = baseUrl && baseUrl !== window.location.origin;
     
     if (shouldUseExternal) {
       // Use createOptimizedPictureExternal with baseUrl when baseUrl is defined and different

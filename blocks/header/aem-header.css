@@ -7,6 +7,7 @@
 :host {
   /* Primary Color System - Direct values from styles.css */
   --color-primary: #000000;
+  --color-primary-base: #000;
   --color-primary-50: #16151b;
   --color-primary-100: #181818;
   --color-primary-200: #262626;
@@ -142,19 +143,79 @@
   --cart-width-desktop: 356px;
   --transition-base: 0.3s ease;
   --transition-fast: 0.2s ease;
+
 }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 400;
+  white-space: nowrap;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  gap: 0.75rem;
+  font-family: var(--font-text);
+  font-weight: var(--regular);
+  letter-spacing: 0;
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  background: transparent;
+  color: var(--btn-bg)
+}
+
 .icon {
     background-color: currentColor;
     display: inline-block;
     height: 1rem;
-    -webkit-mask-position: center;
     mask-position: center;
-    -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
-    -webkit-mask-size: contain;
     mask-size: contain;
     width: 1rem
 }
+
+.container {
+  margin: 0 auto;
+  max-width: 100%;
+  padding: 0 20px
+}
+
+@media only screen and (min-width:45.6875rem) {
+  .container {
+    padding: 0 40px
+  }
+}
+
+@media only screen and (min-width:80rem) {
+  .container {
+    max-width: 1240px;
+    padding: 0
+  }
+}
+
+@media only screen and (max-width:45.625rem) {
+  .container-mobile-full {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0
+  }
+}
+p{
+    margin: 0;
+    padding: 0;
+}
+
+.flex{
+  display: flex;
+}
+
 
 .icon--plus {
     mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="black" stroke-width="1"/><path d="M5 8H11" stroke="black" stroke-width="1" stroke-linecap="round"/><path d="M8 5L8 11" stroke="black" stroke-width="1" stroke-linecap="round"/></svg>')
@@ -219,12 +280,6 @@
 
 .icon--info-filled {
     mask-image: url("data:image/svg+xml;utf8,<svg width='14' height='14' viewBox='0 0 14 14' xmlns='http://www.w3.org/2000/svg'><circle cx='7' cy='7' r='6.5' transform='matrix(-1 8.74228e-08 8.74228e-08 1 14 0)' fill='white' stroke='white'/><rect width='1.5' height='5.5' rx='0.75' transform='matrix(-1 2.62268e-07 2.62268e-07 1 7.75 2.5)' fill='white'/><rect width='2' height='2' rx='1' transform='matrix(-1 2.62268e-07 2.62268e-07 1 8 9)' fill='white'/></svg>")
-}
-
-@media (width >= 1200px) {
-  :root {
-    --header-padding: 1.25rem 2.5rem;
-  }
 }
 
 

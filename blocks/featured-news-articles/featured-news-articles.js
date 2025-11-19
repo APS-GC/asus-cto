@@ -1,5 +1,7 @@
-import { moveInstrumentation } from "../../scripts/scripts.js";
-import { isAuthorEnvironment, safeText } from "../../scripts/utils.js";
+import {
+  transferInstrumentation,
+  isAuthorEnvironment,
+} from "../../scripts/utils.js";
 export default async function decorate(block) {
   const divs = block.children;
   const mockupContainer = document.createRange().createContextualFragment(`
@@ -7,7 +9,9 @@ export default async function decorate(block) {
           <div class="carousel panelcontainer">
             <div class="section-heading">
               <div class="section-heading__text-group">
-                <h2 class="section-heading__title">${divs[0].textContent.trim()}</h2>
+                <h2 class="section-heading__title">${
+                  divs[0].textContent.trim() || "Featured News Articles"
+                }</h2>
               </div>
               <div class="section-heading__action-buttons cmp-carousel__actions">
                 <button class="cmp-carousel__action cmp-carousel__action--previous">
@@ -25,7 +29,9 @@ export default async function decorate(block) {
           </div>
         </div>
         <div class="section-actions-container">
-          <a class="section-actions-btn btn btn-link" href="${divs[2].textContent.trim()}" target="${
+          <a class="section-actions-btn btn btn-link" href="${
+            divs[2].textContent.trim() || "See all News Articles"
+          }" target="${
     divs[3].textContent?.trim().toLowerCase() === "true" ? "_blank" : "_self"
   }">
             ${divs[1]?.textContent?.trim()}<img src="/content/dam/eds-enablement-xwalk/asus-cto-sites/icon-arrow.svg" alt="Arrow Right">
@@ -33,7 +39,7 @@ export default async function decorate(block) {
         </div>`);
 
   const cardNodes = [];
-  for (let i = 5; i < divs.length; i++) {
+  for (let i = 4; i < divs.length; i++) {
     const subDivs = divs[i].children;
     const title = subDivs[0].textContent?.trim() || "";
     const summary = subDivs[1].textContent?.trim() || "";
@@ -55,9 +61,9 @@ export default async function decorate(block) {
 
           <div class="cmp-article-card__content">
             <p class="cmp-article-card__date">
-              <time datetime="${postedDate}" aria-label="Date">
+              <time datetime="${postedDate ?postedDate.replaceAll('/','-'):'' }" aria-label="Date">
                 <span aria-hidden="true">
-                  ${postedDate}
+                  ${postedDate?transferDate(postedDate):''}
                 </span>
               </time>
             </p>
@@ -68,12 +74,9 @@ export default async function decorate(block) {
       </div>
     `);
 
-    //move card attr
+    //move card box attr
     if (isAuthorEnvironment()) {
-      moveInstrumentation(
-        findFirstDataElement(divs[i]),
-        mockup.querySelector(".cmp-carousel__item")
-      );
+      transferInstrumentation(divs[i], mockup);
     }
 
     cardNodes.push(mockup);
@@ -83,41 +86,39 @@ export default async function decorate(block) {
 
   //move attr
   if (isAuthorEnvironment()) {
-    moveInstrumentation(
-      findFirstDataElement(block),
-      mockupContainer.querySelector(".cmp-container")
-    );
-
+    //move title
     if (divs[0]) {
-      moveInstrumentation(
-        findFirstDataElement(divs[0]),
+      transferInstrumentation(
+        divs[0],
         mockupContainer.querySelector(".section-heading__title")
       );
     }
+    //move description
     if (divs[1]) {
-      moveInstrumentation(
-        findFirstDataElement(divs[1]),
+      transferInstrumentation(
+        divs[1],
         mockupContainer.querySelector(".section-actions-container")
       );
     }
   }
-  block.replaceWith(mockupContainer);
+
+  block.innerHTML = "";
+  block.append(mockupContainer);
+
+  await import("../../scripts/carousel.js");
+
+  if (window.initializeSwiperOnAEMCarousel) {
+    window.initializeSwiperOnAEMCarousel(block.querySelector(".cmp-container"));
+  }
 }
 
-function findFirstDataElement(element) {
-  if (
-    Array.from(element.attributes).some((attr) => attr.name.startsWith("data-"))
-  ) {
-    return element;
-  }
-  for (const child of element.children) {
-    if (
-      Array.from(child.attributes).some((attr) => attr.name.startsWith("data-"))
-    ) {
-      return child;
-    } else {
-      return findFirstDataElement(child);
-    }
-  }
-  return null;
+//transfer date format
+function transferDate(dateStr) {
+  const date = new Date(dateStr);
+  const formattedDate = date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+  return formattedDate;
 }

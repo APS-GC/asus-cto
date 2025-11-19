@@ -1,3 +1,7 @@
+.footer-wrapper{
+        padding: 0;
+}
+
 footer {
     background-color: var(--color-primary-100);
     color: var(--color-primary-950);
@@ -102,6 +106,24 @@ footer .newsletter.has--error .newsletter__response:before {
     width: 16px
 }
 
+footer .newsletter.has--success .newsletter__field-wrapper input:not(:focus) {
+    border-color: var(--color-success, #22c55e)
+}
+
+footer .newsletter.has--success .newsletter__response {
+    color: var(--color-success, #22c55e)
+}
+
+footer .newsletter.has--success .newsletter__response:before {
+    background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%2322c55e'/%3E%3Cpath d='m5.5 8 2 2 3.5-3.5' stroke='%23fff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: contain;
+    content: "";
+    height: 16px;
+    width: 16px
+}
+
 footer .social .visually-hidden {
     height: 1px;
     overflow: hidden;
@@ -156,8 +178,8 @@ footer .social__icons li a {
     display: inline-flex
 }
 
-footer .social__icons li a:active .social_icons-circle, footer .social__icons li a:focus .social_icons-circle, footer .social__icons li a:focus-visible .social_icons-circle, footer .social__icons li a:hover .social_icons-circle {
-    fill: var(--color-primary-500)
+footer .social__icons li a:active img, footer .social__icons li a:focus img, footer .social__icons li a:focus-visible img, footer .social__icons li a:hover img {
+    filter: grayscale(100%) brightness(0.5) contrast(1.2);
 }
 
 footer .social__icons li a:focus-visible {

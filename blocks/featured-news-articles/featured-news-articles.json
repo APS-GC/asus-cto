@@ -10,7 +10,7 @@
             "template": {
               "name": "Featured News Articles",
               "filter": "featured-news-articles",
-              "model":"featured-news-articles"
+              "model": "featured-news-articles"
             }
           }
         }
@@ -36,7 +36,7 @@
     {
       "id": "featured-news-articles",
       "fields": [
-       {
+        {
           "component": "text",
           "valueType": "string",
           "name": "title",

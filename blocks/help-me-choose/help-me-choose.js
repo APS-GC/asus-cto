@@ -1,146 +1,511 @@
+import { loadScript } from '../../scripts/aem.js';
+import { moveInstrumentation } from '../../scripts/scripts.js';
+import { fetchGameList } from '../../scripts/api-service.js';
+
+/**
+ * Decorates the help-me-choose block, initializing the carousel and form.
+ * @param {Element} block - The block element to decorate.
+ * @returns {Promise<void>}
+ */
 export default async function decorate(block) {
-    block.innerHTML = `<section class="section-with-bottom-spacing">
-    <div class="cmp-container container">
-      <div class="game-recommendation">
-  <div class="carousel panelcontainer">
-    <div class="section-heading">
-  <div class="section-heading__text-group">
-    <h2 class="section-heading__title">Select The Game You Play</h2>
-    <p class="section-heading__description">We will recommend a plan that suits you most!</p>
-  </div>
-    <div class="section-heading__action-buttons cmp-carousel__actions">
-      <button class="cmp-carousel__action cmp-carousel__action--previous cmp-carousel__action--disabled swiper-button-lock" disabled="" tabindex="-1" aria-label="Previous slide" aria-controls="swiper-wrapper-7e74c24c10f2d0494" aria-disabled="true">
-      </button>
-      <button class="cmp-carousel__action cmp-carousel__action--next cmp-carousel__action--disabled swiper-button-lock" disabled="" tabindex="-1" aria-label="Next slide" aria-controls="swiper-wrapper-7e74c24c10f2d0494" aria-disabled="true">
-      </button>
-    </div>
-</div>
+  // Load noUiSlider only once
+  await loadNoUiSlider();
 
-    <form id="game-selection-form" class="game-form" action="./product-matches.html" aria-label="Game selection form" data-select-game-form="" data-initialized="false">
-      <div id="carousel-4e80c7e13l" class="cmp-carousel" role="group" aria-live="off" aria-roledescription="carousel" data-slides-per-view="auto" data-slides-per-view-tablet="6" data-slides-per-view-desktop="6" data-loop-slides="false">
-        <div class="cmp-carousel__content cmp-carousel__content--overflow" aria-atomic="false" aria-live="polite"><div class="swiper swiper-initialized swiper-horizontal swiper-watch-progress swiper-backface-hidden"><div class="swiper-wrapper" id="swiper-wrapper-7e74c24c10f2d0494" aria-live="off"><div class="cmp-carousel__item swiper-slide swiper-slide-visible swiper-slide-fully-visible swiper-slide-active" role="group" aria-label="Slide 1 of 6" tabindex="-1" style="width: 145.333px; margin-right: 8px;">
-              <div class="game-item">
-  <input type="checkbox" id="game-you-play-cod" name="games" value="cod" data-name="Call of Duty: Modern Warfare" data-image="https://feature-static-ui--cm-p165753-s12741-asus-cto--adobe-cm.aem.page/clientlib-site/images/games/call-of-duty.webp" aria-label="Select Call of Duty: Modern Warfare">
-  <div class="game-details-wrapper">
-    <div class="image-outer">
-      <div class="image-wrapper" aria-hidden="true">
-        <img src="https://feature-static-ui--cm-p165753-s12741-asus-cto--adobe-cm.aem.page/clientlib-site/images/games/call-of-duty.webp" alt="Call of Duty: Modern Warfare" class="game-image" loading="lazy">
-      </div>
-      <div class="checkmark-overlay" aria-hidden="true"></div>
-    </div>
-    <label class="game-info" for="game-you-play-cod" aria-hidden="true">Call of Duty: Modern Warfare</label>
-  </div>
-</div>
-            </div><div class="cmp-carousel__item swiper-slide swiper-slide-visible swiper-slide-fully-visible swiper-slide-next" role="group" aria-label="Slide 2 of 6" tabindex="-1" style="width: 145.333px; margin-right: 8px;">
-              <div class="game-item">
-  <input type="checkbox" id="game-you-play-alanwake" name="games" value="alanwake" data-name="Alan Wake 2" data-image="https://feature-static-ui--cm-p165753-s12741-asus-cto--adobe-cm.aem.page/clientlib-site/images/games/call-of-duty.webp" aria-label="Select Alan Wake 2">
-  <div class="game-details-wrapper">
-    <div class="image-outer">
-      <div class="image-wrapper" aria-hidden="true">
-        <img src="https://feature-static-ui--cm-p165753-s12741-asus-cto--adobe-cm.aem.page/clientlib-site/images/games/call-of-duty.webp" alt="Alan Wake 2" class="game-image" loading="lazy">
-      </div>
-      <div class="checkmark-overlay" aria-hidden="true"></div>
-    </div>
-    <label class="game-info" for="game-you-play-alanwake" aria-hidden="true">Alan Wake 2</label>
-  </div>
-</div>
-            </div><div class="cmp-carousel__item swiper-slide swiper-slide-visible swiper-slide-fully-visible" role="group" aria-label="Slide 3 of 6" tabindex="-1" style="width: 145.333px; margin-right: 8px;">
-              <div class="game-item">
-  <input type="checkbox" id="game-you-play-cs2" name="games" value="cs2" data-name="Counter Strike 2" data-image="https://feature-static-ui--cm-p165753-s12741-asus-cto--adobe-cm.aem.page/clientlib-site/images/games/call-of-duty.webp" aria-label="Select Counter Strike 2">
-  <div class="game-details-wrapper">
-    <div class="image-outer">
-      <div class="image-wrapper" aria-hidden="true">
-        <img src="https://feature-static-ui--cm-p165753-s12741-asus-cto--adobe-cm.aem.page/clientlib-site/images/games/call-of-duty.webp" alt="Counter Strike 2" class="game-image" loading="lazy">
-      </div>
-      <div class="checkmark-overlay" aria-hidden="true"></div>
-    </div>
-    <label class="game-info" for="game-you-play-cs2" aria-hidden="true">Counter Strike 2</label>
-  </div>
-</div>
-            </div><div class="cmp-carousel__item swiper-slide swiper-slide-visible swiper-slide-fully-visible" role="group" aria-label="Slide 4 of 6" tabindex="-1" style="width: 145.333px; margin-right: 8px;">
-              <div class="game-item">
-  <input type="checkbox" id="game-you-play-baldur" name="games" value="baldur" data-name="Baldur's Gate 3" data-image="https://feature-static-ui--cm-p165753-s12741-asus-cto--adobe-cm.aem.page/clientlib-site/images/games/call-of-duty.webp" aria-label="Select Baldur's Gate 3">
-  <div class="game-details-wrapper">
-    <div class="image-outer">
-      <div class="image-wrapper" aria-hidden="true">
-        <img src="https://feature-static-ui--cm-p165753-s12741-asus-cto--adobe-cm.aem.page/clientlib-site/images/games/call-of-duty.webp" alt="Baldur's Gate 3" class="game-image" loading="lazy">
-      </div>
-      <div class="checkmark-overlay" aria-hidden="true"></div>
-    </div>
-    <label class="game-info" for="game-you-play-baldur" aria-hidden="true">Baldur's Gate 3</label>
-  </div>
-</div>
-            </div><div class="cmp-carousel__item swiper-slide swiper-slide-visible swiper-slide-fully-visible" role="group" aria-label="Slide 5 of 6" tabindex="-1" style="width: 145.333px; margin-right: 8px;">
-              <div class="game-item">
-  <input type="checkbox" id="game-you-play-civ6" name="games" value="civ6" data-name="Fortnite" data-image="https://feature-static-ui--cm-p165753-s12741-asus-cto--adobe-cm.aem.page/clientlib-site/images/games/call-of-duty.webp" aria-label="Select Fortnite">
-  <div class="game-details-wrapper">
-    <div class="image-outer">
-      <div class="image-wrapper" aria-hidden="true">
-        <img src="https://feature-static-ui--cm-p165753-s12741-asus-cto--adobe-cm.aem.page/clientlib-site/images/games/call-of-duty.webp" alt="Fortnite" class="game-image" loading="lazy">
-      </div>
-      <div class="checkmark-overlay" aria-hidden="true"></div>
-    </div>
-    <label class="game-info" for="game-you-play-civ6" aria-hidden="true">Fortnite</label>
-  </div>
-</div>
-            </div><div class="cmp-carousel__item swiper-slide swiper-slide-visible" role="group" aria-label="Slide 6 of 6" tabindex="-1" style="width: 145.333px; margin-right: 8px;">
-              <div class="game-item">
-  <input type="checkbox" id="game-you-play-fortnite" name="games" value="fortnite" data-name="Red Redemption 2" data-image="https://feature-static-ui--cm-p165753-s12741-asus-cto--adobe-cm.aem.page/clientlib-site/images/games/call-of-duty.webp" aria-label="Select Red Redemption 2">
-  <div class="game-details-wrapper">
-    <div class="image-outer">
-      <div class="image-wrapper" aria-hidden="true">
-        <img src="https://feature-static-ui--cm-p165753-s12741-asus-cto--adobe-cm.aem.page/clientlib-site/images/games/call-of-duty.webp" alt="Red Redemption 2" class="game-image" loading="lazy">
-      </div>
-      <div class="checkmark-overlay" aria-hidden="true"></div>
-    </div>
-    <label class="game-info" for="game-you-play-fortnite" aria-hidden="true">Red Redemption 2</label>
-  </div>
-</div>
-            </div></div><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div></div> 
-      </div>
+  // Once loaded, render the component
+  await renderHelpMeChoose(block);
 
-      <div class="budget-bar" role="group" aria-label="Your budget">
-        <div class="budget-left">
-            <div id="budget-range-label">Your budget:</div>
-        </div>
-        
-        <div class="budget-center">
-            <label for="budget-min-value" class="sr-only-fixed">Minimum Budget Value</label>
-            <input class="budget-value" id="budget-min-value" value="$1,100">
-            
-            <div class="budget-separator" aria-hidden="true">to</div>
-            
-            <div id="maximum-budget-wrapper-mobile">
-              <label for="budget-max-value" class="sr-only-fixed">Maximum Budget Value</label>
-              <input class="budget-value" id="budget-max-value" value="$5,000">
-            </div>
-            
-            <div class="budget-range-wrapper">
-                <div id="budget-range" class="budget-range-slider noUi-target noUi-ltr noUi-horizontal noUi-txt-dir-ltr" data-start="[1100, 5000]" data-min="500" data-max="5000" data-step="100">
-                <div class="noUi-base"><div class="noUi-connects"><div class="noUi-connect" style="transform: translate(13.3333%, 0px) scale(0.866667, 1);"></div></div><div class="noUi-origin" style="transform: translate(-86.6667%, 0px); z-index: 5;"><div class="noUi-handle noUi-handle-lower" data-handle="0" tabindex="0" aria-label="Budget range minimum value" aria-controls="min-budget" role="slider" aria-orientation="horizontal" aria-valuemin="500.0" aria-valuemax="4900.0" aria-valuenow="1100.0" aria-valuetext="$1100"><div class="noUi-touch-area"></div></div></div><div class="noUi-origin" style="transform: translate(0%, 0px); z-index: 4;"><div class="noUi-handle noUi-handle-upper" data-handle="1" tabindex="0" aria-label="Budget range maximum value" aria-controls="max-budget" role="slider" aria-orientation="horizontal" aria-valuemin="1200.0" aria-valuemax="5000.0" aria-valuenow="5000.0" aria-valuetext="$5000, maximum value reached"><div class="noUi-touch-area"></div></div></div></div></div>
-                <div class="range-labels" aria-hidden="true">
-                    <span>$500</span>
-                    <span>$5,000</span>
-                </div>
-            </div>
-            
-            <div id="maximum-budget-wrapper-desktop"></div><!--desktop-wrapper-placeholder-->
-        </div>
-    
-        <input type="hidden" name="min-budget" id="min-budget" value="1100">
-        <input type="hidden" name="max-budget" id="max-budget" value="5000">
-        
-        <div class="budget-actions">
-            <button type="reset" class="reset-button btn btn-link">Reset</button>
-            <button type="submit" class="btn" disabled="">Help me choose</button> 
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
-    </div>
-  </section>`;
+  // Initialize existing game forms
+  initSelectGameForms(document.body);
 
-    await import('./uifrontend_select-game.js');
-    document.dispatchEvent(new Event('asus-cto--blocks-help-me-choose'));
+  // Setup a single MutationObserver (if not already)
+  setupSelectGameFormsObserver();
 }
+
+
+/**
+ * Renders the Help Me Choose section, including the game list and budget filter.
+ * @param {Element} block - The block element to render the content into.
+ * @returns {Promise<void>}
+ */
+async function renderHelpMeChoose(block) {
+  const helpMeChooseContainer = document.createElement('div');
+  helpMeChooseContainer.className = 'help-me-choose-container container';
+
+  const authoredRows = [...block.children];
+  const AuthoredData = authoredRows.map(row => row.textContent.trim());
+
+  // Fetch products
+  const gameList = await fetchGameList();
+  const lowestPrice = gameList?.results?.lowestPrice || 500;
+  const highestPrice = gameList?.results?.highestPrice || 5000;
+  // Build the HTML in a fragment / string, then insert once
+  const html = `
+    <div class="game-recommendation">
+      <div class="carousel panelcontainer">
+          <div class="section-heading">
+              <div class="section-heading__text-group">
+                  <h2 class="section-heading__title">${escapeHtml(AuthoredData[0] || '')}</h2>
+                  <p class="section-heading__description">${escapeHtml(AuthoredData[1] || '')}</p>
+              </div>
+              <div class="cmp-carousel__actions">
+                  <button class="cmp-carousel__action cmp-carousel__action--previous" type="button" aria-label="Previous">
+                      <span class="icon icon--arrow-left"></span>
+                  </button>
+                  <button class="cmp-carousel__action cmp-carousel__action--next" type="button" aria-label="Next">
+                      <span class="icon icon--arrow-right"></span>
+                  </button>
+              </div>
+          </div>
+
+          <form id="game-selection-form" action="./product-matches.html" class="game-form" aria-label="Game selection form" data-select-game-form>
+              <div class="game-carousel-wrapper">
+                  <div class="swiper">
+                      <div class="swiper-wrapper">
+                          ${gameList?.results?.gameList?.map(game => `
+                          <div class="swiper-slide">
+                              <div class="game-item">
+                                  <input type="checkbox" id="game-you-play-${game.gameId}" name="games" value="${escapeHtml(game.gameId)}" data-name="${escapeHtml(game.gameTitle)}" data-image="${escapeHtml(game.imageUrl)}" aria-checked="false" />
+                                  <div class="game-details-wrapper">
+                                      <div class="image-wrapper" aria-hidden="true">
+                                          <img src="${escapeHtml(game.imageUrl)}" alt="${escapeHtml(game.gameTitle)}" class="game-image" loading="lazy" />
+                                          <div class="checkmark-overlay"></div>
+                                      </div>
+                                      <label class="game-info" for="game-you-play-${game.gameId}">
+                                          ${escapeHtml(game.gameTitle)}
+                                      </label>
+                                  </div>
+                              </div>
+                          </div>
+                          `).join('')}
+                      </div>
+                      <div class="swiper-pagination"></div>
+                  </div>
+              </div>
+
+              <div class="budget-bar">
+                  <div class="budget-left">
+                      <label for="budget-min-value">Your budget:</label>
+                  </div>
+                  <div class="budget-center">
+                      <input type="text" class="budget-value" id="budget-min-value" aria-label="Minimum budget" />
+                      <div class="budget-separator">to</div>
+                      <div class="budget-range-wrapper">
+                          <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="500" data-max="5000" role="slider" data-step="100" aria-label="Budget range slider" aria-valuemax="${highestPrice}" aria-valuemin="${lowestPrice}" aria-orientation="horizontal" aria-valuenow="${lowestPrice}"
+                          aria-valuetext="Budget range between ${_formatCurrency(lowestPrice)} to ${_formatCurrency(highestPrice)}"></div>
+                          <div class="range-labels">
+                              <span>$500</span>
+                              <span>$5,000</span>
+                          </div>
+                      </div>
+                      <input type="text" class="budget-value" id="budget-max-value" aria-label="Maximum budget" />
+                  </div>
+                  <input type="hidden" name="min-budget" id="min-budget" value="" />
+                  <input type="hidden" name="max-budget" id="max-budget" value="" />
+                  <div class="budget-actions">
+                      <button type="reset" class="reset-button btn btn-link">Reset</button>
+                      <button type="submit" class="btn" disabled>Help me choose</button>
+                  </div>
+              </div>
+          </form>
+      </div>
+    </div>
+  `;
+
+  helpMeChooseContainer.innerHTML = html;
+
+  // Move instrumentation
+  moveInstrumentation(block, helpMeChooseContainer);
+
+  // Replace in DOM
+  block.replaceChildren(...helpMeChooseContainer.children);
+
+  // Initialize carousel *after* DOM insertion
+  initializeSwiperCarousel(block);
+}
+
+// Helper to load noUiSlider only once
+let noUiSliderPromise = null;
+/**
+ * Loads the noUiSlider library, ensuring it's only loaded once.
+ */
+function loadNoUiSlider() {
+  if (!noUiSliderPromise) {
+    noUiSliderPromise = loadScript(
+      'https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js'
+    ).catch((err) => {
+      console.error('Failed to load noUiSlider:', err);
+      throw err;
+    });
+  }
+  return noUiSliderPromise;
+}
+
+/**
+ * Sets up a MutationObserver to initialize SelectGameForm components added dynamically.
+ */
+let selectGameObserver = null;
+function setupSelectGameFormsObserver() {
+  if (selectGameObserver) return; // don't create multiple observers
+
+  selectGameObserver = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          initSelectGameForms(node);
+        }
+      }
+    }
+  });
+
+  selectGameObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+/**
+ * Tears down the MutationObserver, disconnecting it from the document body.
+ */
+export function teardownDecorate() {
+  if (selectGameObserver) {
+    selectGameObserver.disconnect();
+    selectGameObserver = null;
+  }
+}
+
+
+/**
+ * Helper to escape user / config data to prevent XSS
+ * @param {string} str - The string to escape.
+ * @returns {string} - The escaped string.
+ */
+// Helper to escape user / config data to prevent XSS
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/**
+* Clamps a value 'v' between a minimum 'a' and a maximum 'b'.
+* @param {number} v - The value to clamp.
+* @param {number} a - The minimum boundary.
+* @param {number} b - The maximum boundary.
+* @returns {number} The clamped value.
+*/
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+/**
+ * Converts a string or number value to an integer, stripping non-numeric characters (except minus sign).
+ * @param {*} v - The value to convert.
+ * @returns {number} The integer value, or 0 if conversion fails.
+ */
+const toNumber = (v) => {
+  if (typeof v === 'number') return v;
+  // Strip non-numeric characters *except* the optional leading minus sign.
+  const n = parseInt(String(v).replace(/[^0-9-]/g, ''), 10);
+  return Number.isNaN(n) ? 0 : n;
+};
+
+// Initialize carousel functionality
+/**
+ * Initializes a Swiper carousel for the block.
+ * @param {Element} block - The block element containing the carousel.
+ * @returns {Swiper} - The initialized Swiper instance.
+ */
+async function initializeSwiperCarousel(block) {
+  const swiperContainer = block.querySelector('.swiper');
+  if (!swiperContainer) return;
+
+  // Use modules explicitly (if using swiper modular build)
+  const swiper = new Swiper(swiperContainer, {
+    // Basic options
+    slidesPerView: 2,
+    spaceBetween: 16,
+
+    navigation: {
+      nextEl: block.querySelector('.cmp-carousel__action--next'),
+      prevEl: block.querySelector('.cmp-carousel__action--previous'),
+    },
+    pagination: {
+      el: block.querySelector('.swiper-pagination'),
+      clickable: true,
+    },
+
+    // Performance: consider enabling lazy loading or virtualization
+    // (depending on your Swiper version)
+    lazy: {
+      loadPrevNext: true,
+      loadPrevNextAmount: 2,
+    },
+
+    // Responsive behavior
+    breakpoints: {
+      768: {
+        slidesPerView: 4,
+        spaceBetween: 20,
+        pagination: {
+          enabled: false,
+        },
+      },
+      1024: {
+        slidesPerView: 6,
+        spaceBetween: 20,
+        allowTouchMove: true,
+        navigation: {
+          enabled: true,
+        },
+        pagination: {
+          enabled: false,
+        },
+      },
+    },
+    on: {
+      beforeDestroy: () => {
+        swiper.navigation.destroy();
+        swiper.pagination.destroy();
+      },
+    },
+  });
+
+  return swiper;
+}
+
+
+/* ---------------------------------------------
+   * Formats a number as a currency string.
+   * @param {number} value - The number to format.
+   * @returns {string} - The formatted currency string.
+   */
+  function _formatCurrency(value) {
+    return `$${(+value || 0).toLocaleString('en-US')}`;
+  }
+
+
+/**
+ * Manages the game selection form and budget slider functionality.
+ */
+class SelectGameForm {
+  /**
+   * Initializes a new SelectGameForm instance.
+   */
+  constructor(formElement) {
+    this.form = formElement;
+    if (!this.form) return;
+
+    this.dom = {
+      games: this.form.querySelectorAll('input[name="games"]'),
+      submitBtn: this.form.querySelector('button[type="submit"]'),
+      slider: this.form.querySelector('#budget-range'),
+      minValText: this.form.querySelector('#budget-min-value'),
+      maxValText: this.form.querySelector('#budget-max-value'),
+      minBudgetInput: this.form.querySelector('#min-budget'),
+      maxBudgetInput: this.form.querySelector('#max-budget'),
+      minBudgetValue: this.form.querySelector('#budget-range').getAttribute('aria-valuenow'),
+      maxBudgetValue: this.form.querySelector('#budget-range').getAttribute('aria-valuemax'),
+    };
+
+    this.DEFAULT_BUDGET_RANGE = { min: 500, max: 5000 };
+    this.DEFAULT_START_BUDGET = { min: this.dom.minBudgetInput.value, max: this.dom.maxBudgetInput.value };
+  }
+
+  /**
+   * Initializes the SelectGameForm, setting up the slider and binding events.
+   */
+  init() {
+    if (!this.form) return;
+
+    this._initSlider();
+    this._bindEvents();
+    this._setupBudgetInputHandlers();
+
+    this._updateSubmitButtonState(this._getSelectedGames().length === 0);
+  }
+
+  /**
+   * Initializes the noUiSlider for budget selection.
+   */
+  _initSlider() {
+    const slider = this.dom.slider;
+    if (!slider || slider.noUiSlider) return;
+
+    const { dataset } = slider;
+
+    const min = +dataset.min || this.DEFAULT_BUDGET_RANGE.min;
+    const max = +dataset.max || this.DEFAULT_BUDGET_RANGE.max;
+    const step = +dataset.step || 1;
+
+    const start = dataset.start
+      ? JSON.parse(dataset.start)
+      : [this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max];
+
+    window.noUiSlider.create(slider, {
+      start,
+      connect: true,
+      step,
+      margin: step,
+      range: { min, max },
+      format: {
+        to: (v) => Math.round(v),
+        from: Number,
+      },
+      ariaFormat: {
+        to: (v) => `$${Math.round(v).toLocaleString('en-US')}`,
+        from: (v) => Number(v.replace(/[$,]/g, '')),
+      },
+      handleAttributes: [
+        { 'aria-label': 'Budget minimum', 'aria-controls': 'min-budget' },
+        { 'aria-label': 'Budget maximum', 'aria-controls': 'max-budget' },
+      ],
+    });
+
+    slider.noUiSlider.on('update', (values) => {
+      const [minVal, maxVal] = values.map(Number);
+      this._updateBudgetDisplay(minVal, maxVal);
+      this._updateSubmitButtonState(this._getSelectedGames().length === 0);
+    });
+  }
+
+  /**
+   * Binds event listeners to the form for handling changes and resets.
+   */
+  _bindEvents() {
+    this.form.addEventListener('change', (e) => {
+      if (e.target.name === 'games') {
+        this._updateSubmitButtonState(this._getSelectedGames().length === 0);
+      }
+    });
+
+    this.form.addEventListener('reset', () => this._handleFormReset());
+  }
+
+  /* ---------------------------------------------
+      Game Selection Helpers
+  ----------------------------------------------*/
+  _getSelectedGames() {
+    return [...this.dom.games]
+      .filter((g) => g.checked)
+      .map((g) => g.value);
+  }
+
+  /**
+   * Updates the state of the submit button based on whether any games are selected.
+   * @param {boolean} disabled - Whether the submit button should be disabled.
+   */
+  _updateSubmitButtonState(disabled) {
+    if (this.dom.submitBtn) {
+      this.dom.submitBtn.disabled = disabled;
+    }
+  }
+
+  /**
+   * Validates a budget value, clamping it within the allowed range.
+   * @param {number} value - The value to validate.
+   * @param {boolean} isMin - Whether the value is the minimum budget.
+   * @returns {number} - The validated budget value.
+   */
+
+  _validateBudgetValue(value, isMin) {
+    const num = clamp(toNumber(value), this.DEFAULT_BUDGET_RANGE.min, this.DEFAULT_BUDGET_RANGE.max);
+    const slider = this.dom.slider?.noUiSlider;
+    if (!slider) return num;
+
+    const [currMin, currMax] = slider.get().map(toNumber);
+
+    return isMin ? Math.min(num, currMax) : Math.max(num, currMin);
+  }
+
+  /**
+   * Updates the displayed budget values and hidden input fields.
+   * @param {number} min - The minimum budget value.
+   * @param {number} max - The maximum budget value.
+   */
+  _updateBudgetDisplay(min, max) {
+    if (this.dom.minValText) this.dom.minValText.value = _formatCurrency(min);
+    if (this.dom.maxValText) this.dom.maxValText.value = _formatCurrency(max);
+
+    if (this.dom.minBudgetInput) this.dom.minBudgetInput.value = min;
+    if (this.dom.maxBudgetInput) this.dom.maxBudgetInput.value = max;
+  }
+
+  /* ---------------------------------------------
+      Reset Handler
+  ----------------------------------------------*/
+  _handleFormReset() {
+    setTimeout(() => {
+      const slider = this.dom.slider?.noUiSlider;
+      if (slider) {
+        slider.set([this.dom.minBudgetValue, this.dom.maxBudgetValue]);
+      }
+      this._updateSubmitButtonState(true);
+    }, 0);
+  }
+
+  /**
+   * Sets up event handlers for the budget input fields.
+   */
+  _setupBudgetInputHandlers() {
+    const pairs = [
+      [this.dom.minValText, true],
+      [this.dom.maxValText, false],
+    ];
+
+    pairs.forEach(([input, isMin]) => {
+      if (!input) return;
+
+      input.addEventListener('focus', () => input.select());
+      input.addEventListener('click', () => input.select());
+
+      input.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^0-9$,]/g, '');
+      });
+
+      input.addEventListener('blur', () => this._handleBudgetInputChange(input, isMin));
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          input.blur();
+        }
+      });
+    });
+  }
+
+  /**
+   * Handles changes to the budget input fields, validating and formatting the input.
+   * @param {HTMLInputElement} input - The input element that triggered the change.
+   * @param {boolean} isMin - Whether the input is for the minimum budget value.
+   */
+  _handleBudgetInputChange(input, isMin) {
+    const slider = this.dom.slider?.noUiSlider;
+    if (!slider) return;
+
+    const validated = this._validateBudgetValue(toNumber(input.value), isMin);
+
+    input.value = _formatCurrency(validated);
+
+    const [currMin, currMax] = slider.get().map(toNumber);
+
+    slider.set(isMin ? [validated, currMax] : [currMin, validated]);
+  }
+}
+
+
+/**
+ * Initializes all SelectGameForm components found within a given context.
+ * @param {HTMLElement} context - The root element within which to search for and initialize the forms.
+ */
+const initSelectGameForms = (context) => {
+  // Select all elements marked with the data attribute
+  const forms = context.querySelectorAll('[data-select-game-form]');
+  forms.forEach((form) => {
+    // Prevent re-initialization
+    if (form.dataset.initialized !== 'true') {
+      new SelectGameForm(form).init();
+      form.dataset.initialized = 'true';
+    }
+  });
+};
