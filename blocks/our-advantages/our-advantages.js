@@ -1,29 +1,27 @@
-import { isAuthorEnvironment, safeText } from '../../scripts/utils.js';
+import {isAuthorEnvironment, safeText} from '../../scripts/utils.js';
 import {moveInstrumentation} from "../../scripts/scripts.js";
 
 export default async function decorate(block) {
 
-  await renderBlock(block);
+    await renderBlock(block);
 
-  await import('./uifrontend_carousel.js');
-  await import('./uifrontend_advantage-card.js');
+    await import('./uifrontend_carousel.js');
+    await import('./uifrontend_advantage-card.js');
 
-  document.dispatchEvent(new Event('asus-cto-our-advantages'));
+    document.dispatchEvent(new Event('asus-cto-our-advantages'));
 }
 
 async function renderBlock(block) {
 
-  const mockupHeading = document.createRange().createContextualFragment(`<div class="section-heading content-center">
+    const mockupHeading = document.createRange().createContextualFragment(`<div class="section-heading content-center">
         <h2 data-richtext-prop="text" data-richtext-label="Text" data-richtext-filter="text">${block.firstElementChild.textContent.trim()}</h2>
       </div>`);
 
-  if(isAuthorEnvironment()) {
-    debugger;
-    console.log('block.firstElementChild >', Array.from(block.firstElementChild.firstElementChild.attributes).map((attr) => `${attr.name}="${attr.value}"`).join(' '));
-    moveInstrumentation(block.firstElementChild.firstElementChild, mockupHeading.firstElementChild);
-  }
+    if (isAuthorEnvironment()) {
+        moveInstrumentation(block.firstElementChild.firstElementChild, mockupHeading.firstElementChild);
+    }
 
-  const mockupContainer = document.createRange().createContextualFragment(`<div class='container'>
+    const mockupContainer = document.createRange().createContextualFragment(`<div class='container'>
     <div class="carousel panelcontainer">
       <div
           id="carousel-4e80c7e13a"
@@ -56,26 +54,32 @@ async function renderBlock(block) {
     </div>
   </div>`);
 
-  mockupContainer
-      .querySelector('.carousel.panelcontainer')
-      .prepend(mockupHeading);
+    mockupContainer
+        .querySelector('.carousel.panelcontainer')
+        .prepend(mockupHeading);
 
 
-  const cardNodes = [];
-  [...block.children].forEach((card, i) => {
-    // skip the heading
-    if (i === 0) return;
-    const divs = card.querySelectorAll('div');
-    const headline = safeText(divs.item(1));
-    const details = safeText(divs.item(2));
-    const navigate = safeText(divs.item(3));
-    const mediaHTML = card.querySelector('picture')?.innerHTML ?? '';
+    const cardNodes = [];
+    [...block.children].forEach((card, i) => {
+        // skip the heading
+        if (i === 0) return;
+        const divs = card.querySelectorAll('div');
+        const headline = safeText(divs.item(1));
+        const details = safeText(divs.item(2));
+        const navigate = safeText(divs.item(3));
+        const imgSrc = card ? card.querySelector('div > picture > img').getAttribute('src') : null;
 
-    const mockup = document.createRange().createContextualFragment(`
+
+      const mockup = document.createRange().createContextualFragment(`
           <div class="cmp-carousel__item">
             <div class="cmp-advantage-card">
               <div class="cmp-advantage-card__image-wrapper">
-                ${mediaHTML}
+                <img
+                  src="${imgSrc}"
+                  alt="Ultimate Gaming Experience"
+                  class="cmp-advantage-card__image"
+                  loading="lazy"
+                />
                 <video class="cmp-advantage-card__video" playsinline controls>
                   <source
                     type="video/mp4">
@@ -95,15 +99,15 @@ async function renderBlock(block) {
             </div>
           </div>`);
 
-    if (isAuthorEnvironment()) {
-      moveInstrumentation(card, mockup.firstElementChild);
-    }
-    cardNodes.push(mockup);
-  });
+        if (isAuthorEnvironment()) {
+            moveInstrumentation(card, mockup.firstElementChild);
+        }
+        cardNodes.push(mockup);
+    });
 
-  mockupContainer.querySelector('.cmp-carousel__content').append(...cardNodes);
-  if (isAuthorEnvironment()) {
-    moveInstrumentation(block, mockupContainer.firstElementChild);
-  }
-  block.replaceWith(mockupContainer);
+    mockupContainer.querySelector('.cmp-carousel__content').append(...cardNodes);
+    if (isAuthorEnvironment()) {
+        moveInstrumentation(block, mockupContainer.firstElementChild);
+    }
+    block.replaceWith(mockupContainer);
 }

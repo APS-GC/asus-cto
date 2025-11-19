@@ -49,13 +49,6 @@
       "id": "advantage-card",
       "fields": [
         {
-          "component": "reference",
-          "valueType": "string",
-          "name": "media",
-          "label": "Media",
-          "multi": false
-        },
-        {
           "component": "text",
           "name": "title",
           "value": "",
@@ -69,6 +62,20 @@
           "value": "",
           "label": "Details",
           "valueType": "string"
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "cover",
+          "label": "Image",
+          "multi": false
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "media",
+          "label": "Video",
+          "multi": false
         },
         {
           "component": "text",
