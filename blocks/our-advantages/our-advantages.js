@@ -14,7 +14,7 @@ export default async function decorate(block) {
 async function renderBlock(block) {
 
   const mockupHeading = document.createRange().createContextualFragment(`<div class="section-heading content-center">
-        <h2>${block.firstElementChild.textContent.trim()}</h2>
+        <h2 data-richtext-prop="text" data-richtext-label="Text" data-richtext-filter="text">${block.firstElementChild.textContent.trim()}</h2>
       </div>`);
 
   if(isAuthorEnvironment()) {
