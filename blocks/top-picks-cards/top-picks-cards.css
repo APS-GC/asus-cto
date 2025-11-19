@@ -1,8 +1,4 @@
 /* Top Picks Cards Block - Based on webpack component */
-.top-picks-cards {
-  padding-top: 10px;
-}
-
 .top-picks-cards > ul {
   list-style: none;
   margin: 0;

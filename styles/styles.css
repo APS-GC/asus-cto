@@ -1179,6 +1179,20 @@ p,
 .section-spacing-4xl { gap: var(--section-spacing-4xl); }
 .section-spacing-5xl { gap: var(--section-spacing-5xl); }
 
+.section.section-spacing-top__small {
+  padding-top: 1.25rem;
+}
+
+.section.section-spacing-bottom {
+  padding-bottom: 120px;
+}
+
+@media only screen and (max-width: 63.9375rem) {
+  .section.section-spacing-bottom {
+      padding-bottom: 2rem;
+  }
+}
+
 /* Margin Utilities - 8px Baseline System */
 .m-0 { margin: 0; }
 .m-4 { margin: var(--spacing-4); }
