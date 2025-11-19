@@ -571,6 +571,10 @@
             "value": "section-spacing-top__small"
           },
           {
+            "name": "Section Spacing Top",
+            "value": "section-spacing-top"
+          },
+          {
             "name": "Section Spacing Bottom",
             "value": "section-spacing-bottom"
           }

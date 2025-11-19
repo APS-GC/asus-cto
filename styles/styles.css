@@ -1184,13 +1184,21 @@ p,
   padding-top: 1.25rem;
 }
 
+.section.section-spacing-top {
+  padding-top: 4rem;
+}
+
 .section.section-spacing-bottom {
   padding-bottom: 120px;
 }
 
 @media only screen and (max-width: 63.9375rem) {
+  .section.section-spacing-top {
+    padding-top: 2rem;
+  }
+
   .section.section-spacing-bottom {
-      padding-bottom: 2rem;
+    padding-bottom: 2rem;
   }
 }
 
