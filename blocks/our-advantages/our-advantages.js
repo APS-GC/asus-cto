@@ -18,8 +18,8 @@ async function renderBlock(block) {
       </div>`);
 
   if(isAuthorEnvironment()) {
-    console.log('block.firstElementChild >', Array.from(block.firstElementChild.attributes).map((attr) => `${attr.name}="${attr.value}"`).join(' '));
-    moveInstrumentation(block.firstElementChild, mockupHeading.firstElementChild);
+    console.log('block.firstElementChild >', Array.from(block.firstElementChild.firstElementChild.attributes).map((attr) => `${attr.name}="${attr.value}"`).join(' '));
+    moveInstrumentation(block.firstElementChild.firstElementChild, mockupHeading.firstElementChild);
   }
 
   const mockupContainer = document.createRange().createContextualFragment(`<div class='container'>
