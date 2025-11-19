@@ -1,6 +1,4 @@
-import { createOptimizedPictureExternal } from '../../scripts/scripts.js';
-import { createOptimizedPicture } from '../../scripts/aem.js';
-import { moveInstrumentation } from '../../scripts/scripts.js';
+import { createOptimizedPictureExternal, createOptimizedPicture, moveInstrumentation } from '../../scripts/scripts.js';
 
 // Header configuration - calculated once for the entire module
 const HeaderConfig = {
