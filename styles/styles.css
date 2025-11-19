@@ -49,6 +49,10 @@
   --btn-link-color: var(--color-primary-950);
   --btn-link-disabled-color: var(--color-primary-600);
   --btn-link-hover-color: var(--color-primary-950);
+  
+  /* Layout Heights */
+  --header-height: 48px; /* Default: Mobile and Tablet */
+  --carousel-height: 548px; /* Default: Mobile - Used for CLS prevention */
 
   /* Legacy color mappings for backward compatibility */
   --color-white: var(--color-primary-950);
@@ -202,7 +206,7 @@
   font-display: swap; /* Immediate text render with fallback, swap to web font when loaded */
 }
 
-*{
+* {
   box-sizing: border-box;
 }
 
@@ -218,6 +222,9 @@ body {
   letter-spacing: var(--letter-spacing-normal);
   margin: 0;
   padding: 0;
+  
+  /* Font loading optimization - reduce CLS from font swaps */
+  font-size-adjust: 0.5;
   
   /* LCP Optimization: Start visible to prevent text render blocking */
   opacity: 1;
@@ -238,6 +245,31 @@ body.fade-in {
 
 body.fade-in.appear {
   opacity: 1;
+}
+
+header {
+  min-height: var(--header-height);
+}
+
+header .header.block[data-block-status="loading"] {
+  max-height: var(--header-height);
+  overflow: hidden;
+}
+
+/* ========================================================================== 
+ * Image Optimization - Prevent CLS
+ * ========================================================================== */
+
+/* Ensure all images are responsive and maintain aspect ratio */
+img {
+  height: auto;
+  max-width: 100%;
+  display: block;
+}
+
+/* Prevent CLS for images with width/height attributes */
+img[width][height] {
+  height: auto;
 }
 
 /* ========================================================================== 
@@ -608,6 +640,9 @@ p,
     --font-size-4xl: 2.5rem;    /* 40px */
     --font-size-5xl: 3.5rem;    /* 56px */
     --font-size-6xl: 4.5rem;    /* 72px */
+    
+    /* Carousel height for tablet */
+    --carousel-height: 429px;
   }
 }
 
@@ -624,6 +659,10 @@ p,
     --font-size-4xl: 3rem;      /* 48px */
     --font-size-5xl: 4rem;      /* 64px */
     --font-size-6xl: 5rem;      /* 80px */
+    
+    /* Layout heights for desktop */
+    --header-height: 64px;
+    --carousel-height: 777px;
   }
 }
 

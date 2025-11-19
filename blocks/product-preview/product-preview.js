@@ -3,6 +3,7 @@
  */
 
 import { openModal } from '../modal/modal.js';
+import { loadSwiper } from '../../scripts/swiper-loader.js';
 
 /**
  * Parse configuration from block metadata
@@ -307,7 +308,7 @@ function createTimeSpyScore(product, config) {
   `;
 }
 
-function initializeGallery(block) {
+async function initializeGallery(block) {
   const mainSwiperEl = block.querySelector('.preview-gallery-main');
   const thumbSwiperEl = block.querySelector('.preview-gallery-thumbs');
 
@@ -316,6 +317,9 @@ function initializeGallery(block) {
   const slidesCount = mainSwiperEl.querySelectorAll('.swiper-slide').length;
   
   if (slidesCount === 0) return;
+
+  // Dynamically load Swiper library
+  await loadSwiper();
 
   const mainSwiper = new window.Swiper(mainSwiperEl, {
     slidesPerView: 1,
@@ -512,7 +516,7 @@ export default async function decorate(block) {
     </div>
   `;
 
-  initializeGallery(block);
+  await initializeGallery(block);
   initializeTabs(block);
 
   // Add close button event listener

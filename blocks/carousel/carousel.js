@@ -4,6 +4,7 @@
  */
 
 import { moveInstrumentation, isUniversalEditor } from '../../scripts/scripts.js';
+import { loadSwiper } from '../../scripts/swiper-loader.js';
 
 // Configuration defaults
 const DEFAULT_IMAGE_AUTOPLAY = 3000;
@@ -264,7 +265,7 @@ const toggleSliderVideo = (videoPlayPauseBtn) => {
 /**
  * Initialize Swiper carousel
  */
-function initializeSwiper(carouselElement, config) {
+async function initializeSwiper(carouselElement, config) {
   const isUE = isUniversalEditor();
   
   //Force apply UE authoring class and attributes for CSS targeting
@@ -277,16 +278,12 @@ function initializeSwiper(carouselElement, config) {
     }
   }
   
-  // Swiper is already loaded via head.html, initialize directly
-  const setupSwiper = () => {
-    // Check if Swiper is available
-    if (!window.Swiper) {
-      console.warn('Swiper not available, activating fallback mode');
-      carouselElement.querySelector('.swiper')?.classList.add('swiper-fallback');
-      return;
-    }
-    
+  // Load Swiper dynamically
+  const setupSwiper = async () => {
     try {
+      // Dynamically load Swiper library
+      await loadSwiper();
+      
       const swiperConfig = {
         loop: true, // Disable loop in UE authoring
         autoplay: {
@@ -394,7 +391,7 @@ function initializeSwiper(carouselElement, config) {
         });
       }
     } catch (error) {
-      console.error('Error initializing Swiper carousel:', error);
+      console.error('Error loading or initializing Swiper carousel:', error);
       // Fallback: show static content
       carouselElement.querySelector('.swiper')?.classList.add('swiper-fallback');
     }
@@ -402,10 +399,10 @@ function initializeSwiper(carouselElement, config) {
 
   // Delay initialization to ensure DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupSwiper);
+    document.addEventListener('DOMContentLoaded', () => setupSwiper());
   } else {
     // Additional delay for UE environments
-    setTimeout(setupSwiper, isUE ? 500 : 100);
+    setTimeout(() => setupSwiper(), isUE ? 500 : 100);
   }
 }
 
