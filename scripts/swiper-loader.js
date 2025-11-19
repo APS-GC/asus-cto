@@ -4,31 +4,15 @@
  */
 
 import { loadScript, loadCSS } from './aem.js';
-import { isPerformanceModeEnabled } from './scripts.js';
 
 let swiperPromise = null;
 let swiperCSSLoaded = false;
 
 /**
  * Dynamically loads Swiper library from CDN
- * @returns {Promise<Object>} Promise that resolves with Swiper constructor or mock
+ * @returns {Promise<Object>} Promise that resolves with Swiper constructor
  */
 export async function loadSwiper() {
-  // Performance mode: Skip loading third-party scripts, return mock
-  if (isPerformanceModeEnabled()) {
-    console.log('Swiper: Skipped (Performance mode enabled)');
-    // Return a mock Swiper constructor that does nothing
-    return function MockSwiper() {
-      console.log('Mock Swiper initialized (Performance mode)');
-      return {
-        on: () => {},
-        destroy: () => {},
-        update: () => {},
-        autoplay: { start: () => {}, stop: () => {} }
-      };
-    };
-  }
-
   // Return immediately if Swiper is already loaded
   if (window.Swiper) {
     return window.Swiper;

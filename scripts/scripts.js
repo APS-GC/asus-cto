@@ -14,25 +14,6 @@ import {
 } from './aem.js';
 
 /**
- * Performance Mode Utility
- * Check if performance mode is enabled via query parameter
- * When ?performance=true is in URL, third-party scripts are disabled
- * @returns {boolean} True if performance mode is active
- */
-export function isPerformanceModeEnabled() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const isEnabled = urlParams.get('performance') === 'true';
-  
-  // Log once when performance mode is detected
-  if (isEnabled && !window.__performanceModeLogged) {
-    console.warn('⚡ PERFORMANCE MODE ENABLED - Third-party scripts disabled (Swiper, BazaarVoice, etc.)');
-    window.__performanceModeLogged = true;
-  }
-  
-  return isEnabled;
-}
-
-/**
  * Moves all the attributes from a given elmenet to another given element.
  * @param {Element} from the element to copy attributes from
  * @param {Element} to the element to copy attributes to
@@ -339,12 +320,6 @@ async function loadLazy(doc) {
  * @returns {Promise} Resolves when script is loaded
  */
 export async function loadBazaarvoiceScript() {
-  // Performance mode: Skip loading third-party scripts
-  if (isPerformanceModeEnabled()) {
-    console.log('Bazaarvoice: Skipped (Performance mode enabled)');
-    return Promise.resolve();
-  }
-
   const BV_SCRIPT_ID = 'bv-script';
 
   // TODO: Replace with getConfigValue() when configs are ready
