@@ -1,5 +1,4 @@
-import { createOptimizedPicture } from '../../scripts/aem.js';
-import { moveInstrumentation } from '../../scripts/scripts.js';
+import { moveInstrumentation, createOptimizedPicture } from '../../scripts/scripts.js';
 
 // Default values from authoring configuration
 const DEFAULT_VALUES = {
