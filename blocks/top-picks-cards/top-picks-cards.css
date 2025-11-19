@@ -1,8 +1,4 @@
 /* Top Picks Cards Block - Based on webpack component */
-.top-picks-cards {
-  padding-top: 10px;
-}
-
 .top-picks-cards > ul {
   list-style: none;
   margin: 0;
@@ -177,30 +173,5 @@
   
   .top-picks-cards .cta {
     text-decoration: underline;
-  }
-}
-
-
-/*Adding Explicit Container Designs for Top Picks Cards*/
-/*TODO : Apply it Globally and remove from here */
-.top-picks-cards-wrapper {
-  width: 100%;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 var(--spacing-4); 
-}
-
-
-@media (min-width: 48rem) {
-  .top-picks-cards-wrapper {
-    padding: 0 var(--spacing-10); 
-  }
-}
-
-
-@media (min-width: 80rem) {
-  .top-picks-cards-wrapper {
-    max-width: calc(100% - 200px);
-    padding: 0; 
   }
 }
