@@ -2,6 +2,15 @@ import { createOptimizedPictureExternal } from '../../scripts/scripts.js';
 import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
+// Header configuration - calculated once for the entire module
+const HeaderConfig = {
+  get baseUrl() {
+    return window.asusCto?.baseUrl;
+  },
+  get shouldUseExternal() {
+    return this.baseUrl && this.baseUrl !== window.location.origin;
+  }
+};
 
 function parseHeaderData(block) {
   // Initialize empty data structure - values will only come from actual authoring
@@ -54,8 +63,6 @@ function parseHeaderData(block) {
   // Override with Universal Editor model data if available
   if (block.dataset && (block.dataset.model || block.dataset.aueModel)) {
     const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {};
-    
-    console.log('Universal Editor Model Data:', modelData);
     
     // Parse individual logo fields - only use UE authoring values
     // Initialize logos array if needed
@@ -125,7 +132,6 @@ function parseHeaderData(block) {
     }
   }
 
-  console.log('Final parsed data:', data);
   return data;
 }
 
@@ -134,9 +140,8 @@ function parseHTMLContent(block) {
     // Get all div elements that contain the structured data
     const contentDivs = block.querySelectorAll('div > div > div');
 
-    // Check if baseUrl is defined and different from current location
-    const baseUrl = window.asusCto?.baseUrl;
-    const shouldUseExternal = baseUrl && baseUrl !== window.location.origin;
+    // Use HeaderConfig for baseUrl and shouldUseExternal
+    const { baseUrl, shouldUseExternal } = HeaderConfig;
 
     const parsedData = {
       logos: [],
@@ -296,7 +301,6 @@ function parseHTMLContent(block) {
       }
     }
 
-    console.log('Parsed data from HTML:', parsedData);
     return parsedData;
     
   } catch (error) {
@@ -310,9 +314,8 @@ function parseNavLinks(navLinksText) {
     return [];
   }
   
-  // Check if baseUrl is defined and different from current location
-  const baseUrl = window.asusCto?.baseUrl;
-  const shouldUseExternal = baseUrl && baseUrl !== window.location.origin;
+  // Use HeaderConfig for baseUrl and shouldUseExternal
+  const { baseUrl, shouldUseExternal } = HeaderConfig;
   
   return navLinksText.split('\n')
     .filter(line => line.trim())
@@ -515,14 +518,12 @@ function mockLogin() {
   localStorage.setItem('userName', 'John Doe');
   // Automatically add items to cart for logged-in user
   localStorage.setItem('hasCartItems', 'true');
-  console.log('Mock login successful - user logged in with items in cart');
 }
 
 // Mock logout function
 function mockLogout() {
   localStorage.removeItem('isLoggedIn');
   localStorage.removeItem('userName');
-  console.log('Mock logout successful');
 }
 
 // Mock cart data for testing
@@ -635,10 +636,7 @@ async function updateMiniCartDisplay(block) {
   const cartTitle = block.querySelector('#mini-cart-title');
   const miniCartToggle = block.querySelector('#mini-cart-toggle');
   
-  console.log('updateMiniCartDisplay called:', { isLoggedIn, hasCartItems, miniCartContainer: !!miniCartContainer, cartTitle: !!cartTitle });
-  
   if (!miniCartContainer || !cartTitle) {
-    console.log('Missing cart elements');
     return;
   }
   
@@ -654,7 +652,6 @@ async function updateMiniCartDisplay(block) {
     }
   } else {
     const products = await fetchCartProducts();
-    console.log('Fetched products:', products);
     if (!products.length) {
       cartTitle.textContent = 'Your cart is empty.';
       if (miniCartToggle) {
@@ -671,7 +668,6 @@ async function updateMiniCartDisplay(block) {
   
   // Add new content after title
   const newContent = await renderMiniCartContent(isLoggedIn);
-  console.log('Generated new content:', newContent);
   miniCartContainer.insertAdjacentHTML('beforeend', newContent);
   
   // Re-attach cart sign-in event listener if needed
@@ -689,13 +685,11 @@ async function updateMiniCartDisplay(block) {
 // Mock function to add items to cart (for testing)
 function mockAddToCart() {
   localStorage.setItem('hasCartItems', 'true');
-  console.log('Mock items added to cart');
 }
 
 // Mock function to clear cart (for testing)
 function mockClearCart() {
   localStorage.removeItem('hasCartItems');
-  console.log('Mock cart cleared');
 }
 
 // Make functions available globally for testing
@@ -869,9 +863,8 @@ function optimizeLogoImages(block) {
   block.querySelectorAll('.logo-wrapper picture > img').forEach((img) => {
     let optimizedPic;
     
-    // Check if baseUrl is defined and different from current location
-    const baseUrl = window.asusCto?.baseUrl;
-    const shouldUseExternal = baseUrl && baseUrl !== window.location.origin;
+    // Use HeaderConfig for baseUrl and shouldUseExternal
+    const { baseUrl, shouldUseExternal } = HeaderConfig;
     
     if (shouldUseExternal) {
       // Use createOptimizedPictureExternal with baseUrl when baseUrl is defined and different
@@ -973,13 +966,6 @@ function initializeHeader(block) {
   // Mock Login/Logout functionality for desktop profile menu
   const profileMenuItemElements = block.querySelectorAll('.profile-menu__item[data-menu-index]');
   
-  console.log('Debug info:', {
-    isLoggedIn,
-    profileMenuItems: profileMenuItems.map(item => item.linkText),
-    profileMenuLoggedInItems: profileMenuLoggedInItems.map(item => item.linkText),
-    combinedMenuItems: combinedMenuItems.map(item => item.linkText),
-    totalElements: profileMenuItemElements.length
-  });
   
   profileMenuItemElements.forEach((item, index) => {
     const link = item.querySelector('a');
@@ -987,28 +973,16 @@ function initializeHeader(block) {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         
-        console.log('Desktop menu clicked:', { 
-          index, 
-          isLoggedIn, 
-          combinedMenuLength: combinedMenuItems.length, 
-          linkText: link.textContent,
-          isFirstItem: index === 0
-        });
-        
         if (index === 0) {
           if (!isLoggedIn) {
             // First item when not logged in - trigger login
-            console.log('Triggering login');
             mockLogin();
             refreshHeader(block);
           } else {
             // First item when logged in - trigger logout
-            console.log('Triggering logout (first item when logged in)');
             mockLogout();
             refreshHeader(block);
           }
-        } else {
-          console.log('No action for this menu item');
         }
         // For other items, you can add actual navigation logic here
       });

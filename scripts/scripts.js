@@ -473,6 +473,10 @@ function loadDelayed() {
 }
 
 async function loadPage() {
+  if (document.querySelector('aem-header')) {
+    console.log('Web component usage detected - skipping full page initialization');
+    return;
+  }
   await loadEager(document);
   await loadLazy(document);
   loadDelayed();
