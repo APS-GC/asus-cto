@@ -13,11 +13,17 @@ export default async function decorate(block) {
 
 async function renderBlock(block) {
 
+  const mockupHeading = document.createRange().createContextualFragment(`<div class="section-heading content-center">
+        <h2>${block.firstElementChild.textContent.trim()}</h2>
+      </div>`);
+
+  if(isAuthorEnvironment()) {
+    console.log('block.firstElementChild >', Array.from(block.firstElementChild.attributes).map((attr) => `${attr.name}="${attr.value}"`).join(' '));
+    moveInstrumentation(block.firstElementChild, mockupHeading.firstElementChild);
+  }
+
   const mockupContainer = document.createRange().createContextualFragment(`<div class='container'>
     <div class="carousel panelcontainer">
-      <div class="section-heading content-center">
-        <h2>${block.firstElementChild.textContent.trim()}</h2>
-      </div>
       <div
           id="carousel-4e80c7e13a"
           class="cmp-carousel"
@@ -49,18 +55,20 @@ async function renderBlock(block) {
     </div>
   </div>`);
 
+  mockupContainer
+      .querySelector('.carousel.panelcontainer')
+      .prepend(mockupHeading);
+
+
   const cardNodes = [];
-  [...block.children].forEach((card) => {
+  [...block.children].forEach((card, i) => {
+    // skip the heading
+    if (i === 0) return;
     const divs = card.querySelectorAll('div');
     const headline = safeText(divs.item(1));
     const details = safeText(divs.item(2));
     const navigate = safeText(divs.item(3));
     const mediaHTML = card.querySelector('picture')?.innerHTML ?? '';
-
-    if (headline === '') {
-      console.log('advantage card must have a headline');
-      return;
-    }
 
     const mockup = document.createRange().createContextualFragment(`
           <div class="cmp-carousel__item">
