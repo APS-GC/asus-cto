@@ -149,5 +149,11 @@
       "components": [
         "our-advantage"
       ]
+    },
+    {
+      "id": "help-me-choose",
+      "components": [
+        "help-me-choose"
+      ]
     }
 ]
