@@ -1122,14 +1122,14 @@
         "component": "richtext",
         "name": "quote",
         "value": "",
-        "label": "Quote",
+        "label": "Title",
         "valueType": "string"
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "author",
-        "label": "Author",
+        "label": "Description",
         "value": ""
       }
     ]
