@@ -1,5 +1,1120 @@
 [
- 
+  {
+    "id": "page-metadata",
+    "fields": [
+      {
+        "component": "multiselect",
+        "name": "theme",
+        "label": "Theme",
+        "description": "Apply additional styling options",
+        "options": [
+          {
+            "name": "Gradient",
+            "value": "gradient-animation"
+          }, 
+          {
+            "name": "Gradient Animation",
+            "value": "gradient-animation-active"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:title",
+        "label": "Page Title",
+        "description": "Main page title - used in browser tab and search results",
+        "validation": {
+          "required": true
+        }
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "jcr:description",
+        "label": "Meta Description",
+        "description": "Brief description for search engines and social media (150-160 characters recommended)",
+        "validation": {
+          "required": true
+        }
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "keywords",
+        "multi": true,
+        "label": "Keywords",
+        "description": "SEO keywords for this page (comma separated)"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "canonicalUrl",
+        "label": "Canonical URL",
+        "description": "Canonical URL for this page (helps prevent duplicate content issues)"
+      },
+      {
+        "component": "select",
+        "name": "pageLanguage",
+        "label": "Page Language",
+        "description": "Language code for this page",
+        "options": [
+          {
+            "name": "English (US)",
+            "value": "en-US"
+          },
+          {
+            "name": "English (UK)",
+            "value": "en-GB"
+          },
+          {
+            "name": "English (General)",
+            "value": "en"
+          },
+          {
+            "name": "French",
+            "value": "fr"
+          },
+          {
+            "name": "German",
+            "value": "de"
+          },
+          {
+            "name": "Spanish",
+            "value": "es"
+          },
+          {
+            "name": "Italian",
+            "value": "it"
+          },
+          {
+            "name": "Japanese",
+            "value": "ja"
+          },
+          {
+            "name": "Chinese (Simplified)",
+            "value": "zh-CN"
+          },
+          {
+            "name": "Chinese (Traditional)",
+            "value": "zh-TW"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "robots",
+        "label": "Search Engine Indexing",
+        "description": "Control how search engines index this page",
+        "options": [
+          {
+            "name": "Index, Follow (Default)",
+            "value": "index,follow"
+          },
+          {
+            "name": "Index, No Follow",
+            "value": "index,nofollow"
+          },
+          {
+            "name": "No Index, Follow",
+            "value": "noindex,follow"
+          },
+          {
+            "name": "No Index, No Follow",
+            "value": "noindex,nofollow"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "author",
+        "label": "Author",
+        "description": "Author of this page content"
+      },
+      {
+        "component": "reference",
+        "name": "ogImage",
+        "label": "Social Media Image",
+        "description": "Image for social media sharing (Open Graph) - recommended 1200x630px",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ogImageAlt",
+        "label": "Social Media Image Alt Text",
+        "description": "Alternative text for the social media image"
+      },
+      {
+        "component": "select",
+        "name": "ogType",
+        "label": "Open Graph Type",
+        "description": "Type of content for social media sharing",
+        "options": [
+          {
+            "name": "Website",
+            "value": "website"
+          },
+          {
+            "name": "Article",
+            "value": "article"
+          },
+          {
+            "name": "Product",
+            "value": "product"
+          },
+          {
+            "name": "Video",
+            "value": "video"
+          }
+        ]
+      },
+      {
+        "component": "reference",
+        "name": "pageVideo",
+        "label": "Page Video",
+        "description": "Main video for this page (hero/background video)",
+        "multi": false
+      },
+      {
+        "component": "reference",
+        "name": "videoTrack",
+        "label": "Video Captions/Subtitles",
+        "description": "Caption or subtitle file for the page video (VTT format)",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "videoDescription",
+        "label": "Video Description",
+        "description": "Description of the page video content for accessibility"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "publishDate",
+        "label": "Publish Date",
+        "description": "Publication date (YYYY-MM-DD format)"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "modifiedDate",
+        "label": "Last Modified Date",
+        "description": "Last modification date (YYYY-MM-DD format)"
+      },
+      {
+        "component": "select",
+        "name": "pageBackgroundColor",
+        "label": "Page Background Color",
+        "description": "Set the background color for the entire page",
+        "options": [
+          {
+            "name": "Default White",
+            "value": ""
+          },
+          {
+            "name": "Light Grey",
+            "value": "page-bg-light-grey"
+          },
+          {
+            "name": "Dark",
+            "value": "page-bg-dark"
+          },
+          {
+            "name": "Primary Brand",
+            "value": "page-bg-primary"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "image",
+    "fields": [
+      {
+        "component": "reference",
+        "name": "image",
+        "label": "Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "name": "imageAlt",
+        "label": "Alt Text"
+      }
+    ]
+  },
+  {
+    "id": "title",
+    "fields": [
+      {
+        "component": "text",
+        "name": "title",
+        "label": "Title"
+      },
+      {
+        "component": "select",
+        "name": "titleType",
+        "label": "Title Type",
+        "options": [
+          {
+            "name": "h1",
+            "value": "h1"
+          },
+          {
+            "name": "h2",
+            "value": "h2"
+          },
+          {
+            "name": "h3",
+            "value": "h3"
+          },
+          {
+            "name": "h4",
+            "value": "h4"
+          },
+          {
+            "name": "h5",
+            "value": "h5"
+          },
+          {
+            "name": "h6",
+            "value": "h6"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "button",
+    "fields": [
+      {
+        "component": "aem-content",
+        "name": "link",
+        "label": "Link"
+      },
+      {
+        "component": "text",
+        "name": "linkText",
+        "label": "Text"
+      },
+      {
+        "component": "text",
+        "name": "linkTitle",
+        "label": "Title"
+      },
+      {
+        "component": "select",
+        "name": "linkType",
+        "label": "Type",
+        "options": [
+          {
+            "name": "default",
+            "value": ""
+          },
+          {
+            "name": "primary",
+            "value": "primary"
+          },
+          {
+            "name": "secondary",
+            "value": "secondary"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "section",
+    "fields": [
+      {
+        "component": "text",
+        "name": "name",
+        "label": "Section Name",
+        "description": "The label shown for this section in the Content Tree"
+      },
+      {
+        "component": "multiselect",
+        "name": "style",
+        "label": "Additional Styles",
+        "description": "Apply additional styling options",
+        "options": [
+          {
+            "name": "Responsive Container",
+            "value": "container"
+          },
+          {
+            "name": "Section Spacing Top (Small)",
+            "value": "section-spacing-top__small"
+          },
+          {
+            "name": "Section Spacing Top",
+            "value": "section-spacing-top"
+          },
+          {
+            "name": "Section Spacing Bottom",
+            "value": "section-spacing-bottom"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "card",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Image",
+        "multi": false
+      },
+      {
+        "component": "richtext",
+        "name": "text",
+        "value": "",
+        "label": "Text",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "columns",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "columns",
+        "value": "",
+        "label": "Columns"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "rows",
+        "value": "",
+        "label": "Rows"
+      }
+    ]
+  },
+  {
+    "id": "fragment",
+    "fields": [
+      {
+        "component": "aem-content",
+        "name": "reference",
+        "label": "Reference"
+      }
+    ]
+  },
+  {
+    "id": "hero",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Alt",
+        "value": ""
+      },
+      {
+        "component": "richtext",
+        "name": "text",
+        "value": "",
+        "label": "Text",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "quote",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "quote",
+        "value": "",
+        "label": "Quote",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "author",
+        "label": "Author",
+        "value": ""
+      },
+      {
+        "component": "select",
+        "name": "classes",
+        "value": "",
+        "label": "Background Color",
+        "description": "The quote background color",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Red",
+            "value": "bg-red"
+          },
+          {
+            "name": "Green",
+            "value": "bg-green"
+          },
+          {
+            "name": "Blue",
+            "value": "bg-blue"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "feature-product-card",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Product Image",
+        "description": "Upload or select a product image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "label",
+        "label": "Product Label/Category",
+        "description": "Small label text (e.g., 'Top picks', 'Featured', etc.)",
+        "value": "Top picks"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Product Title",
+        "description": "Main product title or name",
+        "value": "",
+        "validation": {
+          "required": true
+        }
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaLinkName",
+        "label": "CTA Link Name",
+        "description": "Text for the call-to-action button (e.g., 'View configs', 'Learn more')",
+        "value": "View configs"
+      },
+      {
+        "component": "aem-content",
+        "name": "link",
+        "label": "Call-to-Action Link",
+        "description": "Link with text (e.g., 'View configs', 'Learn more')",
+        "valueType": "string"
+      }
+    ]
+  },
+   {
+    "id": "footer",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "titleSubscription",
+        "label": "Title For Subscription Section",
+        "description": "Title For Subscription Section"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "placeholder",
+        "label": "Placeholder for Form Field",
+        "description": "Placeholder to Give Email"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "buttonText",
+        "label": "Label For Subscription Button",
+        "description": "Label For Subscription Button"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "socialTitle",
+        "label": "Title for Social Icon Section",
+        "description": "Title for Social Icon Section"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "titleFirstColumn",
+        "label": "Title For First Column",
+        "description": "Title For First Column"
+      },
+      {
+        "component": "richtext",
+        "name": "config",
+        "value": "",
+        "label": "Footer First Column Config Menu",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "titleSecondColumn",
+        "label": "Title For Second Column",
+        "description": "Title For Second Column"
+      },
+      {
+        "component": "richtext",
+        "name": "configSecondColumn",
+        "value": "",
+        "label": "Footer Second Column Config Menu",
+        "valueType": "string",
+        "required": true
+      },
+       {
+        "component": "text",
+        "valueType": "string",
+        "name": "titleThirdColumn",
+        "label": "Title For Third Column",
+        "description": "Title For Third Column"
+      },
+      {
+        "component": "richtext",
+        "name": "configThirdColumn",
+        "value": "",
+        "label": "Footer Third Column Config Menu",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "copyrightLinks",
+        "value": "",
+        "label": "Copyright Links for Footer",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "boolean",
+        "name": "showGlobal",
+        "label": "Show Global Icon and Text",
+        "valueType": "boolean"
+      }
+    ]
+  },
+  {
+      "id": "footer-icon",
+      "fields": [
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "iconImage",
+          "label": "Icon Image",
+          "multi": false
+        },
+        {
+        "component": "aem-content",
+        "name": "iconURL",
+        "label": "Footer Icon URL",
+        "description": "URL the Footer Icon should link to"
+        }
+      ]
+    },
+  {
+    "id": "article-card-item",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Article Image",
+        "description": "Upload or select an article image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Image Alt Text",
+        "description": "Alternative text for the article image",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "date",
+        "label": "Article Date",
+        "description": "Publication date of the article (e.g., February 10, 2025)",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Article Title",
+        "description": "Main title of the article",
+        "value": "",
+        "validation": {
+          "required": true
+        }
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Article Description",
+        "description": "Brief description or excerpt of the article",
+        "valueType": "string",
+        "value": ""
+      },
+      {
+        "component": "aem-content",
+        "name": "link",
+        "label": "Article Link",
+        "description": "Link to the full article",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "header",
+    "fields": [
+      {
+        "component": "aem-content",
+        "name": "asusLogoUrl",
+        "label": "ASUS Logo URL",
+        "description": "URL the ASUS logo should link to"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "asusLogoAltText",
+        "label": "ASUS Logo Alt Text",
+        "description": "Alternative text for the ASUS logo"
+      },
+      {
+        "component": "reference",
+        "name": "asusLogoImage",
+        "label": "ASUS Logo Image",
+        "description": "Select ASUS logo image from DAM",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "rogLogoAltText",
+        "label": "ROG Logo Alt Text",
+        "description": "Alternative text for the ROG logo"
+      },
+      {
+        "component": "reference",
+        "name": "rogLogoImage",
+        "label": "ROG Logo Image",
+        "description": "Select ROG logo image from DAM",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "gamingPcLogoAltText",
+        "label": "Gaming PC Logo Alt Text",
+        "description": "Alternative text for the Gaming PC logo"
+      },
+      {
+        "component": "reference",
+        "name": "gamingPcLogoImage",
+        "label": "Gaming PC Logo Image",
+        "description": "Select Gaming PC logo image from DAM",
+        "multi": false
+      },
+      {
+        "component": "richtext",
+        "name": "navLinks",
+        "label": "Navigation Links",
+        "description": "Enter navigation links using rich text editor",
+        "valueType": "string"
+      },
+      {
+        "component": "richtext",
+        "name": "profileMenu",
+        "value": "",
+        "label": "Profile Menu Items",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "profileMenuLogin",
+        "value": "",
+        "label": "Profile Menu Items for Login",
+        "valueType": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "id": "carousel",
+    "fields": [
+      {
+        "component": "number",
+        "name": "imageAutoplayDuration",
+        "label": "Image Autoplay Duration (seconds)",
+        "value": 5,
+        "validation": {
+          "min": 1,
+          "max": 30
+        }
+      },
+      {
+        "component": "number",
+        "name": "videoAutoplayDuration", 
+        "label": "Video Autoplay Duration (seconds)",
+        "value": 8,
+        "validation": {
+          "min": 1,
+          "max": 60
+        }
+      }
+    ]
+  },
+  {
+    "id": "carousel-slide",
+    "fields": [
+      {
+        "component": "text",
+        "name": "title",
+        "label": "Title",
+        "valueType": "string",
+        "validation": {
+          "required": true
+        }
+      },
+      {
+        "component": "text", 
+        "name": "subtitle",
+        "label": "Subtitle",
+        "valueType": "string"
+      },
+      {
+        "component": "reference",
+        "name": "media",
+        "label": "Media",
+        "multi": false,
+        "valueType": "string",
+        "validation": {
+          "required": true
+        }
+      },
+      {
+        "component": "text",
+        "name": "mediaAlt",
+        "label": "Media Alt Text",
+        "valueType": "string",
+        "validation": {
+          "required": true
+        }
+      },
+      {
+        "component": "text",
+        "name": "ctaText",
+        "label": "CTA Button Text",
+        "valueType": "string"
+      },
+      {
+        "component": "select",
+        "name": "ctaLocation",
+        "label": "CTA Button Location",
+        "valueType": "string",
+        "options": [
+            {
+              "name": "Start Top",
+              "value": "start-top"
+            },
+            {
+              "name": "Start Center",
+              "value": "start-center"
+            },
+            {
+              "name": "star bottom",
+              "value": "start-bottom"
+            },
+            {
+              "name": "Center Top",
+              "value": "center-top"
+            },
+            {
+              "name": "Center Center",
+              "value": "center-center"
+            },
+            {
+              "name": "Center Bottom",
+              "value": "center-bottom"
+            },
+            {
+              "name": "End Top",
+              "value": "end-top"
+            },
+            {
+              "name": "End Center",
+              "value": "end-center"
+            },
+            {
+              "name": "End Bottom:",
+              "value": "end-bottom"
+            }
+          ],
+          "value": "center-center"
+      },
+      {
+        "component": "aem-content",
+        "name": "ctaLink",
+        "label": "CTA Button Link",
+        "multi": false,
+        "valueType": "string"
+      },
+      {
+        "component": "boolean",
+        "name": "openNewTab",
+        "label": "Open in New Tab",
+        "valueType": "boolean"
+      }
+    ]
+  },
+  {
+      "id": "top-picks-card",
+      "fields": [
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "image",
+          "label": "Product Image",
+          "description": "Upload or select a product image",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "label",
+          "label": "Product Label/Category",
+          "description": "Small label text (e.g., 'Top picks', 'Featured', etc.)",
+          "value": "Top picks"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "title",
+          "label": "Product Title",
+          "description": "Main product title or name",
+          "value": "",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "ctaLinkName",
+          "label": "CTA Link Name",
+          "description": "Text for the call-to-action button (e.g., 'View configs', 'Learn more')",
+          "value": "View configs"
+        },
+        {
+          "component": "aem-content",
+          "name": "link",
+          "label": "Call-to-Action Link",
+          "description": "Link URL for the call-to-action",
+          "valueType": "string"
+        }
+      ]
+    },
+    {
+    "id": "product-card",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "sectionTitle",
+        "label": "Section Title",
+        "description": "Title displayed above the product cards",
+        "value": "Hot Products"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "itemCount",
+        "label": "Number of Items",
+        "description": "Number of product cards to display in the carousel (default: 3)",
+        "value": "3",
+        "validation": {
+          "min": 1,
+          "max": 10
+        }
+      },
+      {
+        "component": "aem-content",
+        "name": "viewAllLink",
+        "label": "View All Link",
+        "description": "URL for the 'View all' link",
+        "valueType": "string",
+        "value": "/products"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "viewAllText",
+        "label": "View All Text",
+        "description": "Text for the 'View all' link",
+        "value": "View all"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "apiEndpoint",
+        "label": "API Endpoint",
+        "description": "GraphQL API endpoint for fetching product data",
+        "value": "/mock-api/products"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "autoplayInterval",
+        "label": "Auto-play Interval",
+        "description": "Auto-play interval in milliseconds (0 to disable)",
+        "value": "5000",
+        "validation": {
+          "min": 0,
+          "max": 15000
+        }
+      }
+    ]
+  },
+  {
+    "id": "hot-products",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Section Title",
+        "description": "Title displayed above the hot products section",
+        "value": "Hot Products"
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "productsToShow",
+        "label": "Products to Show",
+        "description": "Number of products to display in the carousel (default: 3)",
+        "value": 3
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "compareLabel",
+        "label": "Compare Label",
+        "description": "Text for the compare checkbox label",
+        "value": "Compare"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "buyNowText",
+        "label": "Buy Now Button Text",
+        "description": "Text for the buy now call-to-action button",
+        "value": "Buy now"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "quickViewText",
+        "label": "Quick View Button Text",
+        "description": "Text for the quick view button that appears on product image hover",
+        "value": "Quick view"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "estoreLabel",
+        "label": "Estore Price Label",
+        "description": "Label text for the estore price section",
+        "value": "ASUS estore price"
+      },
+      {
+        "component": "richtext",
+        "name": "estoreTooltip",
+        "label": "Estore Price Tooltip",
+        "description": "Tooltip content explaining the estore price",
+        "valueType": "string",
+        "value": "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "viewAllText",
+        "label": "View All Link Text",
+        "description": "Text for the 'View all' link at the bottom",
+        "value": "View all"
+      },
+      {
+        "component": "aem-content",
+        "name": "viewAllLink",
+        "label": "View All Link URL",
+        "description": "URL for the 'View all' link",
+        "valueType": "string",
+        "value": "#"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "productPreviewModalPath",
+        "label": "Product Preview Modal Path",
+        "description": "Path to the product preview modal content page (default: /modals/product-preview)",
+        "value": "/modals/product-preview"
+      }
+    ]
+  },
+  {
+    "id": "product-preview",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fpsDetailsModalPath",
+        "label": "FPS Details Modal Path",
+        "description": "Path to the FPS details modal content page (default: /content/asus-cto/language-master/en/modals/fps-details)",
+        "value": "/content/asus-cto/language-master/en/modals/fps-details"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "timeSpyScoreModalPath",
+        "label": "Time Spy Score Modal Path",
+        "description": "Path to the Time Spy Score modal content page (default: /content/asus-cto/language-master/en/modals/time-spy-score)",
+        "value": "/content/asus-cto/language-master/en/modals/time-spy-score"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "dataSourceTooltip",
+        "label": "Data Source Tooltip",
+        "description": "Tooltip text for the data source information icon (default: All FPS performance data presented are theoretical...)",
+        "value": "All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ."
+      }
+    ]
+  },
   {
     "id": "help-me-choose",
     "fields": [
@@ -18,5 +1133,179 @@
         "value": ""
       }
     ]
-  }
+  },
+  {
+    "id": "featured-news-articles",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": "Featured News Articles"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "seeAllButtonText",
+        "label": "See All Articles Button Text",
+        "value": "See all News Articles"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "seeAllButtonLinkTo",
+        "label": "See All Articles Button LinkTo"
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "openLinkInNewTab",
+        "label": "Open link in new tab"
+      },
+      {
+        "component": "number",
+        "name": "itemCount",
+        "label": "Number of Items",
+        "value": 7,
+        "description": "Number of cards to display in the carousel (max:7)",
+        "validation": {
+          "min": 1,
+          "max": 7
+        }
+      }
+    ]
+  },
+  {
+    "id": "featured-news-article",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "articleTitle",
+        "label": "Title of the Article"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "articleSummary",
+        "label": "Article Summary"
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "media",
+        "label": "Media"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Image Alt"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "postedDate",
+        "label": "Posted Date"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "articleLinkTo",
+        "label": "Article LinkTo"
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "articleOpenInNewTab",
+        "label": "Select to open in new tab"
+      }
+    ]
+  },
+  {
+      "id": "our-advantages",
+      "fields": [
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "title",
+          "label": "Title",
+          "value": "Our Advantages"
+        },
+        {
+          "component": "number",
+          "name": "itemCount",
+          "label": "Number of Items",
+          "value": 3,
+          "description": "Number of advantage cards to display in the carousel (max: 4)",
+          "validation": {
+            "min": 1,
+            "max": 4
+          }
+        },
+        {
+          "component": "number",
+          "name": "imageAutoplayDuration",
+          "label": "Image Autoplay Duration (seconds)",
+          "value": 5,
+          "validation": {
+            "min": 1,
+            "max": 30
+          }
+        }
+      ]
+    },
+    {
+      "id": "our-advantage",
+      "fields": [
+        {
+          "component": "text",
+          "name": "title",
+          "value": "",
+          "label": "Headline",
+          "valueType": "string",
+          "required": true
+        },
+        {
+          "component": "text",
+          "name": "details",
+          "value": "",
+          "label": "Details",
+          "valueType": "string"
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "media",
+          "label": "Cover Image",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "imageAlt",
+          "label": "Image Alt"
+        },
+        {
+          "component": "text",
+          "name": "navigation",
+          "value": "",
+          "label": "Navigation Button Text",
+          "valueType": "string"
+        },
+        {
+          "component": "aem-content",
+          "valueType": "string",
+          "name": "link",
+          "label": "Navigation Button LinkTo"
+        },
+        {
+          "component": "boolean",
+          "valueType": "boolean",
+          "name": "articleOpenInNewTab",
+          "label": "Select to open in new tab"
+        }
+      ]
+    }
 ]
