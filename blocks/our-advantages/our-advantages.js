@@ -1,6 +1,6 @@
 import { isAuthorEnvironment, safeText } from "../../scripts/utils.js";
 import { transferInstrumentation } from "../../scripts/utils.js";
-import { loadSwiper } from '../../scripts/swiper-loader.js';
+import { loadScript } from '../../scripts/aem.js';
 const itemsStartIndex = 3;
 export default async function decorate(block) {
   const divs = block.children;
@@ -68,7 +68,7 @@ export default async function decorate(block) {
                     ${details}
                   </p>
                   <button class="cmp-advantage-card__btn btn">${navigate}<img
-                  alt="play-icon" src="/content/dam/eds-enablement-xwalk/asus-cto-sites/icon-play-filled.svg" /></button>
+                  alt="play-icon" src="${window.hlx.codeBasePath}/icons/icon-play-filled.svg" /></button>
                 </div>
               </div>
             </div>
@@ -97,7 +97,8 @@ export default async function decorate(block) {
   block.append(mockupContainer);
 
   // trigger block
-  await loadSwiper();
+  await loadScript('https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js');
+  await import("../../scripts/carousel.js");
   await import("./uifrontend_advantage-card.js");
 
   if (window.initializeSwiperOnAEMCarousel) {
