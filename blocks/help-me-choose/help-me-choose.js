@@ -10,7 +10,6 @@ import { loadSwiper } from '../../scripts/swiper-loader.js';
  * @returns {Promise<void>}
  */
 export default async function decorate(block) {
-  
   // Load noUiSlider only once
   await loadNoUiSlider();
 

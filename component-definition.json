@@ -185,7 +185,10 @@
                   "name": "Help Me Choose",
                   "model": "help-me-choose",
                   "title": "Select The Game You Play",
-                  "description": "We will recommend a plan that suits you most!"
+                  "description": "We will recommend a plan that suits you most!",
+                  "yourBudgetLabel": "Your Budget",
+                  "HelpMeChooseButtonLabel": "Help me choose",
+                  "ResetButtonLabel": "Reset"
                 }
               }
             }
