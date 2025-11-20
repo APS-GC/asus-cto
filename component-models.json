@@ -1116,7 +1116,7 @@
     ]
   },
   {
-    "id": "help-me-choose1",
+    "id": "help-me-choose",
     "fields": [
       {
         "component": "text",
