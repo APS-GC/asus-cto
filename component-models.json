@@ -1124,13 +1124,6 @@
         "value": "",
         "label": "Quote",
         "valueType": "string"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "author",
-        "label": "Author",
-        "value": ""
       }
     ]
   },
