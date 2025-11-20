@@ -1,0 +1,19 @@
+{
+  "models": [
+    {
+      "id": "help-me-choose",
+      "fields": [
+        {
+          "name": "title",
+          "label": "Title",
+          "component": "richtext"
+        },
+        {
+          "name": "description",
+          "label": "Description",
+          "component": "text"
+        }
+      ]
+    }
+  ]
+}

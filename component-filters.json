@@ -16,6 +16,7 @@
       "cards",
       "columns",
       "fragment",
+      "quote",
       "carousel",
       "top-picks-cards",
       "footer",
@@ -147,12 +148,6 @@
       "id": "our-advantages",
       "components": [
         "our-advantage"
-      ]
-    },
-    {
-      "id": "help-me-choose",
-      "components": [
-        "help-me-choose"
       ]
     }
 ]
