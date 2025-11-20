@@ -1133,5 +1133,24 @@
         "value": "We will recommend a plan that suits you most!"
       }
     ]
+  },
+  {
+    "id": "product-compare",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "viewcomparison",
+        "label": "View Comparison",
+        "value": ""
+      }
+    ]
   }
 ]
