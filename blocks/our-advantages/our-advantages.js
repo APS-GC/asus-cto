@@ -49,19 +49,26 @@ export default async function decorate(block) {
     const divs = card.querySelectorAll("div");
     const headline = safeText(divs.item(1));
     const details = safeText(divs.item(2));
-    const navigate = safeText(divs.item(3));
+    const imageAlt = safeText(divs.item(3));
+    const buttonText = safeText(divs.item(4));
+    const buttonTextLink = safeText(divs.item(5));
+    const isTargetBlank = divs.item(6).textContent === 'true' ? 1 : 0;
     const mediaHTML = card.querySelector("picture")?.innerHTML ?? "";
+    if(card.querySelector("picture")&& imageAlt){
+      card.querySelector("picture").querySelector('img').alt = imageAlt;
+    }
 
+
+    // <video class="cmp-advantage-card__video" playsinline controls>
+    //               <source
+    //                 type="video/mp4">
+    //               Your browser does not support the video tag.
+    //             </video>
     const mockup = document.createRange().createContextualFragment(`
-          <div class="cmp-carousel__item">
+          <div class="cmp-carousel__item" data-url="${buttonTextLink}" data-blank="${isTargetBlank}">
             <div class="cmp-advantage-card">
               <div class="cmp-advantage-card__image-wrapper">
                 ${mediaHTML}
-                <video class="cmp-advantage-card__video" playsinline controls>
-                  <source
-                    type="video/mp4">
-                  Your browser does not support the video tag.
-                </video>
               </div>
               <div class="cmp-advantage-card__overlay">
                 <div class="cmp-advantage-card__content">
@@ -69,7 +76,7 @@ export default async function decorate(block) {
                   <p class="cmp-advantage-card__desc">
                     ${details}
                   </p>
-                  <button class="cmp-advantage-card__btn btn">${navigate}<img
+                  <button class="cmp-advantage-card__btn btn">${buttonText}<img
                   alt="play-icon" src="${window.hlx.codeBasePath}/icons/icon-play-filled.svg" /></button>
                 </div>
               </div>
