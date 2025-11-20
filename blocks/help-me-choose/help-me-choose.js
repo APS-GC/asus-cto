@@ -15,7 +15,7 @@ export default async function decorate(block) {
   await loadNoUiSlider();
 
   // Once loaded, render the component
-  // await renderHelpMeChoose(block);
+  await renderHelpMeChoose(block);
 
   // Initialize existing game forms
   initSelectGameForms(document.body);
@@ -137,7 +137,10 @@ async function renderHelpMeChoose(block) {
   moveInstrumentation(block, helpMeChooseContainer);
 
   // Replace in DOM
-  block.replaceChildren(...helpMeChooseContainer.children);
+  // Replace block content
+    block.textContent = '';
+    block.appendChild(...helpMeChooseContainer.children);
+  // block.replaceChildren(...helpMeChooseContainer.children);
 
   // Initialize carousel *after* DOM insertion
   initializeSwiperCarousel(block);
