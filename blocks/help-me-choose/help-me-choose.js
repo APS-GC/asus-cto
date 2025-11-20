@@ -155,7 +155,7 @@ async function renderHelpMeChoose(block) {
     el.setAttribute('data-aue-label', 'Help Me Choose');
   }
 
-  addAueAttributes(helpMeChooseContainer);
+  addAueAttributes(block);
 
 
   // Move instrumentation
@@ -312,7 +312,6 @@ const toNumber = (v) => {
  */
 async function initializeSwiperCarousel(block) {
   const swiperContainer = block.querySelector('.swiper');
-  debugger
   if (!swiperContainer) return;
 
   await loadSwiper();
