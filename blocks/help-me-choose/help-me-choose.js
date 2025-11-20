@@ -1,6 +1,7 @@
 import { loadScript } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
-import { fetchGameList } from '../../scripts/api-service.js';
+import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
+import { API_URIS } from '../../constants/api-constants.js';
 
 
 /**
@@ -37,7 +38,9 @@ async function renderHelpMeChoose(block) {
   const AuthoredData = authoredRows.map(row => row.textContent.trim());
 
   // Fetch products
-  const gameList = await fetchGameList();
+
+  const endpoint = await getApiEndpoint(API_URIS.FETCH_GAME_LIST_EN);
+  const gameList = await fetchGameList(endpoint);
 
   if(!gameList?.results?.gameList || gameList?.results?.gameList.length == -1) return;
 
