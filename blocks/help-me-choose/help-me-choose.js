@@ -20,9 +20,9 @@ export default async function decorate(block) {
   // Initialize existing game forms
   initSelectGameForms(document.body);
 
-  initFilterComponents(document.body);
+  // initFilterComponents(document.body);
   // Setup a single MutationObserver (if not already)
-  setupSelectGameFormsObserver();
+  // setupSelectGameFormsObserver();
 }
 
 
