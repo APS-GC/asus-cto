@@ -142,6 +142,10 @@ async function renderHelpMeChoose(block) {
   initializeSwiperCarousel(block);
 
   function addAueAttributes(el) {
+    el.setAttribute(
+        'data-aue-resource',
+        'urn:aemconnection:/content/asus-cto/language-master/en/development/dev/demo/desktops/jcr:content/root/section_810842420/block',
+    );
     el.setAttribute('data-aue-type', 'component');
     el.setAttribute('data-aue-behavior', 'component');
     el.setAttribute('data-aue-model', 'help-me-choose');
