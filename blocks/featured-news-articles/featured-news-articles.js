@@ -37,7 +37,7 @@ export default async function decorate(block) {
   }">
             ${
               divs[1]?.textContent?.trim() || "See all News Articles"
-            }<img src="../../icons/icon-arrow.svg" alt="Arrow Right">
+            }<img src="${`${window.hlx.codeBasePath}/icons/icon-arrow.svg`}" alt="Arrow Right">
             </a>
         </div>`);
 
