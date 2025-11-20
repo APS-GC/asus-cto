@@ -105,6 +105,9 @@ export function createOptimizedPicture(
  * @returns {boolean} True if running in Universal Editor
  */
 export function isUniversalEditor() {
+   // TODO: returning false by default just for the demo because on published URLs, we are getting API CORS error
+  return false;
+  
   return (
     window.location.pathname.includes('/editor.html') ||
     window.location.search.includes('editor') ||
