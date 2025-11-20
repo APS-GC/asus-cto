@@ -1120,39 +1120,17 @@
     "fields": [
       {
         "component": "richtext",
-        "name": "quote",
+        "name": "title",
         "value": "",
-        "label": "Quote",
+        "label": "Title",
         "valueType": "string"
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "author",
-        "label": "Author",
+        "name": "description",
+        "label": "Description",
         "value": ""
-      },
-      {
-        "component": "select",
-        "name": "classes",
-        "value": "",
-        "label": "Background Color",
-        "description": "The quote background color",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Red",
-            "value": "bg-red"
-          },
-          {
-            "name": "Green",
-            "value": "bg-green"
-          },
-          {
-            "name": "Blue",
-            "value": "bg-blue"
-          }
-        ]
       }
     ]
   },
