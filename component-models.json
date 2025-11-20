@@ -1120,10 +1120,17 @@
     "fields": [
       {
         "component": "richtext",
-        "name": "quote",
+        "name": "title",
         "value": "",
-        "label": "Quote",
+        "label": "Title",
         "valueType": "string"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description",
+        "label": "Description",
+        "value": ""
       }
     ]
   },

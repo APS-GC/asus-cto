@@ -184,8 +184,8 @@
                 "template": {
                   "name": "Quote",
                   "model": "help-me-choose",
-                  "quote": "Select The Game You Play",
-                  "author": "We will recommend a plan that suits you most!"
+                  "title": "Select The Game You Play",
+                  "description": "We will recommend a plan that suits you most!"
                 }
               }
             }
