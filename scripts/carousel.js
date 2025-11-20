@@ -501,7 +501,7 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
   const finalConfig = isCustomEffect ? { ...baseConfig, ...customEffectSettings } : baseConfig;
 
   // Initialize Swiper
-  const swiperInstance = new Swiper(swiperContainer, finalConfig);
+  const swiperInstance = new window.Swiper(swiperContainer, finalConfig);
 
   // Store reference for the observer to use
   swiperContainer.swiperInstance = swiperInstance;
