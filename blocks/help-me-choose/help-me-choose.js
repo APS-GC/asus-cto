@@ -15,7 +15,7 @@ export default async function decorate(block) {
   // await loadNoUiSlider();
 
   // Once loaded, render the component
-  await renderHelpMeChoose(block);
+  // await renderHelpMeChoose(block);
 
   // Initialize existing game forms
   // initSelectGameForms(document.body);
