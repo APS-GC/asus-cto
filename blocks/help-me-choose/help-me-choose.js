@@ -36,6 +36,7 @@ async function renderHelpMeChoose(block) {
 
   const authoredRows = [...block.children];
   const AuthoredData = authoredRows.map(row => row.textContent.trim());
+  console.log('Authored Data:', AuthoredData);
 
   // Fetch products
 
@@ -81,14 +82,14 @@ async function renderHelpMeChoose(block) {
 
               <div class="budget-bar">
                   <div class="budget-left">
-                      <label for="budget-min-value">Your budget:</label>
+                      <label for="budget-min-value">${escapeHtml(AuthoredData[2] || 'Your Budget')}:</label>
                   </div>
                   <div class="budget-center">${generateBudgetCenterHTML(lowestPrice, highestPrice)}</div>
                   <input type="hidden" name="min-budget" id="min-budget" value="" />
                   <input type="hidden" name="max-budget" id="max-budget" value="" />
                   <div class="budget-actions">
-                      <button type="reset" class="reset-button btn btn-link">Reset</button>
-                      <button type="submit" class="btn" disabled>Help me choose</button>
+                      <button type="reset" class="reset-button btn btn-link">${escapeHtml(AuthoredData[4] || 'Reset')}</button>
+                      <button type="submit" class="btn" disabled>${escapeHtml(AuthoredData[3] || 'Help me choose')}</button>
                   </div>
               </div>
           </form>
@@ -106,7 +107,7 @@ async function renderHelpMeChoose(block) {
             </div>
             <div class="vertical-divider"></div>
             <div class="budget">
-                <div class="your-budget">Your budget: 
+                <div class="your-budget">${escapeHtml(AuthoredData[2] || 'Your Budget')}:
                     <div>
                         <span class="confirmed-budget-min-value" attr-value="${defaultMinBudget}">${_formatCurrency(lowestPrice)}</span>
                         <span>-</span>
@@ -117,8 +118,8 @@ async function renderHelpMeChoose(block) {
                 <input type="hidden" name="min-budget" id="min-budget" value="" />
                 <input type="hidden" name="max-budget" id="max-budget" value="" />
                 <div class="budget-actions">
-                    <button type="reset" class="reset-button btn btn-link">Reset</button>
-                    <button type="submit" class="btn btn-link">Confirm</button>
+                    <button type="reset" class="reset-button btn btn-link">${escapeHtml(AuthoredData[4] || 'Reset')}</button>
+                    <button type="submit" class="btn btn-link">${escapeHtml(AuthoredData[5] || 'Confirm')}</button>
                 </div>
             </div>
         </form>
@@ -133,7 +134,7 @@ async function renderHelpMeChoose(block) {
   helpMeChooseContainer.innerHTML = html;
 
   // Move instrumentation
-  moveInstrumentation(block, helpMeChooseContainer);
+  // moveInstrumentation(block, helpMeChooseContainer);
 
   // Replace in DOM
   block.replaceChildren(...helpMeChooseContainer.children);
