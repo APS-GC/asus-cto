@@ -1,6 +1,6 @@
 import { isAuthorEnvironment, safeText } from "../../scripts/utils.js";
 import { transferInstrumentation } from "../../scripts/utils.js";
-
+import { loadSwiper } from '../../scripts/swiper-loader.js';
 const itemsStartIndex = 3;
 export default async function decorate(block) {
   const divs = block.children;
@@ -97,7 +97,7 @@ export default async function decorate(block) {
   block.append(mockupContainer);
 
   // trigger block
-  await import("../../scripts/carousel.js");
+  await loadSwiper();
   await import("./uifrontend_advantage-card.js");
 
   if (window.initializeSwiperOnAEMCarousel) {
