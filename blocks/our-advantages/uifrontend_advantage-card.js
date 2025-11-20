@@ -96,3 +96,13 @@ advantageCardsWrapper.addEventListener('click', function (event) {
     };
   }
 });
+
+
+
+advantageCardsWrapper.querySelectorAll('.cmp-carousel__item').forEach((item, index) => {
+  item.addEventListener('click', () => {
+    const link = item.getAttribute('data-url');
+    const isBlank = item.getAttribute('data-blank');
+    window.open(link,isBlank?'_blank':"_self")
+  });
+});
