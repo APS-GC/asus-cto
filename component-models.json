@@ -1119,7 +1119,7 @@
     "id": "help-me-choose",
     "fields": [
       {
-        "component": "text",
+        "component": "richtext",
         "name": "title",
         "value": "",
         "label": "Title",
