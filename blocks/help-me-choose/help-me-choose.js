@@ -140,6 +140,9 @@ async function renderHelpMeChoose(block) {
 
   // Initialize carousel *after* DOM insertion
   initializeSwiperCarousel(block);
+
+  // Move instrumentation
+  moveInstrumentation(block, helpMeChooseContainer);
 }
 
 function _isHomePage(){
