@@ -6,8 +6,7 @@ import {
   decorateSections,
   loadBlock,
   loadScript,
-  loadSections,
-  updateSectionMetadata,
+  loadSections
 } from './aem.js';
 
 import { decorateRichtext } from './editor-support-rte.js';
@@ -79,7 +78,7 @@ async function applyChanges(event) {
           decorateSections(parentElement);
           decorateBlocks(parentElement);
           // Update section metadata for UE changes
-          updateSectionMetadata(newSection);
+          // updateSectionMetadata(newSection);
           await loadSections(parentElement);
           element.remove();
           newSection.style.display = null;
