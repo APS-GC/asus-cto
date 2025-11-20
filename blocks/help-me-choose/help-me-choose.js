@@ -2,7 +2,7 @@ import { loadScript } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
-
+import { loadSwiper } from '../../scripts/swiper-loader.js';
 
 /**
  * Decorates the help-me-choose block, initializing the carousel and form.
@@ -53,43 +53,8 @@ async function renderHelpMeChoose(block) {
   // Build the HTML in a fragment / string, then insert once
   const html = 
   
-  !_isHomePage() ? `
-   
-  <div class="filter-bar container-xl"> 
-    <div class="filters-container container">
-        <form class="filters">
-            <div class="selected-games">
-                <p class="selected-games-text">Selected game:</p>
-                <div class="collapsed-view">
-                </div>
-                <div class="expanded-view">${generateGameItemsHTML(gameList?.results?.gameList)}</div>
-            </div>
-            <div class="vertical-divider"></div>
-            <div class="budget">
-                <div class="your-budget">Your budget: 
-                    <div>
-                        <span class="confirmed-budget-min-value" attr-value="${defaultMinBudget}">${_formatCurrency(lowestPrice)}</span>
-                        <span>-</span>
-                        <span class="confirmed-budget-max-value" attr-value="${defaultMaxBudget}">${_formatCurrency(highestPrice)}</span>
-                    </div>
-                </div>
-                <div class="budget-center">${generateBudgetCenterHTML(lowestPrice, highestPrice)}</div>
-                <input type="hidden" name="min-budget" id="min-budget" value="" />
-                <input type="hidden" name="max-budget" id="max-budget" value="" />
-                <div class="budget-actions">
-                    <button type="reset" class="reset-button btn btn-link">Reset</button>
-                    <button type="submit" class="btn btn-link">Confirm</button>
-                </div>
-            </div>
-        </form>
-        <div class="filter-button">
-            Filter 
-         <span class="icon icon--arrow-bottom" id="filter-icon"></span>
-        </div>
-    </div>
-</div>` : `
-
-<div class="game-recommendation">
+  _isHomePage() ? `
+  <div class="game-recommendation">
       <div class="carousel panelcontainer">
           <div class="section-heading">
               <div class="section-heading__text-group">
@@ -128,7 +93,42 @@ async function renderHelpMeChoose(block) {
               </div>
           </form>
       </div>
-    </div>`;
+    </div>` : `
+ 
+  <div class="filter-bar container-xl"> 
+    <div class="filters-container container">
+        <form class="filters">
+            <div class="selected-games">
+                <p class="selected-games-text">Selected game:</p>
+                <div class="collapsed-view">
+                </div>
+                <div class="expanded-view">${generateGameItemsHTML(gameList?.results?.gameList)}</div>
+            </div>
+            <div class="vertical-divider"></div>
+            <div class="budget">
+                <div class="your-budget">Your budget: 
+                    <div>
+                        <span class="confirmed-budget-min-value" attr-value="${defaultMinBudget}">${_formatCurrency(lowestPrice)}</span>
+                        <span>-</span>
+                        <span class="confirmed-budget-max-value" attr-value="${defaultMaxBudget}">${_formatCurrency(highestPrice)}</span>
+                    </div>
+                </div>
+                <div class="budget-center">${generateBudgetCenterHTML(lowestPrice, highestPrice)}</div>
+                <input type="hidden" name="min-budget" id="min-budget" value="" />
+                <input type="hidden" name="max-budget" id="max-budget" value="" />
+                <div class="budget-actions">
+                    <button type="reset" class="reset-button btn btn-link">Reset</button>
+                    <button type="submit" class="btn btn-link">Confirm</button>
+                </div>
+            </div>
+        </form>
+        <div class="filter-button">
+            Filter 
+         <span class="icon icon--arrow-bottom" id="filter-icon"></span>
+        </div>
+    </div>
+</div>
+`;
 
   helpMeChooseContainer.innerHTML = html;
 
@@ -143,7 +143,11 @@ async function renderHelpMeChoose(block) {
 }
 
 function _isHomePage(){
-  return window.location.pathname === '/';
+  const patterns = [/^\/product-matches\/.+$/];
+  if (patterns.some(regex => regex.test(window.location.pathname))) {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -290,8 +294,10 @@ async function initializeSwiperCarousel(block) {
   const swiperContainer = block.querySelector('.swiper');
   if (!swiperContainer) return;
 
+  await loadSwiper();
+
   // Use modules explicitly (if using swiper modular build)
-  const swiper = new Swiper(swiperContainer, {
+  const swiper = new window.Swiper(swiperContainer, {
     // Basic options
     slidesPerView: 2,
     spaceBetween: 16,
