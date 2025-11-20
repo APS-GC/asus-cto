@@ -137,7 +137,7 @@ async function renderHelpMeChoose(block) {
 
   // Replace in DOM
   // block.replaceChildren(...helpMeChooseContainer.children);
-  // block.innerHTML = "";
+  block.innerHTML = "";
   debugger
   block.append(...helpMeChooseContainer.children);
 
