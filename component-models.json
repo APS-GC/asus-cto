@@ -1123,14 +1123,14 @@
         "valueType": "string",
         "name": "title",
         "label": "Title",
-        "value": "Select The Game You Play"
+        "value": ""
       },
       {
         "component": "richtext",
         "valueType": "string",
         "name": "description",
         "label": "Description",
-        "value": "We will recommend a plan that suits you most!"
+        "value": ""
       }
     ]
   },
