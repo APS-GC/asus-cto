@@ -168,7 +168,7 @@ function generateHeroBannerHTML(slide, config, index = 0) {
       slide.mediaAlt || 'Hero Banner',
       isFirstSlide, // eager=true for first slide (LCP optimization!)
       [
-        { media: '(min-width: 1200px)', width: '1400' },
+        { media: '(min-width: 1200px)', width: '750' },
         { media: '(min-width: 768px)', width: '1024' },
         { width: '640' }
       ],
