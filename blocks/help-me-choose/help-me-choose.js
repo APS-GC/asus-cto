@@ -58,8 +58,8 @@ async function renderHelpMeChoose(block) {
       <div class="carousel panelcontainer">
           <div class="section-heading">
               <div class="section-heading__text-group">
-                  <h2 class="section-heading__title">${escapeHtml(AuthoredData[0] || '')}</h2>
-                  <p class="section-heading__description">${escapeHtml(AuthoredData[1] || '')}</p>
+                  <h2 class="section-heading__title" data-aue-prop="title" data-aue-label="Title" data-aue-type="text">${escapeHtml(AuthoredData[0] || '')}</h2>
+                  <p class="section-heading__description" data-aue-prop="description" data-aue-label="Description" data-aue-type="text">${escapeHtml(AuthoredData[1] || '')}</p>
               </div>
               <div class="cmp-carousel__actions1_hmc">
                   <button class="cmp-carousel__action_hmc cmp-carousel__action_hmc--previous" type="button" aria-label="Previous">
@@ -135,6 +135,9 @@ async function renderHelpMeChoose(block) {
   // Move instrumentation
   moveInstrumentation(block, helpMeChooseContainer);
 
+  const clonedBlock = block.cloneNode(true);
+
+
   // Replace in DOM
   block.replaceChildren(...helpMeChooseContainer.children);
 
@@ -142,7 +145,7 @@ async function renderHelpMeChoose(block) {
   initializeSwiperCarousel(block);
 
   // Move instrumentation
-  moveInstrumentation(block, helpMeChooseContainer);
+  moveInstrumentation(clonedBlock, helpMeChooseContainer);
 }
 
 function _isHomePage(){
