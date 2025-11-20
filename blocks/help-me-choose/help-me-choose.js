@@ -137,10 +137,7 @@ async function renderHelpMeChoose(block) {
   // moveInstrumentation(block, helpMeChooseContainer);
 
   // Replace in DOM
-  // Replace block content
-    block.textContent = '';
-    block.appendChild(...helpMeChooseContainer.children);
-  // block.replaceChildren(...helpMeChooseContainer.children);
+  block.replaceChildren(...helpMeChooseContainer.children);
 
   // Initialize carousel *after* DOM insertion
   initializeSwiperCarousel(block);
