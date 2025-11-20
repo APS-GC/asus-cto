@@ -144,8 +144,22 @@ async function renderHelpMeChoose(block) {
   // Initialize carousel *after* DOM insertion
   initializeSwiperCarousel(block);
 
+  function addAueAttributes(el) {
+    el.setAttribute(
+        'data-aue-resource',
+        'urn:aemconnection:/content/asus-cto/language-master/en/development/dev/demo/desktops/jcr:content/root/section_810842420/block',
+    );
+    el.setAttribute('data-aue-type', 'component');
+    el.setAttribute('data-aue-behavior', 'component');
+    el.setAttribute('data-aue-model', 'help-me-choose');
+    el.setAttribute('data-aue-label', 'Help Me Choose');
+  }
+
+  addAueAttributes(helpMeChooseContainer);
+
+
   // Move instrumentation
-  moveInstrumentation(clonedBlock, helpMeChooseContainer);
+  // moveInstrumentation(clonedBlock, helpMeChooseContainer);
 }
 
 function _isHomePage(){
