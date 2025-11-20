@@ -11,7 +11,9 @@ export default async function decorate(block) {
     .createContextualFragment(`<div class='container'>
     <div class="carousel panelcontainer">
       <div class="section-heading content-center">
-        <h2>${title}</h2>
+        <div class="section-heading__text-group">
+          <h2 class="section-heading__title">${title}</h2>
+        </div>
       </div>
       <div
         class="cmp-carousel"
