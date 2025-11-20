@@ -134,10 +134,11 @@ async function renderHelpMeChoose(block) {
 
   // Move instrumentation
   moveInstrumentation(block, helpMeChooseContainer);
+  moveInstrumentation(block, helpMeChooseContainer.children);
 
   // Replace in DOM
   // block.replaceChildren(...helpMeChooseContainer.children);
-  block.innerHTML = "";
+  // block.innerHTML = "";
   debugger
   block.append(...helpMeChooseContainer.children);
 
