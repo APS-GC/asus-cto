@@ -1121,14 +1121,14 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "quote",
+        "name": "title",
         "label": "Title",
         "value": ""  
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "author",
+        "name": "description",
         "label": "Description",
         "value": ""
       }
