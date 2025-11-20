@@ -37,7 +37,7 @@ export default async function decorate(block) {
   }">
             ${
               divs[1]?.textContent?.trim() || "See all News Articles"
-            }<img src="/content/dam/eds-enablement-xwalk/asus-cto-sites/icon-arrow.svg" alt="Arrow Right">
+            }<img src="../../icons/icon-arrow.svg" alt="Arrow Right">
             </a>
         </div>`);
 
