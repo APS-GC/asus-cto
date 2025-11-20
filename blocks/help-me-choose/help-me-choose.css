@@ -647,13 +647,13 @@
   width: 100%;
 }
 
-.swiper {
+.help-me-choose .swiper {
   width: 100%;
   height: 100%;
-  padding-bottom: 40px; /* Space for pagination */
+  /* padding-bottom: 40px; Space for pagination */
 }
 
-.swiper-slide {
+.help-me-choose .swiper-slide {
   text-align: center;
   font-size: 18px;
   background: #fff;
@@ -665,8 +665,8 @@
 }
 
 /* Navigation Buttons */
-.swiper-button-next,
-.swiper-button-prev {
+.help-me-choose .swiper-button-next,
+.help-me-choose .swiper-button-prev {
   color: var(--color-primary-950);
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 50%;
@@ -675,34 +675,34 @@
   top: 40%; /* Adjust vertical position */
 }
 
-.swiper-button-next:after,
-.swiper-button-prev:after {
+.help-me-choose .swiper-button-next:after,
+.help-me-choose .swiper-button-prev:after {
   font-size: 20px;
   font-weight: bold;
 }
 
-.swiper-pagination {
+.help-me-choose .swiper-pagination {
   display: none;
 }
 
 /* Pagination Bullets */
-.swiper-pagination-bullet {
+.help-me-choose .swiper-pagination-bullet {
   background-color: var(--color-primary-300);
   opacity: 1;
 }
 
-.swiper-pagination-bullet-active {
+.help-me-choose .swiper-pagination-bullet-active {
   background-color: var(--color-primary-950);
 }
 
 /* Hide navigation on desktop where it's a static grid */
 @media (min-width: 1024px) {
-  .swiper-button-next,
-  .swiper-button-prev,
-  .swiper-pagination {
+  .help-me-choose .swiper-button-next,
+  .help-me-choose .swiper-button-prev,
+  .help-me-choose .swiper-pagination {
     display: none;
   }
-  .swiper {
+  .help-me-choose .swiper {
     padding-bottom: 0;
   }
 }
@@ -1022,7 +1022,7 @@
     background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="%23fff" d="m18 12-9 5.196V6.804z"/></svg>')
 }
 
-.swiper:not(.is-autoplay-enabled) .cmp-carousel__indicator--active {
+.help-me-choose .swiper:not(.is-autoplay-enabled) .cmp-carousel__indicator--active {
     background-color: var(--color-primary-950)
 }
 
