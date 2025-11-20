@@ -140,7 +140,7 @@
   {
     "id": "our-advantages",
     "components": [
-      "advantage-card"
+      "our-advantage"
     ]
   }
 ]
