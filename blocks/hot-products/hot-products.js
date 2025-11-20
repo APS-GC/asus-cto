@@ -2,6 +2,7 @@ import { fetchHotProducts } from '../../scripts/api-service.js';
 import { isUniversalEditor, loadBazaarvoiceScript } from '../../scripts/scripts.js';
 import { openModal } from '../modal/modal.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
+import { loadSwiper } from '../../scripts/swiper-loader.js';
 
 function initializeTooltips(container) {
   const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
@@ -257,7 +258,7 @@ const DEFAULT_CONFIG = {
   productPreviewModalPath: '/content/asus-cto/language-master/en/modals/product-preview'
 };
 
-function initializeSwiper(section, config) {
+async function initializeSwiper(section, config) {
   const swiperContainer = section.querySelector('.hot-products-swiper');
   const prevButton = section.querySelector('.hot-products-button-prev');
   const nextButton = section.querySelector('.hot-products-button-next');
@@ -266,6 +267,9 @@ function initializeSwiper(section, config) {
     console.warn('Hot Products: Missing swiper container');
     return;
   }
+
+  // Dynamically load Swiper library
+  await loadSwiper();
 
   const swiper = new window.Swiper(swiperContainer, {
     slidesPerView: 1.15,
@@ -418,7 +422,7 @@ export default async function decorate(block) {
 
       initializeTooltips(section);
 
-      initializeSwiper(section, config);
+      await initializeSwiper(section, config);
 
       window.addEventListener('delayed-loaded', async () => {
         try {

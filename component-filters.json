@@ -26,6 +26,7 @@
       "hot-products",
       "product-preview",
       "help-me-choose",
+      "featured-news-articles",
       "our-advantages"
     ]
   },
@@ -113,34 +114,40 @@
       "title"
     ]
   },
-  {
-    "id": "top-picks-cards",
-    "components": [
-      "top-picks-card"
-    ]
-  },
-  {
-    "id": "article-card",
-    "components": [
-      "article-card-item"
-    ]
-  },
-  {
-    "id": "carousel",
-    "components": [
-      "carousel-slide"
-    ]
-  },
-  {
-    "id": "footer",
-    "components": [
-      "footer-icon"
-    ]
-  },
-  {
-    "id": "our-advantages",
-    "components": [
-      "our-advantage"
-    ]
-  }
+   {
+      "id": "top-picks-cards",
+      "components": [
+        "top-picks-card"
+      ]
+    },
+    {
+      "id": "article-card",
+      "components": [
+        "article-card-item"
+      ]
+    },
+    {
+      "id": "carousel",
+      "components": [
+        "carousel-slide"
+      ]
+    },
+     {
+      "id": "footer",
+      "components": [
+        "footer-icon"
+      ]
+    },
+    {
+      "id": "featured-news-articles",
+      "components": [
+        "featured-news-article"
+      ]
+    },
+    {
+      "id": "our-advantages",
+      "components": [
+        "our-advantage"
+      ]
+    }
 ]

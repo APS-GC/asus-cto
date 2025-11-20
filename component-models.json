@@ -337,234 +337,26 @@
         "description": "The label shown for this section in the Content Tree"
       },
       {
-        "component": "select",
-        "name": "marginTop",
-        "label": "Top Margin",
-        "description": "Add top margin to the section",
-        "options": [
-          {
-            "name": "None",
-            "value": ""
-          },
-          {
-            "name": "Small (4px)",
-            "value": "mt-1"
-          },
-          {
-            "name": "Medium (16px)",
-            "value": "mt-4"
-          },
-          {
-            "name": "Large (32px)",
-            "value": "mt-8"
-          },
-          {
-            "name": "Extra Large (48px)",
-            "value": "mt-12"
-          },
-          {
-            "name": "XXL (64px)",
-            "value": "mt-16"
-          },
-          {
-            "name": "XXXL (80px)",
-            "value": "mt-20"
-          },
-          {
-            "name": "XXXXL (96px)",
-            "value": "mt-24"
-          }
-        ]
-      },
-      {
-        "component": "select",
-        "name": "marginBottom",
-        "label": "Bottom Margin",
-        "description": "Add bottom margin to the section",
-        "options": [
-          {
-            "name": "None",
-            "value": ""
-          },
-          {
-            "name": "Small (4px)",
-            "value": "mb-1"
-          },
-          {
-            "name": "Medium (16px)",
-            "value": "mb-4"
-          },
-          {
-            "name": "Large (32px)",
-            "value": "mb-8"
-          },
-          {
-            "name": "Extra Large (48px)",
-            "value": "mb-12"
-          },
-          {
-            "name": "XXL (64px)",
-            "value": "mb-16"
-          },
-          {
-            "name": "XXXL (80px)",
-            "value": "mb-20"
-          },
-          {
-            "name": "XXXXL (96px)",
-            "value": "mb-24"
-          }
-        ]
-      },
-      {
-        "component": "select",
-        "name": "paddingTop",
-        "label": "Top Padding",
-        "description": "Add top padding to the section",
-        "options": [
-          {
-            "name": "None",
-            "value": ""
-          },
-          {
-            "name": "Small (4px)",
-            "value": "pt-1"
-          },
-          {
-            "name": "Medium (16px)",
-            "value": "pt-4"
-          },
-          {
-            "name": "Large (32px)",
-            "value": "pt-8"
-          },
-          {
-            "name": "Extra Large (48px)",
-            "value": "pt-12"
-          },
-          {
-            "name": "XXL (64px)",
-            "value": "pt-16"
-          },
-          {
-            "name": "XXXL (80px)",
-            "value": "pt-20"
-          },
-          {
-            "name": "XXXXL (96px)",
-            "value": "pt-24"
-          }
-        ]
-      },
-      {
-        "component": "select",
-        "name": "paddingBottom",
-        "label": "Bottom Padding",
-        "description": "Add bottom padding to the section",
-        "options": [
-          {
-            "name": "None",
-            "value": ""
-          },
-          {
-            "name": "Small (4px)",
-            "value": "pb-1"
-          },
-          {
-            "name": "Medium (16px)",
-            "value": "pb-4"
-          },
-          {
-            "name": "Large (32px)",
-            "value": "pb-8"
-          },
-          {
-            "name": "Extra Large (48px)",
-            "value": "pb-12"
-          },
-          {
-            "name": "XXL (64px)",
-            "value": "pb-16"
-          },
-          {
-            "name": "XXXL (80px)",
-            "value": "pb-20"
-          },
-          {
-            "name": "XXXXL (96px)",
-            "value": "pb-24"
-          }
-        ]
-      },
-      {
-        "component": "select",
-        "name": "backgroundColor",
-        "label": "Background Color",
-        "description": "Set the background color for the section",
-        "options": [
-          {
-            "name": "None",
-            "value": ""
-          },
-          {
-            "name": "White",
-            "value": "bg-light"
-          },
-          {
-            "name": "Black",
-            "value": "bg-dark"
-          },
-          {
-            "name": "Primary Brand",
-            "value": "bg-primary"
-          },
-          {
-            "name": "Light Grey",
-            "value": "bg-primary-900"
-          },
-          {
-            "name": "Medium Grey",
-            "value": "bg-primary-700"
-          },
-          {
-            "name": "Dark Grey",
-            "value": "bg-primary-200"
-          },
-          {
-            "name": "Info Blue",
-            "value": "bg-info"
-          },
-          {
-            "name": "Success Green",
-            "value": "bg-success"
-          },
-          {
-            "name": "Warning Orange",
-            "value": "bg-warning"
-          }
-        ]
-      },
-      {
         "component": "multiselect",
         "name": "style",
         "label": "Additional Styles",
         "description": "Apply additional styling options",
         "options": [
           {
-            "name": "Highlight",
-            "value": "highlight"
-          },
-          {
-            "name": "Full Width",
-            "value": "full-width"
-          },
-          {
-            "name": "Centered Content",
-            "value": "text-center"
-          },
-          {
             "name": "Responsive Container",
             "value": "container"
+          },
+          {
+            "name": "Section Spacing Top (Small)",
+            "value": "section-spacing-top__small"
+          },
+          {
+            "name": "Section Spacing Top",
+            "value": "section-spacing-top"
+          },
+          {
+            "name": "Section Spacing Bottom",
+            "value": "section-spacing-bottom"
           }
         ]
       }
@@ -1343,62 +1135,67 @@
     ]
   },
   {
-    "id": "our-advantages",
+    "id": "featured-news-articles",
     "fields": [
       {
         "component": "text",
         "valueType": "string",
         "name": "title",
         "label": "Title",
-        "value": "Our Advantages"
+        "value": "Featured News Articles"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "seeAllButtonText",
+        "label": "See All Articles Button Text",
+        "value": "See all News Articles"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "seeAllButtonLinkTo",
+        "label": "See All Articles Button LinkTo"
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "openLinkInNewTab",
+        "label": "Open link in new tab"
       },
       {
         "component": "number",
         "name": "itemCount",
         "label": "Number of Items",
-        "value": 3,
-        "description": "Number of advantage cards to display in the carousel (default: 3)",
+        "value": 7,
+        "description": "Number of cards to display in the carousel (max:7)",
         "validation": {
           "min": 1,
-          "max": 4
-        }
-      },
-      {
-        "component": "number",
-        "name": "imageAutoplayDuration",
-        "label": "Image Autoplay Duration (seconds)",
-        "value": 5,
-        "validation": {
-          "min": 1,
-          "max": 30
+          "max": 7
         }
       }
     ]
   },
   {
-    "id": "our-advantage",
+    "id": "featured-news-article",
     "fields": [
       {
         "component": "text",
-        "name": "title",
-        "value": "",
-        "label": "Headline",
         "valueType": "string",
-        "required": true
+        "name": "articleTitle",
+        "label": "Title of the Article"
       },
       {
         "component": "text",
-        "name": "details",
-        "value": "",
-        "label": "Details",
-        "valueType": "string"
+        "valueType": "string",
+        "name": "articleSummary",
+        "label": "Article Summary"
       },
       {
         "component": "reference",
         "valueType": "string",
         "name": "media",
-        "label": "Cover Image",
-        "multi": false
+        "label": "Media"
       },
       {
         "component": "text",
@@ -1408,16 +1205,15 @@
       },
       {
         "component": "text",
-        "name": "navigation",
-        "value": "",
-        "label": "Navigation Button Text",
-        "valueType": "string"
+        "valueType": "string",
+        "name": "postedDate",
+        "label": "Posted Date"
       },
       {
         "component": "aem-content",
         "valueType": "string",
-        "name": "link",
-        "label": "Navigation Button LinkTo"
+        "name": "articleLinkTo",
+        "label": "Article LinkTo"
       },
       {
         "component": "boolean",
@@ -1426,5 +1222,90 @@
         "label": "Select to open in new tab"
       }
     ]
-  }
+  },
+  {
+      "id": "our-advantages",
+      "fields": [
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "title",
+          "label": "Title",
+          "value": "Our Advantages"
+        },
+        {
+          "component": "number",
+          "name": "itemCount",
+          "label": "Number of Items",
+          "value": 3,
+          "description": "Number of advantage cards to display in the carousel (max: 4)",
+          "validation": {
+            "min": 1,
+            "max": 4
+          }
+        },
+        {
+          "component": "number",
+          "name": "imageAutoplayDuration",
+          "label": "Image Autoplay Duration (seconds)",
+          "value": 5,
+          "validation": {
+            "min": 1,
+            "max": 30
+          }
+        }
+      ]
+    },
+    {
+      "id": "our-advantage",
+      "fields": [
+        {
+          "component": "text",
+          "name": "title",
+          "value": "",
+          "label": "Headline",
+          "valueType": "string",
+          "required": true
+        },
+        {
+          "component": "text",
+          "name": "details",
+          "value": "",
+          "label": "Details",
+          "valueType": "string"
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "media",
+          "label": "Cover Image",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "imageAlt",
+          "label": "Image Alt"
+        },
+        {
+          "component": "text",
+          "name": "navigation",
+          "value": "",
+          "label": "Navigation Button Text",
+          "valueType": "string"
+        },
+        {
+          "component": "aem-content",
+          "valueType": "string",
+          "name": "link",
+          "label": "Navigation Button LinkTo"
+        },
+        {
+          "component": "boolean",
+          "valueType": "boolean",
+          "name": "articleOpenInNewTab",
+          "label": "Select to open in new tab"
+        }
+      ]
+    }
 ]
