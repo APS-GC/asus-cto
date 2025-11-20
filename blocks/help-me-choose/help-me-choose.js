@@ -134,7 +134,7 @@ async function renderHelpMeChoose(block) {
   helpMeChooseContainer.innerHTML = html;
 
   // Move instrumentation
-  moveInstrumentation(block, helpMeChooseContainer);
+  // moveInstrumentation(block, helpMeChooseContainer);
 
   // Replace in DOM
   // Replace block content
