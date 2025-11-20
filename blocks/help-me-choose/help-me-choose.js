@@ -12,17 +12,17 @@ import { loadSwiper } from '../../scripts/swiper-loader.js';
 export default async function decorate(block) {
   
   // Load noUiSlider only once
-  // await loadNoUiSlider();
+  await loadNoUiSlider();
 
   // Once loaded, render the component
   // await renderHelpMeChoose(block);
 
   // Initialize existing game forms
-  // initSelectGameForms(document.body);
+  initSelectGameForms(document.body);
 
-  // initFilterComponents(document.body);
+  initFilterComponents(document.body);
   // Setup a single MutationObserver (if not already)
-  // setupSelectGameFormsObserver();
+  setupSelectGameFormsObserver();
 }
 
 
