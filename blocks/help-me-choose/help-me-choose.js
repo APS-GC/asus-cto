@@ -134,13 +134,9 @@ async function renderHelpMeChoose(block) {
 
   // Move instrumentation
   moveInstrumentation(block, helpMeChooseContainer);
-  moveInstrumentation(block, helpMeChooseContainer.children);
 
   // Replace in DOM
-  // block.replaceChildren(...helpMeChooseContainer.children);
-  // block.innerHTML = "";
-  debugger
-  block.append(...helpMeChooseContainer.children);
+  block.replaceChildren(...helpMeChooseContainer.children);
 
   // Initialize carousel *after* DOM insertion
   initializeSwiperCarousel(block);
@@ -296,6 +292,7 @@ const toNumber = (v) => {
  */
 async function initializeSwiperCarousel(block) {
   const swiperContainer = block.querySelector('.swiper');
+  debugger
   if (!swiperContainer) return;
 
   await loadSwiper();
