@@ -1152,6 +1152,13 @@
         "name": "ResetButtonLabel",
         "label": "Reset Button Label",
         "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ConfirmButtonLabel",
+        "label": "Confirm Button Label",
+        "value": ""
       }
     ]
   },

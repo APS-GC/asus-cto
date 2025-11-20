@@ -188,7 +188,8 @@
                   "description": "We will recommend a plan that suits you most!",
                   "yourBudgetLabel": "Your Budget",
                   "HelpMeChooseButtonLabel": "Help me choose",
-                  "ResetButtonLabel": "Reset"
+                  "ResetButtonLabel": "Reset",
+                  "ConfirmButtonLabel": "Confirm"
                 }
               }
             }
