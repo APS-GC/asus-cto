@@ -128,13 +128,16 @@ export const getBlockConfigs = async (block, defaults = {}, blockName = '') => {
     // Universal Editor format - load field order and map by position
     const fieldOrder = await getBlockFieldOrder(blockName);
     
-    if (fieldOrder.length > 0) {
+    // Fallback to defaults keys if JSON fetch failed (e.g., on author instance)
+    const finalFieldOrder = fieldOrder.length > 0 ? fieldOrder : Object.keys(defaults);
+    
+    if (finalFieldOrder.length > 0) {
       rows.forEach((row, index) => {
-        if (index < fieldOrder.length) {
+        if (index < finalFieldOrder.length) {
           const cell = row.children[0];
           if (cell) {
             const value = cell.textContent.trim();
-            const fieldName = fieldOrder[index];
+            const fieldName = finalFieldOrder[index];
 
             if (value !== '') {
               // Try to parse as number if it looks like a number
