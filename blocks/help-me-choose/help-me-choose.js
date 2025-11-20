@@ -10,10 +10,9 @@ import { loadSwiper } from '../../scripts/swiper-loader.js';
  * @returns {Promise<void>}
  */
 export default async function decorate(block) {
-
-  try{
+  
   // Load noUiSlider only once
-  await loadNoUiSlider();
+  // await loadNoUiSlider();
 
   // Once loaded, render the component
   await renderHelpMeChoose(block);
@@ -24,10 +23,6 @@ export default async function decorate(block) {
   initFilterComponents(document.body);
   // Setup a single MutationObserver (if not already)
   setupSelectGameFormsObserver();
-  } catch (error){
-    console.error('Error decorating Help Me Choose block:', error);
-    block.innerHTML = '<div class="product-card-error">Error loading products. Please try again later.</div>';
-  }
 }
 
 
