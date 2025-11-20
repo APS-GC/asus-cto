@@ -1135,7 +1135,7 @@
     ]
   },
   {
-    "id": "product-compare",
+    "id": "product-comparison",
     "fields": [
       {
         "component": "richtext",
