@@ -1,6 +1,6 @@
 import { isAuthorEnvironment, safeText } from "../../scripts/utils.js";
 import { transferInstrumentation } from "../../scripts/utils.js";
-import { loadScript } from '../../scripts/aem.js';
+import { loadScript, loadSections } from "../../scripts/aem.js";
 const itemsStartIndex = 3;
 export default async function decorate(block) {
   const divs = block.children;
@@ -21,7 +21,7 @@ export default async function decorate(block) {
         aria-live="polite"
         aria-roledescription="carousel"
         data-cmp-is="our-advantages"
-        data-cmp-delay="${imageAutoplayDuration*1000}"
+        data-cmp-delay="${imageAutoplayDuration * 1000}"
         data-carousel-effect="creative"
       >
         <div class="cmp-carousel__content">
@@ -52,12 +52,11 @@ export default async function decorate(block) {
     const imageAlt = safeText(divs.item(3));
     const buttonText = safeText(divs.item(4));
     const buttonTextLink = safeText(divs.item(5));
-    const isTargetBlank = divs.item(6).textContent === 'true' ? 1 : 0;
+    const isTargetBlank = divs.item(6).textContent === "true" ? 1 : 0;
     const mediaHTML = card.querySelector("picture")?.innerHTML ?? "";
-    if(card.querySelector("picture")&& imageAlt){
-      card.querySelector("picture").querySelector('img').alt = imageAlt;
+    if (card.querySelector("picture") && imageAlt) {
+      card.querySelector("picture").querySelector("img").alt = imageAlt;
     }
-
 
     // <video class="cmp-advantage-card__video" playsinline controls>
     //               <source
@@ -65,7 +64,7 @@ export default async function decorate(block) {
     //               Your browser does not support the video tag.
     //             </video>
     const mockup = document.createRange().createContextualFragment(`
-          <div class="cmp-carousel__item" data-url="${buttonTextLink}" data-blank="${isTargetBlank}">
+          <div class="cmp-carousel__item"  data-url="${buttonTextLink}" data-blank="${isTargetBlank}">
             <div class="cmp-advantage-card">
               <div class="cmp-advantage-card__image-wrapper">
                 ${mediaHTML}
@@ -106,14 +105,20 @@ export default async function decorate(block) {
   block.append(mockupContainer);
 
   // trigger block
-  await loadScript('https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js');
+  await loadScript(
+    "https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"
+  );
   await import("../../scripts/carousel.js");
   await import("./uifrontend_advantage-card.js");
 
-
-  requestAnimationFrame(() => {
-    if (window.initializeSwiperOnAEMCarousel) {
-        window.initializeSwiperOnAEMCarousel(block.querySelector(".container"));
+  document.addEventListener(
+    "eds-lazy-event",
+    () => {
+      const container = block.querySelector(".container");
+      if (window.initializeSwiperOnAEMCarousel && container) {
+        window.initializeSwiperOnAEMCarousel(container);
       }
-  });
+    },
+    { once: true }
+  );
 }
