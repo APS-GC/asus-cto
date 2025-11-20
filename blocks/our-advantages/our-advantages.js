@@ -20,7 +20,7 @@ export default async function decorate(block) {
         role="group"
         aria-live="polite"
         aria-roledescription="carousel"
-        data-cmp-is="carousel"
+        data-cmp-is="our-advantages"
         data-cmp-delay="${imageAutoplayDuration*1000}"
         data-carousel-effect="creative"
       >
@@ -110,7 +110,10 @@ export default async function decorate(block) {
   await import("../../scripts/carousel.js");
   await import("./uifrontend_advantage-card.js");
 
-  if (window.initializeSwiperOnAEMCarousel) {
-    window.initializeSwiperOnAEMCarousel(block.querySelector(".container"));
-  }
+
+  requestAnimationFrame(() => {
+    if (window.initializeSwiperOnAEMCarousel) {
+        window.initializeSwiperOnAEMCarousel(block.querySelector(".container"));
+      }
+  });
 }
