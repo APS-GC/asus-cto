@@ -316,8 +316,9 @@ async function initializeSwiper(section, config) {
 
 // Handle quick view button click
 async function handleQuickView(product, config) {
-  const isUE = isUniversalEditor();
-  if (isUE) return;
+  //TODO: Commenting this just for the demo because on published URLs, we are getting API CORS error
+  // const isUE = isUniversalEditor();
+  // if (isUE) return;
 
   // Store product data temporarily for the product-preview block to access
   window.__productPreviewData = product;
