@@ -2,6 +2,7 @@ import {
   transferInstrumentation,
   isAuthorEnvironment,
 } from "../../scripts/utils.js";
+import { loadSwiper } from '../../scripts/swiper-loader.js';
 const itemsStartIndex = 5;
 export default async function decorate(block) {
   const divs = block.children;
@@ -113,6 +114,7 @@ export default async function decorate(block) {
   block.innerHTML = "";
   block.append(mockupContainer);
 
+  await loadSwiper();
   await import("../../scripts/carousel.js");
 
   if (window.initializeSwiperOnAEMCarousel) {
