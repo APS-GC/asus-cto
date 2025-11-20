@@ -25,7 +25,8 @@
       "product-card",
       "hot-products",
       "product-preview",
-      "help-me-choose"
+      "help-me-choose",
+      "featured-news-articles"
     ]
   },
   {
@@ -134,6 +135,12 @@
       "id": "footer",
       "components": [
         "footer-icon"
+      ]
+    },
+    {
+      "id": "featured-news-articles",
+      "components": [
+        "featured-news-article"
       ]
     }
 ]

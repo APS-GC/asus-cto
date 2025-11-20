@@ -2,8 +2,8 @@
 Your project's 
 
 ## Environments
-- Preview: https://main--asus--AEM-COMP.aem.page/home
-- Live: https://main--asus--AEM-COMP.aem.live/home
+- Preview: https://main--asus-cto--APS-GC.aem.page/home
+- Live: https://main--asus-cto--APS-GC.aem.live/home
 
 ## Documentation
 
