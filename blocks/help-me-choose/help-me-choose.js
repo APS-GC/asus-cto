@@ -18,7 +18,7 @@ export default async function decorate(block) {
   await renderHelpMeChoose(block);
 
   // Initialize existing game forms
-  initSelectGameForms(document.body);
+  // initSelectGameForms(document.body);
 
   // initFilterComponents(document.body);
   // Setup a single MutationObserver (if not already)
