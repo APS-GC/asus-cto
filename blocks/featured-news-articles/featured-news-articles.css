@@ -604,3 +604,89 @@ section:has(.cmp-carousel) {
     gap: 0.75rem;
   }
 }
+
+
+.section-actions-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    margin-top: 2rem
+}
+
+.section-actions-container .section-actions-btn {
+    background-color: var(--color-black-50);
+    border: none;
+    color: var(--color-white);
+    cursor: pointer;
+    font-family: var(--font-text);
+    font-size: 1.125rem;
+    font-weight: var(--regular);
+    letter-spacing: 0;
+    line-height: 1.5rem
+}
+
+.section-actions-container .section-actions-btn .icon {
+    height: 12px;
+    width: 12px
+}
+
+.section-actions-container .loader {
+    -webkit-animation: loader 1s linear infinite;
+    animation: loader 1s linear infinite;
+    display: none
+}
+
+.section-actions-container .loader .icon {
+    height: 48px;
+    width: 48px
+}
+
+@-webkit-keyframes loader {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg)
+    }
+    to {
+        -webkit-transform: rotate(1turn);
+        transform: rotate(1turn)
+    }
+}
+
+@keyframes loader {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg)
+    }
+    to {
+        -webkit-transform: rotate(1turn);
+        transform: rotate(1turn)
+    }
+}
+
+.section-actions-container.is-loading {
+    margin-top: 0;
+    padding-top: 6rem
+}
+
+.section-actions-container.is-loading .section-actions-btn {
+    display: none
+}
+
+.section-actions-container.is-loading .loader {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex
+}
+
+.section-actions-container.has-more:not(.is-loading) .section-actions-btn {
+    display: block
+}
+
+@media only screen and (max-width: 79.9375rem) {
+    .section-actions-container {
+        margin-top: 1.25rem
+    }
+}
