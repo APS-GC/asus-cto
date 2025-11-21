@@ -1,10 +1,75 @@
 import './uifrontend/_footer.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
+// Footer configuration - calculated once for the entire module
+const FooterConfig = {
+  get baseUrl() {
+    return window.asusCto?.baseUrl;
+  },
+  get shouldUseExternal() {
+    return this.baseUrl && this.baseUrl !== window.location.origin;
+  }
+};
+
 function parseFragmentContent(block) {
   try {
-    // Get all div elements that contain the structured data
-    const contentDivs = block.querySelectorAll('div > div > div');
+    // Enhanced selector strategy to handle both wrapped and unwrapped content structures
+    let contentDivs = [];
+    
+    // First, try to find the root footer div
+    const footerDiv = block.querySelector('.footer') || block;
+    
+    // Get all direct children of the footer
+    const footerChildren = Array.from(footerDiv.children);
+    
+    // Extract content divs from each child, handling different wrapper structures
+    footerChildren.forEach(child => {
+      // Check for wrapped structure: div > p > div
+      const pElement = child.querySelector('p');
+      if (pElement) {
+        const innerDiv = pElement.querySelector('div');
+        if (innerDiv) {
+          contentDivs.push(innerDiv);
+        }
+      } else {
+        // Check for direct structure: div > div
+        const directDiv = child.querySelector('div');
+        if (directDiv) {
+          contentDivs.push(directDiv);
+        } else {
+          // Fallback: use the child itself
+          contentDivs.push(child);
+        }
+      }
+      
+      // Additionally, for social media sections, check if this child has both picture and URL content
+      // This handles cases where EDS processes the fragment and merges content
+      const hasImage = child.querySelector('picture img');
+      if (hasImage) {
+        // Look for URL content in the same child or adjacent siblings
+        const textContent = child.textContent?.trim();
+        if (textContent && !textContent.includes('<')) {
+          // Extract URL text that's not part of the image
+          const imageText = child.querySelector('picture').textContent || '';
+          const urlText = textContent.replace(imageText, '').trim();
+          if (urlText && (urlText.startsWith('http') || urlText.includes('facebook.com') || urlText.includes('youtube.com'))) {
+            // Create a virtual URL div for this content
+            const virtualUrlDiv = document.createElement('div');
+            virtualUrlDiv.textContent = urlText;
+            contentDivs.push(virtualUrlDiv);
+          }
+        }
+      }
+    });
+
+    console.log('parseFragmentContent - contentDivs found:', contentDivs.length);
+    console.log('parseFragmentContent - block structure:', block.outerHTML.substring(0, 500));
+    console.log('parseFragmentContent - footerChildren count:', footerChildren.length);
+    
+    // Debug each extracted contentDiv
+    contentDivs.forEach((div, index) => {
+      console.log(`ContentDiv ${index}:`, div.outerHTML.substring(0, 150));
+    });
 
     const parsedData = {
       newsletterLabel: '',
@@ -68,10 +133,13 @@ function parseFragmentContent(block) {
         const linksList = div.querySelector('ul');
         if (linksList && parsedData.footerColumns[0]) {
           const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[0].links = Array.from(links).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.footerColumns[0].links = Array.from(links).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: href
+            };
+          });
         }
       } else if (index === 6) {
         // 7th div: Column 2 Title
@@ -83,10 +151,13 @@ function parseFragmentContent(block) {
         const linksList = div.querySelector('ul');
         if (linksList && parsedData.footerColumns[1]) {
           const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[1].links = Array.from(links).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.footerColumns[1].links = Array.from(links).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl:  FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
+            };
+          });
         }
       } else if (index === 8) {
         // 9th div: Column 3 Title
@@ -98,20 +169,26 @@ function parseFragmentContent(block) {
         const linksList = div.querySelector('ul');
         if (linksList && parsedData.footerColumns[2]) {
           const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[2].links = Array.from(links).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.footerColumns[2].links = Array.from(links).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
+            };
+          });
         }
       } else if (index === 10) {
         // 11th div: Legal Links
         const linksList = div.querySelector('ul');
         if (linksList) {
           const links = linksList.querySelectorAll('li a');
-          parsedData.legalLinks = Array.from(links).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.legalLinks = Array.from(links).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
+            };
+          });
         }
       } else if (index === 11) {
         // 12th div: show Global
@@ -120,25 +197,49 @@ function parseFragmentContent(block) {
         }
       } else if (index >= 12) {
         // 13th+ divs: Social Media Icons with Images and Links
-        // Structure: <div><p><div><picture><img></picture></div><div>URL</div></p></div>
-        const picture = div.querySelector('div > picture img');
-        const urlDiv = div.querySelectorAll('div')[1] || div.querySelector('a'); // Second div contains the URL
+        // Structure is pairs of consecutive divs: picture div + URL div
         
-        if (picture && urlDiv) {
-          const socialPlatforms = ['facebook', 'x', 'instagram', 'tiktok', 'youtube', 'discord', 'twitch', 'thread']; // Map to known platforms
-          const platformIndex = index - 12;
-          const platform = socialPlatforms[platformIndex] || `social${platformIndex + 1}`;
-          const url = urlDiv.textContent?.trim() || '#';
+        const isEvenIndex = (index - 12) % 2 === 0;
+        
+        if (isEvenIndex) {
+          // This should be a picture div, pair it with the next div for URL
+          const pictureDiv = div;
+          const urlDiv = contentDivs[index + 1];
           
-          parsedData.socialLinks.push({
-            platform: platform,
-            url: url,
-            icon: picture.getAttribute('src') || '',
-            altText: picture.getAttribute('alt') || platform.charAt(0).toUpperCase() + platform.slice(1),
-            originalElement: picture, // Store reference to original image element for moveInstrumentation
-            actualDiv:div
-          });
+          console.log(`Processing social pair ${index}-${index + 1}:`);
+          console.log('Picture div:', pictureDiv?.outerHTML.substring(0, 200));
+          console.log('URL div:', urlDiv?.outerHTML.substring(0, 200));
+          
+          const picture = pictureDiv.querySelector('picture img');
+          let url = '#';
+          
+          if (urlDiv) {
+            const urlLink = urlDiv.querySelector('a');
+            const urlText = urlDiv.textContent?.trim();
+            url = urlLink?.href || urlText || '#';
+          }
+          
+          console.log('Found picture:', !!picture, picture?.src);
+          console.log('Found URL:', url);
+          
+          if (picture && url && url !== '#') {
+            const socialPlatforms = ['facebook', 'x', 'instagram', 'tiktok', 'youtube', 'discord', 'twitch', 'thread'];
+            const platformIndex = Math.floor((index - 12) / 2); // Divide by 2 since we have pairs
+            const platform = socialPlatforms[platformIndex] || `social${platformIndex + 1}`;
+            
+            console.log(`Creating social link: ${platform}, ${url}`);
+            
+            parsedData.socialLinks.push({
+              platform: platform,
+              url: url,
+              icon: picture.getAttribute('src') || '',
+              altText: picture.getAttribute('alt') || platform.charAt(0).toUpperCase() + platform.slice(1),
+              originalElement: picture, // Store reference to original image element for moveInstrumentation
+              actualDiv: pictureDiv
+            });
+          }
         }
+        // Skip odd indices as they are processed as part of the pairs
       }
     }
 
@@ -393,6 +494,8 @@ function parseFooterData(block) {
 }
 
 function buildSocialIcons(socialLinks, socialLabel) {
+  console.log('buildSocialIcons called with:', { socialLinks, socialLabel });
+  
   // Create social container
   const socialDiv = document.createElement('div');
   socialDiv.className = 'social';
@@ -411,12 +514,20 @@ function buildSocialIcons(socialLinks, socialLabel) {
   const ul = document.createElement('ul');
   ul.className = 'social__icons p-0 m-0';
   
+  console.log(`Processing ${socialLinks.length} social links`);
+  
   // Process each social link
-  socialLinks.forEach(link => {
+  socialLinks.forEach((link, index) => {
+    console.log(`Processing social link ${index}:`, link);
+    
     const li = document.createElement('li');
     const a = document.createElement('a');
     const img = document.createElement('img');
-    moveInstrumentation(link.actualDiv,li);
+    
+    if (link.actualDiv) {
+      moveInstrumentation(link.actualDiv,li);
+    }
+    
     const altText = link.altText || link.platform.charAt(0).toUpperCase() + link.platform.slice(1);
     
     // Set link attributes
@@ -440,11 +551,14 @@ function buildSocialIcons(socialLinks, socialLabel) {
     a.appendChild(img);
     li.appendChild(a);
     ul.appendChild(li);
+    
+    console.log(`Created social link ${index}: ${a.outerHTML}`);
   });
   
   nav.appendChild(ul);
   socialDiv.appendChild(nav);
   
+  console.log('Final social icons HTML:', socialDiv.outerHTML);
   return socialDiv.outerHTML;
 }
 
