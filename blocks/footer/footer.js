@@ -62,14 +62,6 @@ function parseFragmentContent(block) {
       }
     });
 
-    console.log('parseFragmentContent - contentDivs found:', contentDivs.length);
-    console.log('parseFragmentContent - block structure:', block.outerHTML.substring(0, 500));
-    console.log('parseFragmentContent - footerChildren count:', footerChildren.length);
-    
-    // Debug each extracted contentDiv
-    contentDivs.forEach((div, index) => {
-      console.log(`ContentDiv ${index}:`, div.outerHTML.substring(0, 150));
-    });
 
     const parsedData = {
       newsletterLabel: '',
@@ -206,9 +198,6 @@ function parseFragmentContent(block) {
           const pictureDiv = div;
           const urlDiv = contentDivs[index + 1];
           
-          console.log(`Processing social pair ${index}-${index + 1}:`);
-          console.log('Picture div:', pictureDiv?.outerHTML.substring(0, 200));
-          console.log('URL div:', urlDiv?.outerHTML.substring(0, 200));
           
           const picture = pictureDiv.querySelector('picture img');
           let url = '#';
@@ -219,15 +208,12 @@ function parseFragmentContent(block) {
             url = urlLink?.href || urlText || '#';
           }
           
-          console.log('Found picture:', !!picture, picture?.src);
-          console.log('Found URL:', url);
           
           if (picture && url && url !== '#') {
             const socialPlatforms = ['facebook', 'x', 'instagram', 'tiktok', 'youtube', 'discord', 'twitch', 'thread'];
             const platformIndex = Math.floor((index - 12) / 2); // Divide by 2 since we have pairs
             const platform = socialPlatforms[platformIndex] || `social${platformIndex + 1}`;
             
-            console.log(`Creating social link: ${platform}, ${url}`);
             
             parsedData.socialLinks.push({
               platform: platform,
@@ -246,7 +232,6 @@ function parseFragmentContent(block) {
     // Filter out empty columns
     parsedData.footerColumns = parsedData.footerColumns.filter(col => col && col.columnTitle);
 
-    console.log('Parsed data from fragment:', parsedData);
     return parsedData;
     
   } catch (error) {
@@ -291,7 +276,6 @@ function parseFooterData(block) {
   if (block.dataset && (block.dataset.model || block.dataset.aueModel)) {
     const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {};
     
-    console.log('Universal Editor Model Data:', modelData);
     
     // Parse newsletter fields from UE model
     if (modelData.titleSubscription) data.newsletterLabel = modelData.titleSubscription;
@@ -351,8 +335,6 @@ function parseFooterData(block) {
     // This would need to be implemented based on the actual UE model structure for social icons
     // For now, we'll keep the existing social links from fragment parsing
   }
-
-  console.log('Final parsed data:', data);
 
   // Process block content for authoring data
   const rows = [...block.children];
@@ -494,8 +476,6 @@ function parseFooterData(block) {
 }
 
 function buildSocialIcons(socialLinks, socialLabel) {
-  console.log('buildSocialIcons called with:', { socialLinks, socialLabel });
-  
   // Create social container
   const socialDiv = document.createElement('div');
   socialDiv.className = 'social';
@@ -514,12 +494,8 @@ function buildSocialIcons(socialLinks, socialLabel) {
   const ul = document.createElement('ul');
   ul.className = 'social__icons p-0 m-0';
   
-  console.log(`Processing ${socialLinks.length} social links`);
-  
   // Process each social link
   socialLinks.forEach((link, index) => {
-    console.log(`Processing social link ${index}:`, link);
-    
     const li = document.createElement('li');
     const a = document.createElement('a');
     const img = document.createElement('img');
@@ -552,13 +528,11 @@ function buildSocialIcons(socialLinks, socialLabel) {
     li.appendChild(a);
     ul.appendChild(li);
     
-    console.log(`Created social link ${index}: ${a.outerHTML}`);
   });
   
   nav.appendChild(ul);
   socialDiv.appendChild(nav);
   
-  console.log('Final social icons HTML:', socialDiv.outerHTML);
   return socialDiv.outerHTML;
 }
 

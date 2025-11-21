@@ -1,5 +1,10 @@
 import { loadFooterFragment, processFooterFragmentContent, createOptimizedPictureExternal, moveInstrumentation } from '../../scripts/scripts.js';
 import { createOptimizedPicture } from '../../scripts/aem.js';
+import { 
+  loadAssetsForComponent,
+  loadCustomFragment,
+  initializeBlockInShadowRoot
+} from '../../scripts/aem-component-utils.js';
 
 // Footer configuration - calculated once for the entire module
 const FooterConfig = {
@@ -54,90 +59,18 @@ class AEMFooter extends HTMLElement {
    * Load required CSS and JS assets
    */
   async loadAssets() {
-    // Load CSS into shadow root
-    await this.loadStyles();
-    
-    // Set up window.hlx.codeBasePath BEFORE loading aem.js to ensure icons use correct baseUrl
     const baseUrl = this.baseUrl || window.location.origin;
-    
-    // Initialize window.hlx if it doesn't exist
-    if (!window.hlx) {
-      await this.loadScript(`${baseUrl}/scripts/aem.js`);
-    }
+    await loadAssetsForComponent(this.shadowRoot, baseUrl, 'footer');
   }
 
-  /**
-   * Load CSS file
-   */
-  loadCSS(href, media) {
-    return new Promise((resolve, reject) => {
-      if (!this.shadowRoot.querySelector(`link[href="${href}"]`)) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = href;
-        if (media) link.media = media;
-        link.onload = resolve;
-        link.onerror = reject;
-        this.shadowRoot.append(link);
-      } else {
-        resolve();
-      }
-    });
-  }
-
-  /**
-   * Load all required styles with CSS variable inheritance for shadow DOM
-   */
-  async loadStyles() {
-    const baseUrl = this.baseUrl || window.location.origin;
-    return Promise.allSettled([
-      this.loadCSS(`${baseUrl}/blocks/footer/aem-footer.css`),
-      this.loadCSS(`${baseUrl}/blocks/footer/footer.css`)
-    ]);
-  }
-
-  /**
-   * Load JS file
-   */
-  loadScript(src) {
-    return new Promise((resolve, reject) => {
-      if (!document.querySelector(`head > script[src="${src}"]`)) {
-        const script = document.createElement('script');
-        script.src = src;
-        script.type = 'module';
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.append(script);
-      } else {
-        resolve();
-      }
-    });
-  }
 
   /**
    * Load footer fragment from custom URL
    * @returns {Promise<string|null>} Fragment HTML content or null if not found
    */
   async loadCustomFooterFragment() {
-    if (!this.fragmentUrl) {
-      console.warn('Fragment URL not provided, falling back to default');
-      return await loadFooterFragment();
-    }
-    
     const baseUrl = this.baseUrl || window.location.origin;
-    const fullFragmentUrl = `${baseUrl}/${this.fragmentUrl}`;
-    
-    try {
-      const response = await fetch(fullFragmentUrl);
-      if (response.ok) {
-        const html = await response.text();
-        return processFooterFragmentContent(html);
-      }
-    } catch (error) {
-      console.log('Failed to load custom footer fragment:', error);
-    }
-    
-    return null;
+    return await loadCustomFragment(this.fragmentUrl, baseUrl, loadFooterFragment, processFooterFragmentContent);
   }
 
   /**
@@ -197,27 +130,8 @@ class AEMFooter extends HTMLElement {
    * Initialize footer block functionality
    */
   async initializeFooterBlock() {
-    const footerBlock = this.shadowRoot.querySelector('.footer');
-    if (!footerBlock) return;
-
-    try {
-      // Import and execute footer decoration
-      const baseUrl = this.baseUrl || window.location.origin;
-      const footerModule = await import(`${baseUrl}/blocks/footer/footer.js`);
-      if (footerModule.default) {
-        // Set up FooterConfig baseUrl before running footer.js
-        if (!window.asusCto) {
-          window.asusCto = {};
-        }
-        if (!window.asusCto.baseUrl) {
-          window.asusCto.baseUrl = this.baseUrl || window.location.origin;
-        }
-        
-        await footerModule.default(footerBlock);
-      }
-    } catch (error) {
-      console.error('Error initializing footer block:', error);
-    }
+    const baseUrl = this.baseUrl || window.location.origin;
+    await initializeBlockInShadowRoot(this.shadowRoot, '.footer', 'footer', baseUrl);
   }
 
   /**
