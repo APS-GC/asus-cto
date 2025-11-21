@@ -8,8 +8,23 @@ const DEFAULT_VALUES = {
 
 export default function decorate(block) {
   /* change to ul, li */
+  let limit = -1;
+  const cardRows = [];
+
+  // Separate config rows from card rows
+  [...block.children].forEach(row => {
+    if (row.children.length === 2 && row.children[0].textContent.trim().toLowerCase() === 'limit') {
+      const newLimit = parseInt(row.children[1].textContent.trim(), 10);
+      if (!Number.isNaN(newLimit)) {
+        limit = newLimit;
+      }
+    } else {
+      cardRows.push(row);
+    }
+  });
+
   const ul = document.createElement('ul');
-  [...block.children].forEach((row) => {
+  cardRows.slice(0, limit > 0 ? limit : cardRows.length).forEach((row) => {
     const li = document.createElement('li');
     li.className = 'top-picks-card';
     moveInstrumentation(row, li);

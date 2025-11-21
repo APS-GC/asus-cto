@@ -31,6 +31,8 @@ export default async function decorate(block) {
  * @returns {Promise<void>}
  */
 async function renderHelpMeChoose(block) {
+  console.log(block)
+  return
   const helpMeChooseContainer = document.createElement('div');
   helpMeChooseContainer.className = 'help-me-choose-container container';
 
@@ -52,82 +54,80 @@ async function renderHelpMeChoose(block) {
   const defaultMinBudget = urlParams.get('min-budget') || 500;
   const defaultMaxBudget = urlParams.get('max-budget') || 5000;
   // Build the HTML in a fragment / string, then insert once
-  const html = 
-  
-  _isHomePage() ? `
-  <div class="game-recommendation">
-      <div class="carousel panelcontainer">
-          <div class="section-heading">
-              <div class="section-heading__text-group">
-                  <h2 class="section-heading__title">${escapeHtml(AuthoredData[0] || '')}</h2>
-                  <p class="section-heading__description">${escapeHtml(AuthoredData[1] || '')}</p>
+  const html = `
+  <div
+  class="cmp-product-compare is-hidden is-collapsed"
+  data-compare-container
+  role="region"
+  aria-labelledby="compare-title"
+>
+  <div class="container">
+    <div class="cmp-product-compare__header">
+      <div class="cmp-product-compare__header-content">
+        <div class="cmp-product-compare__title-group">
+          <div class="cmp-product-compare__title-row">
+            <h2 class="cmp-product-compare__title" id="compare-title">
+              Product Comparison (<span data-count>0</span>/4)
+            </h2>
+            <div class="cmp-product-compare__error-container" aria-live="polite">
+              <div class="cmp-product-compare__error" hidden data-error="limit">
+                You have reached the limit of 4 products, please remove one product before adding a
+                new one for comparison.
               </div>
-              <div class="cmp-carousel__actions1_hmc">
-                  <button class="cmp-carousel__action_hmc cmp-carousel__action_hmc--previous" type="button" aria-label="Previous">
-                      <span class="icon icon--arrow-left"></span>
-                  </button>
-                  <button class="cmp-carousel__action_hmc cmp-carousel__action_hmc--next" type="button" aria-label="Next">
-                      <span class="icon icon--arrow-right"></span>
-                  </button>
+              <div class="cmp-product-compare__error" hidden data-error="minimum">
+                Please select at least 2 products to compare.
               </div>
+            </div>
           </div>
-
-          <form id="game-selection-form" onsubmit="event.preventDefault();" action="./product-matches" class="game-form" aria-label="Game selection form" data-select-game-form>
-              <div class="game-carousel-wrapper">
-                  <div class="swiper">
-                      <div class="swiper-wrapper">${generateGameItemsHTML(gameList?.results?.gameList)}</div>
-                      <div class="swiper-pagination"></div>
-                  </div>
-              </div>
-
-              <div class="budget-bar">
-                  <div class="budget-left">
-                      <label for="budget-min-value">${escapeHtml(AuthoredData[2] || 'Your Budget')}:</label>
-                  </div>
-                  <div class="budget-center">${generateBudgetCenterHTML(lowestPrice, highestPrice)}</div>
-                  <input type="hidden" name="min-budget" id="min-budget" value="" />
-                  <input type="hidden" name="max-budget" id="max-budget" value="" />
-                  <div class="budget-actions">
-                      <button type="reset" class="reset-button btn btn-link">${escapeHtml(AuthoredData[4] || 'Reset')}</button>
-                      <button type="submit" class="btn" disabled>${escapeHtml(AuthoredData[3] || 'Help me choose')}</button>
-                  </div>
-              </div>
-          </form>
-      </div>
-    </div>` : `
- 
-  <div class="filter-bar container-xl"> 
-    <div class="filters-container container">
-        <form class="filters">
-            <div class="selected-games">
-                <p class="selected-games-text">Selected game:</p>
-                <div class="collapsed-view">
-                </div>
-                <div class="expanded-view">${generateGameItemsHTML(gameList?.results?.gameList)}</div>
-            </div>
-            <div class="vertical-divider"></div>
-            <div class="budget">
-                <div class="your-budget">${escapeHtml(AuthoredData[2] || 'Your Budget')}:
-                    <div>
-                        <span class="confirmed-budget-min-value" attr-value="${defaultMinBudget}">${_formatCurrency(lowestPrice)}</span>
-                        <span>-</span>
-                        <span class="confirmed-budget-max-value" attr-value="${defaultMaxBudget}">${_formatCurrency(highestPrice)}</span>
-                    </div>
-                </div>
-                <div class="budget-center">${generateBudgetCenterHTML(lowestPrice, highestPrice)}</div>
-                <input type="hidden" name="min-budget" id="min-budget" value="" />
-                <input type="hidden" name="max-budget" id="max-budget" value="" />
-                <div class="budget-actions">
-                    <button type="reset" class="reset-button btn btn-link">${escapeHtml(AuthoredData[4] || 'Reset')}</button>
-                    <button type="submit" class="btn btn-link">${escapeHtml(AuthoredData[5] || 'Confirm')}</button>
-                </div>
-            </div>
-        </form>
-        <div class="filter-button">
-            Filter 
-         <span class="icon icon--arrow-bottom" id="filter-icon"></span>
         </div>
+
+        <button
+          class="cmp-button cmp-product-compare__toggle"
+          data-action="toggle-collapse"
+          data-toggle="collapse"
+          aria-expanded="false"
+          aria-controls="compare-content"
+          aria-label="Toggle compare content"
+        ></button>
+      </div>
     </div>
+
+    <div class="cmp-product-compare__content-row" id="compare-content">
+      <div class="carousel panelcontainer">
+        <div
+          id="carousel-product-compare"
+          class="cmp-carousel"
+          role="group"
+          aria-live="polite"
+          aria-roledescription="carousel"
+          data-cmp-is="carousel"
+          data-slides-per-view="2"
+          data-slides-per-view-tablet="2"
+          data-slides-per-view-desktop="4"
+          data-loop-slides="false"
+          data-space-between="8"
+          data-space-between-tablet="8"
+          data-space-between-desktop="20"
+        >
+          <div 
+            class="cmp-carousel__content cmp-carousel__content--overflow cmp-product-compare__list"
+            aria-atomic="false"
+            aria-live="polite"
+          >
+          </div>
+        </div>
+      </div>
+
+      <div class="cmp-product-compare__actions">
+        <button class="cmp-button cmp-button--primary" data-action="compare" data-compare-link="./product-comparison.html" aria-label="Compare the selected products">
+          View Comparison
+        </button>
+        <button class="cmp-button cmp-button--tertiary btn btn-link" data-action="clear-all">
+          Clear All
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 `;
 

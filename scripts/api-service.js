@@ -106,7 +106,7 @@ export async function fetchGameList(
   try {
     console.log(`Attempting to fetch from: ${endpoint}`);
 
-    const response = await fetch(endpoint, {
+    const response = await fetch("https://dummyjson.com/c/ba3b-dd2e-4ba7-b9f0", {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
