@@ -47,8 +47,9 @@ export default async function decorate(block) {
   [...block.children].forEach((card, i) => {
     if (i > itemsStartIndex + itemCount - 1 || i < itemsStartIndex) return;
     const divs = card.querySelectorAll("div");
-    const headline = safeText(divs.item(1));
-    const details = safeText(divs.item(2));
+    const headline = safeText(divs.item(0));
+    const details = safeText(divs.item(1));
+    // const video = safeText(divs.item(2));
     const imageAlt = safeText(divs.item(3));
     const buttonText = safeText(divs.item(4));
     const buttonTextLink = safeText(divs.item(5));
