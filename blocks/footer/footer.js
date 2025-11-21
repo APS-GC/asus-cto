@@ -1,5 +1,6 @@
 import './uifrontend/_footer.js';
-import { moveInstrumentation } from '../../scripts/scripts.js';
+import { moveInstrumentation, createOptimizedPictureExternal } from '../../scripts/scripts.js';
+import { createOptimizedPicture } from '../../scripts/aem.js';
 
 // Footer configuration - calculated once for the entire module
 const FooterConfig = {
@@ -599,6 +600,57 @@ function buildLegalLinks(legalLinks) {
   return linksContainer.innerHTML;
 }
 
+// Function to optimize footer images using createOptimizedPicture
+// Similar to optimizeLogoImages() from header component
+function optimizeFooterImages(container) {
+  // Find all images in footer and optimize them, particularly social media icons
+  container.querySelectorAll('footer img, .footer img, .social img, .social__icons img').forEach((img) => {
+    // Skip if already optimized or if it's not in a picture element
+    if (img.closest('picture')?.hasAttribute('data-optimized')) {
+      return;
+    }
+    
+    let optimizedPic;
+    
+    // Use FooterConfig for baseUrl and shouldUseExternal
+    const { baseUrl, shouldUseExternal } = FooterConfig;
+    
+    if (shouldUseExternal) {
+      // Use createOptimizedPictureExternal with baseUrl when baseUrl is defined and different
+      optimizedPic = createOptimizedPictureExternal(
+        img.src, 
+        img.alt, 
+        true, // eager loading for footer images (above fold)
+        [{ width: '200' }, { width: '400' }], // responsive breakpoints
+        baseUrl
+      );
+    } else {
+      // Use createOptimizedPicture from aem.js when baseUrl is not defined or equals window.location.href
+      optimizedPic = createOptimizedPicture(
+        img.src, 
+        img.alt, 
+        true, // eager loading for footer images (above fold)
+        [{ width: '200' }, { width: '400' }] // responsive breakpoints
+      );
+    }
+    
+    // Move instrumentation from original to optimized image
+    moveInstrumentation(img, optimizedPic.querySelector('img'));
+    
+    // Mark as optimized to prevent re-processing
+    optimizedPic.setAttribute('data-optimized', 'true');
+    
+    // Replace the original picture with optimized version
+    const originalPicture = img.closest('picture');
+    if (originalPicture) {
+      originalPicture.replaceWith(optimizedPic);
+    } else {
+      // If no picture element, wrap the img and replace
+      img.replaceWith(optimizedPic);
+    }
+  });
+}
+
 export default function decorate(block) {
   const data = parseFooterData(block);
 
@@ -746,6 +798,12 @@ export default function decorate(block) {
     });
   }
 
+  // Optimize footer images after HTML is set
+  optimizeFooterImages(block);
+
   // Dispatch custom event to match reference
   document.dispatchEvent(new Event('asus-cto-DOMContentLoaded'));
 }
+
+// Export the optimizeFooterImages function for use by web component
+export { optimizeFooterImages };

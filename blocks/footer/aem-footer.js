@@ -1,10 +1,10 @@
-import { loadFooterFragment, processFooterFragmentContent, createOptimizedPictureExternal, moveInstrumentation } from '../../scripts/scripts.js';
-import { createOptimizedPicture } from '../../scripts/aem.js';
+import { loadFooterFragment, processFooterFragmentContent } from '../../scripts/scripts.js';
 import { 
   loadAssetsForComponent,
   loadCustomFragment,
   initializeBlockInShadowRoot
 } from '../../scripts/aem-component-utils.js';
+import { optimizeFooterImages } from './footer.js';
 
 // Footer configuration - calculated once for the entire module
 const FooterConfig = {
@@ -73,58 +73,6 @@ class AEMFooter extends HTMLElement {
     return await loadCustomFragment(this.fragmentUrl, baseUrl, loadFooterFragment, processFooterFragmentContent);
   }
 
-  /**
-   * Function to optimize footer images using createOptimizedPicture
-   * Similar to optimizeLogoImages() from header component
-   */
-  optimizeFooterImages() {
-    // Find all images in footer and optimize them, particularly social media icons
-    this.shadowRoot.querySelectorAll('footer img, .footer img, .social img, .social__icons img').forEach((img) => {
-      // Skip if already optimized or if it's not in a picture element
-      if (img.closest('picture')?.hasAttribute('data-optimized')) {
-        return;
-      }
-      
-      let optimizedPic;
-      
-      // Use FooterConfig for baseUrl and shouldUseExternal
-      const { baseUrl, shouldUseExternal } = FooterConfig;
-      
-      if (shouldUseExternal) {
-        // Use createOptimizedPictureExternal with baseUrl when baseUrl is defined and different
-        optimizedPic = createOptimizedPictureExternal(
-          img.src, 
-          img.alt, 
-          true, // eager loading for footer images (above fold)
-          [{ width: '200' }, { width: '400' }], // responsive breakpoints
-          baseUrl
-        );
-      } else {
-        // Use createOptimizedPicture from aem.js when baseUrl is not defined or equals window.location.href
-        optimizedPic = createOptimizedPicture(
-          img.src, 
-          img.alt, 
-          true, // eager loading for footer images (above fold)
-          [{ width: '200' }, { width: '400' }] // responsive breakpoints
-        );
-      }
-      
-      // Move instrumentation from original to optimized image
-      moveInstrumentation(img, optimizedPic.querySelector('img'));
-      
-      // Mark as optimized to prevent re-processing
-      optimizedPic.setAttribute('data-optimized', 'true');
-      
-      // Replace the original picture with optimized version
-      const originalPicture = img.closest('picture');
-      if (originalPicture) {
-        originalPicture.replaceWith(optimizedPic);
-      } else {
-        // If no picture element, wrap the img and replace
-        img.replaceWith(optimizedPic);
-      }
-    });
-  }
 
   /**
    * Initialize footer block functionality
@@ -155,7 +103,7 @@ class AEMFooter extends HTMLElement {
       await this.initializeFooterBlock();
 
       // Optimize footer images after HTML is set and footer functionality is initialized
-      this.optimizeFooterImages();
+      optimizeFooterImages(this.shadowRoot);
 
       this.isLoaded = true;
       this.dispatchEvent(new CustomEvent('aem-footer-loaded', {
