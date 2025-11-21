@@ -7,9 +7,12 @@ const DEFAULT_VALUES = {
 };
 
 export default function decorate(block) {
+  const cardRows = [...block.children];
+  const limit = 3;
+
   /* change to ul, li */
   const ul = document.createElement('ul');
-  [...block.children].forEach((row) => {
+  cardRows.slice(0, limit).forEach((row) => {
     const li = document.createElement('li');
     li.className = 'top-picks-card';
     moveInstrumentation(row, li);
