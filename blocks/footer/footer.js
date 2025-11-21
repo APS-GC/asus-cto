@@ -1,10 +1,68 @@
 import './uifrontend/_footer.js';
-import { moveInstrumentation } from '../../scripts/scripts.js';
+import { moveInstrumentation, createOptimizedPictureExternal } from '../../scripts/scripts.js';
+import { createOptimizedPicture } from '../../scripts/aem.js';
+
+// Footer configuration - calculated once for the entire module
+const FooterConfig = {
+  get baseUrl() {
+    return window.asusCto?.baseUrl;
+  },
+  get shouldUseExternal() {
+    return this.baseUrl && this.baseUrl !== window.location.origin;
+  }
+};
 
 function parseFragmentContent(block) {
   try {
-    // Get all div elements that contain the structured data
-    const contentDivs = block.querySelectorAll('div > div > div');
+    // Enhanced selector strategy to handle both wrapped and unwrapped content structures
+    let contentDivs = [];
+    
+    // First, try to find the root footer div
+    const footerDiv = block.querySelector('.footer') || block;
+    
+    // Get all direct children of the footer
+    const footerChildren = Array.from(footerDiv.children);
+    
+    // Extract content divs from each child, handling different wrapper structures
+    footerChildren.forEach(child => {
+      // Check for wrapped structure: div > p > div
+      const pElement = child.querySelector('p');
+      if (pElement) {
+        const innerDiv = pElement.querySelector('div');
+        if (innerDiv) {
+          contentDivs.push(innerDiv);
+        }
+      } else {
+        // Check for direct structure: div > div
+        const directDiv = child.querySelector('div');
+        if (directDiv) {
+          contentDivs.push(directDiv);
+        } else {
+          // Fallback: use the child itself
+          contentDivs.push(child);
+        }
+      }
+      
+      // Additionally, for social media sections, check if this child has both picture and URL content
+      // This handles cases where EDS processes the fragment and merges content
+      const hasImage = child.querySelector('picture img');
+      if (hasImage) {
+        // Look for URL content in the same child or adjacent siblings
+        const textContent = child.textContent?.trim();
+        if (textContent && !textContent.includes('<')) {
+          // Extract URL text that's not part of the image
+          const imageText = child.querySelector('picture').textContent || '';
+          const urlText = textContent.replace(imageText, '').trim();
+          if (urlText && (urlText.startsWith('http') || urlText.includes('facebook.com') || urlText.includes('youtube.com'))) {
+            // Create a virtual URL div for this content
+            const virtualUrlDiv = document.createElement('div');
+            virtualUrlDiv.textContent = urlText;
+            contentDivs.push(virtualUrlDiv);
+          }
+        }
+      }
+    });
+
 
     const parsedData = {
       newsletterLabel: '',
@@ -68,10 +126,13 @@ function parseFragmentContent(block) {
         const linksList = div.querySelector('ul');
         if (linksList && parsedData.footerColumns[0]) {
           const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[0].links = Array.from(links).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.footerColumns[0].links = Array.from(links).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: href
+            };
+          });
         }
       } else if (index === 6) {
         // 7th div: Column 2 Title
@@ -83,10 +144,13 @@ function parseFragmentContent(block) {
         const linksList = div.querySelector('ul');
         if (linksList && parsedData.footerColumns[1]) {
           const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[1].links = Array.from(links).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.footerColumns[1].links = Array.from(links).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl:  FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
+            };
+          });
         }
       } else if (index === 8) {
         // 9th div: Column 3 Title
@@ -98,20 +162,26 @@ function parseFragmentContent(block) {
         const linksList = div.querySelector('ul');
         if (linksList && parsedData.footerColumns[2]) {
           const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[2].links = Array.from(links).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.footerColumns[2].links = Array.from(links).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
+            };
+          });
         }
       } else if (index === 10) {
         // 11th div: Legal Links
         const linksList = div.querySelector('ul');
         if (linksList) {
           const links = linksList.querySelectorAll('li a');
-          parsedData.legalLinks = Array.from(links).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
+          parsedData.legalLinks = Array.from(links).map(link => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
+            };
+          });
         }
       } else if (index === 11) {
         // 12th div: show Global
@@ -120,32 +190,49 @@ function parseFragmentContent(block) {
         }
       } else if (index >= 12) {
         // 13th+ divs: Social Media Icons with Images and Links
-        // Structure: <div><p><div><picture><img></picture></div><div>URL</div></p></div>
-        const picture = div.querySelector('div > picture img');
-        const urlDiv = div.querySelectorAll('div')[1] || div.querySelector('a'); // Second div contains the URL
+        // Structure is pairs of consecutive divs: picture div + URL div
         
-        if (picture && urlDiv) {
-          const socialPlatforms = ['facebook', 'x', 'instagram', 'tiktok', 'youtube', 'discord', 'twitch', 'thread']; // Map to known platforms
-          const platformIndex = index - 12;
-          const platform = socialPlatforms[platformIndex] || `social${platformIndex + 1}`;
-          const url = urlDiv.textContent?.trim() || '#';
+        const isEvenIndex = (index - 12) % 2 === 0;
+        
+        if (isEvenIndex) {
+          // This should be a picture div, pair it with the next div for URL
+          const pictureDiv = div;
+          const urlDiv = contentDivs[index + 1];
           
-          parsedData.socialLinks.push({
-            platform: platform,
-            url: url,
-            icon: picture.getAttribute('src') || '',
-            altText: picture.getAttribute('alt') || platform.charAt(0).toUpperCase() + platform.slice(1),
-            originalElement: picture, // Store reference to original image element for moveInstrumentation
-            actualDiv:div
-          });
+          
+          const picture = pictureDiv.querySelector('picture img');
+          let url = '#';
+          
+          if (urlDiv) {
+            const urlLink = urlDiv.querySelector('a');
+            const urlText = urlDiv.textContent?.trim();
+            url = urlLink?.href || urlText || '#';
+          }
+          
+          
+          if (picture && url && url !== '#') {
+            const socialPlatforms = ['facebook', 'x', 'instagram', 'tiktok', 'youtube', 'discord', 'twitch', 'thread'];
+            const platformIndex = Math.floor((index - 12) / 2); // Divide by 2 since we have pairs
+            const platform = socialPlatforms[platformIndex] || `social${platformIndex + 1}`;
+            
+            
+            parsedData.socialLinks.push({
+              platform: platform,
+              url: url,
+              icon: picture.getAttribute('src') || '',
+              altText: picture.getAttribute('alt') || platform.charAt(0).toUpperCase() + platform.slice(1),
+              originalElement: picture, // Store reference to original image element for moveInstrumentation
+              actualDiv: pictureDiv
+            });
+          }
         }
+        // Skip odd indices as they are processed as part of the pairs
       }
     }
 
     // Filter out empty columns
     parsedData.footerColumns = parsedData.footerColumns.filter(col => col && col.columnTitle);
 
-    console.log('Parsed data from fragment:', parsedData);
     return parsedData;
     
   } catch (error) {
@@ -190,7 +277,6 @@ function parseFooterData(block) {
   if (block.dataset && (block.dataset.model || block.dataset.aueModel)) {
     const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {};
     
-    console.log('Universal Editor Model Data:', modelData);
     
     // Parse newsletter fields from UE model
     if (modelData.titleSubscription) data.newsletterLabel = modelData.titleSubscription;
@@ -250,8 +336,6 @@ function parseFooterData(block) {
     // This would need to be implemented based on the actual UE model structure for social icons
     // For now, we'll keep the existing social links from fragment parsing
   }
-
-  console.log('Final parsed data:', data);
 
   // Process block content for authoring data
   const rows = [...block.children];
@@ -412,11 +496,15 @@ function buildSocialIcons(socialLinks, socialLabel) {
   ul.className = 'social__icons p-0 m-0';
   
   // Process each social link
-  socialLinks.forEach(link => {
+  socialLinks.forEach((link, index) => {
     const li = document.createElement('li');
     const a = document.createElement('a');
     const img = document.createElement('img');
-    moveInstrumentation(link.actualDiv,li);
+    
+    if (link.actualDiv) {
+      moveInstrumentation(link.actualDiv,li);
+    }
+    
     const altText = link.altText || link.platform.charAt(0).toUpperCase() + link.platform.slice(1);
     
     // Set link attributes
@@ -440,6 +528,7 @@ function buildSocialIcons(socialLinks, socialLabel) {
     a.appendChild(img);
     li.appendChild(a);
     ul.appendChild(li);
+    
   });
   
   nav.appendChild(ul);
@@ -509,6 +598,57 @@ function buildLegalLinks(legalLinks) {
   });
   
   return linksContainer.innerHTML;
+}
+
+// Function to optimize footer images using createOptimizedPicture
+// Similar to optimizeLogoImages() from header component
+function optimizeFooterImages(container) {
+  // Find all images in footer and optimize them, particularly social media icons
+  container.querySelectorAll('footer img, .footer img, .social img, .social__icons img').forEach((img) => {
+    // Skip if already optimized or if it's not in a picture element
+    if (img.closest('picture')?.hasAttribute('data-optimized')) {
+      return;
+    }
+    
+    let optimizedPic;
+    
+    // Use FooterConfig for baseUrl and shouldUseExternal
+    const { baseUrl, shouldUseExternal } = FooterConfig;
+    
+    if (shouldUseExternal) {
+      // Use createOptimizedPictureExternal with baseUrl when baseUrl is defined and different
+      optimizedPic = createOptimizedPictureExternal(
+        img.src, 
+        img.alt, 
+        true, // eager loading for footer images (above fold)
+        [{ width: '200' }, { width: '400' }], // responsive breakpoints
+        baseUrl
+      );
+    } else {
+      // Use createOptimizedPicture from aem.js when baseUrl is not defined or equals window.location.href
+      optimizedPic = createOptimizedPicture(
+        img.src, 
+        img.alt, 
+        true, // eager loading for footer images (above fold)
+        [{ width: '200' }, { width: '400' }] // responsive breakpoints
+      );
+    }
+    
+    // Move instrumentation from original to optimized image
+    moveInstrumentation(img, optimizedPic.querySelector('img'));
+    
+    // Mark as optimized to prevent re-processing
+    optimizedPic.setAttribute('data-optimized', 'true');
+    
+    // Replace the original picture with optimized version
+    const originalPicture = img.closest('picture');
+    if (originalPicture) {
+      originalPicture.replaceWith(optimizedPic);
+    } else {
+      // If no picture element, wrap the img and replace
+      img.replaceWith(optimizedPic);
+    }
+  });
 }
 
 export default function decorate(block) {
@@ -658,6 +798,12 @@ export default function decorate(block) {
     });
   }
 
+  // Optimize footer images after HTML is set
+  optimizeFooterImages(block);
+
   // Dispatch custom event to match reference
   document.dispatchEvent(new Event('asus-cto-DOMContentLoaded'));
 }
+
+// Export the optimizeFooterImages function for use by web component
+export { optimizeFooterImages };

@@ -1,4 +1,9 @@
 import { loadHeaderFragment, processFragmentContent } from '../../scripts/scripts.js';
+import { 
+  loadAssetsForComponent,
+  loadCustomFragment,
+  initializeBlockInShadowRoot
+} from '../../scripts/aem-component-utils.js';
 
 /**
  * AEM Header Web Component
@@ -46,91 +51,18 @@ class AEMHeader extends HTMLElement {
    * Load required CSS and JS assets
    */
   async loadAssets() {
-    // Load CSS into shadow root
-    await this.loadStyles();
-    
-    // Set up window.hlx.codeBasePath BEFORE loading aem.js to ensure icons use correct baseUrl
     const baseUrl = this.baseUrl || window.location.origin;
-    
-    // Initialize window.hlx if it doesn't exist
-    if (!window.hlx) {
-      const baseUrl = this.baseUrl || window.location.origin;
-      await this.loadScript(`${baseUrl}/scripts/aem.js`);
-    }
+    await loadAssetsForComponent(this.shadowRoot, baseUrl, 'header');
   }
 
-  /**
-   * Load CSS file
-   */
-  loadCSS(href, media) {
-    return new Promise((resolve, reject) => {
-      if (!this.shadowRoot.querySelector(`link[href="${href}"]`)) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = href;
-        if (media) link.media = media;
-        link.onload = resolve;
-        link.onerror = reject;
-        this.shadowRoot.append(link);
-      } else {
-        resolve();
-      }
-    });
-  }
-
-  /**
-   * Load all required styles with CSS variable inheritance for shadow DOM
-   */
-  async loadStyles() {
-    const baseUrl = this.baseUrl || window.location.origin;
-    return Promise.allSettled([
-      this.loadCSS(`${baseUrl}/blocks/header/aem-header.css`),
-      this.loadCSS(`${baseUrl}/blocks/header/header.css`)
-    ]);
-  }
-
-  /**
-   * Load JS file
-   */
-  loadScript(src) {
-    return new Promise((resolve, reject) => {
-      if (!document.querySelector(`head > script[src="${src}"]`)) {
-        const script = document.createElement('script');
-        script.src = src;
-        script.type = 'module';
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.append(script);
-      } else {
-        resolve();
-      }
-    });
-  }
 
   /**
    * Load header fragment from custom URL
    * @returns {Promise<string|null>} Fragment HTML content or null if not found
    */
   async loadCustomHeaderFragment() {
-    if (!this.fragmentUrl) {
-      console.warn('Fragment URL not provided, falling back to default');
-      return await loadHeaderFragment();
-    }
-    
     const baseUrl = this.baseUrl || window.location.origin;
-    const fullFragmentUrl = `${baseUrl}/${this.fragmentUrl}`;
-    
-    try {
-      const response = await fetch(fullFragmentUrl);
-      if (response.ok) {
-        const html = await response.text();
-        return processFragmentContent(html);
-      }
-    } catch (error) {
-      console.log('Failed to load custom header fragment:', error);
-    }
-    
-    return null;
+    return await loadCustomFragment(this.fragmentUrl, baseUrl, loadHeaderFragment, processFragmentContent);
   }
 
   /**
@@ -175,19 +107,8 @@ class AEMHeader extends HTMLElement {
    * Initialize header block functionality
    */
   async initializeHeaderBlock() {
-    const headerBlock = this.shadowRoot.querySelector('.header');
-    if (!headerBlock) return;
-
-    try {
-      // Import and execute header decoration
-      const baseUrl = this.baseUrl || window.location.origin;
-      const headerModule = await import(`${baseUrl}/blocks/header/header.js`);
-      if (headerModule.default) {
-        await headerModule.default(headerBlock);
-      }
-    } catch (error) {
-      console.error('Error initializing header block:', error);
-    }
+    const baseUrl = this.baseUrl || window.location.origin;
+    await initializeBlockInShadowRoot(this.shadowRoot, '.header', 'header', baseUrl);
   }
 
 
