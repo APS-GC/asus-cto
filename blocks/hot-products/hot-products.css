@@ -34,6 +34,10 @@
     display: flex;
 }
 
+.hot-products-wrapper:has(.hot-products-error, .hot-products-loading) {
+    display: block;
+}
+
 .hot-products-card {
     background: var(--color-primary-50);
     color: var(--color-primary-950);
@@ -633,12 +637,7 @@
     padding: 3rem;
     text-align: center;
     grid-column: 1 / -1;
-}
-
-.hot-products-loading {
-    background: var(--color-primary-50);
-    border-radius: 1rem;
-    position: relative;
+    width: 100%;
 }
 
 .hot-products-loading::after {

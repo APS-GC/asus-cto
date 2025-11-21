@@ -370,7 +370,7 @@ export default async function decorate(block) {
   const wrapper = document.createElement('div');
   wrapper.className = 'hot-products-wrapper swiper-wrapper';
 
-  wrapper.innerHTML = '<div class="hot-products-loading swiper-slide">Loading products...</div>';
+  wrapper.innerHTML = '<div class="hot-products-loading swiper-slide"></div>';
 
   swiperContainer.appendChild(wrapper);
 
@@ -387,13 +387,15 @@ export default async function decorate(block) {
 
   block.appendChild(section);
 
-  try {
-    const products = await fetchHotProducts(null, config);
+  // Use setTimeout to ensure the loading state is painted before API call
+  setTimeout(async () => {
+    try {
+      const products = await fetchHotProducts(null, config);
 
-    if (products && products.length > 0) {
-      wrapper.innerHTML = '';
+      if (products && products.length > 0) {
+        wrapper.innerHTML = '';
 
-      const productsToDisplay = products.slice(0, config.productsToShow);
+        const productsToDisplay = products.slice(0, config.productsToShow);
 
       productsToDisplay.forEach(product => {
         if (product.hoverImage) {
@@ -431,11 +433,12 @@ export default async function decorate(block) {
           console.error('Hot Products: Failed to load Bazaarvoice:', error);
         }
       }, { once: true });
-    } else {
-      wrapper.innerHTML = '<div class="hot-products-error">No products available</div>';
+      } else {
+        wrapper.innerHTML = '<div class="hot-products-error">No products available</div>';
+      }
+    } catch (error) {
+      console.error('Error loading hot products:', error);
+      wrapper.innerHTML = '<div class="hot-products-error">Failed to load products. Please try again later.</div>';
     }
-  } catch (error) {
-    console.error('Error loading hot products:', error);
-    wrapper.innerHTML = '<div class="hot-products-error">Failed to load products. Please try again later.</div>';
-  }
+  }, 0);
 }
