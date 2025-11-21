@@ -1,5 +1,10 @@
-import { createOptimizedPicture } from '../../scripts/aem.js';
-import { moveInstrumentation } from '../../scripts/scripts.js';
+import { moveInstrumentation, createOptimizedPicture } from '../../scripts/scripts.js';
+
+// Default values from authoring configuration
+const DEFAULT_VALUES = {
+  label: 'Top picks',
+  ctaLinkName: 'View configs'
+};
 
 export default function decorate(block) {
   /* change to ul, li */
@@ -31,14 +36,13 @@ export default function decorate(block) {
           productImageWrapper.append(picture);
         }
       } else if (index === 1) {
-        // Second cell contains category/label
+        // Second cell contains category/label - apply default if empty
         const textContent = cell.textContent.trim();
-        if (textContent) {
-          const label = document.createElement('h3');
-          label.className = 'label';
-          label.textContent = textContent;
-          productInfo.append(label);
-        }
+        const labelText = textContent || DEFAULT_VALUES.label;
+        const label = document.createElement('h3');
+        label.className = 'label';
+        label.textContent = labelText;
+        productInfo.append(label);
       } else if (index === 2) {
         // Third cell contains title
         const textContent = cell.textContent.trim();
@@ -49,8 +53,8 @@ export default function decorate(block) {
           productInfo.append(title);
         }
       } else if (index === 3) {
-        // Fourth cell contains the CTA link name
-        const ctaLinkName = cell.textContent.trim();
+        // Fourth cell contains the CTA link name - apply default if empty
+        const ctaLinkName = cell.textContent.trim() || DEFAULT_VALUES.ctaLinkName;
         // Store the CTA link name for use in the next cell
         li.dataset.ctaLinkName = ctaLinkName;
       } else if (index === 4) {
@@ -62,8 +66,8 @@ export default function decorate(block) {
           
           link.className = 'cta';
           
-          // Use the CTA link name from the previous cell, or fallback to existing text
-          const ctaLinkName = li.dataset.ctaLinkName || link.textContent.trim() || 'View configs';
+          // Use the CTA link name from the previous cell, or fallback to existing text, or use default
+          const ctaLinkName = li.dataset.ctaLinkName || link.textContent.trim() || DEFAULT_VALUES.ctaLinkName;
           link.textContent = ctaLinkName;
           
           link.setAttribute('aria-label', `${ctaLinkName} for ${productInfo.querySelector('.title')?.textContent || 'product'}`);

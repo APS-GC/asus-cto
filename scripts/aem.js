@@ -493,125 +493,22 @@ function decorateSections(main) {
     section.dataset.sectionStatus = 'initialized';
     section.style.display = 'none';
 
-    // Process section metadata - check multiple sources
-    let meta = {};
-    
-    // 1. Check for traditional section-metadata div (for backwards compatibility)
+    // Process section metadata
     const sectionMeta = section.querySelector('div.section-metadata');
     if (sectionMeta) {
-      meta = readBlockConfig(sectionMeta);
-      sectionMeta.parentNode.remove();
-    }
-    
-    // 2. Check for UE data attributes or model data on the section element
-    const ueModelData = section.dataset.ueModel;
-    if (ueModelData) {
-      try {
-        const modelData = JSON.parse(ueModelData);
-        meta = { ...meta, ...modelData };
-      } catch (e) {
-        // Invalid JSON, skip
-      }
-    }
-    
-    // 3. Check for individual UE data attributes
-    const ueFields = ['marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'backgroundColor', 'style'];
-    ueFields.forEach(field => {
-      const dataAttr = `data-${field.toLowerCase()}`;
-      if (section.hasAttribute(dataAttr)) {
-        meta[field] = section.getAttribute(dataAttr);
-      }
-    });
-    
-    // Apply metadata as CSS classes
-    const cssClassFields = ['marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'backgroundColor', 'style'];
-    
-    Object.keys(meta).forEach((key) => {
-      if (cssClassFields.includes(key)) {
+      const meta = readBlockConfig(sectionMeta);
+      Object.keys(meta).forEach((key) => {
         if (key === 'style') {
-          // Handle multiselect style field - can have multiple values separated by commas
           const styles = meta.style
             .split(',')
             .filter((style) => style)
             .map((style) => toClassName(style.trim()));
           styles.forEach((style) => section.classList.add(style));
         } else {
-          // Handle single CSS class fields - apply the value directly as a CSS class
-          if (meta[key] && meta[key].trim()) {
-            section.classList.add(meta[key].trim());
-          }
+          section.dataset[toCamelCase(key)] = meta[key];
         }
-      } else {
-        // Other metadata fields become data attributes
-        section.dataset[toCamelCase(key)] = meta[key];
-      }
-    });
-  });
-}
-
-/**
- * Updates section metadata dynamically (for Universal Editor)
- * @param {Element} section The section element to update
- */
-function updateSectionMetadata(section) {
-  // Process section metadata - check multiple sources (same as decorateSections)
-  let meta = {};
-  
-  // 1. Check for traditional section-metadata div (for backwards compatibility)
-  const sectionMeta = section.querySelector('div.section-metadata');
-  if (sectionMeta) {
-    meta = readBlockConfig(sectionMeta);
-  }
-  
-  // 2. Check for UE data attributes or model data on the section element
-  const ueModelData = section.dataset.ueModel;
-  if (ueModelData) {
-    try {
-      const modelData = JSON.parse(ueModelData);
-      meta = { ...meta, ...modelData };
-    } catch (e) {
-      // Invalid JSON, skip
-    }
-  }
-  
-  // 3. Check for individual UE data attributes
-  const ueFields = ['marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'backgroundColor', 'style'];
-  ueFields.forEach(field => {
-    const dataAttr = `data-${field.toLowerCase()}`;
-    if (section.hasAttribute(dataAttr)) {
-      meta[field] = section.getAttribute(dataAttr);
-    }
-  });
-  
-  // Fields that should be applied as CSS classes to the section element
-  const cssClassFields = ['marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'backgroundColor', 'style'];
-  
-  // Remove existing styling classes from section
-  const existingClasses = Array.from(section.classList).filter(cls => 
-    cls.startsWith('mt-') || cls.startsWith('mb-') || cls.startsWith('pt-') || cls.startsWith('pb-') ||
-    cls.startsWith('bg-') || cls === 'highlight' || cls === 'full-width' || cls === 'text-center'
-  );
-  existingClasses.forEach(cls => section.classList.remove(cls));
-  
-  // Apply new metadata as CSS classes
-  Object.keys(meta).forEach((key) => {
-    if (cssClassFields.includes(key)) {
-      if (key === 'style') {
-        // Handle multiselect style field - can have multiple values separated by commas
-        const styles = meta.style
-          .split(',')
-          .filter((style) => style)
-          .map((style) => toClassName(style.trim()));
-        styles.forEach((style) => section.classList.add(style));
-      } else {
-        // Handle single CSS class fields - apply the value directly as a CSS class
-        if (meta[key] && meta[key].trim()) {
-          section.classList.add(meta[key].trim());
-        }
-      }
-    } else {
-      // Other metadata fields become data attributes
-      section.dataset[toCamelCase(key)] = meta[key];
+      });
+      sectionMeta.parentNode.remove();
     }
   });
 }
@@ -718,86 +615,10 @@ function decorateBlocks(main) {
  * @returns {Promise}
  */
 async function loadHeader(header) {
-  try {
-    // Try to load header from fragment first
-    const fragmentContent = await loadHeaderFragment();
-    if (fragmentContent) {
-      const headerBlock = buildBlock('header', '');
-      
-      // Populate the header block with fragment content
-      headerBlock.innerHTML = fragmentContent;
-      
-      header.append(headerBlock);
-      decorateBlock(headerBlock);
-      return loadBlock(headerBlock);
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('Failed to load header fragment, falling back to default header:', error);
-  }
-
-  // Fallback to original header loading
   const headerBlock = buildBlock('header', '');
   header.append(headerBlock);
   decorateBlock(headerBlock);
   return loadBlock(headerBlock);
-}
-
-/**
- * Loads header fragment from the working fragment URL
- * @returns {Promise<string|null>} Fragment HTML content or null if not found
- */
-async function loadHeaderFragment() {
-  const fragmentUrl = './fragments/header.plain.html';
-
-  try {
-    const response = await fetch(fragmentUrl);
-    if (response.ok) {
-      const html = await response.text();
-      return processFragmentContent(html);
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('Failed to load header fragment:', error);
-  }
-
-  return null;
-}
-
-/**
- * Processes fragment content and extracts header block structure
- * @param {string} html Fragment HTML content
- * @returns {string|null} Processed header block content
- */
-function processFragmentContent(html) {
-  try {
-    // Create a temporary DOM to parse the fragment
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-
-    // Look for existing header block (UE authoring data format)
-    const existingHeaderBlock = tempDiv.querySelector('.header.block');
-    if (existingHeaderBlock) {
-      // Extract the inner header content (skip the outer wrapper)
-      const innerHeader = existingHeaderBlock.querySelector('.header');
-      if (innerHeader) {
-        return innerHeader.outerHTML;
-      }
-    }
-
-    // Fallback: Look for any header block
-    const headerBlock = tempDiv.querySelector('.header');
-    if (headerBlock) {
-      return headerBlock.outerHTML;
-    }
-
-    return null;
-
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('Error processing fragment content:', error);
-    return null;
-  }
 }
 
 /**
@@ -881,17 +702,14 @@ export {
   loadCSS,
   loadFooter,
   loadHeader,
-  loadHeaderFragment,
   loadScript,
   loadSection,
   loadSections,
-  processFragmentContent,
   readBlockConfig,
   sampleRUM,
   setup,
   toCamelCase,
   toClassName,
-  updateSectionMetadata,
   waitForFirstImage,
   wrapTextNodes,
 };

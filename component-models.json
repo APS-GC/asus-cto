@@ -337,230 +337,26 @@
         "description": "The label shown for this section in the Content Tree"
       },
       {
-        "component": "select",
-        "name": "marginTop",
-        "label": "Top Margin",
-        "description": "Add top margin to the section",
-        "options": [
-          {
-            "name": "None",
-            "value": ""
-          },
-          {
-            "name": "Small (4px)",
-            "value": "mt-1"
-          },
-          {
-            "name": "Medium (16px)",
-            "value": "mt-4"
-          },
-          {
-            "name": "Large (32px)",
-            "value": "mt-8"
-          },
-          {
-            "name": "Extra Large (48px)",
-            "value": "mt-12"
-          },
-          {
-            "name": "XXL (64px)",
-            "value": "mt-16"
-          },
-          {
-            "name": "XXXL (80px)",
-            "value": "mt-20"
-          },
-          {
-            "name": "XXXXL (96px)",
-            "value": "mt-24"
-          }
-        ]
-      },
-      {
-        "component": "select",
-        "name": "marginBottom",
-        "label": "Bottom Margin",
-        "description": "Add bottom margin to the section",
-        "options": [
-          {
-            "name": "None",
-            "value": ""
-          },
-          {
-            "name": "Small (4px)",
-            "value": "mb-1"
-          },
-          {
-            "name": "Medium (16px)",
-            "value": "mb-4"
-          },
-          {
-            "name": "Large (32px)",
-            "value": "mb-8"
-          },
-          {
-            "name": "Extra Large (48px)",
-            "value": "mb-12"
-          },
-          {
-            "name": "XXL (64px)",
-            "value": "mb-16"
-          },
-          {
-            "name": "XXXL (80px)",
-            "value": "mb-20"
-          },
-          {
-            "name": "XXXXL (96px)",
-            "value": "mb-24"
-          }
-        ]
-      },
-      {
-        "component": "select",
-        "name": "paddingTop",
-        "label": "Top Padding",
-        "description": "Add top padding to the section",
-        "options": [
-          {
-            "name": "None",
-            "value": ""
-          },
-          {
-            "name": "Small (4px)",
-            "value": "pt-1"
-          },
-          {
-            "name": "Medium (16px)",
-            "value": "pt-4"
-          },
-          {
-            "name": "Large (32px)",
-            "value": "pt-8"
-          },
-          {
-            "name": "Extra Large (48px)",
-            "value": "pt-12"
-          },
-          {
-            "name": "XXL (64px)",
-            "value": "pt-16"
-          },
-          {
-            "name": "XXXL (80px)",
-            "value": "pt-20"
-          },
-          {
-            "name": "XXXXL (96px)",
-            "value": "pt-24"
-          }
-        ]
-      },
-      {
-        "component": "select",
-        "name": "paddingBottom",
-        "label": "Bottom Padding",
-        "description": "Add bottom padding to the section",
-        "options": [
-          {
-            "name": "None",
-            "value": ""
-          },
-          {
-            "name": "Small (4px)",
-            "value": "pb-1"
-          },
-          {
-            "name": "Medium (16px)",
-            "value": "pb-4"
-          },
-          {
-            "name": "Large (32px)",
-            "value": "pb-8"
-          },
-          {
-            "name": "Extra Large (48px)",
-            "value": "pb-12"
-          },
-          {
-            "name": "XXL (64px)",
-            "value": "pb-16"
-          },
-          {
-            "name": "XXXL (80px)",
-            "value": "pb-20"
-          },
-          {
-            "name": "XXXXL (96px)",
-            "value": "pb-24"
-          }
-        ]
-      },
-      {
-        "component": "select",
-        "name": "backgroundColor",
-        "label": "Background Color",
-        "description": "Set the background color for the section",
-        "options": [
-          {
-            "name": "None",
-            "value": ""
-          },
-          {
-            "name": "White",
-            "value": "bg-light"
-          },
-          {
-            "name": "Black",
-            "value": "bg-dark"
-          },
-          {
-            "name": "Primary Brand",
-            "value": "bg-primary"
-          },
-          {
-            "name": "Light Grey",
-            "value": "bg-primary-900"
-          },
-          {
-            "name": "Medium Grey",
-            "value": "bg-primary-700"
-          },
-          {
-            "name": "Dark Grey",
-            "value": "bg-primary-200"
-          },
-          {
-            "name": "Info Blue",
-            "value": "bg-info"
-          },
-          {
-            "name": "Success Green",
-            "value": "bg-success"
-          },
-          {
-            "name": "Warning Orange",
-            "value": "bg-warning"
-          }
-        ]
-      },
-      {
         "component": "multiselect",
         "name": "style",
         "label": "Additional Styles",
         "description": "Apply additional styling options",
         "options": [
           {
-            "name": "Highlight",
-            "value": "highlight"
+            "name": "Responsive Container",
+            "value": "container"
           },
           {
-            "name": "Full Width",
-            "value": "full-width"
+            "name": "Section Spacing Top (Small)",
+            "value": "section-spacing-top__small"
           },
           {
-            "name": "Centered Content",
-            "value": "text-center"
+            "name": "Section Spacing Top",
+            "value": "section-spacing-top"
+          },
+          {
+            "name": "Section Spacing Bottom",
+            "value": "section-spacing-bottom"
           }
         ]
       }
@@ -728,187 +524,116 @@
       }
     ]
   },
-  {
+   {
     "id": "footer",
     "fields": [
       {
         "component": "text",
         "valueType": "string",
-        "name": "newsletterLabel",
-        "label": "Newsletter Label",
-        "description": "Label text for newsletter signup",
-        "value": "Get the latest deals and more"
+        "name": "titleSubscription",
+        "label": "Title For Subscription Section",
+        "description": "Title For Subscription Section"
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "newsletterPlaceholder",
-        "label": "Newsletter Email Placeholder",
-        "description": "Placeholder text for email input",
-        "value": "Enter email address"
+        "name": "placeholder",
+        "label": "Placeholder for Form Field",
+        "description": "Placeholder to Give Email"
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "newsletterButtonText",
-        "label": "Newsletter Button Text",
-        "description": "Text for newsletter signup button",
-        "value": "Sign up"
+        "name": "buttonText",
+        "label": "Label For Subscription Button",
+        "description": "Label For Subscription Button"
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "socialLabel",
-        "label": "Social Media Label",
-        "description": "Label text for social media section",
-        "value": "Follow us at:"
-      },
-      {
-        "component": "container",
-        "name": "socialLinks",
-        "label": "Social Media Links",
-        "description": "Social media platform links",
-        "multi": true,
-        "fields": [
-          {
-            "component": "select",
-            "name": "platform",
-            "label": "Platform",
-            "options": [
-              {
-                "name": "Facebook",
-                "value": "facebook"
-              },
-              {
-                "name": "Twitter/X",
-                "value": "x"
-              },
-              {
-                "name": "Discord",
-                "value": "discord"
-              },
-              {
-                "name": "YouTube",
-                "value": "youtube"
-              },
-              {
-                "name": "Twitch",
-                "value": "twitch"
-              },
-              {
-                "name": "Instagram",
-                "value": "instagram"
-              },
-              {
-                "name": "TikTok",
-                "value": "tiktok"
-              },
-              {
-                "name": "Threads",
-                "value": "thread"
-              }
-            ]
-          },
-          {
-            "component": "aem-content",
-            "name": "url",
-            "label": "Platform URL",
-            "description": "URL for the social media platform"
-          },
-          {
-            "component": "reference",
-            "name": "icon",
-            "label": "Platform Icon",
-            "description": "Select icon from DAM for this social platform",
-            "multi": false
-          },
-          {
-            "component": "text",
-            "valueType": "string",
-            "name": "altText",
-            "label": "Icon Alt Text",
-            "description": "Alternative text for the platform icon"
-          }
-        ]
-      },
-      {
-        "component": "container",
-        "name": "footerColumns",
-        "label": "Footer Navigation Columns",
-        "description": "Footer navigation link columns",
-        "multi": true,
-        "fields": [
-          {
-            "component": "text",
-            "valueType": "string",
-            "name": "columnTitle",
-            "label": "Column Title",
-            "description": "Title for this footer column"
-          },
-          {
-            "component": "container",
-            "name": "links",
-            "label": "Column Links",
-            "description": "Links for this column",
-            "multi": true,
-            "fields": [
-              {
-                "component": "text",
-                "valueType": "string",
-                "name": "linkText",
-                "label": "Link Text",
-                "description": "Display text for the link"
-              },
-              {
-                "component": "aem-content",
-                "name": "linkUrl",
-                "label": "Link URL",
-                "description": "URL for the link"
-              }
-            ]
-          }
-        ]
+        "name": "socialTitle",
+        "label": "Title for Social Icon Section",
+        "description": "Title for Social Icon Section"
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "globalText",
-        "label": "Global/Language Text",
-        "description": "Text for global/language selector",
-        "value": "Global / English"
+        "name": "titleFirstColumn",
+        "label": "Title For First Column",
+        "description": "Title For First Column"
       },
       {
-        "component": "reference",
-        "name": "globalIcon",
-        "label": "Global/Language Icon",
-        "description": "Select icon from DAM for global/language selector",
-        "multi": false,
-        "value": "/icons/Global.svg"
+        "component": "richtext",
+        "name": "config",
+        "value": "",
+        "label": "Footer First Column Config Menu",
+        "valueType": "string",
+        "required": true
       },
       {
-        "component": "container",
-        "name": "legalLinks",
-        "label": "Legal Links",
-        "description": "Bottom footer legal links",
-        "multi": true,
-        "fields": [
-          {
-            "component": "text",
-            "valueType": "string",
-            "name": "linkText",
-            "label": "Link Text",
-            "description": "Display text for the legal link"
-          },
-          {
-            "component": "aem-content",
-            "name": "linkUrl",
-            "label": "Link URL",
-            "description": "URL for the legal link"
-          }
-        ]
+        "component": "text",
+        "valueType": "string",
+        "name": "titleSecondColumn",
+        "label": "Title For Second Column",
+        "description": "Title For Second Column"
+      },
+      {
+        "component": "richtext",
+        "name": "configSecondColumn",
+        "value": "",
+        "label": "Footer Second Column Config Menu",
+        "valueType": "string",
+        "required": true
+      },
+       {
+        "component": "text",
+        "valueType": "string",
+        "name": "titleThirdColumn",
+        "label": "Title For Third Column",
+        "description": "Title For Third Column"
+      },
+      {
+        "component": "richtext",
+        "name": "configThirdColumn",
+        "value": "",
+        "label": "Footer Third Column Config Menu",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "copyrightLinks",
+        "value": "",
+        "label": "Copyright Links for Footer",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "boolean",
+        "name": "showGlobal",
+        "label": "Show Global Icon and Text",
+        "valueType": "boolean"
       }
     ]
   },
+  {
+      "id": "footer-icon",
+      "fields": [
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "iconImage",
+          "label": "Icon Image",
+          "multi": false
+        },
+        {
+        "component": "aem-content",
+        "name": "iconURL",
+        "label": "Footer Icon URL",
+        "description": "URL the Footer Icon should link to"
+        }
+      ]
+    },
   {
     "id": "article-card-item",
     "fields": [
@@ -968,17 +693,17 @@
     "id": "header",
     "fields": [
       {
+        "component": "aem-content",
+        "name": "asusLogoUrl",
+        "label": "ASUS Logo URL",
+        "description": "URL the ASUS logo should link to"
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "asusLogoAltText",
         "label": "ASUS Logo Alt Text",
         "description": "Alternative text for the ASUS logo"
-      },
-      {
-        "component": "aem-content",
-        "name": "asusLogoUrl",
-        "label": "ASUS Logo URL",
-        "description": "URL the ASUS logo should link to"
       },
       {
         "component": "reference",
@@ -995,12 +720,6 @@
         "description": "Alternative text for the ROG logo"
       },
       {
-        "component": "aem-content",
-        "name": "rogLogoUrl",
-        "label": "ROG Logo URL",
-        "description": "URL the ROG logo should link to"
-      },
-      {
         "component": "reference",
         "name": "rogLogoImage",
         "label": "ROG Logo Image",
@@ -1013,12 +732,6 @@
         "name": "gamingPcLogoAltText",
         "label": "Gaming PC Logo Alt Text",
         "description": "Alternative text for the Gaming PC logo"
-      },
-      {
-        "component": "aem-content",
-        "name": "gamingPcLogoUrl",
-        "label": "Gaming PC Logo URL",
-        "description": "URL the Gaming PC logo should link to"
       },
       {
         "component": "reference",
@@ -1035,117 +748,26 @@
         "valueType": "string"
       },
       {
-        "component": "boolean",
-        "name": "showSearch",
-        "label": "Show Search Icon",
-        "description": "Display the search icon in the header",
-        "value": true
-      },
-      {
-        "component": "boolean",
-        "name": "showProfile",
-        "label": "Show Profile Icon",
-        "description": "Display the profile icon in the header",
-        "value": true
-      },
-      {
-        "component": "boolean",
-        "name": "showCart",
-        "label": "Show Cart Icon",
-        "description": "Display the cart icon in the header",
-        "value": true
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "searchPlaceholder",
-        "label": "Mobile Search Placeholder",
-        "description": "Placeholder text for mobile search input",
-        "value": "Enter keywords"
-      },
-      {
-        "component": "reference",
-        "name": "searchIcon",
-        "label": "Search Icon",
-        "description": "Select search icon from DAM",
-        "multi": false,
-        "value": "/icons/search.svg"
-      },
-      {
-        "component": "reference",
-        "name": "cartIcon",
-        "label": "Cart Icon",
-        "description": "Select cart icon from DAM",
-        "multi": false,
-        "value": "/icons/cart.svg"
-      },
-      {
-        "component": "reference",
-        "name": "profileIcon",
-        "label": "Profile Icon",
-        "description": "Select profile icon from DAM",
-        "multi": false,
-        "value": "/icons/profile.svg"
-      },
-      {
-        "component": "reference",
-        "name": "hamburgerIcon",
-        "label": "Hamburger Menu Icon",
-        "description": "Select hamburger menu icon from DAM",
-        "multi": false,
-        "value": "/icons/hamburger.svg"
-      },
-      {
-        "component": "reference",
-        "name": "closeIcon",
-        "label": "Close Icon",
-        "description": "Select close icon from DAM",
-        "multi": false,
-        "value": "/icons/close.svg"
-      },
-      {
-        "component": "reference",
-        "name": "arrowLeftIcon",
-        "label": "Left Arrow Icon",
-        "description": "Select left arrow icon from DAM",
-        "multi": false,
-        "value": "/icons/arrow-left.svg"
-      },
-      {
-        "component": "reference",
-        "name": "arrowRightIcon",
-        "label": "Right Arrow Icon",
-        "description": "Select right arrow icon from DAM",
-        "multi": false,
-        "value": "/icons/arrow-right.svg"
-      },
-      {
-        "component": "container",
-        "name": "profileMenuItems",
+        "component": "richtext",
+        "name": "profileMenu",
+        "value": "",
         "label": "Profile Menu Items",
-        "description": "Items in the profile dropdown menu",
-        "multi": true,
-        "fields": [
-          {
-            "component": "text",
-            "valueType": "string",
-            "name": "linkText",
-            "label": "Menu Item Text",
-            "description": "Display text for the profile menu item"
-          },
-          {
-            "component": "aem-content",
-            "name": "linkUrl",
-            "label": "Menu Item URL",
-            "description": "URL for the profile menu item"
-          }
-        ]
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "profileMenuLogin",
+        "value": "",
+        "label": "Profile Menu Items for Login",
+        "valueType": "string",
+        "required": true
       }
     ]
   },
   {
     "id": "carousel",
-      "fields": [
+    "fields": [
       {
         "component": "number",
         "name": "imageAutoplayDuration",
@@ -1217,40 +839,44 @@
         "label": "CTA Button Location",
         "valueType": "string",
         "options": [
-          {
-            "name": "Center",
-            "value": "center"
-          },
-          {
-            "name": "Top",
-            "value": "top"
-          },
-          {
-            "name": "Bottom", 
-            "value": "bottom"
-          },
-          {
-            "name": "Left",
-            "value": "left"
-          },
-          {
-            "name": "Right",
-            "value": "right"
-          },
-          {
-            "name": "Start Center",
-            "value": "start-center"
-          },
-          {
-            "name": "End Center",
-            "value": "end-center"
-          },
-          {
-            "name": "Center Top",
-            "value": "center-top"
-          }
-        ],
-        "value": "center"
+            {
+              "name": "Start Top",
+              "value": "start-top"
+            },
+            {
+              "name": "Start Center",
+              "value": "start-center"
+            },
+            {
+              "name": "star bottom",
+              "value": "start-bottom"
+            },
+            {
+              "name": "Center Top",
+              "value": "center-top"
+            },
+            {
+              "name": "Center Center",
+              "value": "center-center"
+            },
+            {
+              "name": "Center Bottom",
+              "value": "center-bottom"
+            },
+            {
+              "name": "End Top",
+              "value": "end-top"
+            },
+            {
+              "name": "End Center",
+              "value": "end-center"
+            },
+            {
+              "name": "End Bottom:",
+              "value": "end-bottom"
+            }
+          ],
+          "value": "center-center"
       },
       {
         "component": "aem-content",
@@ -1266,5 +892,448 @@
         "valueType": "boolean"
       }
     ]
-  }
+  },
+  {
+      "id": "top-picks-card",
+      "fields": [
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "image",
+          "label": "Product Image",
+          "description": "Upload or select a product image",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "label",
+          "label": "Product Label/Category",
+          "description": "Small label text (e.g., 'Top picks', 'Featured', etc.)",
+          "value": "Top picks"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "title",
+          "label": "Product Title",
+          "description": "Main product title or name",
+          "value": "",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "ctaLinkName",
+          "label": "CTA Link Name",
+          "description": "Text for the call-to-action button (e.g., 'View configs', 'Learn more')",
+          "value": "View configs"
+        },
+        {
+          "component": "aem-content",
+          "name": "link",
+          "label": "Call-to-Action Link",
+          "description": "Link URL for the call-to-action",
+          "valueType": "string"
+        }
+      ]
+    },
+    {
+    "id": "product-card",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "sectionTitle",
+        "label": "Section Title",
+        "description": "Title displayed above the product cards",
+        "value": "Hot Products"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "itemCount",
+        "label": "Number of Items",
+        "description": "Number of product cards to display in the carousel (default: 3)",
+        "value": "3",
+        "validation": {
+          "min": 1,
+          "max": 10
+        }
+      },
+      {
+        "component": "aem-content",
+        "name": "viewAllLink",
+        "label": "View All Link",
+        "description": "URL for the 'View all' link",
+        "valueType": "string",
+        "value": "/products"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "viewAllText",
+        "label": "View All Text",
+        "description": "Text for the 'View all' link",
+        "value": "View all"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "apiEndpoint",
+        "label": "API Endpoint",
+        "description": "GraphQL API endpoint for fetching product data",
+        "value": "/mock-api/products"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "autoplayInterval",
+        "label": "Auto-play Interval",
+        "description": "Auto-play interval in milliseconds (0 to disable)",
+        "value": "5000",
+        "validation": {
+          "min": 0,
+          "max": 15000
+        }
+      }
+    ]
+  },
+  {
+    "id": "hot-products",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Section Title",
+        "description": "Title displayed above the hot products section",
+        "value": "Hot Products"
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "productsToShow",
+        "label": "Products to Show",
+        "description": "Number of products to display in the carousel (default: 3)",
+        "value": 3
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "compareLabel",
+        "label": "Compare Label",
+        "description": "Text for the compare checkbox label",
+        "value": "Compare"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "buyNowText",
+        "label": "Buy Now Button Text",
+        "description": "Text for the buy now call-to-action button",
+        "value": "Buy now"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "quickViewText",
+        "label": "Quick View Button Text",
+        "description": "Text for the quick view button that appears on product image hover",
+        "value": "Quick view"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "estoreLabel",
+        "label": "Estore Price Label",
+        "description": "Label text for the estore price section",
+        "value": "ASUS estore price"
+      },
+      {
+        "component": "richtext",
+        "name": "estoreTooltip",
+        "label": "Estore Price Tooltip",
+        "description": "Tooltip content explaining the estore price",
+        "valueType": "string",
+        "value": "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "viewAllText",
+        "label": "View All Link Text",
+        "description": "Text for the 'View all' link at the bottom",
+        "value": "View all"
+      },
+      {
+        "component": "aem-content",
+        "name": "viewAllLink",
+        "label": "View All Link URL",
+        "description": "URL for the 'View all' link",
+        "valueType": "string",
+        "value": "#"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "productPreviewModalPath",
+        "label": "Product Preview Modal Path",
+        "description": "Path to the product preview modal content page (default: /modals/product-preview)",
+        "value": "/modals/product-preview"
+      }
+    ]
+  },
+  {
+    "id": "product-preview",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "fpsDetailsModalPath",
+        "label": "FPS Details Modal Path",
+        "description": "Path to the FPS details modal content page (default: /content/asus-cto/language-master/en/modals/fps-details)",
+        "value": "/content/asus-cto/language-master/en/modals/fps-details"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "timeSpyScoreModalPath",
+        "label": "Time Spy Score Modal Path",
+        "description": "Path to the Time Spy Score modal content page (default: /content/asus-cto/language-master/en/modals/time-spy-score)",
+        "value": "/content/asus-cto/language-master/en/modals/time-spy-score"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "dataSourceTooltip",
+        "label": "Data Source Tooltip",
+        "description": "Tooltip text for the data source information icon (default: All FPS performance data presented are theoretical...)",
+        "value": "All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ."
+      }
+    ]
+  },
+  {
+    "id": "help-me-choose",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": ""  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description",
+        "label": "Description",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "yourBudgetLabel",
+        "label": "Your Budget Label",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "HelpMeChooseButtonLabel",
+        "label": "Help Me Choose Button Label",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ResetButtonLabel",
+        "label": "Reset Button Label",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ConfirmButtonLabel",
+        "label": "Confirm Button Label",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "featured-news-articles",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": "Featured News Articles"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "seeAllButtonText",
+        "label": "See All Articles Button Text",
+        "value": "See all News Articles"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "seeAllButtonLinkTo",
+        "label": "See All Articles Button LinkTo"
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "openLinkInNewTab",
+        "label": "Open link in new tab"
+      },
+      {
+        "component": "number",
+        "name": "itemCount",
+        "label": "Number of Items",
+        "value": 7,
+        "description": "Number of cards to display in the carousel (max:7)",
+        "validation": {
+          "min": 1,
+          "max": 7
+        }
+      }
+    ]
+  },
+  {
+    "id": "featured-news-article",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "articleTitle",
+        "label": "Title of the Article"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "articleSummary",
+        "label": "Article Summary"
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "media",
+        "label": "Media"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Image Alt"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "postedDate",
+        "label": "Posted Date"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "articleLinkTo",
+        "label": "Article LinkTo"
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "articleOpenInNewTab",
+        "label": "Select to open in new tab"
+      }
+    ]
+  },
+  {
+      "id": "our-advantages",
+      "fields": [
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "title",
+          "label": "Title",
+          "value": "Our Advantages"
+        },
+        {
+          "component": "number",
+          "name": "itemCount",
+          "label": "Number of Items",
+          "value": 3,
+          "description": "Number of advantage cards to display in the carousel (max: 4)",
+          "validation": {
+            "min": 1,
+            "max": 4
+          }
+        },
+        {
+          "component": "number",
+          "name": "imageAutoplayDuration",
+          "label": "Image Autoplay Duration (seconds)",
+          "value": 5,
+          "validation": {
+            "min": 1,
+            "max": 30
+          }
+        }
+      ]
+    },
+    {
+      "id": "our-advantage",
+      "fields": [
+        {
+          "component": "text",
+          "name": "title",
+          "value": "",
+          "label": "Headline",
+          "valueType": "string",
+          "required": true
+        },
+        {
+          "component": "text",
+          "name": "details",
+          "value": "",
+          "label": "Details",
+          "valueType": "string"
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "media",
+          "label": "Cover Image",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "imageAlt",
+          "label": "Image Alt"
+        },
+        {
+          "component": "text",
+          "name": "navigation",
+          "value": "",
+          "label": "Navigation Button Text",
+          "valueType": "string"
+        },
+        {
+          "component": "aem-content",
+          "valueType": "string",
+          "name": "link",
+          "label": "Navigation Button LinkTo"
+        },
+        {
+          "component": "boolean",
+          "valueType": "boolean",
+          "name": "articleOpenInNewTab",
+          "label": "Select to open in new tab"
+        }
+      ]
+    }
 ]
