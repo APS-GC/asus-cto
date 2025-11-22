@@ -1175,36 +1175,29 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "description",
-        "label": "Description",
+        "name": "compareButtonLabel",
+        "label": "Compare Button Label",
+        "value": ""
+      },      
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "clearAllButtonLabel",
+        "label": "Clear All Button Label",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "yourBudgetLabel",
-        "label": "Your Budget Label",
+        "name": "limitErrorMessage",
+        "label": "Limit Error Message",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "HelpMeChooseButtonLabel",
-        "label": "Help Me Choose Button Label",
-        "value": ""
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "ResetButtonLabel",
-        "label": "Reset Button Label",
-        "value": ""
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "ConfirmButtonLabel",
-        "label": "Confirm Button Label",
+        "name": "minimumErrorMessage",
+        "label": "Minimum Error Message",
         "value": ""
       }
     ]

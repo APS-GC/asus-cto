@@ -205,12 +205,11 @@
                 "template": {
                   "name": "Product Compare",
                   "model": "product-compare",
-                  "title": "Select The Game You Play",
-                  "description": "We will recommend a plan that suits you most!",
-                  "yourBudgetLabel": "Your Budget",
-                  "HelpMeChooseButtonLabel": "Help me choose",
-                  "ResetButtonLabel": "Reset",
-                  "ConfirmButtonLabel": "Confirm"
+                  "title": "Product Comparison",
+                  "compareButtonLabel": "View Comparison",
+                  "clearAllButtonLabel": "Clear All",
+                  "limitErrorMessage": "You have reached the limit of 4 products, please remove one product before adding a new one for comparison.",
+                  "minimumErrorMessage": "Please select at least 2 products to compare."
                 }
               }
             }

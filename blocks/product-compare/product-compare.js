@@ -17,6 +17,11 @@ async function renderProductCompare(block) {
   const productCompareContainer = document.createElement('div');
   productCompareContainer.className = 'product-compare-container container';
 
+
+  const authoredRows = [...block.children];
+  const AuthoredData = authoredRows.map(row => row.textContent.trim());
+  console.log('Hello Authored Data:', AuthoredData);
+
   // Build the HTML in a fragment / string, then insert once
   const html = `
   <div
@@ -31,15 +36,14 @@ async function renderProductCompare(block) {
             <div class="cmp-product-compare__title-group">
                <div class="cmp-product-compare__title-row">
                   <h2 class="cmp-product-compare__title" id="compare-title">
-                     Product Comparison (<span data-count>0</span>/4)
+                     ${escapeHtml(AuthoredData[0] || '')} (<span data-count>0</span>/4)
                   </h2>
                   <div class="cmp-product-compare__error-container" aria-live="polite">
                      <div class="cmp-product-compare__error" hidden data-error="limit">
-                        You have reached the limit of 4 products, please remove one product before adding a
-                        new one for comparison.
+                        ${escapeHtml(AuthoredData[3] || '')}
                      </div>
                      <div class="cmp-product-compare__error" hidden data-error="minimum">
-                        Please select at least 2 products to compare.
+                        ${escapeHtml(AuthoredData[4] || '')}
                      </div>
                   </div>
                </div>
@@ -84,10 +88,10 @@ async function renderProductCompare(block) {
          </div>
          <div class="cmp-product-compare__actions">
             <button class="cmp-button cmp-button--primary" data-action="compare" data-compare-link="./product-comparison.html" aria-label="Compare the selected products">
-            View Comparison
+            ${escapeHtml(AuthoredData[1] || '')}
             </button>
             <button class="cmp-button cmp-button--tertiary btn btn-link" data-action="clear-all">
-            Clear All
+            ${escapeHtml(AuthoredData[2] || '')}
             </button>
          </div>
       </div>
@@ -99,6 +103,21 @@ async function renderProductCompare(block) {
 
   // Replace in DOM
   block.replaceChildren(...productCompareContainer.children);
+}
+
+/**
+ * Helper to escape user / config data to prevent XSS
+ * @param {string} str - The string to escape.
+ * @returns {string} - The escaped string.
+ */
+// Helper to escape user / config data to prevent XSS
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 /**
