@@ -20,7 +20,6 @@ async function renderProductCompare(block) {
 
   const authoredRows = [...block.children];
   const AuthoredData = authoredRows.map(row => row.textContent.trim());
-  console.log('Hello Authored Data:', AuthoredData);
 
   // Build the HTML in a fragment / string, then insert once
   const html = `
