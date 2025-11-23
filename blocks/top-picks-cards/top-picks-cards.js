@@ -9,7 +9,7 @@ const DEFAULT_VALUES = {
 export default function decorate(block) {
   /* change to ul, li */
   const ul = document.createElement('ul');
-  [...block.children].forEach((row) => {
+  [...block.children].slice(0, 2).forEach((row) => {
     const li = document.createElement('li');
     li.className = 'top-picks-card';
     moveInstrumentation(row, li);
