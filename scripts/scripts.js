@@ -390,6 +390,11 @@ async function loadEager(doc) {
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
+    const hasCarousel = main.querySelector('.carousel, .hot-products, .product-preview, .help-me-choose');
+    if (hasCarousel) {
+      loadSwiper().catch(err => console.error('Failed to preload Swiper:', err));
+    }
+    
     document.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
   }
