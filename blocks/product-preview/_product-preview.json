@@ -43,6 +43,16 @@
           "label": "Data Source Tooltip",
           "description": "Tooltip text for the data source information icon (default: All FPS performance data presented are theoretical...)",
           "value": "All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ."
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "threeMarkLogo",
+          "label": "3DMark Logo",
+          "description": "Image path for the 3DMark logo displayed in the Time Spy Score section",
+          "validation": {
+            "required": true
+          }
         }
       ]
     }

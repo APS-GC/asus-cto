@@ -255,6 +255,7 @@ const DEFAULT_CONFIG = {
   estoreTooltip: 'ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.',
   viewAllText: 'View all',
   viewAllLink: '#',
+  openLinkInNewTab: false,
   productPreviewModalPath: '/content/asus-cto/language-master/en/modals/product-preview'
 };
 
@@ -370,7 +371,7 @@ export default async function decorate(block) {
   const wrapper = document.createElement('div');
   wrapper.className = 'hot-products-wrapper swiper-wrapper';
 
-  wrapper.innerHTML = '<div class="hot-products-loading swiper-slide">Loading products...</div>';
+  wrapper.innerHTML = '<div class="hot-products-loading swiper-slide"></div>';
 
   swiperContainer.appendChild(wrapper);
 
@@ -378,8 +379,9 @@ export default async function decorate(block) {
 
   const footer = document.createElement('div');
   footer.className = 'hot-products-section-footer';
+  const targetAttrs = config.openLinkInNewTab ? ' target="_blank" rel="noopener noreferrer"' : '';
   footer.innerHTML = `
-    <a href="${config.viewAllLink}" class="hot-products-view-all">
+    <a href="${config.viewAllLink}" class="hot-products-view-all"${targetAttrs}>
       ${config.viewAllText} <span class="hot-products-arrow">›</span>
     </a>
   `;
@@ -387,13 +389,15 @@ export default async function decorate(block) {
 
   block.appendChild(section);
 
-  try {
-    const products = await fetchHotProducts(null, config);
+  // Use setTimeout to ensure the loading state is painted before API call
+  setTimeout(async () => {
+    try {
+      const products = await fetchHotProducts(null, config);
 
-    if (products && products.length > 0) {
-      wrapper.innerHTML = '';
+      if (products && products.length > 0) {
+        wrapper.innerHTML = '';
 
-      const productsToDisplay = products.slice(0, config.productsToShow);
+        const productsToDisplay = products.slice(0, config.productsToShow);
 
       productsToDisplay.forEach(product => {
         if (product.hoverImage) {
@@ -431,11 +435,12 @@ export default async function decorate(block) {
           console.error('Hot Products: Failed to load Bazaarvoice:', error);
         }
       }, { once: true });
-    } else {
-      wrapper.innerHTML = '<div class="hot-products-error">No products available</div>';
+      } else {
+        wrapper.innerHTML = '<div class="hot-products-error">No products available</div>';
+      }
+    } catch (error) {
+      console.error('Error loading hot products:', error);
+      wrapper.innerHTML = '<div class="hot-products-error">Failed to load products. Please try again later.</div>';
     }
-  } catch (error) {
-    console.error('Error loading hot products:', error);
-    wrapper.innerHTML = '<div class="hot-products-error">Failed to load products. Please try again later.</div>';
-  }
+  }, 0);
 }
