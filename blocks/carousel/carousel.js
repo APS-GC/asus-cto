@@ -3,8 +3,7 @@
  * Supports authorable hero banner slides with video/image media, CTA buttons, and autoplay settings
  */
 
-import { moveInstrumentation, isUniversalEditor, createOptimizedPicture } from '../../scripts/scripts.js';
-import { loadSwiper } from '../../scripts/swiper-loader.js';
+import { moveInstrumentation, isUniversalEditor, createOptimizedPicture, loadSwiper } from '../../scripts/scripts.js';
 
 // Configuration defaults
 const DEFAULT_IMAGE_AUTOPLAY = 3000;

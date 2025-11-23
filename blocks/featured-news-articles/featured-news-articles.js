@@ -2,7 +2,7 @@ import {
   transferInstrumentation,
   isAuthorEnvironment,
 } from "../../scripts/utils.js";
-import { loadSwiper } from '../../scripts/swiper-loader.js';
+import { loadSwiper } from '../../scripts/scripts.js';
 const itemsStartIndex = 5;
 export default async function decorate(block) {
   const divs = block.children;

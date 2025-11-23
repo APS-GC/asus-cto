@@ -1,8 +1,7 @@
 import { fetchHotProducts } from '../../scripts/api-service.js';
-import { isUniversalEditor, loadBazaarvoiceScript } from '../../scripts/scripts.js';
+import { isUniversalEditor, loadBazaarvoiceScript, loadSwiper } from '../../scripts/scripts.js';
 import { openModal } from '../modal/modal.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
-import { loadSwiper } from '../../scripts/swiper-loader.js';
 
 function initializeTooltips(container) {
   const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
