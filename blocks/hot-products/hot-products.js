@@ -255,6 +255,7 @@ const DEFAULT_CONFIG = {
   estoreTooltip: 'ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.',
   viewAllText: 'View all',
   viewAllLink: '#',
+  openLinkInNewTab: false,
   productPreviewModalPath: '/content/asus-cto/language-master/en/modals/product-preview'
 };
 
@@ -378,8 +379,9 @@ export default async function decorate(block) {
 
   const footer = document.createElement('div');
   footer.className = 'hot-products-section-footer';
+  const targetAttrs = config.openLinkInNewTab ? ' target="_blank" rel="noopener noreferrer"' : '';
   footer.innerHTML = `
-    <a href="${config.viewAllLink}" class="hot-products-view-all">
+    <a href="${config.viewAllLink}" class="hot-products-view-all"${targetAttrs}>
       ${config.viewAllText} <span class="hot-products-arrow">›</span>
     </a>
   `;

@@ -93,6 +93,14 @@
           "value": "#"
         },
         {
+          "component": "boolean",
+          "name": "openLinkInNewTab",
+          "label": "Open Link in New Tab",
+          "description": "Check to open the 'View all' link in a new tab",
+          "valueType": "boolean",
+          "value": false
+        },
+        {
           "component": "text",
           "valueType": "string",
           "name": "productPreviewModalPath",
