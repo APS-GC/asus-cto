@@ -3,7 +3,7 @@
  */
 
 import { openModal } from '../modal/modal.js';
-import { loadSwiper } from '../../scripts/swiper-loader.js';
+import { loadSwiper } from '../../scripts/scripts.js';
 
 /**
  * Parse configuration from block metadata
