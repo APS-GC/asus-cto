@@ -22,7 +22,7 @@ export default async function decorate(block) {
         aria-roledescription="carousel"
         data-cmp-is="our-advantages"
         data-cmp-delay="${imageAutoplayDuration * 1000}"
-        data-carousel-effect="creative"
+        
       >
         <div class="cmp-carousel__content">
         </div>
