@@ -590,7 +590,7 @@ function loadDelayed() {
 }
 
 async function loadPage() {
-  if (document.querySelector('aem-header')) {
+  if (document.querySelector('aem-header, aem-footer')) {
     console.log('Web component usage detected - skipping full page initialization');
     return;
   }
