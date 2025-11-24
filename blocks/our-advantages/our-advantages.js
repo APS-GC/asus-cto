@@ -105,7 +105,6 @@ export default async function decorate(block) {
   block.append(mockupContainer);
 
   // trigger block
-  await loadSwiper();
   await import("../../scripts/carousel.js");
   await import("./uifrontend_advantage-card.js");
 

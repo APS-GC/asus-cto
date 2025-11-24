@@ -106,7 +106,7 @@ export function createOptimizedPicture(
  * Loads Swiper library on-demand to improve initial page load performance
  */
 let swiperPromise = null;
-// let swiperCSSLoaded = false;
+let swiperCSSLoaded = false;
 
 /**
  * Dynamically loads Swiper library from CDN
@@ -126,10 +126,10 @@ export async function loadSwiper() {
       try {
         await Promise.all([
           // Load CSS once
-          // !swiperCSSLoaded ? loadCSS('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css').then(() => {
-          //   swiperCSSLoaded = true;
-          //   console.log('Swiper CSS loaded');
-          // }) : Promise.resolve(),
+          !swiperCSSLoaded ? loadCSS('https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css').then(() => {
+            swiperCSSLoaded = true;
+            console.log('Swiper CSS loaded');
+          }) : Promise.resolve(),
           // Load JS
           loadScript(
             'https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js',
@@ -390,7 +390,7 @@ async function loadEager(doc) {
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
-    const hasCarousel = main.querySelector('.carousel, .hot-products, .product-preview, .help-me-choose');
+    const hasCarousel = main.querySelector('.carousel, .hot-products, .product-preview, .help-me-choose,.our-advantages');
     if (hasCarousel) {
       loadSwiper().catch(err => console.error('Failed to preload Swiper:', err));
     }
