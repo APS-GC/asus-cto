@@ -165,6 +165,8 @@ function createProductCard(product, config) {
             data-name="${product.name}"
             data-model="${product.modelName || ''}"
             data-image="${product.mainImage}"
+            data-sku="${product.sku || ''}"
+            data-pdp="${product.urlKey || 'pdp.html'}"
             data-add-to-compare
           />
           <label for="compare-${product.sku}" class="hot-products-compare-label">${config.compareLabel}</label>
