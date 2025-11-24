@@ -313,7 +313,6 @@ class ProductCompare {
    * @returns {HTMLElement} The created slide element.
    */
   createSlotElement(product) {
-    console.log("hello 3", product);
     const slide = document.createElement('div');
     slide.className = 'swiper-slide';
 
