@@ -1,4 +1,6 @@
+import { loadCSS, loadScript } from '../../scripts/aem.js';
 import { loadSwiper } from '../../scripts/swiper-loader.js';
+
 
 /**
  * Main entry point for the product-compare block.
@@ -6,6 +8,7 @@ import { loadSwiper } from '../../scripts/swiper-loader.js';
  */
 export default async function decorate(block) {
   await renderProductCompare(block);
+  await loadSwiperCSS();
   initProductCompare(block);
 }
 
@@ -117,6 +120,23 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+
+/**
+ * Loads the Swiper CSS from a CDN, ensuring it is only fetched once.
+ */
+let swiperCSSLoaded = null;
+function loadSwiperCSS() {
+  if (!swiperCSSLoaded) {
+    swiperCSSLoaded = loadCSS(
+      'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css'
+    ).catch((err) => {
+      console.error('Failed to load Swiper CSS:', err);
+      throw err;
+    });
+  }
+  return swiperCSSLoaded;
 }
 
 /**
