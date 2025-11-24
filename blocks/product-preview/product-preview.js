@@ -3,7 +3,7 @@
  */
 
 import { openModal } from '../modal/modal.js';
-import { loadSwiper } from '../../scripts/swiper-loader.js';
+import { loadSwiper } from '../../scripts/scripts.js';
 
 /**
  * Parse configuration from block metadata
@@ -14,7 +14,8 @@ function parseConfig(block) {
   const config = {
     fpsDetailsModalPath: '/content/asus-cto/language-master/en/modals/fps-details',
     timeSpyScoreModalPath: '/content/asus-cto/language-master/en/modals/time-spy-score',
-    dataSourceTooltip: 'All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ.'
+    dataSourceTooltip: 'All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ.',
+    threeMarkLogo: ''
   };
 
   const rows = [...block.children];
@@ -27,6 +28,7 @@ function parseConfig(block) {
       if (key === 'fpsdetailsmodalpath') config.fpsDetailsModalPath = value;
       if (key === 'timespyscoremodalpath') config.timeSpyScoreModalPath = value;
       if (key === 'datasourcetooltip') config.dataSourceTooltip = value;
+      if (key === 'threemarklogo') config.threeMarkLogo = value;
     }
   });
 
@@ -239,7 +241,7 @@ function createGamePerformance(product, config) {
       <div class="time-spy-score-right">
         <span class="data-from">Data from</span>
         <div class="data-source">
-          <img src="./clientlib-site/images/3dmark.webp" alt="3DMark">
+          <img src="${config.threeMarkLogo}" alt="3DMark">
           <button class="btn btn-link btn-tooltip" data-tooltip="${config.dataSourceTooltip}" aria-label="3D Mark information">
             <span class="icon icon--info"></span>
           </button>
@@ -298,7 +300,7 @@ function createTimeSpyScore(product, config) {
       <div class="time-spy-score-right">
         <span class="data-from">Data from</span>
         <div class="data-source">
-          <img src="./clientlib-site/images/3dmark.webp" alt="3DMark">
+          <img src="${config.threeMarkLogo}" alt="3DMark">
           <button class="btn btn-link btn-tooltip" data-tooltip="${config.dataSourceTooltip}" aria-label="3D Mark information">
             <span class="icon icon--info"></span>
           </button>
