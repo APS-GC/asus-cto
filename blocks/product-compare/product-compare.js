@@ -1,6 +1,5 @@
 import { loadCSS, loadScript } from '../../scripts/aem.js';
-import { loadSwiper } from '../../scripts/swiper-loader.js';
-
+import { loadSwiper } from '../../scripts/scripts.js';
 
 /**
  * Main entry point for the product-compare block.
