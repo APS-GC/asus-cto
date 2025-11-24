@@ -889,8 +889,6 @@ body:has(.header.mm-open) {
     }
 
     .cmp-header .cmp-sitenavigation__item--cart, .cmp-header .cmp-sitenavigation__item--menu-toggle {
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex
     }
 
@@ -913,7 +911,7 @@ body:has(.header.mm-open) {
     }
 }
 
-@media only screen and (max-width: 63.9375rem) {
+@media only screen and (max-width: 79.9375rem) {
     .cmp-header {
         padding-bottom: 1rem;
         padding-top: 1rem
@@ -972,7 +970,7 @@ body:has(.header.mm-open) {
     }
 }
 
-@media only screen and (min-width: 64rem) {
+@media only screen and (min-width: 79.9375rem) {
     .cmp-sitenavigation__item--menu-toggle {
         display: none
     }
