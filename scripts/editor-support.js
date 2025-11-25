@@ -8,10 +8,55 @@ import {
   loadScript,
   loadSections,
   updateSectionMetadata,
+  getMetadata,
 } from './aem.js';
 
 import { decorateRichtext } from './editor-support-rte.js';
 import { decorateMain } from './scripts.js';
+
+// Set the filter for a Universal Editor editable element
+function setUEFilter(element, filter) {
+  element.dataset.aueFilter = filter;
+}
+
+/**
+ * Update Universal Editor component filters based on page structure
+ * See: https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/developing/universal-editor/attributes-types
+ */
+function updateUEInstrumentation() {
+  const main = document.querySelector('main');
+  if (!main) return;
+
+  const theme = getMetadata('theme');
+
+  // ----- if header fragment
+  if (theme === 'header') {
+    setUEFilter(main, 'empty');
+    const section = main.querySelector('.section');
+    if (section) {
+      setUEFilter(section, 'section-header');
+    }
+    return;
+  }
+
+  // ----- if footer fragment
+  if (theme === 'footer') {
+    setUEFilter(main, 'empty');
+    const section = main.querySelector('.section');
+    if (section) {
+      setUEFilter(section, 'section-footer');
+    }
+    return;
+  }
+
+  // ----- default content pages
+  setUEFilter(main, 'main');
+  
+  // Update available blocks for all default sections
+  main.querySelectorAll('.section').forEach((elem) => {
+    setUEFilter(elem, 'section');
+  });
+}
 
 async function applyChanges(event) {
   // redecorate default content and blocks on patches (in the properties rail)
@@ -108,11 +153,22 @@ function attachEventListners(main) {
   ].forEach((eventType) => main?.addEventListener(eventType, async (event) => {
     event.stopPropagation();
     const applied = await applyChanges(event);
-    if (!applied) window.location.reload();
+    if (applied) {
+      // Update UE instrumentation after successful changes
+      updateUEInstrumentation();
+    } else {
+      window.location.reload();
+    }
   }));
 }
 
 attachEventListners(document.querySelector('main'));
+
+// Load Adobe Universal Editor filter definition
+loadScript('/component-filters.json', { type: 'application/vnd.adobe.aue.filter+json' });
+
+// Update UE component filters on page load
+updateUEInstrumentation();
 
 // decorate rich text
 // this has to happen after decorateMain(), and everythime decorateBlocks() is called
