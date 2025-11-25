@@ -49,7 +49,7 @@ function updateUEInstrumentation() {
     return;
   }
 
-  if (theme === 'desktop') {
+  if (theme === 'desktops') {
     setUEFilter(main, 'main-desktop');
 
   }
