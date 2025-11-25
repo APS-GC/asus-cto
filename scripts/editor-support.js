@@ -28,6 +28,7 @@ function updateUEInstrumentation() {
   if (!main) return;
 
   const theme = getMetadata('og:title');
+  console.log("UE Theme:", theme);
 
   // ----- if header fragment
   if (theme === 'header') {
