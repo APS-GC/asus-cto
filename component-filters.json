@@ -36,7 +36,8 @@
     "id": "hero-section",
     "components": [
       "image",
-      "title"
+      "title",
+      "carousel"
     ]
   },
   {
