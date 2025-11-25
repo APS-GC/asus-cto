@@ -134,8 +134,6 @@ function attachEventListners(main) {
 
 attachEventListners(document.querySelector('main'));
 
-// Load Adobe Universal Editor filter definition
-loadScript('/component-filters.json', { type: 'application/vnd.adobe.aue.filter+json' });
 
 // Update UE component filters on page load
 updateUEInstrumentation();
