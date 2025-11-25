@@ -27,7 +27,7 @@ function updateUEInstrumentation() {
   const main = document.querySelector('main');
   if (!main) return;
 
-  const theme = getMetadata('theme');
+  const theme = getMetadata('og:title');
 
   // ----- if header fragment
   if (theme === 'header') {
@@ -49,6 +49,10 @@ function updateUEInstrumentation() {
     return;
   }
 
+  if (theme === 'desktop') {
+    setUEFilter(main, 'main-desktop');
+
+  }
   // ----- default content pages
   setUEFilter(main, 'main');
   

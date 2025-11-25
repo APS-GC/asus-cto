@@ -75,6 +75,23 @@
               }
             }
           }
+        },
+        {
+          "title": "Hero Section",
+          "id": "hero-section",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "filter": "hero-section",
+                  "name": " Hero Section",
+                  "model": "hero-section",
+                  "style": "hero-section"
+                }
+              }
+            }
+          }
         }
       ]
     },
