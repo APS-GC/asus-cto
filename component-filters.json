@@ -2,6 +2,12 @@
   {
     "id": "main",
     "components": [
+      "section"
+    ]
+  },
+  {
+    "id": "main-desktops",
+    "components": [
       "section",
       "hero-section"
     ]
