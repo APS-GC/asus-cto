@@ -1181,6 +1181,46 @@
     ]
   },
   {
+    "id": "product-compare",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": ""  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "compareButtonLabel",
+        "label": "Compare Button Label",
+        "value": ""
+      },      
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "clearAllButtonLabel",
+        "label": "Clear All Button Label",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "limitErrorMessage",
+        "label": "Limit Error Message",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "minimumErrorMessage",
+        "label": "Minimum Error Message",
+        "value": ""
+      }
+    ]
+  },
+  {
     "id": "featured-news-articles",
     "fields": [
       {

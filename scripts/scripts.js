@@ -106,7 +106,7 @@ export function createOptimizedPicture(
  * Loads Swiper library on-demand to improve initial page load performance
  */
 let swiperPromise = null;
-// let swiperCSSLoaded = false;
+let swiperCSSLoaded = false;
 
 /**
  * Dynamically loads Swiper library from CDN
@@ -126,15 +126,15 @@ export async function loadSwiper() {
       try {
         await Promise.all([
           // Load CSS once
-          // !swiperCSSLoaded ? loadCSS('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css').then(() => {
-          //   swiperCSSLoaded = true;
-          //   console.log('Swiper CSS loaded');
-          // }) : Promise.resolve(),
+          !swiperCSSLoaded ? loadCSS('https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css').then(() => {
+            swiperCSSLoaded = true;
+            console.log('Swiper CSS loaded');
+          }) : Promise.resolve(),
           // Load JS
           loadScript(
-            'https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js',
+            'https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js',
             {
-              integrity: 'sha512-Ysw1DcK1P+uYLqprEAzNQJP+J4hTx4t/3X2nbVwszao8wD+9afLjBQYjz7Uk4ADP+Er++mJoScI42ueGtQOzEA==',
+              // integrity: 'sha512-Ysw1DcK1P+uYLqprEAzNQJP+J4hTx4t/3X2nbVwszao8wD+9afLjBQYjz7Uk4ADP+Er++mJoScI42ueGtQOzEA==',
               crossorigin: 'anonymous',
               referrerpolicy: 'no-referrer'
             }
@@ -390,7 +390,7 @@ async function loadEager(doc) {
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
-    const hasCarousel = main.querySelector('.carousel, .hot-products, .product-preview, .help-me-choose');
+    const hasCarousel = main.querySelector('.carousel, .hot-products, .product-preview, .help-me-choose,.our-advantages');
     if (hasCarousel) {
       loadSwiper().catch(err => console.error('Failed to preload Swiper:', err));
     }
@@ -590,7 +590,7 @@ function loadDelayed() {
 }
 
 async function loadPage() {
-  if (document.querySelector('aem-header')) {
+  if (document.querySelector('aem-header, aem-footer')) {
     console.log('Web component usage detected - skipping full page initialization');
     return;
   }

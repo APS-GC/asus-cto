@@ -1,6 +1,6 @@
 import { isAuthorEnvironment, safeText } from "../../scripts/utils.js";
 import { transferInstrumentation } from "../../scripts/utils.js";
-import { loadScript, loadSections } from "../../scripts/aem.js";
+import { loadSwiper } from "../../scripts/scripts.js";
 const itemsStartIndex = 3;
 export default async function decorate(block) {
   const divs = block.children;
@@ -105,9 +105,6 @@ export default async function decorate(block) {
   block.append(mockupContainer);
 
   // trigger block
-  await loadScript(
-    "https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"
-  );
   await import("../../scripts/carousel.js");
   await import("./uifrontend_advantage-card.js");
 

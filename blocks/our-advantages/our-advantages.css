@@ -838,3 +838,6 @@ section:has(.cmp-carousel) {
     overflow: visible
 }
 
+.swiper-pagination{
+    position: static
+}
