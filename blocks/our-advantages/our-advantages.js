@@ -1,13 +1,13 @@
 import { isAuthorEnvironment, safeText } from "../../scripts/utils.js";
 import { transferInstrumentation } from "../../scripts/utils.js";
 const pubUrl = 'https://publish-p165753-e1767020.adobeaemcloud.com';
-const itemsStartIndex = 3;
+const itemsStartIndex = 4;
 export default async function decorate(block) {
   const divs = block.children;
   const title = divs[0].textContent.trim() || "Our Advantages";
   const itemCount = Number(divs[1].textContent.trim()) || 3;
   const imageAutoplayDuration = Number(divs[2].textContent.trim()) || 5;
-  const videoAutoplayDuration = Number(divs[3].textContent.trim()) || 5;
+  const videoAutoplayDuration = Number(divs[3].textContent.trim()) || 1;
   const mockupContainer = document.createRange()
     .createContextualFragment(`<div class='container'>
     <div class="carousel panelcontainer">
