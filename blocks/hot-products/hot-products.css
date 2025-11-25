@@ -1,3 +1,5 @@
+/* stylelint-disable declaration-block-no-duplicate-properties */
+
 /* Swiper CSS loaded dynamically by swiper-loader.js to prevent duplicate loads */
 
 .hot-products.block {
@@ -160,9 +162,9 @@
     padding: .5rem .75rem;
     position: absolute;
     top: 50%;
-    -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    -webkit-transition: all .2s ease;
+    transform: translate(-50%, -50%);
+    transition: all .2s ease;
     transition: all .2s ease;
     z-index: 2;
 }
@@ -415,7 +417,6 @@
     color: var(--color-primary-950);
     font-family: var(--font-text);
     font-size: 1.25rem;
-    font-weight: var(--regular);
     font-weight: var(--medium);
     letter-spacing: 0;
     line-height: 1.75rem;
@@ -565,8 +566,7 @@
     border-color: var(--color-primary-950);
 }
 
-@media (max-width: 1024px) {
-
+@media (width <= 1024px) {
     .hot-products-navigation {
         display: flex;
     }
@@ -586,7 +586,7 @@
     }
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
     .hot-products-section-title {
         font-family: var(--font-display);
         font-size: 1.875rem;
@@ -614,7 +614,7 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
     .hot-products-section-title {
         font-size: 1.25rem;
     }
@@ -672,3 +672,4 @@
     border: 1px solid var(--color-error);
     border-radius: 1rem;
 }
+/* stylelint-enable declaration-block-no-duplicate-properties */

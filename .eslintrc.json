@@ -51,7 +51,14 @@
     "quotes": ["error", "single", {
       "avoidEscape": true,
       "allowTemplateLiterals": true
-    }]
+    }],
+    "number-max-precision": [
+      2,  // maximum decimal places allowed
+      {
+        // optional secondary options
+        "ignoreProperties": ["transition", "animation"],        // ignore these CSS properties
+      }
+    ]
   },
   "ignorePatterns": [
     "node_modules/",

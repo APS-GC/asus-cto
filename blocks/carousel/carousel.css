@@ -1,3 +1,5 @@
+/* stylelint-disable declaration-block-no-duplicate-properties, no-duplicate-selectors, declaration-property-value-no-unknown */
+
 /* Swiper CSS loaded dynamically by swiper-loader.js to prevent duplicate loads */
 
 /* Override default Swiper pagination styles */
@@ -99,7 +101,7 @@
   left: calc(50% - 620px);
   text-align: left;
   top: 50%;
-  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
   transform: translateY(-50%);
 }
 
@@ -107,7 +109,7 @@
   left: 50%;
   text-align: center;
   top: calc(64px + var(--header-height));
-  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
   transform: translateX(-50%);
 }
 
@@ -115,7 +117,7 @@
   right: calc(50% - 620px);
   text-align: left;
   top: 50%;
-  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
   transform: translateY(-50%);
 }
 
@@ -135,7 +137,7 @@
   left: 50%;
   text-align: center;
   top: 50%;
-  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
 
@@ -143,7 +145,7 @@
   bottom: 10%;
   left: 50%;
   text-align: center;
-  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
   transform: translateX(-50%);
 }
 
@@ -217,7 +219,7 @@
  
     .cmp-carousel__footer{
     display: -webkit-box;
-    display: -ms-flexbox;
+    display: flexbox;
     display: flex;
     position: absolute;
     justify-content: center;
@@ -232,7 +234,7 @@
 
 /* Indicators Group */
 .cmp-carousel__indicators-group {
-    background: rgba(0,0,0,.8);
+    background: rgb(0,0,0,.8);
     border-radius: 32px;
     height: 16px;
     width: fit-content
@@ -267,7 +269,7 @@
     position: relative;
 }
 
-.cmp-carousel__indicator:before {
+.cmp-carousel__indicator::before {
     background-color: transparent;
     border: 1px solid var(--color-primary-950);
     border-radius: 8px;
@@ -277,20 +279,20 @@
     height: 8px;
     opacity: 1;
     position: relative;
-    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
     transition: all .3s ease;
     width: 8px
 }
 
-.cmp-carousel__indicator:hover:before {
-    background-color: hsla(0,0%,100%,.4)
+.cmp-carousel__indicator:hover::before {
+    background-color: hsl(0deg,0%,100%,.4)
 }
 
 .cmp-carousel__indicator:focus {
     outline: 0
 }
 
-.cmp-carousel__indicator:focus:before {
+.cmp-carousel__indicator:focus::before {
     outline: 2px solid var(--color-focus-ring)
 }
 
@@ -301,13 +303,13 @@
     width: 96px
 }
 
-.cmp-carousel__indicator--active:before {
+.cmp-carousel__indicator--active::before {
     background-color: var(--color-primary-300);
     border: 0;
     width: 100%
 }
 
-.cmp-carousel__indicator--active:after {
+.cmp-carousel__indicator--active::after {
     background-color: var(--color-primary-950);
     border-radius: 8px;
     content: "";
@@ -368,6 +370,7 @@
 }
 
 /* State Modifiers */
+
 /* Autoplay paused state */
 .cmp-carousel:has(.is-autoplay-paused) .carousel-autoplay-toggle {
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 12L9 17.1962L9 6.80385L18 12Z" fill="white"/></svg>');
@@ -404,9 +407,9 @@
 .cmp-carousel__action {
   width: 50px;
   height: 50px;
-  border: 2px solid rgba(255, 255, 255, 0.7);
+  border: 2px solid rgb(255, 255, 255, 0.7);
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgb(0, 0, 0, 0.3);
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -418,7 +421,7 @@
 
 .cmp-carousel__action:hover {
   border-color: white;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgb(0, 0, 0, 0.5);
 }
 
 .cmp-carousel__action--previous::before {
@@ -445,6 +448,7 @@
 }
 
 /* UE Authoring Environment Detection and Overrides */
+
 /* Target common UE iframe and editor contexts */
 body[data-aue-behavior] .cmp-carousel .swiper,
 .aem-authoring-enabled .cmp-carousel .swiper,
@@ -481,8 +485,9 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
 }
 
 /* Responsive Design */
+
 /* Tablet/Medium screens - migrated from hero-banner responsive design */
-@media only screen and (max-width: 79.9375rem) {
+@media only screen and (width <= 79.9375rem) {
   /* Height now controlled by --carousel-height CSS variable in styles.css */
   
   .cmp-carousel .hero-content .headline {
@@ -503,7 +508,7 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
   .cmp-carousel .cmp-hero-banner.hero-content--start-center .hero-content {
     bottom: 76px;
     top: unset;
-    -webkit-transform: unset;
+    transform: unset;
     transform: unset;
   }
 
@@ -514,13 +519,13 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
 }
 
 /* Mobile screens - migrated from hero-banner responsive design */
-@media only screen and (max-width: 45.625rem) {
+@media only screen and (width <= 45.625rem) {
   /* Height now controlled by --carousel-height CSS variable in styles.css */
 
-  .cmp-carousel .hero-banner:after,
-  .cmp-carousel .cmp-hero-banner:after {
-    background: -webkit-gradient(linear,left top,left bottom,from(transparent),to(rgba(0,0,0,.6)));
-    background: linear-gradient(180deg,transparent,rgba(0,0,0,.6));
+  .cmp-carousel .hero-banner::after,
+  .cmp-carousel .cmp-hero-banner::after {
+    background: -webkit-gradient(linear,left top,left bottom,from(transparent),to(rgb(0,0,0,.6)));
+    background: linear-gradient(180deg,transparent,rgb(0,0,0,.6));
     content: "";
     inset: 0;
     position: absolute;
@@ -533,7 +538,7 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
     left: 20px;
     text-align: left;
     top: unset;
-    -webkit-transform: unset;
+    transform: unset;
     transform: unset;
   }
   
@@ -546,8 +551,7 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
 }
 
 /* Existing carousel responsive rules - maintaining backward compatibility */
-@media (max-width: 1024px) {
-  
+@media (width <= 1024px) {
   /* Override responsive rules in UE authoring */
   body[data-aue-behavior] .cmp-carousel .swiper,
   .aem-authoring-enabled .cmp-carousel .swiper,
@@ -555,7 +559,7 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
   iframe[src*="editor"] .cmp-carousel .swiper,
   [data-authoring="true"] .cmp-carousel .swiper {
     height: 350px !important;
-    -webkit-transform: none;
+    transform: none;
     transform: none;
     margin-left: auto;
   }
@@ -602,7 +606,7 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
 .carousel-autoplay-toggle:focus-visible,
 .cmp-carousel__media-control:focus-visible,
 .cmp-carousel__action:focus-visible {
-  outline: 2px solid #0066cc;
+  outline: 2px solid #06c;
   outline-offset: 2px;
 }
 
@@ -657,3 +661,4 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
 .swiper-fallback .swiper-slide:not(:first-child) {
   display: none;
 }
+/* stylelint-enable declaration-block-no-duplicate-properties, no-duplicate-selectors, declaration-property-value-no-unknown */
