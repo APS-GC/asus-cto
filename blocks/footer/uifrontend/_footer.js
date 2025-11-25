@@ -87,7 +87,7 @@ document.addEventListener('asus-cto-DOMContentLoaded', () => {
   const responseElement = newsletterForm.querySelector('.newsletter__response');
   if (newsletterForm) {
     newsletterForm.addEventListener('submit', (e) => {
-      debugger
+      debugger;
       e.preventDefault();
 
       newsletterForm.classList.remove('has--error', 'has--success');

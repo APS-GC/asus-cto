@@ -13,19 +13,19 @@
 
 .article-card-link {
   background: #1a1a1a;
-  color: #ffffff;
+  color: #fff;
   border-radius: 16px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
   text-decoration: none;
-  border: 1px solid #333333;
+  border: 1px solid #333;
   height: 100%;
 }
 
 .article-card-link:hover {
-  border-color: #555555;
+  border-color: #555;
   transform: translateY(-2px);
 }
 
@@ -65,7 +65,7 @@
 .article-card-date {
   font-size: 12px;
   line-height: 1.4;
-  color: #ffffff;
+  color: #fff;
   margin: 0;
   font-weight: 500;
 }
@@ -74,7 +74,7 @@
   font-size: 20px;
   line-height: 1.3;
   font-weight: 600;
-  color: #ffffff;
+  color: #fff;
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -98,13 +98,13 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 1024px) {
+@media (width <= 1024px) {
   .article-card-title {
     font-size: 18px;
   }
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .article-card > ul {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     grid-gap: 16px;
@@ -115,7 +115,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .article-card > ul {
     grid-template-columns: 1fr;
     grid-gap: 16px;
@@ -123,7 +123,7 @@
 }
 
 /* Responsive adjustments for larger screens */
-@media (min-width: 1200px) {
+@media (width >= 1200px) {
   .article-card > ul {
     grid-template-columns: repeat(3, 1fr);
   }

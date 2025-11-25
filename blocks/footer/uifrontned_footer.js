@@ -25,7 +25,7 @@ class BackToTop {
   /**
    * Smooth scroll to top of page
    */
-  scrollToTop() {
+  static scrollToTop() {
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
@@ -65,15 +65,14 @@ class BackToTop {
   /**
    * Throttle function to limit scroll event frequency
    */
-  throttle(func, limit) {
+  static throttle(func, limit) {
     let inThrottle;
-    return function () {
-      const args = arguments;
+    return function throttled(...args) {
       const context = this;
       if (!inThrottle) {
         func.apply(context, args);
         inThrottle = true;
-        setTimeout(() => (inThrottle = false), limit);
+        setTimeout(() => { inThrottle = false; }, limit);
       }
     };
   }
@@ -87,7 +86,6 @@ document.addEventListener('asus-cto-DOMContentLoaded', () => {
   const responseElement = newsletterForm.querySelector('.newsletter__response');
   if (newsletterForm) {
     newsletterForm.addEventListener('submit', (e) => {
-      debugger
       e.preventDefault();
 
       newsletterForm.classList.remove('has--error', 'has--success');

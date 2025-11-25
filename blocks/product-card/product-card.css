@@ -1,3 +1,5 @@
+/* stylelint-disable no-duplicate-selectors */
+
 /* Product Card Block uses global CSS variables from styles.css */
 
 /* Product Card Block Styles */
@@ -121,7 +123,7 @@
 }
 
 .cmp-carousel__action {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgb(255, 255, 255, 0.9);
   border: 1px solid #ddd;
   border-radius: 50%;
   width: 44px;
@@ -139,7 +141,7 @@
 
 .cmp-carousel__action:hover {
   background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgb(0, 0, 0, 0.15);
 }
 
 .cmp-carousel__action--previous,
@@ -180,9 +182,9 @@
   display: flex;
   flex-direction: column;
   height: 100%; /* Full height to match container */
-  padding: 1.5rem 1.5rem 2rem 1.5rem;
+  padding: 1.5rem 1.5rem 2rem;
   gap: 1rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px rgb(0, 0, 0, 0.3);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   max-width: 320px;
   margin: 0 auto;
@@ -192,7 +194,7 @@
 
 .cmp-product-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 32px rgb(0, 0, 0, 0.4);
 }
 
 .cmp-product-card__header {
@@ -344,7 +346,7 @@
 .cmp-product-card__model {
   color: var(--color-primary-700);
   font-size: 0.875rem;
-  margin: 0 0 1rem 0;
+  margin: 0 0 1rem;
 }
 
 .cmp-product-card__model a {
@@ -529,7 +531,7 @@
 
 .cmp-product-card__buy-button {
   flex: 1;
-  background: #ffffff;
+  background: #fff;
   color: #1a1a1a;
   border: none;
   border-radius: var(--border-radius);
@@ -551,7 +553,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgb(255, 255, 255, 0.95);
   color: #1a1a1a;
   border: 1px solid var(--color-primary-600);
   border-radius: var(--border-radius);
@@ -620,7 +622,7 @@
   border-radius: var(--border-radius, 8px);
   padding: 1rem;
   font-size: 0.75rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgb(0, 0, 0, 0.15);
   z-index: 99999;
   opacity: 0;
   visibility: hidden;
@@ -646,7 +648,7 @@
   border-radius: var(--border-radius, 8px);
   padding: 1rem;
   font-size: 0.75rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgb(0, 0, 0, 0.15);
   width: 260px;
   z-index: 99999;
   display: none;
@@ -700,7 +702,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 675px) {
+@media (width <= 675px) {
   .cmp-product-card {
     padding: 1.5rem;
     max-width: none;
@@ -741,7 +743,7 @@
   }
 }
 
-@media (min-width: 676px) and (max-width: 768px) {
+@media (width >= 676px) and (width <= 768px) {
   .cmp-product-card {
     padding: 1.5rem;
     max-width: none;
@@ -771,7 +773,7 @@
   }
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (width >= 768px) and (width <= 1023px) {
   /* Tablet: Show configured number of items per slide */
   .product-card-carousel .cmp-carousel__content {
     display: flex;
@@ -790,7 +792,7 @@
   }
 }
 
-@media (min-width: 1024px) {
+@media (width >= 1024px) {
   /* Desktop: Static grid, no carousel - show only itemCount products */
   .cmp-product-card {
     max-width: 320px;
@@ -841,3 +843,4 @@
   white-space: nowrap !important;
   border: 0 !important;
 }
+/* stylelint-enable no-duplicate-selectors */

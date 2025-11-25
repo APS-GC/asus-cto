@@ -56,7 +56,7 @@ export function loadScriptToHead(src) {
 export function loadStylesForComponent(shadowRoot, baseUrl, componentName) {
   return Promise.allSettled([
     loadCSSToShadowRoot(shadowRoot, `${baseUrl}/blocks/${componentName}/aem-${componentName}.css`),
-    loadCSSToShadowRoot(shadowRoot, `${baseUrl}/blocks/${componentName}/${componentName}.css`)
+    loadCSSToShadowRoot(shadowRoot, `${baseUrl}/blocks/${componentName}/${componentName}.css`),
   ]);
 }
 
@@ -70,7 +70,7 @@ export function loadStylesForComponent(shadowRoot, baseUrl, componentName) {
 export async function loadAssetsForComponent(shadowRoot, baseUrl, componentName) {
   // Load CSS into shadow root
   await loadStylesForComponent(shadowRoot, baseUrl, componentName);
-  
+
   // Initialize window.hlx if it doesn't exist
   if (!window.hlx) {
     await loadScriptToHead(`${baseUrl}/scripts/aem.js`);
@@ -87,12 +87,13 @@ export async function loadAssetsForComponent(shadowRoot, baseUrl, componentName)
  */
 export async function loadCustomFragment(fragmentUrl, baseUrl, fallbackLoader, processor) {
   if (!fragmentUrl) {
+    // eslint-disable-next-line no-console
     console.warn('Fragment URL not provided, falling back to default');
-    return await fallbackLoader();
+    return await fallbackLoader(); // eslint-disable-line no-return-await
   }
-  
+
   const fullFragmentUrl = `${baseUrl}/${fragmentUrl}`;
-  
+
   try {
     const response = await fetch(fullFragmentUrl);
     if (response.ok) {
@@ -100,9 +101,10 @@ export async function loadCustomFragment(fragmentUrl, baseUrl, fallbackLoader, p
       return processor(html);
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('Failed to load custom fragment:', error);
   }
-  
+
   return null;
 }
 
@@ -129,10 +131,11 @@ export async function initializeBlockInShadowRoot(shadowRoot, blockSelector, com
       if (!window.asusCto.baseUrl) {
         window.asusCto.baseUrl = baseUrl || window.location.origin;
       }
-      
+
       await blockModule.default(block);
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Error initializing ${componentName} block:`, error);
   }
 }
@@ -145,15 +148,16 @@ export async function initializeBlockInShadowRoot(shadowRoot, blockSelector, com
  * @returns {Promise} Promise that resolves when event is handled
  */
 export async function handleComponentEvent(component, event, refreshFunction) {
-  const { action, detail } = event.detail || {};
-  
+  const { action } = event.detail || {};
+
   switch (action) {
     case 'refresh':
       await refreshFunction();
       component.dispatchEvent(new CustomEvent(`aem-${component.constructor.name.toLowerCase().replace('aem', '')}-refreshed`));
       break;
-      
+
     default:
+      // eslint-disable-next-line no-console
       console.warn('Unknown component action:', action);
   }
 }

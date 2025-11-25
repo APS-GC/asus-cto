@@ -1,8 +1,7 @@
-export const safeText = (el, fallback = "") =>
-  el?.textContent?.trim() ?? fallback;
+export const safeText = (el, fallback = '') => el?.textContent?.trim() ?? fallback;
 
 export function isAuthorEnvironment() {
-  if (window?.location?.origin?.includes("author")) {
+  if (window?.location?.origin?.includes('author')) {
     return true;
   }
   return false;
@@ -12,8 +11,7 @@ export function whatBlockIsThis(element) {
   let currentElement = element;
 
   while (currentElement.parentElement) {
-    if (currentElement.parentElement.classList.contains("block"))
-      return currentElement.parentElement;
+    if (currentElement.parentElement.classList.contains('block')) return currentElement.parentElement;
     currentElement = currentElement.parentElement;
     if (currentElement.classList.length > 0) return currentElement.classList[0];
   }
@@ -44,32 +42,12 @@ export function transferAttributes(from, to, attributes) {
 }
 
 /**
- * Move instrumentation attributes from a given element to another given element virtual node.
- * @param {Element} from the element to copy attributes from
- * @param {Element} to the element to copy attributes to
- */
-export function transferInstrumentation(from, to) {
-  const fromElement = hasAEMAttributes(from) ? from  : findFirstLevelAEMElement(from);
-  if(!fromElement)return;
-  transferAttributes(
-    fromElement,
-    to,
-    [...fromElement.attributes]
-      .map(({ nodeName }) => nodeName)
-      .filter(
-        (attr) =>
-          attr.startsWith("data-aue-") || attr.startsWith("data-richtext-")
-      )
-  );
-}
-
-/** 
  * Helper to check if an element has AEM-specific data attributes
  * @param {Element} el - Element to check
  * @returns {boolean} True if element has AEM data attributes
  */
 function hasAEMAttributes(el) {
-  return Array.from(el.attributes).some(attr => attr.name.startsWith('data-aue-'));
+  return Array.from(el.attributes).some((attr) => attr.name.startsWith('data-aue-'));
 }
 
 /**
@@ -79,9 +57,31 @@ function hasAEMAttributes(el) {
  * @returns {Element|null} The first element with data-* attribute, or null if none found
  */
 function findFirstLevelAEMElement(element) {
-  if (hasAEMAttributes(element))return element;
+  if (hasAEMAttributes(element)) return element;
   for (const child of element.children) {
-    return hasAEMAttributes(child) ? child : findFirstLevelAEMElement(child);
+    const foundElement = findFirstLevelAEMElement(child);
+    if (foundElement) {
+      return foundElement;
+    }
   }
   return null;
+}
+
+/**
+ * Move instrumentation attributes from a given element to another given element virtual node.
+ * @param {Element} from the element to copy attributes from
+ * @param {Element} to the element to copy attributes to
+ */
+export function transferInstrumentation(from, to) {
+  const fromElement = hasAEMAttributes(from) ? from : findFirstLevelAEMElement(from);
+  if (!fromElement) return;
+  transferAttributes(
+    fromElement,
+    to,
+    [...fromElement.attributes]
+      .map(({ nodeName }) => nodeName)
+      .filter(
+        (attr) => attr.startsWith('data-aue-') || attr.startsWith('data-richtext-'),
+      ),
+  );
 }

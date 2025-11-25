@@ -65,7 +65,7 @@ body.modal-open {
 
 @media (width >=768px) {
   .modal dialog .modal-content {
-    padding: 3rem 3rem;
+    padding: 3rem;
   }
 }
 
@@ -74,7 +74,6 @@ body.modal-open {
   color: var(--color-primary-100);
   font-family: var(--font-text);
   font-size: 1.25rem;
-  font-weight: var(--regular);
   font-weight: var(--medium);
   letter-spacing: 0;
   line-height: 1.75rem;
@@ -167,7 +166,7 @@ body.modal-open {
   line-height: 1.25rem;
 }
 
-@media (max-width: 767px) {
+@media (width <= 767px) {
   .modal dialog {
     width: calc(100vw - 1rem);
     max-height: calc(100dvh - 1rem);

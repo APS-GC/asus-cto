@@ -60,7 +60,7 @@
 
 /* TT Norms Pro Regular */
 @font-face {
-  font-family: "TTNormsProRegular";
+  font-family: TTNormsProRegular;
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -72,7 +72,7 @@
 
 /* TT Norms Pro Medium */
 @font-face {
-  font-family: "TTNormsProMedium";
+  font-family: TTNormsProMedium;
   font-style: normal;
   font-weight: 500;
   font-display: swap;
@@ -84,7 +84,7 @@
 
 /* Font fallback stacks for better performance and accessibility */
 :root {
-  --font-text: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  --font-display: "TTNormsProMedium", "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  --font-display-regular: "TTNormsProRegular", "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-text: "Roboto", -apple-system, blinkmacsystemfont, "Segoe UI", system-ui, sans-serif;
+  --font-display: "TTNormsProMedium", "Roboto", -apple-system, blinkmacsystemfont, "Segoe UI", system-ui, sans-serif;
+  --font-display-regular: "TTNormsProRegular", "Roboto", -apple-system, blinkmacsystemfont, "Segoe UI", system-ui, sans-serif;
 }
