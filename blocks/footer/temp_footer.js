@@ -2,64 +2,78 @@ function parseFooterData(block) {
   // Default data structure
   const data = {
     newsletterLabel: 'Get the latest deals and more',
-    newsletterPlaceholder: 'Enter email address', 
+    newsletterPlaceholder: 'Enter email address',
     newsletterButtonText: 'Sign up',
     socialLabel: 'Follow us at:',
     socialLinks: [
-      { platform: 'facebook', url: '#', icon: '/icons/social/icon-facebook.svg', altText: 'Facebook' },
-      { platform: 'x', url: '#', icon: '/icons/social/icon-x.svg', altText: 'Twitter' },
-      { platform: 'discord', url: '#', icon: '/icons/social/icon-discord.svg', altText: 'Discord' },
-      { platform: 'youtube', url: '#', icon: '/icons/social/icon-youtube.svg', altText: 'YouTube' },
-      { platform: 'twitch', url: '#', icon: '/icons/social/icon-twitch.svg', altText: 'Twitch' },
-      { platform: 'instagram', url: '#', icon: '/icons/social/icon-instagram.svg', altText: 'Instagram' },
-      { platform: 'tiktok', url: '#', icon: '/icons/social/icon-tiktok.svg', altText: 'TikTok' },
-      { platform: 'thread', url: '#', icon: '/icons/social/icon-thread.svg', altText: 'Threads' }
+      {
+        platform: 'facebook', url: '#', icon: '/icons/social/icon-facebook.svg', altText: 'Facebook',
+      },
+      {
+        platform: 'x', url: '#', icon: '/icons/social/icon-x.svg', altText: 'Twitter',
+      },
+      {
+        platform: 'discord', url: '#', icon: '/icons/social/icon-discord.svg', altText: 'Discord',
+      },
+      {
+        platform: 'youtube', url: '#', icon: '/icons/social/icon-youtube.svg', altText: 'YouTube',
+      },
+      {
+        platform: 'twitch', url: '#', icon: '/icons/social/icon-twitch.svg', altText: 'Twitch',
+      },
+      {
+        platform: 'instagram', url: '#', icon: '/icons/social/icon-instagram.svg', altText: 'Instagram',
+      },
+      {
+        platform: 'tiktok', url: '#', icon: '/icons/social/icon-tiktok.svg', altText: 'TikTok',
+      },
+      {
+        platform: 'thread', url: '#', icon: '/icons/social/icon-thread.svg', altText: 'Threads',
+      },
     ],
     footerColumns: [
       {
         columnTitle: 'Shop',
-        links: [{ linkText: 'All Desktops', linkUrl: '#' }]
-      },
-      {
-        columnTitle: 'Support', 
-        links: [
-          { linkText: 'Help Me Choose', linkUrl: '#' },
-          { linkText: 'Contact Us', linkUrl: '#' },
-          { linkText: 'Shopping FAQs', linkUrl: '#' }
-        ]
+        links: [{ linkText: 'All Desktops', linkUrl: '#' }],
       },
       {
         columnTitle: 'Support',
         links: [
           { linkText: 'Help Me Choose', linkUrl: '#' },
-          { linkText: 'Education & Commercial Inquiries', linkUrl: '#' }
-        ]
-      }
+          { linkText: 'Contact Us', linkUrl: '#' },
+          { linkText: 'Shopping FAQs', linkUrl: '#' },
+        ],
+      },
+      {
+        columnTitle: 'Support',
+        links: [
+          { linkText: 'Help Me Choose', linkUrl: '#' },
+          { linkText: 'Education & Commercial Inquiries', linkUrl: '#' },
+        ],
+      },
     ],
     globalText: 'Global / English',
     globalIcon: '/icons/Global.svg',
     legalLinks: [
       { linkText: 'Privacy Policy', linkUrl: '#' },
       { linkText: 'Terms & Conditions', linkUrl: '#' },
-      { linkText: 'Cookie Settings', linkUrl: '#' }
-    ]
+      { linkText: 'Cookie Settings', linkUrl: '#' },
+    ],
   };
 
   // Process block content for authoring data
   const rows = [...block.children];
-  let footerColumnsArray = [];
-  let legalLinksArray = [];
-  let socialLinksArray = [];
-  let currentColumn = null;
-  let currentSection = '';
-  
-  rows.forEach((row, index) => {
+  const footerColumnsArray = [];
+  const legalLinksArray = [];
+  const socialLinksArray = [];
+
+  rows.forEach((row) => {
     const cells = [...row.children];
-    
+
     if (cells.length >= 2) {
       const field = cells[0].textContent.trim();
       const value = cells[1].textContent.trim();
-      
+
       // Handle simple text fields
       switch (field) {
         case 'Newsletter Label':
@@ -85,11 +99,11 @@ function parseFooterData(block) {
           if (field.startsWith('Column ')) {
             // Parse footer columns - format: "Column Title" | "Links (pipe separated)"
             const columnTitle = field.replace('Column ', '');
-            const links = value.split('|').map(link => {
+            const links = value.split('|').map((link) => {
               const [linkText, linkUrl] = link.split(' - ');
-              return { 
-                linkText: linkText ? linkText.trim() : link.trim(), 
-                linkUrl: linkUrl ? linkUrl.trim() : '#' 
+              return {
+                linkText: linkText ? linkText.trim() : link.trim(),
+                linkUrl: linkUrl ? linkUrl.trim() : '#',
               };
             });
             footerColumnsArray.push({ columnTitle, links });
@@ -101,11 +115,11 @@ function parseFooterData(block) {
             // Parse social links - format: "Social Platform" | "URL|Icon|AltText"
             const platform = field.replace('Social ', '').toLowerCase();
             const parts = value.split('|');
-            const socialLink = { 
-              platform, 
+            const socialLink = {
+              platform,
               url: parts[0] || '#',
               icon: parts[1] || `/icons/social/icon-${platform}.svg`,
-              altText: parts[2] || platform.charAt(0).toUpperCase() + platform.slice(1)
+              altText: parts[2] || platform.charAt(0).toUpperCase() + platform.slice(1),
             };
             socialLinksArray.push(socialLink);
           }
@@ -113,21 +127,21 @@ function parseFooterData(block) {
       }
     } else if (cells.length === 1) {
       const singleValue = cells[0].textContent.trim();
-      
+
       // Handle single-cell rows that might contain structured data
       if (singleValue.includes('|')) {
         // Parse pipe-separated data
-        const parts = singleValue.split('|').map(p => p.trim());
+        const parts = singleValue.split('|').map((p) => p.trim());
         if (parts.length === 2) {
           const [key, value] = parts;
-          
+
           if (key.startsWith('Column:')) {
             const columnTitle = key.replace('Column:', '').trim();
-            const links = value.split(',').map(link => {
+            const links = value.split(',').map((link) => {
               const [linkText, linkUrl] = link.split(' - ');
-              return { 
-                linkText: linkText ? linkText.trim() : link.trim(), 
-                linkUrl: linkUrl ? linkUrl.trim() : '#' 
+              return {
+                linkText: linkText ? linkText.trim() : link.trim(),
+                linkUrl: linkUrl ? linkUrl.trim() : '#',
               };
             });
             footerColumnsArray.push({ columnTitle, links });
@@ -155,11 +169,11 @@ function parseFooterData(block) {
 }
 
 function buildSocialIcons(socialLinks, socialLabel) {
-  const socialIconsHTML = socialLinks.map(link => {
+  const socialIconsHTML = socialLinks.map((link) => {
     // Use authored icon if available, fallback to default platform icon
     const iconSrc = link.icon || `/icons/social/icon-${link.platform}.svg`;
     const altText = link.altText || link.platform.charAt(0).toUpperCase() + link.platform.slice(1);
-    
+
     return `
       <li>
         <a href="${link.url}" target="_blank" aria-label="Follow us on ${altText} (open a new window)">
@@ -182,22 +196,21 @@ function buildSocialIcons(socialLinks, socialLabel) {
 }
 
 function buildFooterColumns(footerColumns) {
-  return footerColumns.map(column => `
+  return footerColumns.map((column) => `
     <ul class='footer-links__column pl-0'>
       <li><p class="w-500">${column.columnTitle}</p></li>
-      ${column.links.map(link => `<li><a href='${link.linkUrl}'>${link.linkText}</a></li>`).join('')}
+      ${column.links.map((link) => `<li><a href='${link.linkUrl}'>${link.linkText}</a></li>`).join('')}
     </ul>
   `).join('');
 }
 
 function buildLegalLinks(legalLinks) {
-  return legalLinks.map(link => `
+  return legalLinks.map((link) => `
     <a href='${link.linkUrl}' target="_blank" aria-label="View ${link.linkText} (open a new window)">${link.linkText}</a>
   `).join('');
 }
 
 export default function decorate(block) {
-  debugger
   const data = parseFooterData(block);
 
   // Create the footer structure using parsed data
@@ -247,10 +260,6 @@ export default function decorate(block) {
       e.preventDefault();
       const emailInput = form.querySelector('input[type="email"]');
       if (emailInput && emailInput.value) {
-        // Handle newsletter signup - you can add your logic here
-        console.log('Newsletter signup:', emailInput.value);
-        // Show success message or redirect
-        alert('Thank you for signing up for our newsletter!');
         emailInput.value = '';
       }
     });

@@ -12,6 +12,7 @@ import {
   buildBlock,
   decorateBlock,
   loadBlock,
+  toCamelCase,
 } from './aem.js';
 
 /**
@@ -117,41 +118,35 @@ export async function loadSwiper() {
   if (window.Swiper) {
     return window.Swiper;
   }
-  
+
   // Return existing promise if load is in progress
   if (!swiperPromise) {
-    console.log('Swiper: Starting dynamic load (JS + CSS) [Call ID: ' + Date.now() + ']');
-    
     swiperPromise = (async () => {
       try {
         await Promise.all([
           // Load CSS once
           !swiperCSSLoaded ? loadCSS('https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css').then(() => {
             swiperCSSLoaded = true;
-            console.log('Swiper CSS loaded');
           }) : Promise.resolve(),
           // Load JS
           loadScript(
             'https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js',
             {
-              // integrity: 'sha512-Ysw1DcK1P+uYLqprEAzNQJP+J4hTx4t/3X2nbVwszao8wD+9afLjBQYjz7Uk4ADP+Er++mJoScI42ueGtQOzEA==',
               crossorigin: 'anonymous',
-              referrerpolicy: 'no-referrer'
-            }
-          )
+              referrerpolicy: 'no-referrer',
+            },
+          ),
         ]);
-        console.log('Swiper loaded dynamically (CSS + JS)');
         return window.Swiper;
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Failed to load Swiper library:', error);
         swiperPromise = null; // Reset on error so retry is possible
         throw error;
       }
     })(); // IIFE (Immediately Invoked Function Expression) creates promise synchronously
-  } else {
-    console.log('Swiper: Reusing existing load promise');
   }
-  
+
   return swiperPromise;
 }
 
@@ -160,61 +155,17 @@ export async function loadSwiper() {
  * @returns {boolean} True if running in Universal Editor
  */
 export function isUniversalEditor() {
-   // TODO: returning false by default just for the demo because on published URLs, we are getting API CORS error
-  return false;
-  
+  // TODO: returning false by default just for the demo because on published URLs, we are getting API CORS error
   return (
-    window.location.pathname.includes('/editor.html') ||
-    window.location.search.includes('editor') ||
-    window.location.search.includes('aue_') ||
-    document.body.hasAttribute('data-aue-behavior') ||
-    document.body.classList.contains('editor') ||
-    document.body.classList.contains('aem-authoring-enabled') ||
-    document.querySelector('[data-aue-resource]') !== null ||
-    window.hlx?.aemRoot !== undefined
+    window.location.pathname.includes('/editor.html')
+    || window.location.search.includes('editor')
+    || window.location.search.includes('aue_')
+    || document.body.hasAttribute('data-aue-behavior')
+    || document.body.classList.contains('editor')
+    || document.body.classList.contains('aem-authoring-enabled')
+    || document.querySelector('[data-aue-resource]') !== null
+    || window.hlx?.aemRoot !== undefined
   );
-}
-
-/**
- * Loads header fragment from the working fragment URL
- * @returns {Promise<string|null>} Fragment HTML content or null if not found
- */
-export async function loadHeaderFragment() {
-  //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = '/content/asus-cto/language-master/en/fragments/head.plain.html';
-  try {
-    const response = await fetch(fragmentUrl);
-    if (response.ok) {
-      const html = await response.text();
-      return processFragmentContent(html);
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('Failed to load header fragment:', error);
-  }
-
-  return null;
-}
-
-/**
- * Loads footer fragment from the working fragment URL
- * @returns {Promise<string|null>} Fragment HTML content or null if not found
- */
-export async function loadFooterFragment() {
-  //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = '/content/asus-cto/language-master/en/fragments/footer.plain.html';
-  try {
-    const response = await fetch(fragmentUrl);
-    if (response.ok) {
-      const html = await response.text();
-      return processFooterFragmentContent(html);
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('Failed to load footer fragment:', error);
-  }
-
-  return null;
 }
 
 /**
@@ -245,7 +196,6 @@ export function processFragmentContent(html) {
     }
 
     return null;
-
   } catch (error) {
     // eslint-disable-next-line no-console
     console.log('Error processing fragment content:', error);
@@ -254,19 +204,88 @@ export function processFragmentContent(html) {
 }
 
 /**
- * Returns a picture element with webp and fallbacks
- * @param {string} src The image URL
- * @param {string} [alt] The image alternative text
- * @param {boolean} [eager] Set loading attribute to eager
- * @param {Array} [breakpoints] Breakpoints and corresponding params (eg. width)
- * @returns {Element} The picture element
+ * Loads header fragment from the working fragment URL
+ * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
+export async function loadHeaderFragment() {
+  // TODO: change this to relative when we base url is changed.
+  const fragmentUrl = '/content/asus-cto/language-master/en/fragments/head.plain.html';
+  try {
+    const response = await fetch(fragmentUrl);
+    if (response.ok) {
+      const html = await response.text();
+      return processFragmentContent(html);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Failed to load header fragment:', error);
+  }
+
+  return null;
+}
+
+/**
+ * Processes footer fragment content and extracts footer block structure
+ * @param {string} html Fragment HTML content
+ * @returns {string|null} Processed footer block content
+ */
+export function processFooterFragmentContent(html) {
+  try {
+    // Create a temporary DOM to parse the fragment
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    // Look for existing footer block (UE authoring data format)
+    const existingFooterBlock = tempDiv.querySelector('.footer.block');
+    if (existingFooterBlock) {
+      // Extract the inner footer content (skip the outer wrapper)
+      const innerFooter = existingFooterBlock.querySelector('.footer');
+      if (innerFooter) {
+        return innerFooter.outerHTML;
+      }
+    }
+
+    // Fallback: Look for any footer block
+    const footerBlock = tempDiv.querySelector('.footer');
+    if (footerBlock) {
+      return footerBlock.outerHTML;
+    }
+
+    return null;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Error processing footer fragment content:', error);
+    return null;
+  }
+}
+
+/**
+ * Loads footer fragment from the working fragment URL
+ * @returns {Promise<string|null>} Fragment HTML content or null if not found
+ */
+export async function loadFooterFragment() {
+  // TODO: change this to relative when we base url is changed.
+  const fragmentUrl = '/content/asus-cto/language-master/en/fragments/footer.plain.html';
+  try {
+    const response = await fetch(fragmentUrl);
+    if (response.ok) {
+      const html = await response.text();
+      return processFooterFragmentContent(html);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Failed to load footer fragment:', error);
+  }
+
+  return null;
+}
+
 export function createOptimizedPictureExternal(
   src,
+  baseUrl,
   alt = '',
   eager = false,
   breakpoints = [{ media: '(min-width: 600px)', width: '2000' }, { width: '750' }],
-  baseUrl
 ) {
   let url;
   if (baseUrl) {
@@ -305,45 +324,7 @@ export function createOptimizedPictureExternal(
 
   return picture;
 }
-/**
- * Processes footer fragment content and extracts footer block structure
- * @param {string} html Fragment HTML content
- * @returns {string|null} Processed footer block content
- */
-export function processFooterFragmentContent(html) {
-  try {
-    // Create a temporary DOM to parse the fragment
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
 
-    // Look for existing footer block (UE authoring data format)
-    const existingFooterBlock = tempDiv.querySelector('.footer.block');
-    if (existingFooterBlock) {
-      // Extract the inner footer content (skip the outer wrapper)
-      const innerFooter = existingFooterBlock.querySelector('.footer');
-      if (innerFooter) {
-        return innerFooter.outerHTML;
-      }
-    }
-
-    // Fallback: Look for any footer block
-    const footerBlock = tempDiv.querySelector('.footer');
-    if (footerBlock) {
-      return footerBlock.outerHTML;
-    }
-
-    return null;
-
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('Error processing footer fragment content:', error);
-    return null;
-  }
-}
-
-/**
- * load fonts.css and set a session storage flag
- */
 async function loadFonts() {
   await loadCSS(`${window.hlx.codeBasePath}/styles/fonts.css`);
   try {
@@ -353,10 +334,6 @@ async function loadFonts() {
   }
 }
 
-/**
- * Builds all synthetic blocks in a container element.
- * @param {Element} main The container element
- */
 function buildAutoBlocks() {
   try {
     // TODO: add auto block, if needed
@@ -366,11 +343,6 @@ function buildAutoBlocks() {
   }
 }
 
-/**
- * Decorates the main element.
- * @param {Element} main The main element
- */
-// eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
   // hopefully forward compatible button decoration
   decorateButtons(main);
@@ -380,10 +352,6 @@ export function decorateMain(main) {
   decorateBlocks(main);
 }
 
-/**
- * Loads everything needed to get to LCP.
- * @param {Element} doc The container element
- */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
@@ -391,10 +359,10 @@ async function loadEager(doc) {
   if (main) {
     decorateMain(main);
     const hasCarousel = main.querySelector('.carousel, .hot-products, .product-preview, .help-me-choose,.our-advantages');
-    if (hasCarousel) {
-      loadSwiper().catch(err => console.error('Failed to preload Swiper:', err));
+    if (hasCarousel) { // eslint-disable-next-line no-console
+      loadSwiper().catch((err) => console.error('Failed to preload Swiper:', err));
     }
-    
+
     document.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
   }
@@ -409,10 +377,17 @@ async function loadEager(doc) {
   }
 }
 
-/**
- * Loads everything that doesn't need to be delayed.
- * @param {Element} doc The container element
- */
+function autolinkModals(doc) {
+  doc.addEventListener('click', async (e) => {
+    const origin = e.target.closest('a');
+    if (origin && origin.href && origin.href.includes('/modals/')) {
+      e.preventDefault();
+      const { openModal } = await import(`${window.hlx.codeBasePath}/blocks/modal/modal.js`);
+      openModal(origin.href);
+    }
+  });
+}
+
 async function loadLazy(doc) {
   autolinkModals(doc);
   const main = doc.querySelector('main');
@@ -422,8 +397,8 @@ async function loadLazy(doc) {
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
 
-  loadHeader(doc.querySelector('header'));
-  loadFooter(doc.querySelector('footer'));
+  loadHeader(doc.querySelector('header')); // eslint-disable-line no-use-before-define
+  loadFooter(doc.querySelector('footer')); // eslint-disable-line no-use-before-define
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
@@ -432,7 +407,7 @@ async function loadLazy(doc) {
 /**
  * Dynamically load Bazaarvoice script only when needed
  * This is called from blocks that need ratings functionality
- * 
+ *
  * @returns {Promise} Resolves when script is loaded
  */
 export async function loadBazaarvoiceScript() {
@@ -447,17 +422,15 @@ export async function loadBazaarvoiceScript() {
 
   // Check if script already exists in DOM
   if (document.getElementById(BV_SCRIPT_ID)) {
-    console.log('Bazaarvoice: Script already loaded');
     return Promise.resolve();
   }
-
-  console.log('Bazaarvoice: Loading script dynamically');
 
   return new Promise((resolve) => {
     const script = document.createElement('script');
     script.id = BV_SCRIPT_ID;
     script.async = true;
     script.onload = () => {
+      // eslint-disable-next-line no-console
       console.log('Bazaarvoice: Script loaded successfully');
       resolve();
     };
@@ -466,40 +439,23 @@ export async function loadBazaarvoiceScript() {
   });
 }
 
-function autolinkModals(doc) {
-  doc.addEventListener('click', async (e) => {
-    const origin = e.target.closest('a');
-    if (origin && origin.href && origin.href.includes('/modals/')) {
-      e.preventDefault();
-      const { openModal } = await import(`${window.hlx.codeBasePath}/blocks/modal/modal.js`);
-      openModal(origin.href);
-    }
-  });
-}
-
-/**
- * Loads a block named 'header' into header
- * @param {Element} header header element
- * @returns {Promise}
- */
 async function loadHeader(header) {
-  
   try {
     // Try to load header from fragment first
     const fragmentContent = await loadHeaderFragment();
     if (fragmentContent) {
       const headerBlock = buildBlock('header', '');
-      
+
       // Populate the header block with fragment content
       headerBlock.innerHTML = fragmentContent;
-      
+
       header.append(headerBlock);
       decorateBlock(headerBlock);
       return loadBlock(headerBlock);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.log('Failed to load header fragment, falling back to default header:', error);
+    console.error('Failed to load header from fragment:', error);
   }
 
   // Fallback to original header loading
@@ -509,29 +465,23 @@ async function loadHeader(header) {
   return loadBlock(headerBlock);
 }
 
-/**
- * Loads a block named 'footer' into footer
- * @param footer footer element
- * @returns {Promise}
- */
 async function loadFooter(footer) {
-  
   try {
     // Try to load footer from fragment first
     const fragmentContent = await loadFooterFragment();
     if (fragmentContent) {
       const footerBlock = buildBlock('footer', '');
-      
+
       // Populate the footer block with fragment content
       footerBlock.innerHTML = fragmentContent;
-      
+
       footer.append(footerBlock);
       decorateBlock(footerBlock);
       return loadBlock(footerBlock);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.log('Failed to load footer fragment, falling back to default footer:', error);
+    console.error('Failed to load footer from fragment:', error);
   }
 
   // Fallback to original footer loading
@@ -541,11 +491,6 @@ async function loadFooter(footer) {
   return loadBlock(footerBlock);
 }
 
-/**
- * Gets placeholders object.
- * @param {string} [prefix] Location of placeholders
- * @returns {object} Window placeholders object
- */
 // eslint-disable-next-line import/prefer-default-export
 export async function fetchPlaceholders(prefix = 'default') {
   window.placeholders = window.placeholders || {};
@@ -563,7 +508,7 @@ export async function fetchPlaceholders(prefix = 'default') {
           json.data
             .filter((placeholder) => placeholder.Key)
             .forEach((placeholder) => {
-              placeholders[toCamelCase(placeholder.Key)] = placeholder.Text;
+              placeholders[toCamelCase(placeholder.Key)] = placeholder.Text; // eslint-disable-line no-undef
             });
           window.placeholders[prefix] = placeholders;
           resolve(window.placeholders[prefix]);
@@ -578,10 +523,6 @@ export async function fetchPlaceholders(prefix = 'default') {
   return window.placeholders[`${prefix}`];
 }
 
-/**
- * Loads everything that happens a lot later,
- * without impacting the user experience.
- */
 function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
@@ -591,7 +532,6 @@ function loadDelayed() {
 
 async function loadPage() {
   if (document.querySelector('aem-header, aem-footer')) {
-    console.log('Web component usage detected - skipping full page initialization');
     return;
   }
   await loadEager(document);

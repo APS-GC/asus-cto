@@ -1,4 +1,3 @@
-import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
 // Transform API response to component format
@@ -15,85 +14,14 @@ function transformProductData(apiProduct) {
     bazaarvoiceProductId: apiProduct.sku,
     benchmarkGame: apiProduct.gameTitle,
     fps: apiProduct.fps,
-    specs: apiProduct.keySpec ? apiProduct.keySpec.map(spec => spec.name) : [],
+    specs: apiProduct.keySpec ? apiProduct.keySpec.map((spec) => spec.name) : [],
     productUrl: apiProduct.urlKey,
     productTags: apiProduct.productTags || [],
     buyButtonStatus: apiProduct.buyButtonStatus || 'Buy now',
     gamePriority: apiProduct.gamePriority || [],
     timeSpyScore: apiProduct.timeSpyOverallScore,
-    quickSpec: apiProduct.quickSpec ? apiProduct.quickSpec[0] : null
+    quickSpec: apiProduct.quickSpec ? apiProduct.quickSpec[0] : null,
   };
-}
-
-// Fetch product data from API with fallback logic
-async function fetchProductData(endpoint = 'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts', maxProducts = null) {
-  const endpoints = [
-    endpoint, // Try the provided endpoint first
-    'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts', // Fallback to author (working)
-    'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts' // Try publish as second fallback
-  ];
-  
-  // Remove duplicates and keep order
-  const uniqueEndpoints = [...new Set(endpoints)];
-  
-  for (const apiEndpoint of uniqueEndpoints) {
-    try {
-      console.log(`Attempting to fetch from: ${apiEndpoint}`);
-      
-      const response = await fetch(apiEndpoint, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          // Add common authentication headers
-          'Cache-Control': 'no-cache'
-        },
-        // Include credentials for author endpoints
-        credentials: apiEndpoint.includes('author') ? 'include' : 'omit',
-        // Handle CORS
-        mode: 'cors'
-      });
-      
-      if (!response.ok) {
-        console.warn(`API endpoint ${apiEndpoint} returned ${response.status}: ${response.statusText}`);
-        continue; // Try next endpoint
-      }
-      
-      // Check if response is actually JSON
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        console.warn(`API endpoint ${apiEndpoint} returned non-JSON content: ${contentType}`);
-        const textResponse = await response.text();
-        console.warn(`Response preview: ${textResponse.substring(0, 200)}...`);
-        continue; // Try next endpoint
-      }
-      
-      const data = await response.json();
-      
-      if (!data.results || !Array.isArray(data.results)) {
-        console.warn(`Invalid API response format from ${apiEndpoint}:`, data);
-        continue; // Try next endpoint
-      }
-      
-      console.log(`Successfully fetched data from: ${apiEndpoint}`, data);
-      // Transform API data to component format - fetch all products, don't limit here
-      const allProducts = data.results.map(transformProductData);
-      
-      // Only limit if maxProducts is specified (for fallback scenarios)
-      return maxProducts ? allProducts.slice(0, maxProducts) : allProducts;
-        
-    } catch (error) {
-      console.warn(`Error fetching from ${apiEndpoint}:`, error.message);
-      if (error.message.includes('JSON')) {
-        console.warn('This usually means the endpoint returned HTML instead of JSON (possibly a login page)');
-      }
-      continue; // Try next endpoint
-    }
-  }
-  
-  // If all endpoints fail, return fallback data
-  console.error('All API endpoints failed, using fallback data');
-  return getFallbackProductData(maxProducts || 6);
 }
 
 // Fallback data when API fails
@@ -115,74 +43,99 @@ function getFallbackProductData(limit = 6) {
       buyButtonStatus: 'Contact Us',
       gamePriority: [],
       timeSpyScore: null,
-      quickSpec: null
+      quickSpec: null,
     },
-    {
-      id: 'fallback-2',
-      name: 'ASUS Gaming Laptop',
-      model: 'Contact Support',
-      image: '/content/dam/asus-cto/products/fallback-image.webp',
-      imageHover: null,
-      price: 'N/A',
-      originalPrice: 'N/A',
-      discount: '0',
-      bazaarvoiceProductId: 'fallback-2',
-      benchmarkGame: 'Various Games',
-      fps: 'TBD',
-      productUrl: '#',
-      productTags: [],
-      buyButtonStatus: 'Contact Us',
-      gamePriority: [],
-      timeSpyScore: null,
-      quickSpec: null
-    },
-    {
-      id: 'fallback-3',
-      name: 'Gaming Monitor',
-      model: 'Contact Support',
-      image: '/content/dam/asus-cto/products/fallback-image.webp',
-      imageHover: null,
-      price: 'N/A',
-      originalPrice: 'N/A',
-      discount: '0',
-      bazaarvoiceProductId: 'fallback-3',
-      benchmarkGame: 'Various Games',
-      fps: 'TBD',
-      specs: ['High Performance Gaming', 'Contact for Details'],
-      productUrl: '#',
-      productTags: [],
-      buyButtonStatus: 'Contact Us',
-      gamePriority: [],
-      timeSpyScore: null,
-      quickSpec: null
-    }
   ];
-  
+
   // Generate at least 6 fallback items to ensure carousel functionality
   const minItems = Math.max(limit, 6);
   return Array(minItems).fill(null).map((_, index) => ({
     ...fallbackProducts[index % fallbackProducts.length],
     id: `fallback-${index + 1}`,
-    name: `${fallbackProducts[index % fallbackProducts.length].name} ${index + 1}`
+    name: `${fallbackProducts[index % fallbackProducts.length].name} ${index + 1}`,
   }));
+}
+
+// Fetch product data from API with fallback logic
+async function fetchProductData(endpoint = 'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts', maxProducts = null) {
+  const endpoints = [
+    endpoint, // Try the provided endpoint first
+    'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts', // Fallback to author (working)
+    'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts', // Try publish as second fallback
+  ];
+
+  // Remove duplicates and keep order
+  const uniqueEndpoints = [...new Set(endpoints)];
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const apiEndpoint of uniqueEndpoints) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      const response = await fetch(apiEndpoint, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          // Add common authentication headers
+          'Cache-Control': 'no-cache',
+        },
+        // Include credentials for author endpoints
+        credentials: apiEndpoint.includes('author') ? 'include' : 'omit',
+        // Handle CORS
+        mode: 'cors',
+      });
+
+      if (!response.ok) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+
+      // Check if response is actually JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+
+      // eslint-disable-next-line no-await-in-loop
+      const data = await response.json();
+
+      if (!data.results || !Array.isArray(data.results)) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+
+      // Transform API data to component format - fetch all products, don't limit here
+      const allProducts = data.results.map(transformProductData);
+
+      // Only limit if maxProducts is specified (for fallback scenarios)
+      return maxProducts ? allProducts.slice(0, maxProducts) : allProducts;
+    } catch (error) {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+  }
+
+  // If all endpoints fail, return fallback data
+  return getFallbackProductData(maxProducts || 6);
 }
 
 // Get placeholder text
 function getPlaceholder(key) {
   const placeholders = {
-    'compare': 'Compare',
+    compare: 'Compare',
     'buy-now': 'Buy now',
     'in-stock': 'In Stock',
-    'new': 'New',
-    'deal': 'Deal',
+    new: 'New',
+    deal: 'Deal',
     'quick-view': 'Quick view',
     'estore-price': 'ASUS estore price',
-    'save': 'SAVE',
+    save: 'SAVE',
     'watch-now': 'Watch now',
-    'previous': 'Previous',
-    'next': 'Next'
+    previous: 'Previous',
+    next: 'Next',
   };
-  
+
   return placeholders[key] || key;
 }
 
@@ -193,12 +146,12 @@ function generateStatusBadges(productTags) {
       <span class="cmp-product-card__status-item cmp-product-card__status--in-stock">${getPlaceholder('in-stock')}</span>
     `;
   }
-  
-  return productTags.map(tag => {
+
+  return `${productTags.map((tag) => {
     const tagLower = tag.toLowerCase();
     let statusClass = '';
     let displayText = '';
-    
+
     switch (tagLower) {
       case 'hot':
         statusClass = 'cmp-product-card__status--hot';
@@ -216,30 +169,21 @@ function generateStatusBadges(productTags) {
         statusClass = 'cmp-product-card__status--custom';
         displayText = tag;
     }
-    
+
     return `<span class="cmp-product-card__status-item ${statusClass}">${displayText}</span>`;
-  }).join('') + `<span class="cmp-product-card__status-item cmp-product-card__status--in-stock">${getPlaceholder('in-stock')}</span>`;
+  }).join('')}<span class="cmp-product-card__status-item cmp-product-card__status--in-stock">${getPlaceholder('in-stock')}</span>`;
 }
 
 // Generate enhanced FPS tooltip with multiple games
 function generateFpsTooltip(product) {
-  console.log('Generating FPS tooltip for product:', product.id, 'Data:', {
-    benchmarkGame: product.benchmarkGame,
-    fps: product.fps,
-    gamePriority: product.gamePriority,
-    timeSpyScore: product.timeSpyScore
-  });
-
   // Check if we have any FPS data at all
   if (!product.benchmarkGame && !product.fps && (!product.gamePriority || product.gamePriority.length === 0)) {
-    console.log('FPS Tooltip: No FPS data available, skipping tooltip for product:', product.id);
     return '';
   }
 
   // Fallback to simple tooltip if no rich data available
   if (!product.gamePriority || !Array.isArray(product.gamePriority) || product.gamePriority.length === 0) {
     if (product.benchmarkGame && product.fps) {
-      console.log('FPS Tooltip: Using simple fallback content for product:', product.id);
       return `
         <table class="cmp-product-card__fps-table">
           <thead>
@@ -258,20 +202,17 @@ function generateFpsTooltip(product) {
           </tbody>
         </table>
       `;
-    } else {
-      console.log('FPS Tooltip: No sufficient data for simple tooltip, skipping for product:', product.id);
-      return '';
     }
+    return '';
   }
-  
+
   // Use API data for rich tooltip
   try {
-    const gameRows = product.gamePriority.slice(0, 6).map(game => {
+    const gameRows = product.gamePriority.slice(0, 6).map((game) => {
       if (!game || typeof game !== 'object') {
-        console.warn('FPS Tooltip: Invalid game data:', game);
         return '';
       }
-      
+
       return `
         <tr>
           <td>${game.gameTitle || 'Unknown Game'}</td>
@@ -279,11 +220,10 @@ function generateFpsTooltip(product) {
           <td>${game.quadHdFps ? `${game.quadHdFps} FPS` : '--'}</td>
         </tr>
       `;
-    }).filter(row => row !== '').join('');
-    
+    }).filter((row) => row !== '').join('');
+
     // If no valid game rows, try simple fallback
     if (!gameRows.trim()) {
-      console.log('FPS Tooltip: No valid game rows, trying simple fallback for product:', product.id);
       if (product.benchmarkGame && product.fps) {
         return `
           <table class="cmp-product-card__fps-table">
@@ -303,12 +243,10 @@ function generateFpsTooltip(product) {
             </tbody>
           </table>
         `;
-      } else {
-        return '';
       }
+      return '';
     }
-    
-    console.log('FPS Tooltip: Using rich content for product:', product.id);
+
     return `
       <table class="cmp-product-card__fps-table">
         <thead>
@@ -329,7 +267,6 @@ function generateFpsTooltip(product) {
       ` : ''}
     `;
   } catch (error) {
-    console.error('FPS Tooltip: Error generating rich tooltip:', error);
     // Try simple fallback on error
     if (product.benchmarkGame && product.fps) {
       return `
@@ -359,14 +296,14 @@ function generateFpsTooltip(product) {
 function createProductCard(product) {
   const card = document.createElement('div');
   card.className = 'cmp-product-card';
-  
+
   // Determine the product URL
   const productUrl = product.productUrl && product.productUrl !== '#' ? product.productUrl : 'pdp.html';
   const buyButtonText = product.buyButtonStatus || getPlaceholder('buy-now');
-  
+
   // Ensure we always have specs array for consistent structure
   const specs = product.specs && product.specs.length > 0 ? product.specs : ['High Performance', 'Premium Quality'];
-  
+
   card.innerHTML = `
     <div class="cmp-product-card__header">
       <div class="cmp-product-card__status">
@@ -423,7 +360,7 @@ function createProductCard(product) {
       </div>
 
       <ul class="cmp-product-card__specs">
-        ${specs.map(spec => `<li class="cmp-product-card__spec-item">${spec}</li>`).join('')}
+        ${specs.map((spec) => `<li class="cmp-product-card__spec-item">${spec}</li>`).join('')}
       </ul>
 
       <div class="cmp-product-card__estore">
@@ -453,7 +390,7 @@ function createProductCard(product) {
       <button class="cmp-button cmp-product-card__buy-button btn" onclick="window.open('${productUrl}', '${product.productUrl && product.productUrl.startsWith('http') ? '_blank' : '_self'}')">${buyButtonText}</button>
     </div>
   `;
-  
+
   return card;
 }
 
@@ -463,88 +400,73 @@ function initializeCarousel(carousel, products, itemsToShow = 3, autoplayInterva
   const prevBtn = carousel.querySelector('.cmp-carousel__action--previous');
   const nextBtn = carousel.querySelector('.cmp-carousel__action--next');
   const indicators = carousel.querySelector('.cmp-carousel__indicators');
-  
+
   let currentIndex = 0;
   let autoPlayTimer = null;
-  
+
   // Check screen sizes
-  function isDesktop() {
-    return window.innerWidth >= 1024;
-  }
-  
   function isTablet() {
     return window.innerWidth >= 768 && window.innerWidth < 1024;
   }
-  
-  function isMobile() {
+
+  function isDesktop() {
     return window.innerWidth < 768;
   }
-  
+
   // Calculate how many slides we need based on device and items to show
   function getTotalSlides() {
     if (isDesktop()) {
       // Desktop: no carousel, static display of itemsToShow products only
       return 1;
-    } else if (isTablet()) {
+    } if (isTablet()) {
       // Tablet: show itemsToShow at a time, calculate how many sets we need
       return Math.ceil(products.length / itemsToShow);
-    } else {
-      // Mobile: show one product at a time
-      return products.length;
     }
+    // Mobile: show one product at a time
+    return products.length;
   }
-  
-  // Get products to show for current slide
-  function getProductsForSlide(slideIndex) {
-    if (isDesktop()) {
-      // Desktop: show only first itemsToShow products
-      return products.slice(0, itemsToShow);
-    } else if (isTablet()) {
-      // Tablet: show itemsToShow products per slide
-      const startIndex = slideIndex * itemsToShow;
-      return products.slice(startIndex, startIndex + itemsToShow);
-    } else {
-      // Mobile: show one product at a time
-      return [products[slideIndex]];
-    }
+
+  function goToSlide(index) {
+    const totalSlides = getTotalSlides();
+    if (totalSlides <= 1) return; // Only skip if there's actually nothing to navigate
+    currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
   }
-  
   // Create indicators
   function createIndicators() {
     const totalSlides = getTotalSlides();
-    
+
     if (isDesktop() || totalSlides <= 1) {
       // No indicators needed for desktop or single slide
       indicators.innerHTML = '';
       return;
     }
-    
+
     // Clear existing indicators
     indicators.innerHTML = '';
-    
+
     for (let i = 0; i < totalSlides; i++) {
       const indicator = document.createElement('li');
       indicator.innerHTML = `<button type="button" role="tab" aria-controls="carousel-slide-${i}" aria-selected="${i === 0 ? 'true' : 'false'}" tabindex="${i === 0 ? '0' : '-1'}">${i + 1}</button>`;
       indicator.addEventListener('click', () => {
-        goToSlide(i);
+        goToSlide(i); // eslint-disable-line no-use-before-define
       });
       indicators.appendChild(indicator);
     }
   }
-  
+
   // Update carousel display
   function updateCarousel() {
     const totalSlides = getTotalSlides();
     if (totalSlides <= 1) return; // Only skip if there's actually nothing to navigate
-    
+
     const indicatorButtons = indicators.querySelectorAll('button');
-    
+
     // Update indicators
     indicatorButtons.forEach((btn, index) => {
       btn.setAttribute('aria-selected', index === currentIndex);
       btn.setAttribute('tabindex', index === currentIndex ? '0' : '-1');
     });
-    
+
     if (isDesktop() || isTablet()) {
       // Desktop and Tablet: move by sets of itemsToShow
       const translatePercent = currentIndex * 100;
@@ -554,45 +476,38 @@ function initializeCarousel(carousel, products, itemsToShow = 3, autoplayInterva
       content.style.transform = `translateX(-${currentIndex * 100}%)`;
     }
   }
-  
-  function goToSlide(index) {
-    const totalSlides = getTotalSlides();
-    if (totalSlides <= 1) return; // Only skip if there's actually nothing to navigate
-    currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
-    updateCarousel();
-  }
-  
+
   function nextSlide() {
     const totalSlides = getTotalSlides();
     if (totalSlides <= 1) return; // Only skip if there's actually nothing to navigate
     currentIndex = (currentIndex + 1) % totalSlides;
     updateCarousel();
   }
-  
+
   function prevSlide() {
     const totalSlides = getTotalSlides();
     if (totalSlides <= 1) return; // Only skip if there's actually nothing to navigate
     currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
     updateCarousel();
   }
-  
+
   function startAutoPlay() {
     const totalSlides = getTotalSlides();
     if (!isDesktop() && !autoPlayTimer && autoplayInterval > 0 && totalSlides > 1) {
       autoPlayTimer = setInterval(nextSlide, autoplayInterval);
     }
   }
-  
+
   function stopAutoPlay() {
     if (autoPlayTimer) {
       clearInterval(autoPlayTimer);
       autoPlayTimer = null;
     }
   }
-  
+
   function handleResize() {
     const totalSlides = getTotalSlides();
-    
+
     if (isDesktop()) {
       stopAutoPlay();
       // Reset transform on desktop
@@ -606,33 +521,31 @@ function initializeCarousel(carousel, products, itemsToShow = 3, autoplayInterva
       updateCarousel();
       startAutoPlay();
     }
-    
+
     createIndicators();
   }
-  
+
   // Event listeners
   prevBtn.addEventListener('click', () => {
-    console.log('Previous button clicked. Current index:', currentIndex, 'Total slides:', getTotalSlides(), 'Desktop:', isDesktop(), 'Window width:', window.innerWidth, 'Products:', products.length, 'Items to show:', itemsToShow);
     stopAutoPlay();
     prevSlide();
     // Restart autoplay after manual interaction
     setTimeout(startAutoPlay, 1000);
   });
-  
+
   nextBtn.addEventListener('click', () => {
-    console.log('Next button clicked. Current index:', currentIndex, 'Total slides:', getTotalSlides(), 'Desktop:', isDesktop(), 'Window width:', window.innerWidth, 'Products:', products.length, 'Items to show:', itemsToShow);
     stopAutoPlay();
     nextSlide();
     // Restart autoplay after manual interaction
     setTimeout(startAutoPlay, 1000);
   });
-  
+
   carousel.addEventListener('mouseenter', stopAutoPlay);
   carousel.addEventListener('mouseleave', startAutoPlay);
-  
+
   // Listen for window resize
   window.addEventListener('resize', handleResize);
-  
+
   // Initial setup
   createIndicators();
   handleResize();
@@ -641,44 +554,37 @@ function initializeCarousel(carousel, products, itemsToShow = 3, autoplayInterva
 // Enhanced tooltip implementation matching webpack components
 function initializeTooltips(container) {
   const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
-  
-  console.log(`Initializing ${tooltipTriggers.length} tooltips in container:`, container);
-  
-  tooltipTriggers.forEach((trigger, index) => {
+
+  tooltipTriggers.forEach((trigger) => {
     const tooltipId = trigger.getAttribute('aria-describedby');
     const tooltip = document.getElementById(tooltipId);
-    
-    console.log(`Tooltip ${index + 1}: Trigger:`, trigger, 'ID:', tooltipId, 'Content element:', tooltip);
-    
+
     if (!tooltip) {
-      console.warn(`Tooltip content not found for trigger ${index + 1} with ID: ${tooltipId}`);
       return;
     }
-    
+
     // Ensure tooltip has content
     if (!tooltip.innerHTML.trim()) {
-      console.warn(`Tooltip ${index + 1} has empty content:`, tooltip);
       return;
     }
-    
+
     // Move tooltip to body for better positioning
     if (tooltip.parentElement !== document.body) {
       document.body.appendChild(tooltip);
-      console.log(`Moved tooltip ${index + 1} to body`);
     }
-    
+
     // Set accessibility attributes
     trigger.setAttribute('aria-haspopup', 'dialog');
     trigger.setAttribute('aria-expanded', 'false');
     tooltip.setAttribute('role', 'tooltip');
     tooltip.setAttribute('aria-hidden', 'true');
-    
+
     // Initial styles
     tooltip.style.position = 'fixed';
     tooltip.style.top = '-9999px';
     tooltip.style.left = '-9999px';
     tooltip.style.zIndex = '99999';
-    
+
     // Ensure tooltip has minimum styling for visibility
     tooltip.style.maxWidth = '400px';
     tooltip.style.padding = '1rem';
@@ -688,11 +594,11 @@ function initializeTooltips(container) {
     tooltip.style.borderRadius = '8px';
     tooltip.style.fontSize = '0.875rem';
     tooltip.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-    
-    const position = trigger.getAttribute('data-tooltip-position') || 'auto';
+
+    const positionAttr = trigger.getAttribute('data-tooltip-position') || 'auto';
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    
-    const calculateBestPosition = (position, triggerRect, tooltipRect) => {
+
+    const calculateBestPosition = (pos, triggerRect, tooltipRect) => {
       const padding = 13; // 8px spacing + 5px arrow size
       const viewport = { width: window.innerWidth, height: window.innerHeight };
       const space = {
@@ -701,7 +607,7 @@ function initializeTooltips(container) {
         left: triggerRect.left,
         right: viewport.width - triggerRect.right,
       };
-      
+
       const strategies = {
         top: () => ({
           top: triggerRect.top - tooltipRect.height - padding,
@@ -725,55 +631,65 @@ function initializeTooltips(container) {
         }),
         auto: () => {
           const positions = [
-            { valid: space.right > tooltipRect.width + padding, left: triggerRect.right + padding, top: triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2, currentPosition: 'right', priority: space.right },
-            { valid: space.bottom > tooltipRect.height + padding, top: triggerRect.bottom + padding, left: triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2, currentPosition: 'bottom', priority: space.bottom },
-            { valid: space.top > tooltipRect.height + padding, top: triggerRect.top - tooltipRect.height - padding, left: triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2, currentPosition: 'top', priority: space.top },
-            { valid: space.left > tooltipRect.width + padding, left: triggerRect.left - tooltipRect.width - padding, top: triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2, currentPosition: 'left', priority: space.left },
+            {
+              valid: space.right > tooltipRect.width + padding, left: triggerRect.right + padding, top: triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2, currentPosition: 'right', priority: space.right,
+            },
+            {
+              valid: space.bottom > tooltipRect.height + padding, top: triggerRect.bottom + padding, left: triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2, currentPosition: 'bottom', priority: space.bottom,
+            },
+            {
+              valid: space.top > tooltipRect.height + padding, top: triggerRect.top - tooltipRect.height - padding, left: triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2, currentPosition: 'top', priority: space.top,
+            },
+            {
+              valid: space.left > tooltipRect.width + padding, left: triggerRect.left - tooltipRect.width - padding, top: triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2, currentPosition: 'left', priority: space.left,
+            },
           ];
           const valid = positions.filter((p) => p.valid);
-          return valid.length > 0 ? valid.reduce((best, cur) => (cur.priority > best.priority ? cur : best)) : positions[0];
+          return valid.length > 0
+            ? valid.reduce((best, cur) => (cur.priority > best.priority ? cur : best))
+            : positions[0];
         },
       };
-      
-      return strategies[position] ? strategies[position]() : strategies.auto();
+
+      return strategies[pos] ? strategies[pos] : strategies.auto();
     };
-    
+
     const positionTooltip = () => {
       const triggerRect = trigger.getBoundingClientRect();
       tooltip.style.visibility = 'hidden';
       tooltip.classList.add('tooltip--visible');
       const tooltipRect = tooltip.getBoundingClientRect();
-      const posResult = calculateBestPosition(position, triggerRect, tooltipRect);
-      
+      const posResult = calculateBestPosition(positionAttr, triggerRect, tooltipRect);
+
       tooltip.style.top = `${Math.max(13, Math.round(posResult.top))}px`;
       tooltip.style.left = `${Math.max(13, Math.round(posResult.left))}px`;
-      
+
       tooltip.classList.remove('tooltip--position-top', 'tooltip--position-bottom', 'tooltip--position-left', 'tooltip--position-right');
       tooltip.classList.add(`tooltip--position-${posResult.currentPosition}`);
       tooltip.style.visibility = '';
     };
-    
+
     const showTooltip = () => {
-      document.querySelectorAll('.tooltip__content.tooltip--visible').forEach(t => {
+      document.querySelectorAll('.tooltip__content.tooltip--visible').forEach((t) => {
         if (t !== tooltip) {
           t.classList.remove('tooltip--visible');
           t.setAttribute('aria-hidden', 'true');
         }
       });
-      
+
       setTimeout(() => {
         positionTooltip();
         tooltip.setAttribute('aria-hidden', 'false');
         trigger.setAttribute('aria-expanded', 'true');
       }, 100);
     };
-    
+
     const hideTooltip = () => {
       tooltip.classList.remove('tooltip--visible');
       tooltip.setAttribute('aria-hidden', 'true');
       trigger.setAttribute('aria-expanded', 'false');
     };
-    
+
     // Event listeners
     if (isTouch) {
       trigger.addEventListener('click', (e) => {
@@ -795,12 +711,12 @@ function initializeTooltips(container) {
 
 // Check if we're in Universal Editor authoring mode
 function isAuthoringMode() {
-  return window.hlx?.rum?.isSelected || 
-         document.body.classList.contains('adobe-ue-edit') ||
-         window.location.search.includes('view-doc-source=true') ||
-         window.location.hostname === 'author-p105462-e991028.adobeaemcloud.com' ||
-         document.querySelector('script[src*="universal-editor"]') !== null ||
-         window.adobeIMS?.isSignedInUser();
+  return window.hlx?.rum?.isSelected
+         || document.body.classList.contains('adobe-ue-edit')
+         || window.location.search.includes('view-doc-source=true')
+         || window.location.hostname === 'author-p105462-e991028.adobeaemcloud.com'
+         || document.querySelector('script[src*="universal-editor"]') !== null
+         || window.adobeIMS?.isSignedInUser();
 }
 
 // Get configuration value with fallback for both hyphenated and camelCase keys
@@ -823,25 +739,25 @@ async function createAuthoringStructure(config, block = null) {
     if (existingSectionTitle) {
       sectionTitle = existingSectionTitle.textContent.trim() || sectionTitle;
     }
-    
+
     const existingItemCount = block.querySelector('[data-aue-prop="itemCount"]');
     if (existingItemCount) {
-      const newItemCount = parseInt(existingItemCount.textContent.trim(), 10);
-      if (!isNaN(newItemCount) && newItemCount > 0) {
+      const newItemCount = Number(existingItemCount.textContent.trim());
+      if (!Number.isNaN(newItemCount) && newItemCount > 0) {
         itemCount = newItemCount;
       }
     }
-    
+
     const existingViewAllLink = block.querySelector('[data-aue-prop="viewAllLink"]');
     if (existingViewAllLink) {
       viewAllLink = existingViewAllLink.textContent.trim() || viewAllLink;
     }
-    
+
     const existingViewAllText = block.querySelector('[data-aue-prop="viewAllText"]');
     if (existingViewAllText) {
       viewAllText = existingViewAllText.textContent.trim() || viewAllText;
     }
-    
+
     const existingApiEndpoint = block.querySelector('[data-aue-prop="apiEndpoint"]');
     if (existingApiEndpoint) {
       apiEndpoint = existingApiEndpoint.textContent.trim() || apiEndpoint;
@@ -850,7 +766,7 @@ async function createAuthoringStructure(config, block = null) {
 
   // Use the same fetchProductData function as the published version
   const products = await fetchProductData(apiEndpoint, itemCount);
-  
+
   // Generate product cards HTML for authoring using the same createProductCard function
   const productCardsElements = products.map((product, index) => {
     const productCard = createProductCard(product);
@@ -904,87 +820,55 @@ async function createAuthoringStructure(config, block = null) {
 function parseConfig(block) {
   const config = {};
   const rows = [...block.children];
-  
-  console.log('parseConfig - Total rows:', rows.length); // Debug log
-  
+
   // Expected configuration mapping based on _product-card.json order
   const configMapping = [
     { key: 'section-title', camelKey: 'sectionTitle', defaultValue: 'Hot Products' },
     { key: 'item-count', camelKey: 'itemCount', defaultValue: '3' },
     { key: 'view-all-link', camelKey: 'viewAllLink', defaultValue: '/products' },
     { key: 'view-all-text', camelKey: 'viewAllText', defaultValue: 'View all' },
-    { key: 'api-endpoint', camelKey: 'apiEndpoint', defaultValue: 'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts' },
-    { key: 'autoplay-interval', camelKey: 'autoplayInterval', defaultValue: '5000' }
+    {
+      key: 'api-endpoint', camelKey: 'apiEndpoint', defaultValue: 'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts',
+    },
+    { key: 'autoplay-interval', camelKey: 'autoplayInterval', defaultValue: '5000' },
   ];
-  
+
   rows.forEach((row, index) => {
     const cells = [...row.children];
-    console.log(`Row ${index} has ${cells.length} cells`); // Debug log
-    
+
     if (cells.length >= 2) {
       // Traditional two-column structure (key-value pairs)
       const key = cells[0].textContent.trim().toLowerCase().replace(/\s+/g, '-');
       const value = cells[1].textContent.trim();
       config[key] = value;
-      
-      // Also store camelCase version for UE compatibility
-      const camelCaseKey = key.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
-      config[camelCaseKey] = value;
-      
-      console.log(`Added config (2-cell): ${key} = ${value}`); // Debug log
     } else if (cells.length === 1) {
       const cellText = cells[0].textContent.trim();
-      console.log(`Single cell content: "${cellText}"`); // Debug log
-      
-      if (cellText.includes(':')) {
-        // Handle colon-separated key:value pairs
-        const [key, value] = cellText.split(':').map(s => s.trim());
-        if (key && value) {
-          const normalizedKey = key.toLowerCase().replace(/\s+/g, '-');
-          config[normalizedKey] = value;
-          
-          // Also store camelCase version for UE compatibility
-          const camelCaseKey = normalizedKey.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
-          config[camelCaseKey] = value;
-          
-          console.log(`Added config (colon-separated): ${normalizedKey} = ${value}`); // Debug log
-        }
-      } else if (cellText && index < configMapping.length) {
+      if (cellText && index < configMapping.length) {
         // Handle UE single-cell structure - map by row index
         const mapping = configMapping[index];
         config[mapping.key] = cellText;
-        config[mapping.camelKey] = cellText;
-        
-        console.log(`Added config (index-mapped): ${mapping.key} = ${cellText}`); // Debug log
       } else if (!cellText && index < configMapping.length) {
         // Handle empty cells - use default values
-        const mapping = configMapping[index];
-        config[mapping.key] = mapping.defaultValue;
-        config[mapping.camelKey] = mapping.defaultValue;
-        
-        console.log(`Added config (default): ${mapping.key} = ${mapping.defaultValue}`); // Debug log
+        // const mapping = configMapping[index];
       }
-    } else {
-      console.log(`Row ${index} skipped - no cells or empty row`); // Debug log
     }
   });
-  
-  console.log('Final config:', config); // Debug log
+
   return config;
 }
 
 // Function to render authoring mode with event listeners
 async function renderAuthoringMode(block) {
   const config = parseConfig(block);
-  
+
   block.innerHTML = '<div class="product-card-loading">Loading products...</div>';
   try {
     const authoringStructure = await createAuthoringStructure(config, block);
     block.innerHTML = authoringStructure;
-    
+
     // Add event listeners for UE field changes
     const ueFields = block.querySelectorAll('[data-aue-prop]');
-    ueFields.forEach(field => {
+    ueFields.forEach((field) => {
       // Listen for content changes (when UE updates the field)
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
@@ -997,13 +881,13 @@ async function renderAuthoringMode(block) {
           }
         });
       });
-      
+
       observer.observe(field, {
         childList: true,
         subtree: true,
-        characterData: true
+        characterData: true,
       });
-      
+
       // Also listen for input events
       field.addEventListener('input', () => {
         clearTimeout(field.updateTimeout);
@@ -1012,23 +896,21 @@ async function renderAuthoringMode(block) {
         }, 500);
       });
     });
-    
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Error loading authoring structure:', error);
     block.innerHTML = '<div class="product-card-error">Error loading authoring view. Please try again later.</div>';
   }
 }
-
 export default async function decorate(block) {
   // Parse initial configuration
   const config = parseConfig(block);
-
   // If we're in authoring mode, show the editable structure
   if (isAuthoringMode()) {
     await renderAuthoringMode(block);
     return;
   }
-  
+
   // Get configuration values for published mode using the helper function
   const sectionTitle = getConfigValue(config, 'section-title', 'sectionTitle', 'Hot Products');
   const itemCount = parseInt(getConfigValue(config, 'item-count', 'itemCount', '3'), 10);
@@ -1036,21 +918,19 @@ export default async function decorate(block) {
   const viewAllText = getConfigValue(config, 'view-all-text', 'viewAllText', 'View all');
   const apiEndpoint = getConfigValue(config, 'api-endpoint', 'apiEndpoint', 'https://author-p165753-e1767020.adobeaemcloud.com/bin/asuscto/fetchHotProducts');
   const autoplayIntervalValue = parseInt(getConfigValue(config, 'autoplay-interval', 'autoplayInterval', '5000'), 10);
-  
+
   // Show loading state
   block.innerHTML = '<div class="product-card-loading">Loading products...</div>';
-  
+
   try {
     // Fetch ALL product data
     const allProducts = await fetchProductData(apiEndpoint);
-    
+
     if (!allProducts || allProducts.length === 0) {
       block.innerHTML = '<div class="product-card-error">No products found.</div>';
       return;
     }
-    
-    console.log(`Fetched ${allProducts.length} products total. ItemCount: ${itemCount}. Will show ${itemCount} items at a time through ${allProducts.length} total products`);
-    
+
     // Create main container with title and view all link - always use ALL products for carousel
     const container = document.createElement('div');
     container.className = 'product-card-section';
@@ -1087,29 +967,27 @@ export default async function decorate(block) {
         </a>
       </div>
     `;
-    
+
     // Add ALL product cards to carousel items
     const carouselItems = container.querySelectorAll('.cmp-carousel__item');
     allProducts.forEach((product, index) => {
       const productCard = createProductCard(product);
       carouselItems[index].appendChild(productCard);
     });
-    
+
     // Replace block content
     block.textContent = '';
     block.appendChild(container);
-    
+
     // Initialize carousel functionality with ALL products and let it handle itemCount
     initializeCarousel(container.querySelector('.cmp-carousel'), allProducts, itemCount, autoplayIntervalValue);
-    
+
     // Initialize tooltips
     initializeTooltips(container);
-    
-    // Add instrumentation  
+
+    // Add instrumentation
     moveInstrumentation(block, container);
-    
   } catch (error) {
-    console.error('Error loading product cards:', error);
     block.innerHTML = '<div class="product-card-error">Error loading products. Please try again later.</div>';
   }
 }

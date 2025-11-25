@@ -1,29 +1,191 @@
+/* eslint-disable max-classes-per-file */
+
 import { loadCSS, loadScript } from '../../scripts/aem.js';
-import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
+import { loadSwiper } from '../../scripts/scripts.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
 
+// Helper to load noUiSlider only once
+let noUiSliderPromise = null;
 /**
- * Decorates the help-me-choose block, initializing the carousel and form.
- * @param {Element} block - The block element to decorate.
- * @returns {Promise<void>}
+ * Loads the noUiSlider library, ensuring it's only loaded once.
  */
-export default async function decorate(block) {
-  // Load noUiSlider only once
-  await loadNoUiSlider();
-  await loadSwiperCSS();
-
-  // Once loaded, render the component
-  await renderHelpMeChoose(block);
-
-  // Initialize existing game forms
-  initSelectGameForms(document.body);
-
-  initFilterComponents(document.body);
-  // Setup a single MutationObserver (if not already)
-  setupSelectGameFormsObserver();
+function loadNoUiSlider() {
+  if (!noUiSliderPromise) {
+    noUiSliderPromise = loadScript(
+      'https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js',
+    ).catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Failed to load noUiSlider:', err);
+      throw err;
+    });
+  }
+  return noUiSliderPromise;
 }
 
+/**
+ * Loads the Swiper CSS from a CDN, ensuring it is only fetched once.
+ */
+let swiperCSSLoaded = null;
+function loadSwiperCSS() {
+  if (!swiperCSSLoaded) {
+    swiperCSSLoaded = loadCSS(
+      'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
+    ).catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Failed to load Swiper CSS:', err);
+      throw err;
+    });
+  }
+  return swiperCSSLoaded;
+}
+
+function _isHomePage() {
+  const patterns = [/^\/product-matches\/.+$/];
+  if (patterns.some((regex) => regex.test(window.location.pathname))) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Helper to escape user / config data to prevent XSS
+ * @param {string} str - The string to escape.
+ * @returns {string} - The escaped string.
+ */
+// Helper to escape user / config data to prevent XSS
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/**
+ * Generates HTML for a list of game items.
+ * @param {Array} games - The list of game objects.
+ * @returns {string} The generated HTML string.
+ */
+function generateGameItemsHTML(games) {
+  if (!games || !Array.isArray(games)) {
+    return '';
+  }
+  return games.map((game) => `
+    <div class="swiper-slide">
+        <div class="game-item">
+            <input type="checkbox" id="game-you-play-${game.gameId}" name="games" value="${escapeHtml(game.gameId)}" data-name="${escapeHtml(game.gameTitle)}" data-image="${escapeHtml(game.imageUrl)}" aria-checked="false" />
+            <div class="game-details-wrapper">
+                <div class="image-wrapper" aria-hidden="true">
+                    <img src="${escapeHtml(game.imageUrl)}" alt="${escapeHtml(game.gameTitle)}" class="game-image" loading="lazy" />
+                    <div class="checkmark-overlay"></div>
+                </div>
+                <label class="game-info" for="game-you-play-${game.gameId}">${escapeHtml(game.gameTitle)}</label>
+            </div>
+        </div>
+    </div>`).join('');
+}
+
+/* ---------------------------------------------
+   * Formats a number as a currency string.
+   * @param {number} value - The number to format.
+   * @returns {string} - The formatted currency string.
+   */
+function _formatCurrency(value) {
+  return `$${(+value || 0).toLocaleString('en-US')}`;
+}
+
+/**
+ * Generates the HTML for the budget center section, including the slider and inputs/displays.
+ * @param {number} lowestPrice - The lowest possible budget price.
+ * @param {number} highestPrice - The highest possible budget price.
+ * @param {boolean} useInputs - If true, renders text inputs for budget; otherwise, renders divs.
+ * @returns {string} The generated HTML string for the budget center.
+ */
+function generateBudgetCenterHTML(lowestPrice, highestPrice) {
+  return `
+    <input class="budget-value" id="budget-min-value" aria-label="Minimum budget" />
+    <div class="budget-separator">to</div>
+    <input class="budget-value" id="budget-max-value" aria-label="Maximum budget" />
+    <div class="budget-range-wrapper">
+        <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="500" data-max="5000" role="slider" data-step="100" aria-label="Budget range slider" aria-valuemax="${highestPrice}" aria-valuemin="${lowestPrice}" aria-orientation="horizontal" aria-valuenow="${lowestPrice}"
+        aria-valuetext="Budget range between ${_formatCurrency(lowestPrice)} to ${_formatCurrency(highestPrice)}"></div>
+        <div class="range-labels">
+            <span>$500</span>
+            <span>$5,000</span>
+        </div>
+    </div>
+  `;
+}
+
+// Initialize carousel functionality
+/**
+ * Initializes a Swiper carousel for the block.
+ * @param {Element} block - The block element containing the carousel.
+ * @returns {Swiper} - The initialized Swiper instance.
+ */
+/* eslint-disable consistent-return */
+async function initializeSwiperCarousel(block) {
+  const swiperContainer = block.querySelector('.swiper');
+  if (!swiperContainer) return;
+
+  await loadSwiper();
+
+  // Use modules explicitly (if using swiper modular build)
+  const swiper = new window.Swiper(swiperContainer, {
+    // Basic options
+    slidesPerView: 2,
+    spaceBetween: 16,
+
+    navigation: {
+      nextEl: block.querySelector('.cmp-carousel__action_hmc--next'),
+      prevEl: block.querySelector('.cmp-carousel__action_hmc--previous'),
+    },
+    pagination: {
+      el: block.querySelector('.swiper-pagination'),
+      clickable: true,
+    },
+
+    // Performance: consider enabling lazy loading or virtualization
+    // (depending on your Swiper version)
+    lazy: {
+      loadPrevNext: true,
+      loadPrevNextAmount: 2,
+    },
+
+    // Responsive behavior
+    breakpoints: {
+      768: {
+        slidesPerView: 4,
+        spaceBetween: 20,
+        pagination: {
+          enabled: false,
+        },
+      },
+      1024: {
+        slidesPerView: 6,
+        spaceBetween: 20,
+        allowTouchMove: true,
+        navigation: {
+          enabled: true,
+        },
+        pagination: {
+          enabled: false,
+        },
+      },
+    },
+    on: {
+      beforeDestroy: () => {
+        swiper.navigation.destroy();
+        swiper.pagination.destroy();
+      },
+    },
+  });
+
+  return swiper;
+}
+/* eslint-enable consistent-return */
 
 /**
  * Renders the Help Me Choose section, including the game list and budget filter.
@@ -35,7 +197,8 @@ async function renderHelpMeChoose(block) {
   helpMeChooseContainer.className = 'help-me-choose-container container';
 
   const authoredRows = [...block.children];
-  const AuthoredData = authoredRows.map(row => row.textContent.trim());
+  const AuthoredData = authoredRows.map((row) => row.textContent.trim());
+  // eslint-disable-next-line no-console
   console.log('Authored Data:', AuthoredData);
 
   // Fetch products
@@ -43,7 +206,7 @@ async function renderHelpMeChoose(block) {
   const endpoint = await getApiEndpoint(API_URIS.FETCH_GAME_LIST_EN);
   const gameList = await fetchGameList(endpoint);
 
-  if(!gameList?.results?.gameList || gameList?.results?.gameList.length == -1) return;
+  if (!gameList?.results?.gameList || gameList?.results?.gameList.length === -1) return;
 
   const lowestPrice = gameList?.results?.lowestPrice || 500;
   const highestPrice = gameList?.results?.highestPrice || 5000;
@@ -52,9 +215,7 @@ async function renderHelpMeChoose(block) {
   const defaultMinBudget = urlParams.get('min-budget') || 500;
   const defaultMaxBudget = urlParams.get('max-budget') || 5000;
   // Build the HTML in a fragment / string, then insert once
-  const html = 
-  
-  _isHomePage() ? `
+  const html = _isHomePage() ? `
   <div class="game-recommendation">
       <div class="carousel panelcontainer">
           <div class="section-heading">
@@ -143,142 +304,6 @@ async function renderHelpMeChoose(block) {
   initializeSwiperCarousel(block);
 }
 
-function _isHomePage(){
-  const patterns = [/^\/product-matches\/.+$/];
-  if (patterns.some(regex => regex.test(window.location.pathname))) {
-    return false;
-  }
-  return true;
-}
-
-/**
- * Generates HTML for a list of game items.
- * @param {Array} games - The list of game objects.
- * @returns {string} The generated HTML string.
- */
-function generateGameItemsHTML(games) {
-  if (!games || !Array.isArray(games)) {
-    return '';
-  }
-  return games.map((game) => `
-    <div class="swiper-slide">
-        <div class="game-item">
-            <input type="checkbox" id="game-you-play-${game.gameId}" name="games" value="${escapeHtml(game.gameId)}" data-name="${escapeHtml(game.gameTitle)}" data-image="${escapeHtml(game.imageUrl)}" aria-checked="false" />
-            <div class="game-details-wrapper">
-                <div class="image-wrapper" aria-hidden="true">
-                    <img src="${escapeHtml(game.imageUrl)}" alt="${escapeHtml(game.gameTitle)}" class="game-image" loading="lazy" />
-                    <div class="checkmark-overlay"></div>
-                </div>
-                <label class="game-info" for="game-you-play-${game.gameId}">${escapeHtml(game.gameTitle)}</label>
-            </div>
-        </div>
-    </div>`).join('');
-}
-
-// Helper to load noUiSlider only once
-let noUiSliderPromise = null;
-/**
- * Loads the noUiSlider library, ensuring it's only loaded once.
- */
-function loadNoUiSlider() {
-  if (!noUiSliderPromise) {
-    noUiSliderPromise = loadScript(
-      'https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js'
-    ).catch((err) => {
-      console.error('Failed to load noUiSlider:', err);
-      throw err;
-    });
-  }
-  return noUiSliderPromise;
-}
-
-/**
- * Loads the Swiper CSS from a CDN, ensuring it is only fetched once.
- */
-let swiperCSSLoaded = null;
-function loadSwiperCSS() {
-  if (!swiperCSSLoaded) {
-    swiperCSSLoaded = loadCSS(
-      'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css'
-    ).catch((err) => {
-      console.error('Failed to load Swiper CSS:', err);
-      throw err;
-    });
-  }
-  return swiperCSSLoaded;
-}
-/**
- * Generates the HTML for the budget center section, including the slider and inputs/displays.
- * @param {number} lowestPrice - The lowest possible budget price.
- * @param {number} highestPrice - The highest possible budget price.
- * @param {boolean} useInputs - If true, renders text inputs for budget; otherwise, renders divs.
- * @returns {string} The generated HTML string for the budget center.
- */
-function generateBudgetCenterHTML(lowestPrice, highestPrice) {
-  return `
-    <input class="budget-value" id="budget-min-value" aria-label="Minimum budget" />
-    <div class="budget-separator">to</div>
-    <input class="budget-value" id="budget-max-value" aria-label="Maximum budget" />
-    <div class="budget-range-wrapper">
-        <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="500" data-max="5000" role="slider" data-step="100" aria-label="Budget range slider" aria-valuemax="${highestPrice}" aria-valuemin="${lowestPrice}" aria-orientation="horizontal" aria-valuenow="${lowestPrice}"
-        aria-valuetext="Budget range between ${_formatCurrency(lowestPrice)} to ${_formatCurrency(highestPrice)}"></div>
-        <div class="range-labels">
-            <span>$500</span>
-            <span>$5,000</span>
-        </div>
-    </div>
-  `;
-}
-
-/**
- * Sets up a MutationObserver to initialize SelectGameForm components added dynamically.
- */
-let selectGameObserver = null;
-function setupSelectGameFormsObserver() {
-  if (selectGameObserver) return; // don't create multiple observers
-
-  selectGameObserver = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      for (const node of mutation.addedNodes) {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          initSelectGameForms(node);
-        }
-      }
-    }
-  });
-
-  selectGameObserver.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
-}
-
-/**
- * Tears down the MutationObserver, disconnecting it from the document body.
- */
-export function teardownDecorate() {
-  if (selectGameObserver) {
-    selectGameObserver.disconnect();
-    selectGameObserver = null;
-  }
-}
-
-
-/**
- * Helper to escape user / config data to prevent XSS
- * @param {string} str - The string to escape.
- * @returns {string} - The escaped string.
- */
-// Helper to escape user / config data to prevent XSS
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
 /**
 * Clamps a value 'v' between a minimum 'a' and a maximum 'b'.
 * @param {number} v - The value to clamp.
@@ -299,83 +324,6 @@ const toNumber = (v) => {
   const n = parseInt(String(v).replace(/[^0-9-]/g, ''), 10);
   return Number.isNaN(n) ? 0 : n;
 };
-
-// Initialize carousel functionality
-/**
- * Initializes a Swiper carousel for the block.
- * @param {Element} block - The block element containing the carousel.
- * @returns {Swiper} - The initialized Swiper instance.
- */
-async function initializeSwiperCarousel(block) {
-  const swiperContainer = block.querySelector('.swiper');
-  if (!swiperContainer) return;
-
-  await loadSwiper();
-
-  // Use modules explicitly (if using swiper modular build)
-  const swiper = new window.Swiper(swiperContainer, {
-    // Basic options
-    slidesPerView: 2,
-    spaceBetween: 16,
-
-    navigation: {
-      nextEl: block.querySelector('.cmp-carousel__action_hmc--next'),
-      prevEl: block.querySelector('.cmp-carousel__action_hmc--previous'),
-    },
-    pagination: {
-      el: block.querySelector('.swiper-pagination'),
-      clickable: true,
-    },
-
-    // Performance: consider enabling lazy loading or virtualization
-    // (depending on your Swiper version)
-    lazy: {
-      loadPrevNext: true,
-      loadPrevNextAmount: 2,
-    },
-
-    // Responsive behavior
-    breakpoints: {
-      768: {
-        slidesPerView: 4,
-        spaceBetween: 20,
-        pagination: {
-          enabled: false,
-        },
-      },
-      1024: {
-        slidesPerView: 6,
-        spaceBetween: 20,
-        allowTouchMove: true,
-        navigation: {
-          enabled: true,
-        },
-        pagination: {
-          enabled: false,
-        },
-      },
-    },
-    on: {
-      beforeDestroy: () => {
-        swiper.navigation.destroy();
-        swiper.pagination.destroy();
-      },
-    },
-  });
-
-  return swiper;
-}
-
-
-/* ---------------------------------------------
-   * Formats a number as a currency string.
-   * @param {number} value - The number to format.
-   * @returns {string} - The formatted currency string.
-   */
-  function _formatCurrency(value) {
-    return `$${(+value || 0).toLocaleString('en-US')}`;
-  }
-
 
 /**
  * Manages the game selection form and budget slider functionality.
@@ -585,7 +533,6 @@ class SelectGameForm {
   }
 }
 
-
 /**
  * Initializes all SelectGameForm components found within a given context.
  * @param {HTMLElement} context - The root element within which to search for and initialize the forms.
@@ -602,16 +549,47 @@ const initSelectGameForms = (context) => {
   });
 };
 
+/**
+ * Sets up a MutationObserver to initialize SelectGameForm components added dynamically.
+ */
+let selectGameObserver = null;
+function setupSelectGameFormsObserver() {
+  if (selectGameObserver) return; // don't create multiple observers
 
-// Filter 
+  selectGameObserver = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          initSelectGameForms(node);
+        }
+      }
+    }
+  });
+
+  selectGameObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+/**
+ * Tears down the MutationObserver, disconnecting it from the document body.
+ */
+export function teardownDecorate() {
+  if (selectGameObserver) {
+    selectGameObserver.disconnect();
+    selectGameObserver = null;
+  }
+}
+
+// Filter
 class FilterComponent {
   constructor(container) {
     this.container = container;
     if (!this.container) {
       return;
     }
-   
-    
+
     this.dom = {
       filterButton: this.container.querySelector('.filter-button'),
       icon: this.container.querySelector('#filter-icon'),
@@ -627,7 +605,7 @@ class FilterComponent {
       form: this.container.querySelector('form.filters'),
     };
 
-     this.DEFAULT_BUDGET_RANGE = { min: 500, max: 5000 };
+    this.DEFAULT_BUDGET_RANGE = { min: 500, max: 5000 };
     this.DEFAULT_START_BUDGET = { min: this.dom.confirmedMin.getAttribute('attr-value'), max: this.dom.confirmedMax.getAttribute('attr-value') };
 
     this.allGames = [];
@@ -732,9 +710,9 @@ class FilterComponent {
     }
   }
 
-  _handleReset() {//this.dom.confirmedMin.textContent
-    this.dom.slider?.noUiSlider.set([this.DEFAULT_START_BUDGET.min,this.DEFAULT_START_BUDGET.max]);
-    this.dom.games.forEach((cb) => (cb.checked = false));
+  _handleReset() { // this.dom.confirmedMin.textContent
+    this.dom.slider?.noUiSlider.set([this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max]);
+    this.dom.games.forEach((cb) => (cb.checked = false)); // eslint-disable-line no-return-assign
     this._updateBudgetDisplay(this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max);
   }
 
@@ -751,7 +729,7 @@ class FilterComponent {
     params.set('min-budget', minBudget);
     params.set('max-budget', maxBudget);
     window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
-    //update confirmed state
+    // update confirmed state
     this._hydrateFromUrl();
     if (window.perfectMatchProductInstance) {
       window.perfectMatchProductInstance.loadPerfectMatchProducts({
@@ -791,7 +769,7 @@ class FilterComponent {
       });
     });
   }
-  
+
   /**
    * Handles changes to the budget input fields, validating and formatting the input.
    * @param {HTMLInputElement} input - The input element that triggered the change.
@@ -828,7 +806,6 @@ class FilterComponent {
   }
 
   _updateCollapsedView(gameIds) {
-
     if (!this.dom.collapsedView) return;
     this.dom.collapsedView.innerHTML = '';
 
@@ -850,17 +827,18 @@ class FilterComponent {
   }
 
   // ---- Validation helpers ----
-sanitizeText(value){
+  // eslint-disable-next-line class-methods-use-this
+  sanitizeText(value) {
   // Remove any characters that could be dangerous in HTML context
-  return value.replace(/[<>"]/g, '');
-};
+    return value.replace(/[<>"]/g, '');
+  }
 
-validateRange(value, fallback, min, max){
-  const num = parseInt(value, 10);
-  if (isNaN(num)) return fallback;
-  return Math.min(Math.max(num, min), max); // clamp between min & max
-};
-
+  // eslint-disable-next-line class-methods-use-this
+  validateRange(value, fallback, min, max) {
+    const num = parseInt(value, 10);
+    if (Number.isNaN(num)) return fallback;
+    return Math.min(Math.max(num, min), max); // clamp between min & max
+  }
 
   _hydrateFromUrl() {
     const params = new URLSearchParams(window.location.search);
@@ -906,7 +884,29 @@ const initFilterComponents = (context) => {
   });
 };
 
+/**
+ * Decorates the help-me-choose block, initializing the carousel and form.
+ * @param {Element} block - The block element to decorate.
+ * @returns {Promise<void>}
+ */
+export default async function decorate(block) {
+  // Load noUiSlider only once
+  await loadNoUiSlider();
+  await loadSwiperCSS();
+
+  // Once loaded, render the component
+  await renderHelpMeChoose(block);
+
+  // Initialize existing game forms
+  initSelectGameForms(document.body);
+
+  initFilterComponents(document.body);
+  // Setup a single MutationObserver (if not already)
+  setupSelectGameFormsObserver();
+}
+
 // MutationObserver
+// eslint-disable-next-line no-unused-vars
 const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     mutation.addedNodes.forEach((node) => {
