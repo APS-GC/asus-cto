@@ -7,7 +7,6 @@ import {
   loadBlock,
   loadScript,
   loadSections,
-  updateSectionMetadata,
   getMetadata,
 } from './aem.js';
 
@@ -27,40 +26,8 @@ function updateUEInstrumentation() {
   const main = document.querySelector('main');
   if (!main) return;
 
-  const theme = getMetadata('og:title');
-  console.log("UE Theme:", theme);
-
-  // ----- if header fragment
-  if (theme === 'header') {
-    setUEFilter(main, 'empty');
-    const section = main.querySelector('.section');
-    if (section) {
-      setUEFilter(section, 'section-header');
-    }
-    return;
-  }
-
-  // ----- if footer fragment
-  if (theme === 'footer') {
-    setUEFilter(main, 'empty');
-    const section = main.querySelector('.section');
-    if (section) {
-      setUEFilter(section, 'section-footer');
-    }
-    return;
-  }
-
-  if (theme === 'desktops') {
-    setUEFilter(main, 'main-desktop');
-
-  }
-  // ----- default content pages
-  setUEFilter(main, 'main');
-  
-  // Update available blocks for all default sections
-  main.querySelectorAll('.section').forEach((elem) => {
-    setUEFilter(elem, 'section');
-  });
+  const theme = getMetadata('og:title') || '';
+  setUEFilter(main, theme?`main-${theme}`:'main');
 }
 
 async function applyChanges(event) {
@@ -128,8 +95,6 @@ async function applyChanges(event) {
           decorateRichtext(newSection);
           decorateSections(parentElement);
           decorateBlocks(parentElement);
-          // Update section metadata for UE changes
-          updateSectionMetadata(newSection);
           await loadSections(parentElement);
           element.remove();
           newSection.style.display = null;
