@@ -1363,6 +1363,13 @@
         {
           "component": "reference",
           "valueType": "string",
+          "name": "video",
+          "label": "Video Media",
+          "multi": false
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
           "name": "media",
           "label": "Cover Image",
           "multi": false

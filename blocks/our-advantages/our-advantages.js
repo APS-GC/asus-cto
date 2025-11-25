@@ -22,7 +22,7 @@ export default async function decorate(block) {
         aria-roledescription="carousel"
         data-cmp-is="our-advantages"
         data-cmp-delay="${imageAutoplayDuration * 1000}"
-        
+        data-carousel-effect="creative"
       >
         <div class="cmp-carousel__content">
         </div>
@@ -58,16 +58,16 @@ export default async function decorate(block) {
       card.querySelector("picture").querySelector("img").alt = imageAlt;
     }
 
-    // <video class="cmp-advantage-card__video" playsinline controls>
-    //               <source
-    //                 type="video/mp4">
-    //               Your browser does not support the video tag.
-    //             </video>
+   
     const mockup = document.createRange().createContextualFragment(`
           <div class="cmp-carousel__item"  data-url="${buttonTextLink}" data-blank="${isTargetBlank}">
             <div class="cmp-advantage-card">
               <div class="cmp-advantage-card__image-wrapper">
                 ${mediaHTML}
+                 <video data-src="${}" class="cmp-advantage-card__video" playsinline controls>
+                  <source  type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
               </div>
               <div class="cmp-advantage-card__overlay">
                 <div class="cmp-advantage-card__content">
