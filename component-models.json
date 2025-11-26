@@ -1184,8 +1184,8 @@
         "name": "style",
         "label": "Style",
         "options": [
-          { "name": "option 1", "value": "option1" },
-          { "name": "option 2", "value": "option2" }
+          { "name": "Variation 1", "value": "1" },
+          { "name": "Variation 2", "value": "2" }
         ] 
       },
       {
@@ -1193,14 +1193,14 @@
         "valueType": "number",
         "name": "minimumBudget",
         "label": "Minimum Budget",
-        "value": 0 
+        "value": 500
       },
       {
         "component": "number",
         "valueType": "number",
         "name": "maximumBudget",
         "label": "Maximum Budget",
-        "value": 0  
+        "value": 5000
       },
       {
         "component": "aem-content",
