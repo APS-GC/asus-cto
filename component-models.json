@@ -1200,18 +1200,12 @@
         "valueType": "number",
         "name": "maximumBudget",
         "label": "Maximum Budget",
-        "value": 5000
-      },
-      {
-        "component": "validator",
-        "valueType": "boolean",
-        "name": "isBudgetValid",
-        "label": "Budget Range Validator",
-        "description": "Ensures the minimum budget is less than the maximum budget.",
-        "value": "=model.minimumBudget < model.maximumBudget",
+        "value": 5000,
         "validation": {
-          "required": true,
-          "errorMessage": "The minimum budget must be less than the maximum budget."
+          "expression": {
+            "value": "model.minimumBudget < model.maximumBudget",
+            "message": "The maximum budget must be greater than the minimum budget."
+          }
         }
       },
       {

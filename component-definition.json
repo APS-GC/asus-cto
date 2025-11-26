@@ -190,7 +190,6 @@
                   "helpmeChooseCTA": "Help me choose",
                   "resetCTAText": "Reset",
                   "confirmCTAText": "Confirm",
-                  "isBudgetValid": "",
                   "minimumBudget": 500,
                   "maximumBudget": 5000,
                   "helpMeChooseCTALinkTo": "/content/asus-cto/language-master/en/products/desktops/product-matches"
