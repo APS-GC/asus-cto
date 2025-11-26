@@ -27,10 +27,7 @@
   background-color: var(--color-primary-100);
   flex-wrap: wrap;
   border-radius: var(--border-radius-xl);
-  padding-top: 2.25rem;
-  padding-bottom: 2.25rem;
-  padding-left: 2.5rem;
-  padding-right: 2.5rem;
+  padding: 2rem 2.5rem;
   gap: 1rem;
 }
 
