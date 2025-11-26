@@ -72,7 +72,7 @@ async function renderHelpMeChoose(block) {
               </div>
           </div>
 
-          <form id="game-selection-form" onsubmit="event.preventDefault();" action="./product-matches" class="game-form" aria-label="Game selection form" data-select-game-form>
+          <form id="game-selection-form" action="${escapeHtml(AuthoredData[9] || '')}" class="game-form" aria-label="Game selection form" data-select-game-form>
               <div class="game-carousel-wrapper">
                   <div class="swiper">
                       <div class="swiper-wrapper">${generateGameItemsHTML(gameList?.results?.gameList)}</div>
