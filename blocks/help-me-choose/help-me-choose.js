@@ -54,7 +54,7 @@ async function renderHelpMeChoose(block) {
   // Build the HTML in a fragment / string, then insert once
   const html = 
   
-  _isHomePage() ? `
+  !_isHomePage() ? `
   <div class="game-recommendation">
       <div class="carousel panelcontainer">
           <div class="section-heading">
