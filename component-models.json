@@ -1194,28 +1194,42 @@
         "component": "text",
         "valueType": "string",
         "name": "compareButtonLabel",
-        "label": "Compare Button Label",
+        "label": "View Comparison Button Text",
         "value": ""
       },      
       {
         "component": "text",
         "valueType": "string",
         "name": "clearAllButtonLabel",
-        "label": "Clear All Button Label",
+        "label": "Clear All Button Text",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "limitErrorMessage",
-        "label": "Limit Error Message",
+        "label": "Maximum Error Message Text",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "minimumErrorMessage",
-        "label": "Minimum Error Message",
+        "label": "Minimum Error Message Text",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "addAnotherProductText",
+        "label": "Add Another Product Text",
+        "value": ""
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "viewComparisonButtonLinkTo",
+        "label": "View Comparison Button LinkTo",
         "value": ""
       }
     ]
