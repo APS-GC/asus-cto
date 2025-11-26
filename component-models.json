@@ -1184,8 +1184,8 @@
         "name": "style",
         "label": "Style",
         "options": [
-          { "name": "Variation 1", "value": "1" },
-          { "name": "Variation 2", "value": "2" }
+          { "name": "Option 1", "value": "0" },
+          { "name": "Option 2", "value": "1" }
         ] 
       },
       {
@@ -1193,13 +1193,7 @@
         "valueType": "number",
         "name": "minimumBudget",
         "label": "Minimum Budget",
-        "value": 500,
-        "validation": {
-          "expression": {
-            "value": "Number(model.minimumBudget) < Number(model.maximumBudget)",
-            "message": "The minimum budget must be less than the maximum budget."
-          }
-        }
+        "value": 500
       },
       {
         "component": "number",
