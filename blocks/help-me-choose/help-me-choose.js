@@ -458,7 +458,7 @@ class SelectGameForm {
     slider.noUiSlider.on('update', (values) => {
       const [minVal, maxVal] = values.map(Number);
       this._updateBudgetDisplay(minVal, maxVal);
-      this._updateSubmitButtonState(this._getSelectedGames().length === 0);
+      this._updateSubmitButtonState();
     });
   }
 
