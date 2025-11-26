@@ -1193,20 +1193,20 @@
         "valueType": "number",
         "name": "minimumBudget",
         "label": "Minimum Budget",
-        "value": 500
+        "value": 500,
+        "validation": {
+          "expression": {
+            "value": "Number(model.minimumBudget) < Number(model.maximumBudget)",
+            "message": "The minimum budget must be less than the maximum budget."
+          }
+        }
       },
       {
         "component": "number",
         "valueType": "number",
         "name": "maximumBudget",
         "label": "Maximum Budget",
-        "value": 5000,
-        "validation": {
-          "expression": {
-            "value": "model.minimumBudget < model.maximumBudget",
-            "message": "The maximum budget must be greater than the minimum budget."
-          }
-        }
+        "value": 5000
       },
       {
         "component": "aem-content",
