@@ -181,10 +181,7 @@
   .help-me-choose-container .help-me-choose-wrapper .panelcontainer .game-form .budget-bar {
     flex-direction: column;
     align-items: flex-start;
-    padding-top: 1.25rem;
-    padding-bottom: 1.25rem;
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
+    padding: 1.5rem 1.25rem;
   }
 
   .help-me-choose-container .help-me-choose-wrapper .panelcontainer .game-form .budget-bar .budget-left {
@@ -218,7 +215,7 @@
     grid-column: 1 / -1;
     order: 2;
     position: relative;
-    margin-top: 0.75rem;
+    margin-top: 1.5rem;
   }
 
   .help-me-choose-container .help-me-choose-wrapper .panelcontainer .game-form .budget-bar .budget-center .budget-range-wrapper .range-labels {

@@ -121,6 +121,7 @@ async function renderHelpMeChoose(block) {
                     <button type="reset" class="reset-button btn btn-link">${escapeHtml(AuthoredData[4] || 'Reset')}</button>
                     <button type="submit" class="btn btn-link">${escapeHtml(AuthoredData[5] || 'Confirm')}</button>
                 </div>
+                
             </div>
         </form>
         <div class="filter-button">
@@ -218,7 +219,6 @@ function generateBudgetCenterHTML(lowestPrice, highestPrice) {
   return `
     <input class="budget-value" id="budget-min-value" aria-label="Minimum budget" />
     <div class="budget-separator">to</div>
-    <input class="budget-value" id="budget-max-value" aria-label="Maximum budget" />
     <div class="budget-range-wrapper">
         <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="500" data-max="5000" role="slider" data-step="100" aria-label="Budget range slider" aria-valuemax="${highestPrice}" aria-valuemin="${lowestPrice}" aria-orientation="horizontal" aria-valuenow="${lowestPrice}"
         aria-valuetext="Budget range between ${_formatCurrency(lowestPrice)} to ${_formatCurrency(highestPrice)}"></div>
@@ -227,6 +227,7 @@ function generateBudgetCenterHTML(lowestPrice, highestPrice) {
             <span>$5,000</span>
         </div>
     </div>
+    <input class="budget-value" id="budget-max-value" aria-label="Maximum budget" />
   `;
 }
 
