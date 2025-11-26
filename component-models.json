@@ -1203,6 +1203,18 @@
         "value": 5000
       },
       {
+        "component": "validator",
+        "valueType": "boolean",
+        "name": "isBudgetValid",
+        "label": "Budget Range Validator",
+        "description": "Ensures the minimum budget is less than the maximum budget.",
+        "value": "=model.minimumBudget < model.maximumBudget",
+        "validation": {
+          "required": true,
+          "errorMessage": "The minimum budget must be less than the maximum budget."
+        }
+      },
+      {
         "component": "aem-content",
         "valueType": "string",
         "name": "helpMeChooseCTALinkTo",
