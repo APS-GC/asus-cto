@@ -293,12 +293,16 @@ async function initializeSwiper(section, config) {
         slidesPerView: 2.5,
         spaceBetween: 24,
         slidesPerGroup: 1,
+        centeredSlides: false,
+        centeredSlidesBounds: false,
       },
       1024: {
         slidesPerView: config.productsToShow,
         spaceBetween: 32,
         allowTouchMove: false,
         simulateTouch: false,
+        centeredSlides: false,
+        centeredSlidesBounds: false,
       },
     },
     a11y: {
