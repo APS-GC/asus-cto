@@ -766,7 +766,7 @@
     ]
   },
   {
-    "id": "carousel",
+    "id": "hero-banner",
     "fields": [
       {
         "component": "number",
@@ -791,7 +791,7 @@
     ]
   },
   {
-    "id": "carousel-slide",
+    "id": "hero-banner-slide",
     "fields": [
       {
         "component": "text",
