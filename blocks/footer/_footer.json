@@ -38,6 +38,13 @@
     "id": "footer",
     "fields": [
       {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "demo",
+        "label": "Demo",
+        "description": ""
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "titleSubscription",
