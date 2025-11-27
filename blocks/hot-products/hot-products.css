@@ -52,7 +52,7 @@
     flex-direction: column;
     height: 100%;
     padding: 2rem;
-    gap: 1rem;
+    gap: 1.25rem;
     width: 100%;
 }
 
@@ -63,7 +63,6 @@
     min-height: 40px;
     font-size: 0.75rem;
     gap: 1.5rem;
-    margin-bottom: 1.25rem;
 }
 
 .hot-products-badges {
