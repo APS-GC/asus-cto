@@ -52,7 +52,7 @@
   
   /* Layout Heights */
   --header-height: 48px; /* Default: Mobile and Tablet */
-  --carousel-height: 548px; /* Default: Mobile - Used for CLS prevention */
+  --hero-banner-height: 548px; /* Default: Mobile - Used for CLS prevention */
 
   /* Legacy color mappings for backward compatibility */
   --color-white: var(--color-primary-950);
@@ -641,8 +641,8 @@ p,
     --font-size-5xl: 3.5rem;    /* 56px */
     --font-size-6xl: 4.5rem;    /* 72px */
     
-    /* Carousel height for tablet */
-    --carousel-height: 429px;
+    /* Hero Banner height for tablet */
+    --hero-banner-height: 429px;
   }
 }
 
@@ -662,7 +662,7 @@ p,
     
     /* Layout heights for desktop */
     --header-height: 64px;
-    --carousel-height: 777px;
+    --hero-banner-height: 777px;
   }
 }
 
