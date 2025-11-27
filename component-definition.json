@@ -184,12 +184,15 @@
                 "template": {
                   "name": "Help Me Choose",
                   "model": "help-me-choose",
-                  "title": "Select The Game You Play",
-                  "description": "We will recommend a plan that suits you most!",
-                  "yourBudgetLabel": "Your Budget",
-                  "HelpMeChooseButtonLabel": "Help me choose",
-                  "ResetButtonLabel": "Reset",
-                  "ConfirmButtonLabel": "Confirm"
+                  "title": "Help me choose",
+                  "subtitle": "Tell us your preferred games, budget and chipset, and we will recommend desktops that best suit your needs.",
+                  "budgetText": "Your budget",
+                  "helpmeChooseCTA": "Help me choose",
+                  "resetCTAText": "Reset",
+                  "confirmCTAText": "Confirm",
+                  "minimumBudget": 500,
+                  "maximumBudget": 5000,
+                  "helpMeChooseCTALinkTo": "/content/asus-cto/language-master/en/products/desktops/product-matches"
                 }
               }
             }

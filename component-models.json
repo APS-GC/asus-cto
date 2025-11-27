@@ -1146,36 +1146,67 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "description",
-        "label": "Description",
+        "name": "subtitle",
+        "label": "Subtitle",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "yourBudgetLabel",
-        "label": "Your Budget Label",
+        "name": "budgetText",
+        "label": "Budget Text",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "HelpMeChooseButtonLabel",
-        "label": "Help Me Choose Button Label",
+        "name": "helpmeChooseCTA",
+        "label": "Help Me Choose CTA",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "ResetButtonLabel",
-        "label": "Reset Button Label",
+        "name": "resetCTAText",
+        "label": "Reset CTA Text",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "ConfirmButtonLabel",
-        "label": "Confirm Button Label",
+        "name": "confirmCTAText",
+        "label": "Confirm CTA Text",
+        "value": ""
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "style",
+        "label": "Style",
+        "options": [
+          { "name": "Option 1", "value": "0" },
+          { "name": "Option 2", "value": "1" }
+        ] 
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "minimumBudget",
+        "label": "Minimum Budget",
+        "value": 500
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "maximumBudget",
+        "label": "Maximum Budget",
+        "value": 5000
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "helpMeChooseCTALinkTo",
+        "label": "Help me Choose CTA LinkTo",
         "value": ""
       }
     ]
