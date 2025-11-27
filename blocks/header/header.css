@@ -808,7 +808,6 @@ body:has(.header.mm-open) {
 }
 
 .profile-dropdown {
-    margin-top: 6px;
     position: relative
 }
 

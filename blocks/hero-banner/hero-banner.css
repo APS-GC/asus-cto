@@ -1,55 +1,55 @@
 /* Swiper CSS loaded dynamically by swiper-loader.js to prevent duplicate loads */
 
 /* Override default Swiper pagination styles */
-.cmp-carousel .swiper-horizontal > .swiper-pagination-bullets,
-.cmp-carousel .swiper-pagination-bullets.swiper-pagination-horizontal,
-.cmp-carousel .swiper-pagination-custom,
-.cmp-carousel .swiper-pagination-fraction {
+.cmp-hero-banner .swiper-horizontal > .swiper-pagination-bullets,
+.cmp-hero-banner .swiper-pagination-bullets.swiper-pagination-horizontal,
+.cmp-hero-banner .swiper-pagination-custom,
+.cmp-hero-banner .swiper-pagination-fraction {
   bottom: unset !important;
   top: unset !important;
   left: unset !important;
   width: unset !important;
 }
 
-/* Carousel Block Styles */
-.block.carousel {
+/* Hero Banner Block Styles */
+.block.hero-banner {
   width: 100%;
   margin: 0;
   padding: 0;
 }
 
-.carousel.panelcontainer {
+.hero-banner.panelcontainer {
   width: 100%;
   position: relative;
   overflow: hidden;
-  min-height: var(--carousel-height); /* Reserve space to prevent CLS */
+  min-height: var(--hero-banner-height); /* Reserve space to prevent CLS */
 }
 
-/* Carousel Container */
-.cmp-carousel {
+/* Hero Banner Container */
+.cmp-hero-banner {
   width: 100%;
   position: relative;
   background: #000;
 }
 
-.cmp-carousel__content {
+.cmp-hero-banner__content {
   position: relative;
   width: 100%;
 }
 
 
 /* Universal Editor authoring mode - constrained height */
-.cmp-carousel.ue-authoring .swiper {
+.cmp-hero-banner.ue-authoring .swiper {
   height: 400px;
   max-height: 400px;
   overflow: hidden;
 }
 
-.cmp-carousel .swiper-wrapper {
+.cmp-hero-banner .swiper-wrapper {
   height: 100%;
 }
 
-.cmp-carousel .swiper-slide {
+.cmp-hero-banner .swiper-slide {
   width: 100%;
   height: 100%;
   display: flex;
@@ -57,25 +57,25 @@
   justify-content: center;
 }
 
-/* Hero Banner Styles within Carousel */
-.cmp-carousel .hero-banner,
-.cmp-carousel .cmp-hero-banner {
+/* Hero Banner Styles within Hero Banner */
+.cmp-hero-banner .hero-banner,
+.cmp-hero-banner .cmp-hero-banner {
   width: 100%;
-  height: var(--carousel-height);
+  height: var(--hero-banner-height);
   position: relative;
   overflow: hidden;
 }
 
 /* Hero Media Wrappers */
-.cmp-carousel .hero-video-wrapper,
-.cmp-carousel .hero-image-wrapper {
+.cmp-hero-banner .hero-video-wrapper,
+.cmp-hero-banner .hero-image-wrapper {
   inset: 0;
   position: absolute;
   z-index: 1;
 }
 
-.cmp-carousel .hero-video,
-.cmp-carousel .hero-image {
+.cmp-hero-banner .hero-video,
+.cmp-hero-banner .hero-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -83,19 +83,19 @@
   pointer-events: none;
 }
 
-.cmp-carousel .hero-video {
+.cmp-hero-banner .hero-video {
   background: #000;
 }
 
 /* Hero Content */
-.cmp-carousel .hero-content {
+.cmp-hero-banner .hero-content {
     color: var(--color-primary-950);
     position: absolute;
     z-index: 3
 }
 
 /* Hero Banner Position Classes */
-.cmp-carousel .hero-banner.hero-content--start-center .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--start-center .hero-content {
   left: calc(50% - 620px);
   text-align: left;
   top: 50%;
@@ -103,7 +103,7 @@
   transform: translateY(-50%);
 }
 
-.cmp-carousel .hero-banner.hero-content--center-top .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--center-top .hero-content {
   left: 50%;
   text-align: center;
   top: calc(64px + var(--header-height));
@@ -111,7 +111,7 @@
   transform: translateX(-50%);
 }
 
-.cmp-carousel .hero-banner.hero-content--end-center .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--end-center .hero-content {
   right: calc(50% - 620px);
   text-align: left;
   top: 50%;
@@ -119,19 +119,19 @@
   transform: translateY(-50%);
 }
 
-.cmp-carousel .hero-banner.hero-content--start-top .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--start-top .hero-content {
   left: calc(50% - 620px);
   text-align: left;
   top: 10%;
 }
 
-.cmp-carousel .hero-banner.hero-content--start-bottom .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--start-bottom .hero-content {
   bottom: 10%;
   left: calc(50% - 620px);
   text-align: left;
 }
 
-.cmp-carousel .hero-banner.hero-content--center-center .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--center-center .hero-content {
   left: 50%;
   text-align: center;
   top: 50%;
@@ -139,7 +139,7 @@
   transform: translate(-50%, -50%);
 }
 
-.cmp-carousel .hero-banner.hero-content--center-bottom .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--center-bottom .hero-content {
   bottom: 10%;
   left: 50%;
   text-align: center;
@@ -147,48 +147,48 @@
   transform: translateX(-50%);
 }
 
-.cmp-carousel .hero-banner.hero-content--end-top .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--end-top .hero-content {
   right: calc(50% - 620px);
   text-align: right;
   top: 10%;
 }
 
-.cmp-carousel .hero-banner.hero-content--end-bottom .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--end-bottom .hero-content {
   bottom: 10%;
   right: calc(50% - 620px);
   text-align: right;
 }
 
 /* Legacy position classes for backward compatibility */
-.cmp-carousel .hero-banner.hero-content--top .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--top .hero-content {
   top: 10%;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
 }
 
-.cmp-carousel .hero-banner.hero-content--bottom .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--bottom .hero-content {
   bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
 }
 
-.cmp-carousel .hero-banner.hero-content--left .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--left .hero-content {
   top: 50%;
   left: 10%;
   transform: translateY(-50%);
   text-align: left;
 }
 
-.cmp-carousel .hero-banner.hero-content--right .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--right .hero-content {
   top: 50%;
   right: 8%;
   transform: translateY(-50%);
   text-align: right;
 }
 
-.cmp-carousel .hero-banner.hero-content--center .hero-content {
+.cmp-hero-banner .hero-banner.hero-content--center .hero-content {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -196,7 +196,7 @@
 }
 
 /* Typography */
-.cmp-carousel .product-name {
+.cmp-hero-banner .product-name {
   font-family: var(--font-display);
     font-size: .875rem;
     font-weight: var(--medium);
@@ -206,7 +206,7 @@
     text-transform: uppercase;
 }
 
-.cmp-carousel .headline {
+.cmp-hero-banner .headline {
   font-family: var(--font-display);
   font-size: 3.25rem;
   font-weight: var(--medium);
@@ -215,7 +215,7 @@
   margin-bottom: 1.5rem
 }
  
-    .cmp-carousel__footer{
+    .cmp-hero-banner__footer{
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -231,7 +231,7 @@
   }
 
 /* Indicators Group */
-.cmp-carousel__indicators-group {
+.cmp-hero-banner__indicators-group {
     background: rgba(0,0,0,.8);
     border-radius: 32px;
     height: 16px;
@@ -239,7 +239,7 @@
 }
 
 /* Pagination Indicators */
-.cmp-carousel__indicators,.cmp-carousel__indicators-group {
+.cmp-hero-banner__indicators,.cmp-hero-banner__indicators-group {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -247,13 +247,13 @@
 }
 
 /* Individual Indicator */
-.cmp-carousel__indicators {
+.cmp-hero-banner__indicators {
     list-style: none;
     margin: -4px 0 0 -4px;
     padding: 0
 }
 
-.cmp-carousel__indicator {
+.cmp-hero-banner__indicator {
     border-radius: 0;
     display: flex;
     height: 24px;
@@ -267,7 +267,7 @@
     position: relative;
 }
 
-.cmp-carousel__indicator:before {
+.cmp-hero-banner__indicator:before {
     background-color: transparent;
     border: 1px solid var(--color-primary-950);
     border-radius: 8px;
@@ -282,32 +282,32 @@
     width: 8px
 }
 
-.cmp-carousel__indicator:hover:before {
+.cmp-hero-banner__indicator:hover:before {
     background-color: hsla(0,0%,100%,.4)
 }
 
-.cmp-carousel__indicator:focus {
+.cmp-hero-banner__indicator:focus {
     outline: 0
 }
 
-.cmp-carousel__indicator:focus:before {
+.cmp-hero-banner__indicator:focus:before {
     outline: 2px solid var(--color-focus-ring)
 }
 
-.cmp-carousel__indicator--active {
+.cmp-hero-banner__indicator--active {
     border: 0;
     cursor: default;
     margin: 0 8px;
     width: 96px
 }
 
-.cmp-carousel__indicator--active:before {
+.cmp-hero-banner__indicator--active:before {
     background-color: var(--color-primary-300);
     border: 0;
     width: 100%
 }
 
-.cmp-carousel__indicator--active:after {
+.cmp-hero-banner__indicator--active:after {
     background-color: var(--color-primary-950);
     border-radius: 8px;
     content: "";
@@ -320,7 +320,7 @@
 }
 
 /* Media Controls */
-.cmp-carousel__media-controls {
+.cmp-hero-banner__media-controls {
   position: absolute;
   right: 32px;
   top: 50%;
@@ -330,7 +330,7 @@
   display: none;
 }
 
-.cmp-carousel__media-control {
+.cmp-hero-banner__media-control {
     border-radius: 50%;
     display: flex;
     height: 32px;
@@ -342,7 +342,7 @@
 }
 
 /* Autoplay Toggle Button */
-.carousel-autoplay-toggle {
+.hero-banner-autoplay-toggle {
   background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="9" y="4.66699" width="1.66667" height="6.66667" rx="0.833333" fill="white"/><rect x="5.33398" y="4.66699" width="1.66667" height="6.66667" rx="0.833333" fill="white"/></svg>') center / 16px no-repeat;
   width: 24px;
   height: 24px;
@@ -355,12 +355,12 @@
 }
 
 /* Show media controls only for slides with video */
-.cmp-carousel:has(.swiper-slide-active .hero-video) .cmp-carousel__media-controls {
+.cmp-hero-banner:has(.swiper-slide-active .hero-video) .cmp-hero-banner__media-controls {
   display: flex;
 }
 
 /* Creative Effect Footer Override */
-.cmp-carousel[data-carousel-effect="creative"] .cmp-carousel__footer {
+.cmp-hero-banner[data-hero-banner-effect="creative"] .cmp-hero-banner__footer {
   position: relative;
   top: unset;
   bottom: unset;
@@ -369,27 +369,27 @@
 
 /* State Modifiers */
 /* Autoplay paused state */
-.cmp-carousel:has(.is-autoplay-paused) .carousel-autoplay-toggle {
+.cmp-hero-banner:has(.is-autoplay-paused) .hero-banner-autoplay-toggle {
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 12L9 17.1962L9 6.80385L18 12Z" fill="white"/></svg>');
 }
 
 /* Media Control Play/Pause States */
-.cmp-carousel__media-controls .cmp-carousel__media-control--play-pause {
+.cmp-hero-banner__media-controls .cmp-hero-banner__media-control--play-pause {
   background: url('data:image/svg+xml,<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle data-figma-bg-blur-radius="10" cx="16" cy="16" r="15.5" fill="%23070707" fill-opacity="0.5" stroke="white"/><rect x="11.6002" y="9.99998" width="0.8" height="12" rx="0.4" fill="white" stroke="white" stroke-width="0.8"/><rect x="19.6002" y="9.99998" width="0.8" height="12" rx="0.4" fill="white" stroke="white" stroke-width="0.8"/></svg>');
 }
 
-.cmp-carousel__media-controls.paused .cmp-carousel__media-control--play-pause {
+.cmp-hero-banner__media-controls.paused .cmp-hero-banner__media-control--play-pause {
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><circle xmlns="http://www.w3.org/2000/svg" data-figma-bg-blur-radius="10" cx="16" cy="16" r="15.5" fill="%23070707" fill-opacity="0.5" stroke="white"/><path d="M22.5192 15.1362C23.1807 15.5221 23.1807 16.4779 22.5192 16.8638L13.5039 22.1227C12.8372 22.5116 12 22.0308 12 21.259L12 10.741C12 9.96925 12.8372 9.48838 13.5039 9.87726L22.5192 15.1362Z" fill="white"/></svg>');
 }
 
 /* Autoplay disabled state */
-.swiper:not(.is-autoplay-enabled) .cmp-carousel__indicator--active {
+.swiper:not(.is-autoplay-enabled) .cmp-hero-banner__indicator--active {
   background-color: var(--color-primary-950, #1a1a1a);
 }
 
 
 /* Navigation Arrows (if needed) */
-.cmp-carousel__actions {
+.cmp-hero-banner__actions {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -401,7 +401,7 @@
   pointer-events: none;
 }
 
-.cmp-carousel__action {
+.cmp-hero-banner__action {
   width: 50px;
   height: 50px;
   border: 2px solid rgba(255, 255, 255, 0.7);
@@ -416,23 +416,23 @@
   pointer-events: all;
 }
 
-.cmp-carousel__action:hover {
+.cmp-hero-banner__action:hover {
   border-color: white;
   background: rgba(0, 0, 0, 0.5);
 }
 
-.cmp-carousel__action--previous::before {
+.cmp-hero-banner__action--previous::before {
   content: "←";
   font-size: 20px;
 }
 
-.cmp-carousel__action--next::before {
+.cmp-hero-banner__action--next::before {
   content: "→";
   font-size: 20px;
 }
 
-/* Placeholder for empty carousel */
-.carousel-placeholder {
+/* Placeholder for empty hero banner */
+.hero-banner-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -446,11 +446,11 @@
 
 /* UE Authoring Environment Detection and Overrides */
 /* Target common UE iframe and editor contexts */
-body[data-aue-behavior] .cmp-carousel .swiper,
-.aem-authoring-enabled .cmp-carousel .swiper,
-.aem-editor .cmp-carousel .swiper,
-iframe[src*="editor"] .cmp-carousel .swiper,
-[data-authoring="true"] .cmp-carousel .swiper {
+body[data-aue-behavior] .cmp-hero-banner .swiper,
+.aem-authoring-enabled .cmp-hero-banner .swiper,
+.aem-editor .cmp-hero-banner .swiper,
+iframe[src*="editor"] .cmp-hero-banner .swiper,
+[data-authoring="true"] .cmp-hero-banner .swiper {
   height: 400px !important;
   max-height: 400px !important;
   min-height: 300px !important;
@@ -458,11 +458,11 @@ iframe[src*="editor"] .cmp-carousel .swiper,
 }
 
 /* Additional UE specific overrides */
-body[data-aue-behavior] .cmp-carousel,
-.aem-authoring-enabled .cmp-carousel,
-.aem-editor .cmp-carousel,
-iframe[src*="editor"] .cmp-carousel,
-[data-authoring="true"] .cmp-carousel {
+body[data-aue-behavior] .cmp-hero-banner,
+.aem-authoring-enabled .cmp-hero-banner,
+.aem-editor .cmp-hero-banner,
+iframe[src*="editor"] .cmp-hero-banner,
+[data-authoring="true"] .cmp-hero-banner {
   border: 2px dashed #ccc !important;
   background: #f8f8f8 !important;
   height: auto !important;
@@ -471,11 +471,11 @@ iframe[src*="editor"] .cmp-carousel,
 }
 
 /* Prevent viewport-based heights in authoring */
-body[data-aue-behavior] .cmp-carousel .swiper-slide,
-.aem-authoring-enabled .cmp-carousel .swiper-slide,
-.aem-editor .cmp-carousel .swiper-slide,
-iframe[src*="editor"] .cmp-carousel .swiper-slide,
-[data-authoring="true"] .cmp-carousel .swiper-slide {
+body[data-aue-behavior] .cmp-hero-banner .swiper-slide,
+.aem-authoring-enabled .cmp-hero-banner .swiper-slide,
+.aem-editor .cmp-hero-banner .swiper-slide,
+iframe[src*="editor"] .cmp-hero-banner .swiper-slide,
+[data-authoring="true"] .cmp-hero-banner .swiper-slide {
   opacity: 1 !important;
   transition: none !important;
 }
@@ -483,9 +483,9 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
 /* Responsive Design */
 /* Tablet/Medium screens - migrated from hero-banner responsive design */
 @media only screen and (max-width: 79.9375rem) {
-  /* Height now controlled by --carousel-height CSS variable in styles.css */
+  /* Height now controlled by --hero-banner-height CSS variable in styles.css */
   
-  .cmp-carousel .hero-content .headline {
+  .cmp-hero-banner .hero-content .headline {
     font-family: var(--font-display);
     font-size: 1.875rem;
     font-weight: var(--medium);
@@ -494,31 +494,31 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
     margin-bottom: 1rem;
   }
   
-  .cmp-carousel .hero-banner:is(.hero-content--start-center,.hero-content--start-top,.hero-content--start-bottom) .hero-content,
-  .cmp-carousel .cmp-hero-banner:is(.hero-content--start-center,.hero-content--start-top,.hero-content--start-bottom) .hero-content {
+  .cmp-hero-banner .hero-banner:is(.hero-content--start-center,.hero-content--start-top,.hero-content--start-bottom) .hero-content,
+  .cmp-hero-banner .cmp-hero-banner:is(.hero-content--start-center,.hero-content--start-top,.hero-content--start-bottom) .hero-content {
     left: 40px;
   }
 
-  .cmp-carousel .hero-banner.hero-content--start-center .hero-content,
-  .cmp-carousel .cmp-hero-banner.hero-content--start-center .hero-content {
+  .cmp-hero-banner .hero-banner.hero-content--start-center .hero-content,
+  .cmp-hero-banner .cmp-hero-banner.hero-content--start-center .hero-content {
     bottom: 76px;
     top: unset;
     -webkit-transform: unset;
     transform: unset;
   }
 
-  .cmp-carousel .hero-banner:is(.hero-content--end-center,.hero-content--end-top,.hero-content--end-bottom) .hero-content,
-  .cmp-carousel .cmp-hero-banner:is(.hero-content--end-center,.hero-content--end-top,.hero-content--end-bottom) .hero-content {
+  .cmp-hero-banner .hero-banner:is(.hero-content--end-center,.hero-content--end-top,.hero-content--end-bottom) .hero-content,
+  .cmp-hero-banner .cmp-hero-banner:is(.hero-content--end-center,.hero-content--end-top,.hero-content--end-bottom) .hero-content {
     right: 40px;
   }
 }
 
 /* Mobile screens - migrated from hero-banner responsive design */
 @media only screen and (max-width: 45.625rem) {
-  /* Height now controlled by --carousel-height CSS variable in styles.css */
+  /* Height now controlled by --hero-banner-height CSS variable in styles.css */
 
-  .cmp-carousel .hero-banner:after,
-  .cmp-carousel .cmp-hero-banner:after {
+  .cmp-hero-banner .hero-banner:after,
+  .cmp-hero-banner .cmp-hero-banner:after {
     background: -webkit-gradient(linear,left top,left bottom,from(transparent),to(rgba(0,0,0,.6)));
     background: linear-gradient(180deg,transparent,rgba(0,0,0,.6));
     content: "";
@@ -527,8 +527,8 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
     z-index: 2;
   }
 
-  .cmp-carousel .hero-banner:is(.hero-content--start-center,.hero-content--center-top,.hero-content--end-center,.hero-content--start-top,.hero-content--start-bottom,.hero-content--center-center,.hero-content--center-bottom,.hero-content--end-top,.hero-content--end-bottom) .hero-content,
-  .cmp-carousel .cmp-hero-banner:is(.hero-content--start-center,.hero-content--center-top,.hero-content--end-center,.hero-content--start-top,.hero-content--start-bottom,.hero-content--center-center,.hero-content--center-bottom,.hero-content--end-top,.hero-content--end-bottom) .hero-content {
+  .cmp-hero-banner .hero-banner:is(.hero-content--start-center,.hero-content--center-top,.hero-content--end-center,.hero-content--start-top,.hero-content--start-bottom,.hero-content--center-center,.hero-content--center-bottom,.hero-content--end-top,.hero-content--end-bottom) .hero-content,
+  .cmp-hero-banner .cmp-hero-banner:is(.hero-content--start-center,.hero-content--center-top,.hero-content--end-center,.hero-content--start-top,.hero-content--start-bottom,.hero-content--center-center,.hero-content--center-bottom,.hero-content--end-top,.hero-content--end-bottom) .hero-content {
     bottom: 76px;
     left: 20px;
     text-align: left;
@@ -537,7 +537,7 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
     transform: unset;
   }
   
-  .cmp-carousel__footer {
+  .cmp-hero-banner__footer {
     padding-right: 1.25rem;
     padding-left: 1.25rem;
     bottom: 20px;
@@ -545,40 +545,40 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
   }
 }
 
-/* Existing carousel responsive rules - maintaining backward compatibility */
+/* Existing hero banner responsive rules - maintaining backward compatibility */
 @media (max-width: 1024px) {
   
   /* Override responsive rules in UE authoring */
-  body[data-aue-behavior] .cmp-carousel .swiper,
-  .aem-authoring-enabled .cmp-carousel .swiper,
-  .aem-editor .cmp-carousel .swiper,
-  iframe[src*="editor"] .cmp-carousel .swiper,
-  [data-authoring="true"] .cmp-carousel .swiper {
+  body[data-aue-behavior] .cmp-hero-banner .swiper,
+  .aem-authoring-enabled .cmp-hero-banner .swiper,
+  .aem-editor .cmp-hero-banner .swiper,
+  iframe[src*="editor"] .cmp-hero-banner .swiper,
+  [data-authoring="true"] .cmp-hero-banner .swiper {
     height: 350px !important;
     -webkit-transform: none;
     transform: none;
     margin-left: auto;
   }
   
-  .cmp-carousel .hero-content--top,
-  .cmp-carousel .hero-content--center-top {
+  .cmp-hero-banner .hero-content--top,
+  .cmp-hero-banner .hero-content--center-top {
     margin-top: 2rem;
   }
   
-  .cmp-carousel .hero-content--bottom {
+  .cmp-hero-banner .hero-content--bottom {
     margin-bottom: 2rem;
   }
   
-  .cmp-carousel__actions {
+  .cmp-hero-banner__actions {
     padding: 0 1rem;
   }
   
-  .cmp-carousel__action {
+  .cmp-hero-banner__action {
     width: 40px;
     height: 40px;
   }
   
-  .cmp-carousel[data-carousel-effect="creative"] .cmp-carousel__footer {
+  .cmp-hero-banner[data-hero-banner-effect="creative"] .cmp-hero-banner__footer {
     margin-top: 1.25rem;
   }
 }
@@ -598,46 +598,46 @@ iframe[src*="editor"] .cmp-carousel .swiper-slide,
 }
 
 /* Focus styles for accessibility - only show outline for keyboard navigation */
-.cmp-carousel__indicator:focus-visible,
-.carousel-autoplay-toggle:focus-visible,
-.cmp-carousel__media-control:focus-visible,
-.cmp-carousel__action:focus-visible {
+.cmp-hero-banner__indicator:focus-visible,
+.hero-banner-autoplay-toggle:focus-visible,
+.cmp-hero-banner__media-control:focus-visible,
+.cmp-hero-banner__action:focus-visible {
   outline: 2px solid #0066cc;
   outline-offset: 2px;
 }
 
 /* Remove outline on mouse click */
-.cmp-carousel__indicator:focus:not(:focus-visible),
-.carousel-autoplay-toggle:focus:not(:focus-visible),
-.cmp-carousel__media-control:focus:not(:focus-visible),
-.cmp-carousel__action:focus:not(:focus-visible) {
+.cmp-hero-banner__indicator:focus:not(:focus-visible),
+.hero-banner-autoplay-toggle:focus:not(:focus-visible),
+.cmp-hero-banner__media-control:focus:not(:focus-visible),
+.cmp-hero-banner__action:focus:not(:focus-visible) {
   outline: none;
 }
 
 /* Swiper overrides */
-.cmp-carousel .swiper-slide {
+.cmp-hero-banner .swiper-slide {
   opacity: 0;
   transition: opacity 0.5s ease;
 }
 
-.cmp-carousel .swiper-slide-active {
+.cmp-hero-banner .swiper-slide-active {
   opacity: 1;
 }
 
 /* Loading states */
-.cmp-carousel .hero-video[data-loading="true"],
-.cmp-carousel .hero-image[data-loading="true"] {
+.cmp-hero-banner .hero-video[data-loading="true"],
+.cmp-hero-banner .hero-image[data-loading="true"] {
   filter: blur(5px);
   transition: filter 0.3s ease;
 }
 
 /* UE Authoring specific styles */
-.cmp-carousel.ue-authoring {
+.cmp-hero-banner.ue-authoring {
   border: 2px dashed #ccc;
   background: #f8f8f8;
 }
 
-.cmp-carousel.ue-authoring .swiper-slide {
+.cmp-hero-banner.ue-authoring .swiper-slide {
   opacity: 1 !important;
   transition: none !important;
 }

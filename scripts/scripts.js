@@ -390,7 +390,7 @@ async function loadEager(doc) {
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
-    const hasCarousel = main.querySelector('.carousel, .hot-products, .product-preview, .help-me-choose,.our-advantages');
+    const hasCarousel = main.querySelector('.hero-banner, .hot-products, .product-preview, .help-me-choose,.our-advantages');
     if (hasCarousel) {
       loadSwiper().catch(err => console.error('Failed to preload Swiper:', err));
     }
