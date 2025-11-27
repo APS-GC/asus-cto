@@ -392,6 +392,7 @@ async function loadEager(doc) {
     decorateMain(main);
     const hasCarousel = main.querySelector('.carousel, .hot-products, .product-preview, .help-me-choose,.our-advantages');
     if (hasCarousel) {
+      loadCSS(`${window.hlx.codeBasePath}/styles/clientlib-base.css`);
       loadSwiper().catch(err => console.error('Failed to preload Swiper:', err));
     }
     
@@ -425,6 +426,7 @@ async function loadLazy(doc) {
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 
+  loadCSS(`${window.hlx.codeBasePath}/styles/clientlib-base.css`);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 }
