@@ -575,12 +575,6 @@
         display: flex;
     }
 
-    .hot-products-swiper {
-        overflow: hidden;
-        padding: 0 1rem 1rem;
-        margin: 0;
-    }
-
     .hot-products-title {
         font-size: 1rem;
     }

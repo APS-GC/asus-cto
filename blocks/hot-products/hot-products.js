@@ -275,8 +275,8 @@ async function initializeSwiper(section, config) {
   await loadSwiper();
 
   const swiper = new window.Swiper(swiperContainer, {
-    slidesPerView: 1.15,
-    spaceBetween: 30,
+    slidesPerView: 1,
+    spaceBetween: 8,
     centeredSlides: true,
     centeredSlidesBounds: true,
     simulateTouch: true,
@@ -294,12 +294,12 @@ async function initializeSwiper(section, config) {
         spaceBetween: 24,
         slidesPerGroup: 1,
       },
-            1024: {
-                slidesPerView: config.productsToShow,
-                spaceBetween: 32,
-                allowTouchMove: false,
-                simulateTouch: false,
-            },
+      1024: {
+        slidesPerView: config.productsToShow,
+        spaceBetween: 32,
+        allowTouchMove: false,
+        simulateTouch: false,
+      },
     },
     a11y: {
       prevSlideMessage: 'Previous slide',
@@ -401,42 +401,42 @@ export default async function decorate(block) {
 
         const productsToDisplay = products.slice(0, config.productsToShow);
 
-      productsToDisplay.forEach(product => {
-        if (product.hoverImage) {
-          const link = document.createElement('link');
-          link.rel = 'preload';
-          link.as = 'image';
-          link.href = product.hoverImage;
-          document.head.appendChild(link);
-        }
-      });
+        productsToDisplay.forEach(product => {
+          if (product.hoverImage) {
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.as = 'image';
+            link.href = product.hoverImage;
+            document.head.appendChild(link);
+          }
+        });
 
-      productsToDisplay.forEach(product => {
-        const card = createProductCard(product, config);
-        wrapper.appendChild(card);
+        productsToDisplay.forEach(product => {
+          const card = createProductCard(product, config);
+          wrapper.appendChild(card);
 
-        // Add quick view event listener
-        const quickViewBtn = card.querySelector('.hot-products-quick-view');
-        if (quickViewBtn) {
-          quickViewBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleQuickView(product, config);
-          });
-        }
-      });
+          // Add quick view event listener
+          const quickViewBtn = card.querySelector('.hot-products-quick-view');
+          if (quickViewBtn) {
+            quickViewBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleQuickView(product, config);
+            });
+          }
+        });
 
-      initializeTooltips(section);
+        initializeTooltips(section);
 
-      await initializeSwiper(section, config);
+        await initializeSwiper(section, config);
 
-      window.addEventListener('delayed-loaded', async () => {
-        try {
-          await loadBazaarvoiceScript();
-        } catch (error) {
-          console.error('Hot Products: Failed to load Bazaarvoice:', error);
-        }
-      }, { once: true });
+        window.addEventListener('delayed-loaded', async () => {
+          try {
+            await loadBazaarvoiceScript();
+          } catch (error) {
+            console.error('Hot Products: Failed to load Bazaarvoice:', error);
+          }
+        }, { once: true });
       } else {
         wrapper.innerHTML = '<div class="hot-products-error">No products available</div>';
       }
