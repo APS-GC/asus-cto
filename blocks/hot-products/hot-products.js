@@ -26,19 +26,31 @@ function initializeTooltips(container) {
       const triggerRect = trigger.getBoundingClientRect();
       const tooltipRect = tooltip.getBoundingClientRect();
 
-      let top = triggerRect.bottom + 10;
-      let left = triggerRect.left;
+      let top = triggerRect.top - tooltipRect.height - 10;
+      let left = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2);
+      let position = 'top';
 
-      if (left + 260 > window.innerWidth) {
-        left = window.innerWidth - 270;
+      if (left + tooltipRect.width > window.innerWidth) {
+        left = window.innerWidth - tooltipRect.width - 10;
       }
 
-      if (top + tooltipRect.height > window.innerHeight) {
-        top = triggerRect.top - tooltipRect.height - 10;
+      if (left < 10) {
+        left = 10;
       }
 
+      if (top < 0) {
+        top = triggerRect.bottom + 10;
+        position = 'bottom';
+      }
+
+      // Calculate arrow position relative to trigger center
+      const triggerCenter = triggerRect.left + (triggerRect.width / 2);
+      const arrowLeft = triggerCenter - left;
+
+      tooltip.setAttribute('data-position', position);
       tooltip.style.top = `${top}px`;
       tooltip.style.left = `${left}px`;
+      tooltip.style.setProperty('--arrow-left', `${arrowLeft}px`);
 
       setTimeout(() => {
         tooltip.style.opacity = '1';
@@ -100,8 +112,8 @@ function createProductCard(product, config) {
       return `
         <tr>
           <td>${game}</td>
-          <td>${fps1080 !== '--' ? `${fps1080} FPS` : '--'}</td>
-          <td>${fps1440 !== '--' ? `${fps1440} FPS` : '--'}</td>
+          <td>${fps1080 !== '--' ? fps1080 : '--'}</td>
+          <td>${fps1440 !== '--' ? fps1440 : '--'}</td>
         </tr>
       `;
     }).join('');

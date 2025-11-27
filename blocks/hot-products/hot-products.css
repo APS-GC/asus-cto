@@ -360,6 +360,55 @@
     pointer-events: none;
 }
 
+.hot-products-tooltip::before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px;
+}
+
+.hot-products-tooltip[data-position="top"]::before {
+    bottom: -16px;
+    left: var(--arrow-left, 50%);
+    transform: translateX(-50%);
+    border-color: var(--color-primary-950) transparent transparent transparent;
+}
+
+.hot-products-tooltip[data-position="top"]::after {
+    content: "";
+    position: absolute;
+    bottom: -16px;
+    left: var(--arrow-left, 50%);
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px;
+    border-color: var(--color-primary-950) transparent transparent transparent;
+}
+
+.hot-products-tooltip[data-position="bottom"]::before {
+    top: -16px;
+    left: var(--arrow-left, 50%);
+    transform: translateX(-50%);
+    border-color: transparent transparent var(--color-primary-950) transparent;
+}
+
+.hot-products-tooltip[data-position="bottom"]::after {
+    content: "";
+    position: absolute;
+    top: -16px;
+    left: var(--arrow-left, 50%);
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px;
+    border-color: transparent transparent var(--color-primary-950) transparent;
+}
+
 .hot-products-tooltip[style*="display: block"] {
     pointer-events: auto;
 }
