@@ -105,7 +105,7 @@ function parseHeroBannerConfig(block) {
         media: media,
         mediaAlt: mediaAlt || 'Hero Banner slide media',
         ctaText: cells[3]?.textContent?.trim() || '',
-        ctaLocation: cells[4]?.textContent?.trim() || 'center',
+        ctaLocation: cells[4]?.textContent?.trim() || 'center-center',
         ctaLink: ctaLink,
         openNewTab: cells[6]?.textContent?.toLowerCase().includes('true') || false,
         isVideo: isVideo,
