@@ -7,7 +7,8 @@
   position: relative;
   width: 100%;
   overflow: hidden;
-  aspect-ratio: 1440 / 777;
+  height: 777px;
+  //aspect-ratio: 1440 / 777;
 
   .hero-image-wrapper,
   .hero-video-wrapper {
@@ -26,7 +27,7 @@
 
   .hero-content {
     position: absolute;
-    z-index: 2;
+    z-index: 3;
     color: var(--color-primary-950);
 
     .product-name {
@@ -103,7 +104,8 @@
   }
 
   @include mix.respond-to("xl", "max") {
-    aspect-ratio: 768 / 429;
+    //aspect-ratio: 768 / 429;
+    height: 429px;
 
     .hero-content {
       .headline {
@@ -120,12 +122,40 @@
     }
   }
 
-  @include mix.respond-to("md", "max") {
-    aspect-ratio: 360 / 528;
+  @include mix.respond-to("tab", "max") {
+    //aspect-ratio: 360 / 528;
+    height: 528px;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 100%);
+      z-index: 2;
+    }
+
+    &:is(
+        .hero-content--start-center,
+        .hero-content--center-top,
+        .hero-content--end-center,
+        .hero-content--start-top,
+        .hero-content--start-bottom,
+        .hero-content--center-center,
+        .hero-content--center-bottom,
+        .hero-content--end-top,
+        .hero-content--end-bottom
+      )
+      .hero-content {
+      left: 20px;
+      top: unset;
+      transform: unset;
+      bottom: 76px;
+      text-align: left;
+    }
   }
 }
 
-@include mix.respond-to("md", "max") {
+@include mix.respond-to("tab", "max") {
   .cmp-carousel:has(.cmp-hero-banner) .cmp-carousel__footer {
     justify-content: space-between;
     bottom: 20px;

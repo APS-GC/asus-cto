@@ -11,8 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     breakpoints: {
       // when window width is >= 768px
       768: {
+        slidesPerView: 2,
+        spaceBetween: 20,
+      },
+      1280: {
         slidesPerView: 4,
-        spaceBetween: 10,
+        spaceBetween: 20,
       },
     },
     pagination: {

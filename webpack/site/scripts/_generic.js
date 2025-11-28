@@ -11,12 +11,3 @@ document.addEventListener('keydown', (event) => {
     elem.click();
   }
 });
-
-document.addEventListener('change', (e) => {
-  const elem = document.activeElement;
-  if (elem.checked) {
-    elem.setAttribute('aria-checked', true);
-  } else {
-    elem.setAttribute('aria-checked', false);
-  }
-});

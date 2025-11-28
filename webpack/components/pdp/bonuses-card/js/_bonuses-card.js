@@ -23,7 +23,9 @@ class BonusCardController {
       this.cacheBonusSections();
       this.bindEvents();
       this.initialized = true;
-    } catch (error) {}
+    } catch (error) {
+      console.debug('Error initializing BonusCardController:', error);
+    }
   }
 
   /**
@@ -95,7 +97,6 @@ class BonusCardController {
       if (section.selectedCount >= section.maxValue) {
         // Prevent selection if max reached
         checkbox.checked = false;
-        // this.showMaxSelectionMessage(sectionId, section.maxValue);
         return;
       }
       section.selectedCount++;
@@ -118,7 +119,7 @@ class BonusCardController {
    */
   updateBonusCounter(sectionId, selected, max) {
     const section = this.bonusSections.get(sectionId);
-    if (!section || !section.element) return;
+    if (!section?.element) return;
 
     // Update data attributes
     section.element.setAttribute('data-selected', selected);

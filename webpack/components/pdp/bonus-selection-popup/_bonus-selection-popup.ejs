@@ -1,15 +1,15 @@
 <section
    class="dialog-container dialog--boxed cmp-bonus-dialog"
-   data-a11y-dialog="select-bonus-dialog"
+   data-a11y-dialog="select-bonus-dialog-<%= popupId || 'default' %>"
    id="select-bonus-dialog"
    aria-hidden="true"
    >
-   <div class="dialog-overlay" data-a11y-dialog-hide="select-bonus-dialog"></div>
+   <div class="dialog-overlay" data-a11y-dialog-hide="select-bonus-dialog-<%= popupId || 'default' %>"></div>
    <div class="dialog-content cmp-custom__popup-bonuses" role="dialog" aria-modal="true">
       <button
          class="cmp-close-popup"
          type="button"
-         data-a11y-dialog-hide="select-bonus-dialog"
+         data-a11y-dialog-hide="select-bonus-dialog-<%= popupId || 'default' %>"
          aria-label="Close dialog"
          ></button>
       <div>
@@ -22,7 +22,6 @@
                      type="radio"
                      class="bonus-radio"
                      name="colour"
-                     id="bonus-option-1"
                      value="black"
                      aria-label="Item colour Black"
                      />
@@ -38,7 +37,6 @@
                      type="radio"
                      class="bonus-radio"
                      name="colour"
-                     id="bonus-option-2"
                      value="red"
                      aria-label="Item colour Red"
                      />
@@ -54,7 +52,6 @@
                      type="radio"
                      class="bonus-radio"
                      name="colour"
-                     id="bonus-option-3"
                      value="grey"
                      aria-label="Item colour Grey"
                            />
@@ -74,7 +71,6 @@
                      type="radio"
                      class="bonus-radio"
                      name="colour"
-                     id="bonus-option-1"
                      value="black"
                      aria-label="Item memory 128GB"
                      />
@@ -90,7 +86,6 @@
                      type="radio"
                      class="bonus-radio"
                      name="colour"
-                     id="bonus-option-2"
                      value="red"
                      aria-label="Item memory 256GB"
                      />
@@ -106,7 +101,6 @@
                      type="radio"
                      class="bonus-radio"
                      name="colour"
-                     id="bonus-option-3"
                      value="grey"
                      aria-label="Item memory 512GB"
                      />

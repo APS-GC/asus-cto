@@ -40,4 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
       );
     });
   });
+
+  let selectResolutionMobile = document.getElementById('select-resolution-mobile');
+
+  selectResolutionMobile.addEventListener('click', () => {
+    selectResolutionMobile.setAttribute('aria-expanded', true);
+  });
 });

@@ -1,21 +1,69 @@
+@use "../../../site/scss/settings/variables" as vars;
+@use "../../../site/scss/settings/typography" as typo;
+
+input {
+  &[type="text"],
+  &[type="email"],
+  &[type="password"],
+  &[type="number"],
+  &[type="search"] {
+    border-radius: vars.$border-radius;
+    border: 1px solid var(--color-primary-600);
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-950);
+    padding: 7px 16px;
+    outline: none;
+    @include typo.text-font();
+    @include typo.text-style("lg");
+
+    &:focus-visible {
+      border-color: var(--color-select-box-highlight);
+      outline: 1px solid var(--color-select-box-highlight);
+    }
+
+    &::placeholder {
+      color: var(--color-primary-600);
+    }
+  }
+}
+
 input[type="checkbox"] {
   appearance: none;
+  background-color: transparent;
+  border-radius: 4px;
   width: 16px;
   height: 16px;
-  background-color: transparent;
-  border: 1px solid var(--color-primary-600);
-  border-radius: 4px;
+  box-sizing: content-box;
   cursor: pointer;
   position: relative;
+  margin: 0;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid var(--color-primary-600);
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
 
   &:focus-visible {
-    outline-color: var(--color-focus-ring);
+    outline: solid 2px var(--color-focus-ring);
+    outline-offset: 2px;
   }
 
   &:checked {
     color: var(--color-primary);
-    background: var(--color-primary-950);
-    border: 1px solid var(--color-primary-950);
+
+    &::before {
+      background: var(--color-primary-950);
+      border: 1px solid var(--color-primary-950);
+    }
 
     &::after {
       content: "";
@@ -38,11 +86,14 @@ input[type="checkbox"] {
 .light-mode {
   input[type="checkbox"] {
     border-color: var(--color-primary-500);
-
     &:checked {
-      background: var(--color-primary-100);
-      border-color: var(--color-primary-100);
-      color: var(--color-primary-950);
+      &::before {
+        background: var(--color-primary-100);
+        border-color: var(--color-primary-100);
+      }
+      &::after {
+        color: var(--color-primary-950);
+      }
     }
   }
 }
