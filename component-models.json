@@ -937,6 +937,14 @@
           "label": "Call-to-Action Link",
           "description": "Link URL for the call-to-action",
           "valueType": "string"
+        },
+        {
+          "component": "boolean",
+          "name": "openLinkInNewTab",
+          "label": "Open Link in New Tab",
+          "description": "Check to open the CTA link in a new tab/window",
+          "valueType": "boolean",
+          "value": false
         }
       ]
     },

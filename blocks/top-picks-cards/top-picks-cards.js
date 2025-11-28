@@ -82,6 +82,17 @@ export default function decorate(block) {
         }
         // Clean up the temporary data attribute
         delete li.dataset.ctaLinkName;
+      } else if (index === 5) {
+        // Sixth cell contains the boolean value for opening in new tab
+        const openInNewTab = cell.textContent.trim().toLowerCase() === 'true';
+        if (openInNewTab) {
+          // Find the CTA link and set target="_blank" and rel="noopener noreferrer"
+          const ctaLink = productInfo.querySelector('.cta');
+          if (ctaLink) {
+            ctaLink.setAttribute('target', '_blank');
+            ctaLink.setAttribute('rel', 'noopener noreferrer');
+          }
+        }
       }
     });
     
