@@ -636,7 +636,7 @@ footer .back-to-top:focus-visible {
     padding-top: 1rem
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(5) > div p {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(5) > div > p {
     font-size: 14px;
     gap: 2.5rem;
     line-height: 18px;
@@ -646,7 +646,9 @@ footer .back-to-top:focus-visible {
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
-    color: var(--color-primary-600)
+    color: var(--color-primary-600);
+    width: 100%;
+    justify-content: end;
 }
 
 .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(5) > div > p,
