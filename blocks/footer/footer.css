@@ -615,7 +615,7 @@ footer .back-to-top:focus-visible {
 
 /* Global setting */
 .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(7) {
-    display: none;
+    visibility: hidden;
 }
 
 /* Privacy Policy & Terms */
@@ -693,6 +693,8 @@ footer .back-to-top:focus-visible {
     font-weight: var(--regular);
     letter-spacing: .24px;
     line-height: 1.125rem;
+    width: 8%;
+    display: inline-block;
 }
 
 /* Social Icons */
