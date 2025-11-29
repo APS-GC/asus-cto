@@ -14,7 +14,7 @@
       "title",
       "hero",
       "cards",
-      "columns1",
+      "columns",
       "fragment",
       "quote",
       "hero-banner",
@@ -101,20 +101,20 @@
     ]
   },
   {
-    "id": "columns1",
-    "components": []
+    "id": "columns",
+    "components": [
+      "column"
+    ]
   },
   {
-    "id": "column1",
+    "id": "column",
     "components": [
       "text",
       "image",
       "button",
-      "title",
-      "dm-asset"
+      "title"
     ]
   },
-
    {
       "id": "top-picks-cards",
       "components": [
