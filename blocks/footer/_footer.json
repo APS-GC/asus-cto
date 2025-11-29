@@ -67,19 +67,22 @@
         "description": ""
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "followUs",
+        "label": "Follow us at text",
+        "value": "Follow us at"
+      },
+      {
+        "component": "footer-icon"
+      },
+      {
         "component": "richtext",
         "name": "privacyTerms",
         "value": "",
         "label": "Privacy & Terms",
         "valueType": "string",
         "required": true
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "followUs",
-        "label": "Follow us at text",
-        "value": "Follow us at"
       },
       {
         "component": "boolean",

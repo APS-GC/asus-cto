@@ -557,14 +557,6 @@
         "description": ""
       },
       {
-        "component": "richtext",
-        "name": "privacyTerms",
-        "value": "",
-        "label": "Privacy & Terms",
-        "valueType": "string",
-        "required": true
-      },
-      {
         "component": "text",
         "valueType": "string",
         "name": "followUs",
@@ -573,6 +565,14 @@
       },
       {
         "component": "footer-icon"
+      },
+      {
+        "component": "richtext",
+        "name": "privacyTerms",
+        "value": "",
+        "label": "Privacy & Terms",
+        "valueType": "string",
+        "required": true
       },
       {
         "component": "boolean",
