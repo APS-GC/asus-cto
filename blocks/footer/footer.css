@@ -502,6 +502,7 @@ footer .back-to-top:focus-visible {
     background-color: var(--color-primary-100);
     color: var(--color-primary-950);
     padding: 1.75rem 2rem 2.5rem 2rem;
+    margin: 1.5rem auto;
 }
 
 /* Newsletter */
