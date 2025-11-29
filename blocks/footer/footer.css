@@ -613,6 +613,11 @@ footer .back-to-top:focus-visible {
   -webkit-column-break-after: avoid;
 }
 
+/* Global setting */
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(6) {
+    display: none;
+}
+
 /* Privacy Policy & Terms */
 
 .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(7) > div {
