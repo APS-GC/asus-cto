@@ -304,8 +304,7 @@
               "template": {
                 "name": "Footer",
                 "model": "footer",
-                "filter": "footer",
-                "demo": "Demo"
+                "filter": "footer"
               }
             }
           }

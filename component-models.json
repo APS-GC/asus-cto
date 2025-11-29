@@ -528,90 +528,31 @@
     "id": "footer",
     "fields": [
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "subscribeToNewsletter",
+        "label": "Title For Subscribe to Newsletter",
+        "description": "Subscribe to Newsletter"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "subscribeToNewsletterPlaceholder",
+        "label": "Subscribe to newsletter placeholder",
+        "description": "Subscribe to newsletter placeholder"
+      },
+      {
         "component": "richtext",
         "valueType": "string",
-        "name": "demo",
-        "label": "Demo",
+        "name": "navigationColumns",
+        "label": "Navigation columns",
         "description": ""
       },
       {
-        "component": "text",
-        "valueType": "string",
-        "name": "titleSubscription",
-        "label": "Title For Subscription Section",
-        "description": "Title For Subscription Section"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "placeholder",
-        "label": "Placeholder for Form Field",
-        "description": "Placeholder to Give Email"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "buttonText",
-        "label": "Label For Subscription Button",
-        "description": "Label For Subscription Button"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "socialTitle",
-        "label": "Title for Social Icon Section",
-        "description": "Title for Social Icon Section"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "titleFirstColumn",
-        "label": "Title For First Column",
-        "description": "Title For First Column"
-      },
-      {
         "component": "richtext",
-        "name": "config",
+        "name": "privacyTerms",
         "value": "",
-        "label": "Footer First Column Config Menu",
-        "valueType": "string",
-        "required": true
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "titleSecondColumn",
-        "label": "Title For Second Column",
-        "description": "Title For Second Column"
-      },
-      {
-        "component": "richtext",
-        "name": "configSecondColumn",
-        "value": "",
-        "label": "Footer Second Column Config Menu",
-        "valueType": "string",
-        "required": true
-      },
-       {
-        "component": "text",
-        "valueType": "string",
-        "name": "titleThirdColumn",
-        "label": "Title For Third Column",
-        "description": "Title For Third Column"
-      },
-      {
-        "component": "richtext",
-        "name": "configThirdColumn",
-        "value": "",
-        "label": "Footer Third Column Config Menu",
-        "valueType": "string",
-        "required": true
-      },
-      {
-        "component": "richtext",
-        "name": "copyrightLinks",
-        "value": "",
-        "label": "Copyright Links for Footer",
+        "label": "Privacy & Terms",
         "valueType": "string",
         "required": true
       },
@@ -620,6 +561,13 @@
         "name": "showGlobal",
         "label": "Show Global Icon and Text",
         "valueType": "boolean"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "followUs",
+        "label": "Follow us at text",
+        "description": "Follow us at"
       }
     ]
   },
