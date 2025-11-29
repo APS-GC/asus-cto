@@ -102,9 +102,7 @@
   },
   {
     "id": "columns",
-    "components": [
-      "column"
-    ]
+    "components": []
   },
   {
     "id": "column",
@@ -112,7 +110,8 @@
       "text",
       "image",
       "button",
-      "title"
+      "title",
+      "dm-asset"
     ]
   },
    {
