@@ -53,11 +53,25 @@
         "description": "Subscribe to newsletter placeholder"
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "signUp",
+        "label": "Sign up",
+        "value": "Sign up"
+      },
+      {
         "component": "richtext",
         "valueType": "string",
         "name": "navigationColumns",
         "label": "Navigation columns",
         "description": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "followUs",
+        "label": "Follow us at text",
+        "value": "Follow us at"
       },
       {
         "component": "richtext",
@@ -72,13 +86,6 @@
         "name": "showGlobal",
         "label": "Show Global Icon and Text",
         "valueType": "boolean"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "followUs",
-        "label": "Follow us at text",
-        "description": "Follow us at"
       }
     ]
   },
