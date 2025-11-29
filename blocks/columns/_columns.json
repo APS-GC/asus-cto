@@ -151,7 +151,7 @@
           "component": "text",
           "valueType": "number",
           "name": "rows",
-          "value": "",
+          "value": "1",
           "label": "Rows"
         }
       ]
