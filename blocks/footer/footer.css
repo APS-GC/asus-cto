@@ -550,3 +550,26 @@ footer .back-to-top:focus-visible {
   break-after: avoid-column;             /* avoid a column break immediately after <p> */
   -webkit-column-break-after: avoid;
 }
+
+
+/* Social Icons */
+
+.footer-wrapper .footer:not(.experiencefragment) > [data-aue-model="footer-icon"] {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #222;
+  overflow: hidden;
+  vertical-align: middle;
+  text-align: center;
+  margin: 0 0.5rem; /* space between icons */
+}
+
+.footer-wrapper .footer:not(.experiencefragment) > [data-aue-model="footer-icon"] img {
+  max-width: 60%;
+  height: auto;
+  margin-top: 50%; /* approximate vertical centering hack */
+  transform: translateY(-50%); /* better centering if you also use position relative/absolute */
+  display: inline-block;
+}
