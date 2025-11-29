@@ -572,6 +572,9 @@
         "value": "Follow us at"
       },
       {
+        "component": "footer-icon"
+      },
+      {
         "component": "boolean",
         "name": "showGlobal",
         "label": "Show Global Icon and Text",
