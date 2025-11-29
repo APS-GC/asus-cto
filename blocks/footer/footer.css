@@ -523,7 +523,7 @@ footer .back-to-top:focus-visible {
   margin: 0.2em 0;
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > a {
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > ul > li > a {
     color: var(--color-primary-600);
     display: inline-block;
     font-family: var(--font-text);
@@ -535,7 +535,7 @@ footer .back-to-top:focus-visible {
     text-decoration: none
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > a:hover {
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > ul > li > a:hover {
     color: var(--color-primary-950);
     text-decoration: underline
 }
