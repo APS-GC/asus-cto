@@ -382,7 +382,7 @@
     ]
   },
   {
-    "id": "columns",
+    "id": "columns1",
     "fields": [
       {
         "component": "multiselect",

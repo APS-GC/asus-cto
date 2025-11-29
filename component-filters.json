@@ -14,7 +14,7 @@
       "title",
       "hero",
       "cards",
-      "columns",
+      "columns1",
       "fragment",
       "quote",
       "hero-banner",
@@ -101,11 +101,11 @@
     ]
   },
   {
-    "id": "columns",
+    "id": "columns1",
     "components": []
   },
   {
-    "id": "column",
+    "id": "column1",
     "components": [
       "text",
       "image",

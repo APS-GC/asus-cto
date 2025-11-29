@@ -113,8 +113,8 @@
           }
         },
         {
-          "title": "Columns",
-          "id": "columns",
+          "title": "Columns1",
+          "id": "columns1",
           "plugins": {
             "xwalk": {
               "page": {
