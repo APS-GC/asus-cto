@@ -498,6 +498,21 @@ footer .back-to-top:focus-visible {
 
 
 
-.footer-wrapper .footer:not(.experiencefragment) > div:first-child {
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div {
     background-color: red;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem; /* optional gutter */
+}
+
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div p,
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div ul {
+  margin: 0;
+  padding: 0;
+}
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div p {
+  grid-column: auto;
+}
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div ul {
+  grid-column: auto;
 }
