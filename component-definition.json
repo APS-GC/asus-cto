@@ -302,15 +302,30 @@
             "page": {
               "resourceType": "core/franklin/components/columns/v1/columns",
               "template": {
-                "name": "Footer",
-                "model": "footer",
-                "filter": "footer"
-              }
+                  "columns": "4",
+                  "rows": "1"
+                }
             }
           }
         }
       },
       {
+        "title": "Footer Column",
+        "id": "footer-column",
+        "plugins": {
+          "xwalk": {
+            "page": {
+              "resourceType": "core/franklin/components/block/v1/block/item",
+              "template": {
+                "name": "Footer column",
+                "model": "footer-column"
+              }
+            }
+          }
+        }
+      },
+
+      { 
         "title": "Footer Icon",
         "id": "footer-icon",
         "plugins": {
