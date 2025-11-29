@@ -532,14 +532,14 @@
         "valueType": "string",
         "name": "subscribeToNewsletter",
         "label": "Title For Subscribe to Newsletter",
-        "description": "Subscribe to Newsletter"
+        "value": "Get the latest deals and more"
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "subscribeToNewsletterPlaceholder",
         "label": "Subscribe to newsletter placeholder",
-        "description": "Subscribe to newsletter placeholder"
+        "value": "Enter email adderss"
       },
       {
         "component": "richtext",
@@ -567,7 +567,7 @@
         "valueType": "string",
         "name": "followUs",
         "label": "Follow us at text",
-        "description": "Follow us at"
+        "description": ""
       }
     ]
   },

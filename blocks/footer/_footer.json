@@ -42,7 +42,8 @@
         "valueType": "string",
         "name": "subscribeToNewsletter",
         "label": "Title For Subscribe to Newsletter",
-        "description": "Subscribe to Newsletter"
+        "description": "Subscribe to Newsletter",
+        "value": "Get the latest deals and more"
       },
       {
         "component": "text",
