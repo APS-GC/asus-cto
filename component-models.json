@@ -536,6 +536,9 @@
         "value": "Get the latest deals and more"
       },
       {
+        "component": "footer-icon"
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "subscribeToNewsletterPlaceholder",
@@ -562,9 +565,6 @@
         "name": "followUs",
         "label": "Follow us at text",
         "value": "Follow us at"
-      },
-      {
-        "component": "footer-icon"
       },
       {
         "component": "richtext",
