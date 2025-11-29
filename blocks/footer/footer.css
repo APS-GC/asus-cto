@@ -697,11 +697,11 @@ footer .back-to-top:focus-visible {
   overflow: hidden;
   vertical-align: middle;
   text-align: center;
-  margin: 0 0.5rem; /* space between icons */
+  /* margin: 0 0.5rem; */
 }
 
 .footer-wrapper .footer:not(.experiencefragment) > [data-aue-model="footer-icon"] img {
-  max-width: 60%;
+  /* max-width: 60%; */
   height: auto;
   margin-top: 50%; /* approximate vertical centering hack */
   transform: translateY(-50%); /* better centering if you also use position relative/absolute */
