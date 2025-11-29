@@ -2,11 +2,8 @@ import { div } from '../../scripts/dom-helpers.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  if (!block.firstElementChild) return;
-
   const cols = [...block.firstElementChild.children];
-  const colCount = Math.round(cols.length);
-  block.classList.add(`columns-${colCount}-cols`);
+  block.classList.add(`columns-${cols.length}-cols`);
   // setup image columns
   [...block.children].forEach((row) => {
     [...row.children].forEach((col) => {
@@ -36,7 +33,6 @@ export default function decorate(block) {
       const cardContent = div({ class: 'columns-feature-card-content' }, description, ...button);
 
       card.appendChild(cardContent);
-      moveInstrumentation(card, cardContent);
       moveInstrumentation(description, cardContent);
       [...button].forEach((btn) => {
         moveInstrumentation(btn, cardContent);
