@@ -548,7 +548,7 @@ footer .back-to-top:focus-visible {
     width: 7%;
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(3) > div { 
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(3) > div > p { 
     font-size: 1.125rem;
     line-height: 1.5rem;
     padding: .5rem 1rem;
