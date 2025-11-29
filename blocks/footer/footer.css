@@ -534,11 +534,3 @@ footer .back-to-top:focus-visible {
 .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > a:hover {
   color: #ddd;
 }
-
-.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div  p,
-.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div  ul {
-  /* avoid breaking inside a <p> or <ul> if possible */
-  break-inside: avoid-column;
-  -webkit-column-break-inside: avoid; /* for WebKit browsers */
-  page-break-inside: avoid;           /* fallback for some browsers */
-}
