@@ -498,6 +498,6 @@ footer .back-to-top:focus-visible {
 
 
 
-.footer-wrapper .footer:not(.experiencefragment) {
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child {
     background-color: red;
 }
