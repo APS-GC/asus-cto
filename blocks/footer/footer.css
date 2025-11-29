@@ -548,7 +548,7 @@ footer .back-to-top:focus-visible {
     width: 7%;
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(3) > div { 
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(3) > div > p { 
     font-size: 1.125rem;
     line-height: 1.5rem;
     padding: .5rem 1rem;
@@ -688,7 +688,7 @@ footer .back-to-top:focus-visible {
 
 
 /* Follow us at */
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(6) > div > p {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(6) > div {
     color: var(--color-primary-700);
     font-size: .75rem;
     font-weight: var(--regular);
