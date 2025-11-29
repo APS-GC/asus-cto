@@ -46,12 +46,19 @@
         "value": "Get the latest deals and more"
       },
       {
-        "component": "array",
+        "component": "group",
         "name": "icons",
         "label": "Footer Icons",
         "fields": [
           {
-            "component": "footer-icon"
+            "component": "array",
+            "name": "items",
+            "label": "Icons List",
+            "fields": [
+              {
+                "component": "footer-icon"
+              }
+            ]
           }
         ]
       },
