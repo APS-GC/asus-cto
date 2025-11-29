@@ -37,30 +37,13 @@
     {
     "id": "footer",
     "fields": [
-     {
+      {
         "component": "text",
         "valueType": "string",
         "name": "subscribeToNewsletter",
         "label": "Title For Subscribe to Newsletter",
         "description": "Subscribe to Newsletter",
         "value": "Get the latest deals and more"
-      },
-      {
-        "component": "group",
-        "name": "icons",
-        "label": "Footer Icons",
-        "fields": [
-          {
-            "component": "array",
-            "name": "items",
-            "label": "Icons List",
-            "fields": [
-              {
-                "component": "footer-icon"
-              }
-            ]
-          }
-        ]
       },
       {
         "component": "text",
