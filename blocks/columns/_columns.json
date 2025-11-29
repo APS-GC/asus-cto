@@ -161,10 +161,6 @@
     {
       "id": "columns",
       "components": []
-    },
-    {
-      "id": "column",
-      "components": ["text", "image", "button", "title", "dm-asset"]
     }
   ]
 }
