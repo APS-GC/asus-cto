@@ -504,23 +504,11 @@ footer .back-to-top:focus-visible {
 .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  gap: 1.5rem;
 }
-
-/* Column 1: items 1 and 2 */
 .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > *:nth-child(1),
-.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > *:nth-child(2) {
-  grid-column: 1;
-}
-
-/* Column 2: items 3 and 4 */
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > *:nth-child(2) { grid-column: 1 }
 .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > *:nth-child(3),
-.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > *:nth-child(4) {
-  grid-column: 2;
-}
-
-/* Column 3: items 5 and 6 */
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > *:nth-child(4) { grid-column: 2 }
 .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > *:nth-child(5),
-.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > *:nth-child(6) {
-  grid-column: 3;
-}
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > *:nth-child(6) { grid-column: 3 }
