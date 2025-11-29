@@ -536,7 +536,14 @@
         "value": "Get the latest deals and more"
       },
       {
-        "component": "footer-icon"
+        "component": "array",
+        "name": "icons",
+        "label": "Footer Icons",
+        "fields": [
+          {
+            "component": "footer-icon"
+          }
+        ]
       },
       {
         "component": "text",
