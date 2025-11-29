@@ -528,138 +528,98 @@
     "id": "footer",
     "fields": [
       {
-        "component": "multiselect",
-        "name": "classes",
-        "value": "",
-        "label": "Column Styles",
+        "component": "richtext",
         "valueType": "string",
-        "maxSize": 4,
-        "options": [
-          {
-            "name": "Variations",
-            "children": [
-              {
-                "name": "Default",
-                "value": "columns-default-variant"
-              },
-              {
-                "name": "Heading With Description",
-                "value": "columns-heading-with-description"
-              },
-              {
-                "name": "Divider Variant",
-                "value": "columns-divider-variant"
-              },
-              {
-                "name": "Transform Teaser",
-                "value": "columns-transform-teaser"
-              },
-              {
-                "name": "Feature Card Variation",
-                "value": "columns-feature-card"
-              },
-              {
-                "name": "Image Right Variation",
-                "value": "columns-image-right"
-              },
-              {
-                "name": "Image Left Variation",
-                "value": "columns-image-left"
-              }
-            ]
-          },
-          {
-            "name": "Vertical Alignment",
-            "children": [
-              {
-                "name": "Top (default)",
-                "value": "valign-top"
-              },
-              {
-                "name": "Center",
-                "value": "valign-center"
-              },
-              {
-                "name": "Bottom",
-                "value": "valign-bottom"
-              }
-            ]
-          },
-          {
-            "name": "Horizontal Alignment",
-            "children": [
-              {
-                "name": "Left (default)",
-                "value": "halign-default"
-              },
-              {
-                "name": "Center",
-                "value": "halign-center"
-              },
-              {
-                "name": "Right",
-                "value": "halign-right"
-              }
-            ]
-          },
-          {
-            "name": "2 Col Desktop Layout",
-            "children": [
-              {
-                "name": "50% - 50% (default)",
-                "value": "columns-layout-default"
-              },
-              {
-                "name": "33% - 67%",
-                "value": "column-layout-33-67"
-              },
-              {
-                "name": "67% - 33%",
-                "value": "column-layout-67-33"
-              },
-              {
-                "name": "25% - 75%",
-                "value": "column-layout-25-75"
-              },
-              {
-                "name": "75% - 25%",
-                "value": "column-layout-75-25"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "component": "select",
-        "valueType": "number",
-        "name": "columns",
-        "value": "2",
-        "label": "Columns",
-        "options": [
-          {
-            "name": "2",
-            "value": "2"
-          },
-          {
-            "name": "3",
-            "value": "3"
-          },
-          {
-            "name": "4",
-            "value": "4"
-          },
-          {
-            "name": "5",
-            "value": "5"
-          }
-        ]
+        "name": "demo",
+        "label": "Demo",
+        "description": ""
       },
       {
         "component": "text",
-        "valueType": "number",
-        "name": "rows",
+        "valueType": "string",
+        "name": "titleSubscription",
+        "label": "Title For Subscription Section",
+        "description": "Title For Subscription Section"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "placeholder",
+        "label": "Placeholder for Form Field",
+        "description": "Placeholder to Give Email"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "buttonText",
+        "label": "Label For Subscription Button",
+        "description": "Label For Subscription Button"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "socialTitle",
+        "label": "Title for Social Icon Section",
+        "description": "Title for Social Icon Section"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "titleFirstColumn",
+        "label": "Title For First Column",
+        "description": "Title For First Column"
+      },
+      {
+        "component": "richtext",
+        "name": "config",
         "value": "",
-        "label": "Rows"
+        "label": "Footer First Column Config Menu",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "titleSecondColumn",
+        "label": "Title For Second Column",
+        "description": "Title For Second Column"
+      },
+      {
+        "component": "richtext",
+        "name": "configSecondColumn",
+        "value": "",
+        "label": "Footer Second Column Config Menu",
+        "valueType": "string",
+        "required": true
+      },
+       {
+        "component": "text",
+        "valueType": "string",
+        "name": "titleThirdColumn",
+        "label": "Title For Third Column",
+        "description": "Title For Third Column"
+      },
+      {
+        "component": "richtext",
+        "name": "configThirdColumn",
+        "value": "",
+        "label": "Footer Third Column Config Menu",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "copyrightLinks",
+        "value": "",
+        "label": "Copyright Links for Footer",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "boolean",
+        "name": "showGlobal",
+        "label": "Show Global Icon and Text",
+        "valueType": "boolean"
       }
     ]
   },

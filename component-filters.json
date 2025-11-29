@@ -102,12 +102,17 @@
   },
   {
     "id": "columns",
-    "components": []
+    "components": [
+      "column"
+    ]
   },
   {
     "id": "column",
     "components": [
-      "text"
+      "text",
+      "image",
+      "button",
+      "title"
     ]
   },
    {
@@ -130,7 +135,9 @@
     },
      {
       "id": "footer",
-      "components": ["footer-icon", "columns"]
+      "components": [
+        "footer-icon"
+      ]
     },
     {
       "id": "featured-news-articles",
