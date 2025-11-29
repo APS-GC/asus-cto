@@ -401,25 +401,6 @@
     ]
   },
   {
-    "id": "footer-columns",
-    "fields": [
-      {
-        "component": "text",
-        "valueType": "number",
-        "name": "columns",
-        "value": "3",
-        "label": "Columns"
-      },
-      {
-        "component": "text",
-        "valueType": "number",
-        "name": "rows",
-        "value": "2",
-        "label": "Rows"
-      }
-    ]
-  },
-  {
     "id": "fragment",
     "fields": [
       {
