@@ -497,17 +497,15 @@ footer .back-to-top:focus-visible {
 
 
 
-
-
-/* .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div  */
-
+/* Authoring UI */
 
 .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div {
-  column-count: 3;
-  column-gap: 2rem;
-  background: #111;
-  color: #ccc;
-  padding: 2rem;
+    column-count: 3;
+    column-gap: 2rem;
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-950);
+    padding-bottom: 1.75rem;
+    padding-top: 2.5rem
 }
 
 .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > p {
