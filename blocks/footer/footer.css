@@ -614,13 +614,13 @@ footer .back-to-top:focus-visible {
 }
 
 /* Global setting */
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(6) {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(7) {
     display: none;
 }
 
 /* Privacy Policy & Terms */
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(7) > div {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(5) > div {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -636,7 +636,7 @@ footer .back-to-top:focus-visible {
     padding-top: 1rem
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(7) > div p {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(5) > div p {
     font-size: 14px;
     gap: 2.5rem;
     line-height: 18px;
@@ -649,8 +649,8 @@ footer .back-to-top:focus-visible {
     color: var(--color-primary-600)
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(7) > div > p,
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(7) > div > p > a {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(5) > div > p,
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(5) > div > p > a {
     font-family: var(--font-text);
     font-size: .75rem;
     font-weight: var(--regular);
@@ -659,19 +659,19 @@ footer .back-to-top:focus-visible {
     line-height: 1.125rem
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(7) > div > p > a {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(5) > div > p > a {
     color: var(--color-primary-600);
     position: relative;
     text-decoration: none;
     white-space: nowrap
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(7) > div > p > a:hover {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(5) > div > p > a:hover {
     color: var(--color-primary-950);
     text-decoration: underline
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(7) > div > p > a:not(:last-child):after {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(5) > div > p > a:not(:last-child):after {
     background-color: var(--color-primary-300);
     content: "";
     height: 11px;
