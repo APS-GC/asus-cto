@@ -498,21 +498,38 @@ footer .back-to-top:focus-visible {
 
 
 
+
 .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div {
-    background-color: red;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem; /* optional gutter */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+  gap: 2rem;        /* spacing between columns */
+  /* optional styling for dark background like your screenshot */
+  background: #111;
+  color: #ccc;
+  padding: 2rem;
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div p,
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div p {
+  font-weight: bold;
+  margin: 0 0 0.5rem 0;
+  color: #fff;
+}
+
 .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div ul {
+  list-style: none;
   margin: 0;
   padding: 0;
 }
-.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div p {
-  grid-column: auto;
+
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div ul li {
+  margin: 0.3rem 0;
 }
-.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div ul {
-  grid-column: auto;
+
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div a {
+  color: #999;
+  text-decoration: none;
+}
+
+.footer-wrapper .footer:not(.experiencefragment) > div:first-child > div a:hover {
+  color: #ddd;
 }
