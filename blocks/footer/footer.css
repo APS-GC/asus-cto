@@ -638,7 +638,7 @@ footer .back-to-top:focus-visible {
 
 .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(7) > div p {
     font-size: 14px;
-    gap: .5rem;
+    gap: 2.5rem;
     line-height: 18px;
     display: -webkit-box;
     display: -ms-flexbox;
