@@ -130,7 +130,7 @@
     },
      {
       "id": "footer",
-      "components": []
+      "components": ["columns", "footer-column", "footer-icon"]
     },
     {
       "id": "featured-news-articles",
