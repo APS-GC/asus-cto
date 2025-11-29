@@ -7179,6 +7179,12 @@ input[type=checkbox]:checked::after {
   }
 }
 
+/* Swiper CSS Override */
+.swiper-pagination {
+  position: static !important;
+  width: auto !important;
+}
+
 /* ========================================================================== 
  * Custom Styling - Ends
  * ========================================================================== */
