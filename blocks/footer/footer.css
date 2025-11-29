@@ -514,11 +514,19 @@ footer .back-to-top:focus-visible {
     line-height: 1.75rem;
 }
 
+/* Placeholder */
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(1) > div > p { 
+    font-size: 1.25rem;
+    font-family: var(--font-text);
+    letter-spacing: 0;
+    line-height: 1.75rem;
+}
+
 .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(2) {
     display: inline-block;
     width: 25%;
 }
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(2) > div { /* Placeholder */
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(2) > div { 
     background-color: var(--color-primary-100);
     border: 1px solid var(--color-primary-600);
     border-radius: .5rem;
@@ -530,19 +538,17 @@ footer .back-to-top:focus-visible {
     line-height: 1.5rem;
     outline: none;
     padding: 7px 16px;
-    padding-block: 1px;
-    padding-inline: 2px;
-    overflow-clip-margin: 0px !important;
-    overflow: clip !important;
     margin-top: var(--spacing-4);
 }
+
+/* Sign Up */
 
 .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(3) {
     display: inline-block;
     width: 7%;
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(3) > div { /* Sign Up */
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(3) > div { 
     font-size: 1.125rem;
     line-height: 1.5rem;
     padding: .5rem 1rem;
