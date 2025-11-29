@@ -74,18 +74,18 @@
         "value": "Follow us at"
       },
       {
-        "component": "boolean",
-        "name": "showGlobal",
-        "label": "Show Global Icon and Text",
-        "valueType": "boolean"
-      },
-      {
         "component": "richtext",
         "name": "privacyTerms",
         "value": "",
         "label": "Privacy & Terms",
         "valueType": "string",
         "required": true
+      },
+      {
+        "component": "boolean",
+        "name": "showGlobal",
+        "label": "Show Global Icon and Text",
+        "valueType": "boolean"
       }
     ]
   },
