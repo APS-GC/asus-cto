@@ -510,7 +510,6 @@ footer .back-to-top:focus-visible {
 
 .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > p {
   font-weight: bold;
-  color: #fff;
   margin: 0 0 0.3em;
 }
 
@@ -525,12 +524,20 @@ footer .back-to-top:focus-visible {
 }
 
 .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > a {
-  color: #999;
-  text-decoration: none;
+    color: var(--color-primary-600);
+    display: inline-block;
+    font-family: var(--font-text);
+    font-size: .875rem;
+    font-weight: var(--regular);
+    letter-spacing: 0;
+    letter-spacing: .16px;
+    line-height: 1.25rem;
+    text-decoration: none
 }
 
 .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > a:hover {
-  color: #ddd;
+    color: var(--color-primary-950);
+    text-decoration: underline
 }
 
 .footer-wrapper .footer:not(.experiencefragment) > div:first-child > div > p,
