@@ -507,8 +507,6 @@ footer .back-to-top:focus-visible {
 
 /* Newsletter */
 .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(1) > div > p { /* Title */
-    /* column-count: 3;
-    column-gap: 2rem; */
     font-size: 1.25rem;
     font-family: var(--font-text);
     letter-spacing: 0;
@@ -706,17 +704,13 @@ footer .back-to-top:focus-visible {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  /* background: #222; */
   overflow: hidden;
   vertical-align: middle;
-  /* text-align: center; */
-  /* margin: 0 0.5rem; */
 }
 
 .footer-wrapper .footer:not(.experiencefragment) > [data-aue-model="footer-icon"] img {
-  /* max-width: 60%; */
   height: auto;
-  margin-top: 50%; /* approximate vertical centering hack */
-  transform: translateY(-50%); /* better centering if you also use position relative/absolute */
+  margin-top: 50%;
+  transform: translateY(-50%);
   display: inline-block;
 }
