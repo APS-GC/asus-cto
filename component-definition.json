@@ -300,7 +300,7 @@
         "plugins": {
           "xwalk": {
             "page": {
-              "resourceType": "core/franklin/components/block/v1/block",
+              "resourceType": "core/franklin/components/columns/v1/columns",
               "template": {
                   "columns": "4",
                   "rows": "1"

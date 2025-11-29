@@ -36,6 +36,7 @@ export default function decorate(block) {
       const cardContent = div({ class: 'columns-feature-card-content' }, description, ...button);
 
       card.appendChild(cardContent);
+      moveInstrumentation(card, cardContent);
       moveInstrumentation(description, cardContent);
       [...button].forEach((btn) => {
         moveInstrumentation(btn, cardContent);

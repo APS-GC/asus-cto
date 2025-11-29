@@ -136,9 +136,7 @@
      {
       "id": "footer",
       "components": [
-        "footer-icon",
-        "footer-icon",
-        "footer-icon"
+        "footer-column"
       ]
     },
     {
