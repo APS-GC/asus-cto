@@ -699,7 +699,7 @@ footer .back-to-top:focus-visible {
 
 /* Social Icons */
 
-.footer-wrapper .footer:not(.experiencefragment) > [data-aue-model="footer-icon"] {
+.footer-wrapper .footer:not(.experiencefragment) > div:has(picture) {
   display: inline-block;
   width: 48px;
   height: 48px;
@@ -708,7 +708,7 @@ footer .back-to-top:focus-visible {
   vertical-align: middle;
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > [data-aue-model="footer-icon"] img {
+.footer-wrapper .footer:not(.experiencefragment) > div:has(picture) > img {
   height: auto;
   margin-top: 50%;
   transform: translateY(-50%);
