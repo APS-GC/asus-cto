@@ -720,3 +720,13 @@ footer .back-to-top:focus-visible {
   transform: translateY(-50%);
   display: inline-block;
 }
+
+
+
+@media only screen and (max-width: 79.9375rem) {
+    .footer-wrapper .footer:not(.experiencefragment) {
+        margin: 0 auto;
+        max-width: 100%;
+        padding: 0 20px;
+    }
+}
