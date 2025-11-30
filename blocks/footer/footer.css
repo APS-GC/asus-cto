@@ -750,6 +750,10 @@ footer .back-to-top:focus-visible {
         width: 40px;
         height: 40px;
     }
+
+    .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(5) > div > p {
+        justify-content: start;
+    }
 }
 
 @media only screen and (max-width: 47.9375rem) {
@@ -763,4 +767,5 @@ footer .back-to-top:focus-visible {
         display: inline-block;
         width: 65%;
     }
+
 }
