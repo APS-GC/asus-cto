@@ -361,6 +361,19 @@ async function initializeSwiperCarousel(block) {
         swiper.navigation.destroy();
         swiper.pagination.destroy();
       },
+      afterInit: function() {
+        const navContainer = this.navigation.nextEl?.parentNode;
+        if (navContainer && this.isBeginning && this.isEnd) {
+          navContainer.style.display = 'none';
+        }
+      },
+      resize: function() {
+        const navContainer = this.navigation.nextEl?.parentNode;
+        if (navContainer) {
+          // Show or hide based on whether both nav buttons are disabled
+          navContainer.style.display = (this.isBeginning && this.isEnd) ? 'none' : '';
+        }
+      },
     },
   });
 
