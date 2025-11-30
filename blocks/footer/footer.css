@@ -717,6 +717,10 @@ footer .back-to-top:focus-visible {
   display: inline-block;
 }
 
+.footer-wrapper .footer:not(.experiencefragment) > div > div > ul > li > a {
+    margin-bottom: 1rem;
+}
+
 
 @media only screen and (max-width: 79.9375rem) {
     .footer-wrapper .footer:not(.experiencefragment) {
@@ -761,6 +765,10 @@ footer .back-to-top:focus-visible {
 
     .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(5) > div {
         padding-bottom: 1rem;
+    }
+
+    .footer-wrapper .footer:not(.experiencefragment) > div > div > ul > li > a {
+        margin-bottom: .75rem;
     }
 }
 
