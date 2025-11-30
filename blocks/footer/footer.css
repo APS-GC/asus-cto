@@ -722,12 +722,19 @@ footer .back-to-top:focus-visible {
 }
 
 
+@media only screen and (max-width: 47.9375rem) {
+     .footer-wrapper .footer:not(.experiencefragment) {
+        margin: 0 auto;
+        max-width: 100%;
+        padding: 0 20px;
+    }
+}
 
 @media only screen and (max-width: 79.9375rem) {
     .footer-wrapper .footer:not(.experiencefragment) {
         margin: 0 auto;
         max-width: 100%;
-        padding: 0 20px;
+        padding: 0 40px;
     }
 
     .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(2) {
