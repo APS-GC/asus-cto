@@ -731,7 +731,7 @@ footer .back-to-top:focus-visible {
 
     .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(2) {
         display: inline-block;
-        width: 88%;
+        width: 85%;
     }
 
     /* Sign Up */
@@ -757,5 +757,10 @@ footer .back-to-top:focus-visible {
         margin: 0 auto;
         max-width: 100%;
         padding: 0 20px;
+    }
+
+    .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(2) {
+        display: inline-block;
+        width: 65%;
     }
 }
