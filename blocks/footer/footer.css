@@ -741,4 +741,14 @@ footer .back-to-top:focus-visible {
         display: inline-block;
         width: 25%;
     }
+
+    /* Follow us at */
+    .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(6) > div > p {
+        width: 100%;
+    }
+    /* Social Icons */
+    .footer-wrapper .footer:not(.experiencefragment) > div:has(picture) {
+        width: 40px;
+        height: 40px;
+    }
 }
