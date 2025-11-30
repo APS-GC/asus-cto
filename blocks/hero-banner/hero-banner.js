@@ -325,6 +325,13 @@ async function initializeSwiper(heroBannerElement, config) {
             const mediaControls = document.querySelector('.cmp-hero-banner__media-controls');
             mediaControls?.classList.remove('paused');
             
+            // Reset inactive bullets progress to 0
+            this.pagination.bullets.forEach((bullet, idx) => {
+              if (idx !== this.realIndex) {
+                bullet.style.setProperty('--slide-progress', 0);
+              }
+            });
+            
             if (this.autoplay && this.autoplay.stop) {
               this.autoplay.stop();
               this.params.autoplay.delay = newDelay;
@@ -350,9 +357,10 @@ async function initializeSwiper(heroBannerElement, config) {
             });
           },
           autoplayTimeLeft(swiper, time, progress) {
-            swiper.pagination.bullets.forEach((bullet, idx) => {
-              bullet.style.setProperty('--slide-progress', idx === swiper.realIndex ? 1 - progress : 0);
-            });
+            const activeBullet = swiper.pagination.bullets[swiper.realIndex];
+            if (activeBullet) {
+              activeBullet.style.setProperty('--slide-progress', 1 - progress);
+            }
           },
         }
       };
@@ -375,9 +383,22 @@ async function initializeSwiper(heroBannerElement, config) {
           const activeVideo = activeSlide?.querySelector('video');
           const mediaControls = document.querySelector('.cmp-hero-banner__media-controls');
           const isVideoPaused = mediaControls?.classList.contains('paused');
+          const isPaused = swiper.el.classList.contains('is-autoplay-paused');
           
-          if (swiper.autoplay && swiper.autoplay.running) {
-            swiper.autoplay.stop();
+          if (isPaused) {
+            // Resume autoplay
+            swiper.autoplay.resume();
+            swiper.el.classList.remove('is-autoplay-paused');
+            autoplayToggle.setAttribute('aria-label', 'Pause');
+            heroBannerElement.setAttribute('aria-live', 'off');
+            
+            // Resume video if it wasn't manually paused
+            if (!isVideoPaused && activeVideo) {
+              manageVideoPlayback(activeVideo, 'play');
+            }
+          } else {
+            // Pause autoplay
+            swiper.autoplay.pause();
             swiper.el.classList.add('is-autoplay-paused');
             autoplayToggle.setAttribute('aria-label', 'Play');
             heroBannerElement.setAttribute('aria-live', 'polite');
@@ -386,16 +407,6 @@ async function initializeSwiper(heroBannerElement, config) {
             if (isVideoPaused && activeVideo) {
               manageVideoPlayback(activeVideo, 'pause');
               mediaControls?.classList.add('paused');
-            }
-          } else if (swiper.autoplay) {
-            swiper.autoplay.start();
-            swiper.el.classList.remove('is-autoplay-paused');
-            autoplayToggle.setAttribute('aria-label', 'Pause');
-            heroBannerElement.setAttribute('aria-live', 'off');
-            
-            // Resume video if it wasn't manually paused
-            if (!isVideoPaused && activeVideo) {
-              manageVideoPlayback(activeVideo, 'play');
             }
           }
         });
