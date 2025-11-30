@@ -545,3 +545,4 @@ export default function decorate(block) {
   // Initialize Swiper hero banner
   initializeSwiper(heroBannerWrapper, config);
 }
+
