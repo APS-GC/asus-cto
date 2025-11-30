@@ -202,7 +202,7 @@ export async function loadHeaderFragment() {
  */
 export async function loadFooterFragment() {
   //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = '/en/fragments/footer.plain.html';
+  const fragmentUrl = '/en/products/desktops/footer.plain.html';
   try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
