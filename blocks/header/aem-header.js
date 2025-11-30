@@ -4,6 +4,7 @@ import {
   loadCustomFragment,
   initializeBlockInShadowRoot
 } from '../../scripts/aem-component-utils.js';
+import { replaceLocaleInUrl } from '../../scripts/configs.js';
 
 /**
  * AEM Header Web Component
@@ -62,7 +63,9 @@ class AEMHeader extends HTMLElement {
    */
   async loadCustomHeaderFragment() {
     const baseUrl = this.baseUrl || window.location.origin;
-    return await loadCustomFragment(this.fragmentUrl, baseUrl, loadHeaderFragment, processFragmentContent);
+    const fragmentUrl = await replaceLocaleInUrl(this.fragmentUrl);
+    
+    return await loadCustomFragment(fragmentUrl, baseUrl, loadHeaderFragment, processFragmentContent);
   }
 
   /**
