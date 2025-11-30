@@ -722,14 +722,6 @@ footer .back-to-top:focus-visible {
 }
 
 
-@media only screen and (max-width: 47.9375rem) {
-     .footer-wrapper .footer:not(.experiencefragment) {
-        margin: 0 auto;
-        max-width: 100%;
-        padding: 0 20px;
-    }
-}
-
 @media only screen and (max-width: 79.9375rem) {
     .footer-wrapper .footer:not(.experiencefragment) {
         margin: 0 auto;
@@ -757,5 +749,13 @@ footer .back-to-top:focus-visible {
     .footer-wrapper .footer:not(.experiencefragment) > div:has(picture) {
         width: 40px;
         height: 40px;
+    }
+}
+
+@media only screen and (max-width: 47.9375rem) {
+     .footer-wrapper .footer:not(.experiencefragment) {
+        margin: 0 auto;
+        max-width: 100%;
+        padding: 0 20px;
     }
 }
