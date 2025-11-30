@@ -758,6 +758,10 @@ footer .back-to-top:focus-visible {
     .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div {
         column-count: 1;
     }
+
+    .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(5) > div {
+        padding-bottom: 1rem;
+    }
 }
 
 @media only screen and (max-width: 47.9375rem) {
