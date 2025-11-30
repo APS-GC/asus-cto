@@ -732,14 +732,14 @@ footer .back-to-top:focus-visible {
 
     .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(2) {
         display: inline-block;
-        width: 72%;
+        width: 88%;
     }
 
     /* Sign Up */
 
     .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(3) {
         display: inline-block;
-        width: 25%;
+        width: auto;
     }
 
     /* Follow us at */
