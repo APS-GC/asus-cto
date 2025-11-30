@@ -729,4 +729,16 @@ footer .back-to-top:focus-visible {
         max-width: 100%;
         padding: 0 20px;
     }
+
+    .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(2) {
+        display: inline-block;
+        width: 72%;
+    }
+
+    /* Sign Up */
+
+    .footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(3) {
+        display: inline-block;
+        width: 25%;
+    }
 }
