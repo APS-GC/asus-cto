@@ -72,7 +72,9 @@
     "comma-spacing": "off",
     "spaced-comment": "off",
     "prefer-template": "off",
-    "indent": "off"
+    "indent": "off",
+    "space-infix-ops": "off",
+    "import/newline-after-import": "off"
   },
   "ignorePatterns": [
     "node_modules/",
