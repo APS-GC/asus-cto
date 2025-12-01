@@ -52,7 +52,7 @@
   
   /* Layout Heights */
   --header-height: 48px; /* Default: Mobile and Tablet */
-  --hero-banner-height: 548px; /* Default: Mobile - Used for CLS prevention */
+  --hero-banner-height: 777px; /* Default: Desktop (same as VML code) - Used for CLS prevention */
 
   /* Legacy color mappings for backward compatibility */
   --color-white: var(--color-primary-950);
@@ -641,8 +641,6 @@ p,
     --font-size-5xl: 3.5rem;    /* 56px */
     --font-size-6xl: 4.5rem;    /* 72px */
     
-    /* Hero Banner height for tablet */
-    --hero-banner-height: 429px;
   }
 }
 
@@ -662,7 +660,6 @@ p,
     
     /* Layout heights for desktop */
     --header-height: 64px;
-    --hero-banner-height: 777px;
   }
 }
 
@@ -1219,7 +1216,7 @@ p,
 .section-spacing-4xl { gap: var(--section-spacing-4xl); }
 .section-spacing-5xl { gap: var(--section-spacing-5xl); }
 
-.section.section-spacing-top__small {
+.section.section-spacing-top-small {
   padding-top: 1.25rem;
 }
 
@@ -2389,3 +2386,15 @@ input[type=checkbox]:checked:after {
     transform: translate(-50%,-50%);
     width: 10px
 }
+
+@media only screen and (max-width: 79.9375rem) {
+    :root {
+        --hero-banner-height:429px
+    }
+  }
+
+  @media only screen and (max-width: 45.625rem) {
+    :root {
+         --hero-banner-height:548px
+    }
+  }
