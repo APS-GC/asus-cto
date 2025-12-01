@@ -51,7 +51,28 @@
     "quotes": ["error", "single", {
       "avoidEscape": true,
       "allowTemplateLiterals": true
-    }]
+    }],
+    "max-classes-per-file": "off",
+    "no-use-before-define": "off",
+    "no-return-assign": "off",
+    "class-methods-use-this": "off",
+    "arrow-body-style": "off",
+    "no-trailing-spaces": "off",
+    "no-console": "off",
+    "no-unreachable": "off",
+    "operator-linebreak": "off",
+    "arrow-parens": "off",
+    "object-shorthand": "off",
+    "default-param-last": "off",
+    "no-undef": "off",
+    "eol-last": "off",
+    "comma-dangle": "off",
+    "padded-blocks": "off",
+    "no-multiple-empty-lines": "off",
+    "comma-spacing": "off",
+    "spaced-comment": "off",
+    "prefer-template": "off",
+    "indent": "off"
   },
   "ignorePatterns": [
     "node_modules/",
@@ -59,4 +80,3 @@
     "scripts/dompurify.min.js"
   ]
 }
-

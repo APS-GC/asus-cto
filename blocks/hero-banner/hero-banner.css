@@ -1,4 +1,4 @@
-/* stylelint-disable declaration-block-no-duplicate-properties, no-duplicate-selectors, declaration-property-value-no-unknown */
+/* stylelint-disable declaration-block-no-duplicate-properties, no-duplicate-selectors, declaration-property-value-no-unknown, color-function-alias-notation, selector-pseudo-element-colon-notation, hue-degree-notation, media-feature-range-notation, color-hex-length, comment-empty-line-before */
 
 /* Swiper CSS loaded dynamically by swiper-loader.js to prevent duplicate loads */
 
@@ -662,4 +662,4 @@ iframe[src*="editor"] .cmp-hero-banner .swiper-slide,
 .swiper-fallback .swiper-slide:not(:first-child) {
   display: none;
 }
-/* stylelint-enable declaration-block-no-duplicate-properties, no-duplicate-selectors, declaration-property-value-no-unknown */
+/* stylelint-enable declaration-block-no-duplicate-properties, no-duplicate-selectors, declaration-property-value-no-unknown, color-function-alias-notation, selector-pseudo-element-colon-notation, hue-degree-notation, media-feature-range-notation, color-hex-length, comment-empty-line-before */

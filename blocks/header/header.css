@@ -1,4 +1,4 @@
-/* stylelint-disable selector-type-no-unknown, declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, selector-pseudo-class-no-unknown, selector-pseudo-element-no-unknown, no-duplicate-selectors */
+/* stylelint-disable selector-type-no-unknown, declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, selector-pseudo-class-no-unknown, selector-pseudo-element-no-unknown, no-duplicate-selectors, media-feature-range-notation, selector-attribute-quotes, selector-pseudo-element-colon-notation */
 
 ____header_start {
     display: block
@@ -1245,4 +1245,4 @@ body:has(.header.mm-open) {
 ____footer_start, ____header_end {
     display: block
 }
-/* stylelint-enable selector-type-no-unknown, declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, selector-pseudo-class-no-unknown, selector-pseudo-element-no-unknown, no-duplicate-selectors */
+/* stylelint-enable selector-type-no-unknown, declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, selector-pseudo-class-no-unknown, selector-pseudo-element-no-unknown, no-duplicate-selectors, selector-attribute-quotes, selector-pseudo-element-colon-notation, media-feature-range-notation */

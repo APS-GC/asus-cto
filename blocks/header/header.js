@@ -830,7 +830,7 @@ function initializeHeader(block) {
   const mobileAccountSubmenu = block.querySelector('.mobile-account-submenu');
   const backButton = block.querySelector('.back-button');
   const mobileOverlay = block.querySelector('.mobile-menu-overlay');
-  
+
   if (mobileAccountToggle && mobileAccountSubmenu) {
     mobileAccountToggle.addEventListener('click', () => {
       const isExpanded = mobileAccountToggle.getAttribute('aria-expanded') === 'true';
@@ -844,7 +844,7 @@ function initializeHeader(block) {
     backButton.addEventListener('click', () => {
       mobileAccountToggle.setAttribute('aria-expanded', 'false');
       mobileAccountSubmenu.classList.remove('active');
-       mobileOverlay.classList.remove('submenu-active');
+      mobileOverlay.classList.remove('submenu-active');
     });
   }
 
