@@ -16,6 +16,15 @@ import {
 import { getConfigValue } from './configs.js';
 
 /**
+ * Get the current locale from configuration
+ * @returns {Promise<string>} The locale value, defaults to 'en' if not configured
+ */
+export async function getLocale() {
+  const locale = await getConfigValue('locale');
+  return locale || 'en';
+}
+
+/**
  * Moves all the attributes from a given elmenet to another given element.
  * @param {Element} from the element to copy attributes from
  * @param {Element} to the element to copy attributes to
@@ -182,7 +191,8 @@ export function isUniversalEditor() {
  */
 export async function loadHeaderFragment() {
   //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = `/${await getConfigValue('locale')}/fragments/head.plain.html`;
+  const locale = await getLocale();
+  const fragmentUrl = `/${locale}/fragments/head.plain.html`;
   try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
@@ -203,7 +213,8 @@ export async function loadHeaderFragment() {
  */
 export async function loadFooterFragment() {
   //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = `/${await getConfigValue('locale')}/fragments/footer.plain.html`;
+  const locale = await getLocale();
+  const fragmentUrl = `/${locale}/fragments/footer.plain.html`;
   try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {

@@ -185,8 +185,13 @@ async function handleQuickView(product, config) {
   // Get modal path from config
   const modalPath = config.productPreviewModalPath || '/modals/product-preview';
 
-  // Open modal with the authored page
-  await openModal(modalPath);
+  // Open modal with the authored page, dialog ID, and classes
+  await openModal(
+    modalPath,
+    true,                           // is modal
+    'product-preview-dialog',       // dialog ID
+    ['cmp-product-preview', 'light-mode']  // classes
+  );
 }
 
 export default async function decorate(block) {
