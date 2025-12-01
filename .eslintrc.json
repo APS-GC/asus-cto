@@ -80,7 +80,9 @@
     "no-return-await": "off",
     "prefer-arrow-callback": "off",
     "func-names": "off",
-    "space-before-function-paren": "off"
+    "space-before-function-paren": "off",
+    "prefer-const": "off",
+    "key-spacing": "off"
   },
   "ignorePatterns": [
     "node_modules/",

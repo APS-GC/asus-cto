@@ -9,22 +9,22 @@ const FooterConfig = {
   },
   get shouldUseExternal() {
     return this.baseUrl && this.baseUrl !== window.location.origin;
-  },
+  }
 };
 
 function parseFragmentContent(block) {
   try {
     // Enhanced selector strategy to handle both wrapped and unwrapped content structures
-    const contentDivs = [];
-
+    let contentDivs = [];
+    
     // First, try to find the root footer div
     const footerDiv = block.querySelector('.footer') || block;
-
+    
     // Get all direct children of the footer
     const footerChildren = Array.from(footerDiv.children);
-
+    
     // Extract content divs from each child, handling different wrapper structures
-    footerChildren.forEach((child) => {
+    footerChildren.forEach(child => {
       // Check for wrapped structure: div > p > div
       const pElement = child.querySelector('p');
       if (pElement) {
@@ -42,7 +42,7 @@ function parseFragmentContent(block) {
           contentDivs.push(child);
         }
       }
-
+      
       // Additionally, for social media sections, check if this child has both picture and URL content
       // This handles cases where EDS processes the fragment and merges content
       const hasImage = child.querySelector('picture img');
@@ -63,6 +63,7 @@ function parseFragmentContent(block) {
       }
     });
 
+
     const parsedData = {
       newsletterLabel: '',
       newsletterPlaceholder: '',
@@ -73,7 +74,7 @@ function parseFragmentContent(block) {
       socialLinks: [],
       globalText: '',
       globalIcon: '',
-      showGlobal: '',
+      showGlobal: ''
     };
 
     // Process divs according to the fragment structure:
@@ -90,11 +91,11 @@ function parseFragmentContent(block) {
     // 11th div: Legal Links
     // 12th div: show Global
     // 13th+ divs: Social Media Icons with Images and Links
-
-    for (let index = 0; index < contentDivs.length; index += 1) {
+    
+    for (let index = 0; index < contentDivs.length; index++) {
       const div = contentDivs[index];
       const textContent = div.textContent?.trim();
-
+      
       if (index === 0) {
         // 1st div: Newsletter Label
         if (textContent) {
@@ -125,11 +126,11 @@ function parseFragmentContent(block) {
         const linksList = div.querySelector('ul');
         if (linksList && parsedData.footerColumns[0]) {
           const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[0].links = Array.from(links).map((link) => {
+          parsedData.footerColumns[0].links = Array.from(links).map(link => {
             const href = link.getAttribute('href') || '#';
             return {
               linkText: link.textContent?.trim() || '',
-              linkUrl: href,
+              linkUrl: href
             };
           });
         }
@@ -143,11 +144,11 @@ function parseFragmentContent(block) {
         const linksList = div.querySelector('ul');
         if (linksList && parsedData.footerColumns[1]) {
           const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[1].links = Array.from(links).map((link) => {
+          parsedData.footerColumns[1].links = Array.from(links).map(link => {
             const href = link.getAttribute('href') || '#';
             return {
               linkText: link.textContent?.trim() || '',
-              linkUrl: FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href,
+              linkUrl:  FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
             };
           });
         }
@@ -161,11 +162,11 @@ function parseFragmentContent(block) {
         const linksList = div.querySelector('ul');
         if (linksList && parsedData.footerColumns[2]) {
           const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[2].links = Array.from(links).map((link) => {
+          parsedData.footerColumns[2].links = Array.from(links).map(link => {
             const href = link.getAttribute('href') || '#';
             return {
               linkText: link.textContent?.trim() || '',
-              linkUrl: FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href,
+              linkUrl: FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
             };
           });
         }
@@ -174,11 +175,11 @@ function parseFragmentContent(block) {
         const linksList = div.querySelector('ul');
         if (linksList) {
           const links = linksList.querySelectorAll('li a');
-          parsedData.legalLinks = Array.from(links).map((link) => {
+          parsedData.legalLinks = Array.from(links).map(link => {
             const href = link.getAttribute('href') || '#';
             return {
               linkText: link.textContent?.trim() || '',
-              linkUrl: FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href,
+              linkUrl: FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
             };
           });
         }
@@ -190,35 +191,38 @@ function parseFragmentContent(block) {
       } else if (index >= 12) {
         // 13th+ divs: Social Media Icons with Images and Links
         // Structure is pairs of consecutive divs: picture div + URL div
-
+        
         const isEvenIndex = (index - 12) % 2 === 0;
-
+        
         if (isEvenIndex) {
           // This should be a picture div, pair it with the next div for URL
           const pictureDiv = div;
           const urlDiv = contentDivs[index + 1];
-
+          
+          
           const picture = pictureDiv.querySelector('picture img');
           let url = '#';
-
+          
           if (urlDiv) {
             const urlLink = urlDiv.querySelector('a');
             const urlText = urlDiv.textContent?.trim();
             url = urlLink?.href || urlText || '#';
           }
-
+          
+          
           if (picture && url && url !== '#') {
             const socialPlatforms = ['facebook', 'x', 'instagram', 'tiktok', 'youtube', 'discord', 'twitch', 'thread'];
             const platformIndex = Math.floor((index - 12) / 2); // Divide by 2 since we have pairs
             const platform = socialPlatforms[platformIndex] || `social${platformIndex + 1}`;
-
+            
+            
             parsedData.socialLinks.push({
-              platform,
-              url,
+              platform: platform,
+              url: url,
               icon: picture.getAttribute('src') || '',
               altText: picture.getAttribute('alt') || platform.charAt(0).toUpperCase() + platform.slice(1),
               originalElement: picture, // Store reference to original image element for moveInstrumentation
-              actualDiv: pictureDiv,
+              actualDiv: pictureDiv
             });
           }
         }
@@ -227,31 +231,21 @@ function parseFragmentContent(block) {
     }
 
     // Filter out empty columns
-    parsedData.footerColumns = parsedData.footerColumns.filter((col) => col && col.columnTitle);
+    parsedData.footerColumns = parsedData.footerColumns.filter(col => col && col.columnTitle);
 
     return parsedData;
+    
   } catch (error) {
+    console.error('Error parsing fragment content:', error);
     return null;
   }
-}
-
-// TODO: This function was not defined. Added a placeholder.
-function parseRichTextLinks(richText) {
-  if (!richText) return [];
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = richText;
-  const links = Array.from(tempDiv.querySelectorAll('a'));
-  return links.map((link) => ({
-    linkText: link.textContent.trim(),
-    linkUrl: link.getAttribute('href') || '#',
-  }));
 }
 
 function parseFooterData(block) {
   // Initialize empty data structure - no defaults
   const data = {
     newsletterLabel: '',
-    newsletterPlaceholder: '',
+    newsletterPlaceholder: '', 
     newsletterButtonText: '',
     socialLabel: '',
     socialLinks: [],
@@ -260,7 +254,7 @@ function parseFooterData(block) {
     globalIcon: '',
     showGlobal: '', // Default to false
     legalLinks: [],
-    originalRows: [], // Store original rows for instrumentation transfer
+    originalRows: [] // Store original rows for instrumentation transfer
   };
 
   // First try to parse from fragment content structure
@@ -282,48 +276,49 @@ function parseFooterData(block) {
   // Override with Universal Editor model data if available
   if (block.dataset && (block.dataset.model || block.dataset.aueModel)) {
     const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {};
-
+    
+    
     // Parse newsletter fields from UE model
     if (modelData.titleSubscription) data.newsletterLabel = modelData.titleSubscription;
     if (modelData.placeholder) data.newsletterPlaceholder = modelData.placeholder;
     if (modelData.buttonText) data.newsletterButtonText = modelData.buttonText;
     if (modelData.socialTitle) data.socialLabel = modelData.socialTitle;
-
+    
     // Parse footer columns from UE model
     const footerColumnsFromModel = [];
-
+    
     // First column
     if (modelData.titleFirstColumn && modelData.config) {
       const firstColumnLinks = parseRichTextLinks(modelData.config);
       footerColumnsFromModel.push({
         columnTitle: modelData.titleFirstColumn,
-        links: firstColumnLinks,
+        links: firstColumnLinks
       });
     }
-
+    
     // Second column
     if (modelData.titleSecondColumn && modelData.configSecondColumn) {
       const secondColumnLinks = parseRichTextLinks(modelData.configSecondColumn);
       footerColumnsFromModel.push({
         columnTitle: modelData.titleSecondColumn,
-        links: secondColumnLinks,
+        links: secondColumnLinks
       });
     }
-
+    
     // Third column
     if (modelData.titleThirdColumn && modelData.configThirdColumn) {
       const thirdColumnLinks = parseRichTextLinks(modelData.configThirdColumn);
       footerColumnsFromModel.push({
         columnTitle: modelData.titleThirdColumn,
-        links: thirdColumnLinks,
+        links: thirdColumnLinks
       });
     }
-
+    
     // Update footer columns if model data exists
     if (footerColumnsFromModel.length > 0) {
       data.footerColumns = footerColumnsFromModel;
     }
-
+    
     // Parse legal links from UE model
     if (modelData.copyrightLinks) {
       const legalLinksFromModel = parseRichTextLinks(modelData.copyrightLinks);
@@ -331,12 +326,12 @@ function parseFooterData(block) {
         data.legalLinks = legalLinksFromModel;
       }
     }
-
+    
     // Parse showGlobal from UE model
     if (modelData.showGlobal !== undefined) {
       data.showGlobal = modelData.showGlobal;
     }
-
+    
     // Parse social icons from UE model (if available as separate items)
     // This would need to be implemented based on the actual UE model structure for social icons
     // For now, we'll keep the existing social links from fragment parsing
@@ -344,20 +339,22 @@ function parseFooterData(block) {
 
   // Process block content for authoring data
   const rows = [...block.children];
-  const footerColumnsArray = [];
-  const legalLinksArray = [];
-  const socialLinksArray = [];
-
-  rows.forEach((row) => {
+  let footerColumnsArray = [];
+  let legalLinksArray = [];
+  let socialLinksArray = [];
+  let currentColumn = null;
+  let currentSection = '';
+  
+  rows.forEach((row, index) => {
     const cells = [...row.children];
-
+    
     // Store original row for instrumentation transfer
     data.originalRows.push(row);
-
+    
     if (cells.length >= 2) {
       const field = cells[0].textContent.trim();
       const value = cells[1].textContent.trim();
-
+      
       // Handle simple text fields
       switch (field) {
         case 'Newsletter Label':
@@ -393,36 +390,36 @@ function parseFooterData(block) {
           if (field.startsWith('Column ')) {
             // Parse footer columns - format: "Column Title" | "Links (pipe separated)"
             const columnTitle = field.replace('Column ', '');
-            const links = value.split('|').map((link) => {
-              const [linkText, linkUrl] = (link || '').split(' - ');
-              return {
-                linkText: linkText ? linkText.trim() : (link || '').trim(),
-                linkUrl: linkUrl ? linkUrl.trim() : '#',
+            const links = value.split('|').map(link => {
+              const [linkText, linkUrl] = link.split(' - ');
+              return { 
+                linkText: linkText ? linkText.trim() : link.trim(), 
+                linkUrl: linkUrl ? linkUrl.trim() : '#' 
               };
             });
-            footerColumnsArray.push({
-              columnTitle,
-              links,
-              originalRow: row, // Store original row for instrumentation
+            footerColumnsArray.push({ 
+              columnTitle, 
+              links, 
+              originalRow: row // Store original row for instrumentation
             });
           } else if (field.startsWith('Legal ')) {
             // Parse legal links - format: "Legal Link Name" | "URL"
             const linkText = field.replace('Legal ', '');
-            legalLinksArray.push({
-              linkText,
-              linkUrl: value,
-              originalRow: row, // Store original row for instrumentation
+            legalLinksArray.push({ 
+              linkText, 
+              linkUrl: value, 
+              originalRow: row // Store original row for instrumentation
             });
           } else if (field.startsWith('Social ')) {
             // Parse social links - format: "Social Platform" | "URL|Icon|AltText"
             const platform = field.replace('Social ', '').toLowerCase();
             const parts = value.split('|');
-            const socialLink = {
-              platform,
+            const socialLink = { 
+              platform, 
               url: parts[0] || '#',
               icon: parts[1] || `/icons/social/icon-${platform}.svg`,
               altText: parts[2] || platform.charAt(0).toUpperCase() + platform.slice(1),
-              originalRow: row, // Store original row for instrumentation
+              originalRow: row // Store original row for instrumentation
             };
             socialLinksArray.push(socialLink);
           }
@@ -430,34 +427,34 @@ function parseFooterData(block) {
       }
     } else if (cells.length === 1) {
       const singleValue = cells[0].textContent.trim();
-
+      
       // Handle single-cell rows that might contain structured data
       if (singleValue.includes('|')) {
         // Parse pipe-separated data
-        const parts = singleValue.split('|').map((p) => p.trim());
+        const parts = singleValue.split('|').map(p => p.trim());
         if (parts.length === 2) {
           const [key, value] = parts;
-
+          
           if (key.startsWith('Column:')) {
             const columnTitle = key.replace('Column:', '').trim();
-            const links = value.split(',').map((link) => {
-              const [linkText, linkUrl] = (link || '').split(' - ');
-              return {
-                linkText: linkText ? linkText.trim() : (link || '').trim(),
-                linkUrl: linkUrl ? linkUrl.trim() : '#',
+            const links = value.split(',').map(link => {
+              const [linkText, linkUrl] = link.split(' - ');
+              return { 
+                linkText: linkText ? linkText.trim() : link.trim(), 
+                linkUrl: linkUrl ? linkUrl.trim() : '#' 
               };
             });
-            footerColumnsArray.push({
-              columnTitle,
-              links,
-              originalRow: row, // Store original row for instrumentation
+            footerColumnsArray.push({ 
+              columnTitle, 
+              links, 
+              originalRow: row // Store original row for instrumentation
             });
           } else if (key.startsWith('Legal:')) {
             const linkText = key.replace('Legal:', '').trim();
-            legalLinksArray.push({
-              linkText,
-              linkUrl: value,
-              originalRow: row, // Store original row for instrumentation
+            legalLinksArray.push({ 
+              linkText, 
+              linkUrl: value, 
+              originalRow: row // Store original row for instrumentation
             });
           }
         }
@@ -483,69 +480,70 @@ function buildSocialIcons(socialLinks, socialLabel) {
   // Create social container
   const socialDiv = document.createElement('div');
   socialDiv.className = 'social';
-
+  
   // Create social label
   const socialLabelElement = document.createElement('small');
   socialLabelElement.className = 'text-social';
   socialLabelElement.textContent = socialLabel;
   socialDiv.appendChild(socialLabelElement);
-
+  
   // Create nav container
   const nav = document.createElement('nav');
   nav.setAttribute('aria-label', 'Social media');
-
+  
   // Create ul container
   const ul = document.createElement('ul');
   ul.className = 'social__icons p-0 m-0';
-
+  
   // Process each social link
-  socialLinks.forEach((link) => {
+  socialLinks.forEach((link, index) => {
     const li = document.createElement('li');
     const a = document.createElement('a');
     const img = document.createElement('img');
-
+    
     if (link.actualDiv) {
-      moveInstrumentation(link.actualDiv, li);
+      moveInstrumentation(link.actualDiv,li);
     }
-
+    
     const altText = link.altText || link.platform.charAt(0).toUpperCase() + link.platform.slice(1);
-
+    
     // Set link attributes
     a.href = link.url;
     a.target = '_blank';
     a.setAttribute('aria-label', `Follow us on ${altText} (open a new window)`);
-
+    
     // Set image attributes
     img.src = link.icon || '';
     img.alt = altText;
     img.width = 40;
     img.height = 40;
     img.loading = 'lazy';
-
+    
     // Apply moveInstrumentation if original element exists
     if (link.originalElement) {
       moveInstrumentation(link.originalElement, img);
     }
-
+    
     // Build structure
     a.appendChild(img);
     li.appendChild(a);
     ul.appendChild(li);
+    
   });
-
+  
   nav.appendChild(ul);
   socialDiv.appendChild(nav);
-
+  
   return socialDiv.outerHTML;
 }
 
 function buildFooterColumns(footerColumns) {
   const columnsContainer = document.createElement('div');
-
-  footerColumns.forEach((column) => {
+  
+  footerColumns.forEach(column => {
     const ul = document.createElement('ul');
     ul.className = 'footer-links__column pl-0';
-
+    
     // Create title list item
     const titleLi = document.createElement('li');
     const titleP = document.createElement('p');
@@ -553,52 +551,52 @@ function buildFooterColumns(footerColumns) {
     titleP.textContent = column.columnTitle;
     titleLi.appendChild(titleP);
     ul.appendChild(titleLi);
-
+    
     // Apply moveInstrumentation to title if original row exists
     if (column.originalRow) {
       moveInstrumentation(column.originalRow, titleP);
     }
-
+    
     // Create link list items
-    column.links.forEach((link) => {
+    column.links.forEach(link => {
       const linkLi = document.createElement('li');
       const linkA = document.createElement('a');
       linkA.href = link.linkUrl;
       linkA.textContent = link.linkText;
-
+      
       // Apply moveInstrumentation to link if original row exists
       if (column.originalRow) {
         moveInstrumentation(column.originalRow, linkA);
       }
-
+      
       linkLi.appendChild(linkA);
       ul.appendChild(linkLi);
     });
-
+    
     columnsContainer.appendChild(ul);
   });
-
+  
   return columnsContainer.innerHTML;
 }
 
 function buildLegalLinks(legalLinks) {
   const linksContainer = document.createElement('div');
-
-  legalLinks.forEach((link) => {
+  
+  legalLinks.forEach(link => {
     const a = document.createElement('a');
     a.href = link.linkUrl;
     a.target = '_blank';
     a.setAttribute('aria-label', `View ${link.linkText} (open a new window)`);
     a.textContent = link.linkText;
-
+    
     // Apply moveInstrumentation if original row exists
     if (link.originalRow) {
       moveInstrumentation(link.originalRow, a);
     }
-
+    
     linksContainer.appendChild(a);
   });
-
+  
   return linksContainer.innerHTML;
 }
 
@@ -611,37 +609,37 @@ function optimizeFooterImages(container) {
     if (img.closest('picture')?.hasAttribute('data-optimized')) {
       return;
     }
-
+    
     let optimizedPic;
-
+    
     // Use FooterConfig for baseUrl and shouldUseExternal
     const { baseUrl, shouldUseExternal } = FooterConfig;
-
+    
     if (shouldUseExternal) {
       // Use createOptimizedPictureExternal with baseUrl when baseUrl is defined and different
       optimizedPic = createOptimizedPictureExternal(
-        img.src,
-        img.alt,
+        img.src, 
+        img.alt, 
         true, // eager loading for footer images (above fold)
-        [{ width: '200' }, { width: '400' }], // responsive breakpoints,
-        baseUrl,
+        [{ width: '200' }, { width: '400' }], // responsive breakpoints
+        baseUrl
       );
     } else {
       // Use createOptimizedPicture from aem.js when baseUrl is not defined or equals window.location.href
       optimizedPic = createOptimizedPicture(
-        img.src,
-        img.alt,
+        img.src, 
+        img.alt, 
         true, // eager loading for footer images (above fold)
-        [{ width: '200' }, { width: '400' }], // responsive breakpoints,
+        [{ width: '200' }, { width: '400' }] // responsive breakpoints
       );
     }
-
+    
     // Move instrumentation from original to optimized image
     moveInstrumentation(img, optimizedPic.querySelector('img'));
-
+    
     // Mark as optimized to prevent re-processing
     optimizedPic.setAttribute('data-optimized', 'true');
-
+    
     // Replace the original picture with optimized version
     const originalPicture = img.closest('picture');
     if (originalPicture) {
@@ -660,39 +658,39 @@ export default function decorate(block) {
   const footerHTML = `<footer class='experiencefragment'>
   <div class='cmp-experiencefragment'>
     <div class='cmp-container container'>
-      <div class='footer-grid'>
+      <div class="footer-grid">
         <!-- Left Column -->
-        <div class='footer-left'>
-          <form id='frm-footer-newsletter' class='newsletter' method='post' aria-label='Newsletter signup' novalidate>
-            <label for='newsletter-email'>${data.newsletterLabel}</label>
+        <div class="footer-left">
+          <form id="frm-footer-newsletter" class='newsletter' method="post" aria-label="Newsletter signup" novalidate>
+            <label for="newsletter-email">${data.newsletterLabel}</label>
             <div class='newsletter__field-wrapper mt-4'>
-              <input type='email' id='newsletter-email' name='email' placeholder='${data.newsletterPlaceholder}' required />
-              <button type='submit' class='btn'>${data.newsletterButtonText}</button>
+              <input type='email' id="newsletter-email" name="email" placeholder='${data.newsletterPlaceholder}' required />
+              <button type="submit" class="btn">${data.newsletterButtonText}</button>
             </div>
-            <div class='newsletter__response'></div>
+            <div class="newsletter__response"></div>
           </form>
 
           ${buildSocialIcons(data.socialLinks, data.socialLabel)}
         </div>
 
         <!-- Right Column -->
-        <div class='footer-right'>
-          <nav class='footer-links' aria-label='Footer Navigation'>
+        <div class="footer-right">
+          <nav class='footer-links' aria-label="Footer Navigation">
             ${buildFooterColumns(data.footerColumns)}
           </nav>
         </div>
       </div>
 
       <div class='footer-bottom'>
-        ${data.showGlobal ? `<span tabindex='0'><img src='${data.globalIcon}' alt='Global'>${data.globalText}</span>` : `<span></span>`}
-        <nav class='footer-bottom__links' aria-label='Legal links'>
+        ${data.showGlobal ? `<span tabindex="0"><img src="${data.globalIcon}" alt="Global">${data.globalText}</span>` : `<span></span>`}
+        <nav class='footer-bottom__links' aria-label="Legal links">
           ${buildLegalLinks(data.legalLinks)}
         </nav>
-        <button class='back-to-top' id='backToTop' aria-label='Back to top'>
-          <svg width='60' height='60' viewBox='0 0 60 60' fill='none' xmlns='http://www.w3.org/2000/svg'>
-            <rect x='0.5' y='0.5' width='59' height='59' rx='29.5' fill='black' class='back-to-top__bg' />
-            <rect x='0.5' y='0.5' width='59' height='59' rx='29.5' stroke='#CCCCCC'/>
-            <path d='M41 34.5L30 25.5L19 34.5' stroke='white' stroke-width='2' stroke-miterlimit='10' stroke-linecap='round' stroke-linejoin='round'/> 
+        <button class="back-to-top" id="backToTop" aria-label="Back to top">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0.5" y="0.5" width="59" height="59" rx="29.5" fill="black" class="back-to-top__bg" />
+            <rect x="0.5" y="0.5" width="59" height="59" rx="29.5" stroke="#CCCCCC"/>
+            <path d="M41 34.5L30 25.5L19 34.5" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>                        
         </button>
       </div>
@@ -731,7 +729,7 @@ export default function decorate(block) {
   // Add newsletter form functionality with triggerSubscribeForm
   const form = block.querySelector('.newsletter');
   const responseElement = form?.querySelector('.newsletter__response');
-
+  
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -754,18 +752,20 @@ export default function decorate(block) {
       const emailInput = form.querySelector('input[type="email"]');
       if (emailInput && emailInput.value) {
         const email = emailInput.value.trim();
-
+        
         // Check if triggerSubscribeForm is available
         if (typeof window.triggerSubscribeForm === 'function') {
           try {
             window.triggerSubscribeForm(email);
           } catch (error) {
+            console.error('Error triggering subscribe form:', error);
             form.classList.add('has--error');
             if (responseElement) {
               responseElement.textContent = 'An error occurred. Please try again.';
             }
           }
         } else {
+          console.warn('triggerSubscribeForm function not available');
           form.classList.add('has--error');
           if (responseElement) {
             responseElement.textContent = 'Subscribe service is currently unavailable. Please try again later.';
@@ -788,12 +788,12 @@ export default function decorate(block) {
     };
 
     window.addEventListener('scroll', toggleBackToTop);
-
+    
     // Scroll to top when clicked
     backToTopButton.addEventListener('click', () => {
       window.scrollTo({
         top: 0,
-        behavior: 'smooth',
+        behavior: 'smooth'
       });
     });
   }
