@@ -82,7 +82,13 @@
     "func-names": "off",
     "space-before-function-paren": "off",
     "prefer-const": "off",
-    "key-spacing": "off"
+    "key-spacing": "off",
+    "keyword-spacing": "off",
+    "space-before-blocks": "off",
+    "consistent-return": "off",
+    "no-restricted-globals": "off",
+    "no-extra-semi": "off"
+
   },
   "ignorePatterns": [
     "node_modules/",
