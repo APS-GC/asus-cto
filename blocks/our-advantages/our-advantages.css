@@ -839,5 +839,6 @@ section:has(.cmp-carousel) {
 }
 
 .swiper-pagination{
-    position: static
+    position: static;
+    width:auto !important;
 }

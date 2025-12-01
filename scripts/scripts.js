@@ -13,6 +13,7 @@ import {
   decorateBlock,
   loadBlock,
 } from './aem.js';
+import { getConfigValue } from './configs.js';
 
 /**
  * Moves all the attributes from a given elmenet to another given element.
@@ -181,7 +182,7 @@ export function isUniversalEditor() {
  */
 export async function loadHeaderFragment() {
   //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = '/content/asus-cto/language-master/en/fragments/head.plain.html';
+  const fragmentUrl = `/${await getConfigValue('locale')}/fragments/head.plain.html`;
   try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
@@ -202,7 +203,7 @@ export async function loadHeaderFragment() {
  */
 export async function loadFooterFragment() {
   //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = '/content/asus-cto/language-master/en/fragments/footer.plain.html';
+  const fragmentUrl = `/${await getConfigValue('locale')}/fragments/footer.plain.html`;
   try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
@@ -390,7 +391,7 @@ async function loadEager(doc) {
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
-    const hasCarousel = main.querySelector('.carousel, .hot-products, .product-preview, .help-me-choose,.our-advantages');
+    const hasCarousel = main.querySelector('.hero-banner, .hot-products, .product-preview, .help-me-choose,.our-advantages');
     if (hasCarousel) {
       loadSwiper().catch(err => console.error('Failed to preload Swiper:', err));
     }

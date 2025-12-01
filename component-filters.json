@@ -25,7 +25,7 @@
       "columns",
       "fragment",
       "quote",
-      "carousel",
+      "hero-banner",
       "top-picks-cards",
       "footer",
       "article-card",
@@ -144,9 +144,9 @@
       ]
     },
     {
-      "id": "carousel",
+      "id": "hero-banner",
       "components": [
-        "carousel-slide"
+        "hero-banner-slide"
       ]
     },
      {
