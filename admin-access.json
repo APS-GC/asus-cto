@@ -1,0 +1,23 @@
+{
+  "access": {
+    "admin": {
+      "role": {
+        "admin": [
+          "epai@adobe.com",
+          "easonp.dev@gmail.com",
+          "samishra@adobe.com",
+          "skumawat@adobe.com"
+        ],
+        "author": [
+          "samishra@adobe.com",
+          "epai@adobe.com",
+          "yshaik@adobe.com"
+        ],
+        "publish": [
+          "samishra@adobe.com"
+        ]
+      },
+      "requireAuth": "auto"
+    }
+  }
+}

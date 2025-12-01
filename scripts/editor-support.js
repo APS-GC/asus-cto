@@ -13,6 +13,96 @@ import {
 import { decorateRichtext } from './editor-support-rte.js';
 import { decorateMain } from './scripts.js';
 
+let adminAccessConfig = null;
+
+async function loadAdminAccessConfig() {
+  if (!adminAccessConfig) {
+    try {
+      const response = await fetch(`${window.hlx.codeBasePath}/admin-access.json`);
+      adminAccessConfig = await response.json();
+    } catch (error) {
+      console.error('Failed to load admin access config:', error);
+      adminAccessConfig = { access: { admin: { role: {} } } };
+    }
+  }
+  return adminAccessConfig;
+}
+
+function getCurrentUserEmail() {
+  try {
+    const key = "adobeid_ims_profile/exc_app/false/AdobeID,ab.manage,account_cluster.read,additional_info,additional_info.job_function,additional_info.projectedProductContext,additional_info.roles,adobeio.appregistry.read,adobeio_api,aem.frontend.all,audiencemanager_api,creative_cloud,mps,openid,org.read,pps.read,read_organizations,read_pc,read_pc.acp,read_pc.dma_tartan,service_principals.write,session";
+    const value = sessionStorage.getItem(key);
+    if (value) {
+      const profile = JSON.parse(value);
+      return profile.email?.toLowerCase();
+    }
+  } catch (error) {
+    console.error('Failed to get user email:', error);
+  }
+  return null;
+}
+
+function getUserRole(userEmail, config) {
+  const roles = config?.access?.admin?.role || {};
+  
+  for (const [roleName, emails] of Object.entries(roles)) {
+    if (emails.some(email => email.toLowerCase() === userEmail)) {
+      return roleName;
+    }
+  }
+  
+  return null;
+}
+
+function getDisabledCapabilities(role) {
+  const roleCapabilities = {
+    admin: [],
+    author: ['publish'],
+    publish: [],
+    default: ['publish']
+  };
+  
+  return roleCapabilities[role] || roleCapabilities.default;
+}
+
+function setUEDisableConfig(capabilities) {
+  if (!capabilities.length) return;
+  
+  const head = document.getElementsByTagName('head')[0];
+  const existingMeta = head.querySelector('meta[name="urn:adobe:aue:config:disable"]');
+  
+  if (existingMeta) {
+    existingMeta.setAttribute('content', capabilities.join(','));
+  } else {
+    const meta = document.createElement('meta');
+    meta.setAttribute('name', 'urn:adobe:aue:config:disable');
+    meta.setAttribute('content', capabilities.join(','));
+    head.appendChild(meta);
+  }
+}
+
+async function applyUserPermissions() {
+  const userEmail = getCurrentUserEmail();
+  if (!userEmail) {
+    console.warn('No user email found, applying default restrictions');
+    setUEDisableConfig(['publish', 'unpublish', 'delete']);
+    return;
+  }
+  
+  const config = await loadAdminAccessConfig();
+  const userRole = getUserRole(userEmail, config);
+  
+  if (!userRole) {
+    console.warn(`User ${userEmail} has no assigned role, applying default restrictions`);
+    setUEDisableConfig(['publish', 'unpublish', 'delete']);
+    return;
+  }
+  
+  const disabledCapabilities = getDisabledCapabilities(userRole);
+  setUEDisableConfig(disabledCapabilities);
+  
+}
+
 // Set the filter for a Universal Editor editable element
 function setUEFilter(element, filter) {
   element.dataset.aueFilter = filter;
@@ -134,6 +224,8 @@ function attachEventListners(main) {
 
 attachEventListners(document.querySelector('main'));
 
+// Apply user permissions based on admin-access.json
+applyUserPermissions();
 
 // Update UE component filters on page load
 updateUEInstrumentation();
