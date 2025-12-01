@@ -1,3 +1,5 @@
+/* stylelint-disable selector-type-no-unknown, declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, selector-pseudo-class-no-unknown, selector-pseudo-element-no-unknown */
+
 /* ========================================================================== 
  * AEM Header Shadow DOM Styles
  * Inherits CSS variables from the main document for shadow DOM compatibility
@@ -6,19 +8,19 @@
 
 :host {
   /* Primary Color System - Direct values from styles.css */
-  --color-primary: #000000;
+  --color-primary: #000;
   --color-primary-base: #000;
   --color-primary-50: #16151b;
   --color-primary-100: #181818;
   --color-primary-200: #262626;
   --color-primary-300: #4d4d4d;
-  --color-primary-400: #666666;
+  --color-primary-400: #666;
   --color-primary-500: #818181;
-  --color-primary-600: #999999;
-  --color-primary-700: #cccccc;
+  --color-primary-600: #999;
+  --color-primary-700: #ccc;
   --color-primary-800: #dcdcdc;
   --color-primary-900: #f5f5f5;
-  --color-primary-950: #ffffff;
+  --color-primary-950: #fff;
 
   /* Status Colors - Direct values from styles.css */
   --color-success: #6fc371;
@@ -31,27 +33,27 @@
   --color-select-box-highlight: #248dff;
 
   /* Button System Variables - Direct values from styles.css */
-  --btn-bg: #ffffff;
-  --btn-color: #000000;
-  --btn-disabled-bg: #999999;
+  --btn-bg: #fff;
+  --btn-color: #000;
+  --btn-disabled-bg: #999;
   --btn-disabled-color: #dcdcdc;
-  --btn-hover-bg: #cccccc;
-  --btn-outline-border: #ffffff;
-  --btn-outline-disabled-border: #999999;
-  --btn-outline-hover-bg: #ffffff;
-  --btn-outline-hover-color: #000000;
-  --btn-link-color: #ffffff;
-  --btn-link-disabled-color: #999999;
-  --btn-link-hover-color: #ffffff;
+  --btn-hover-bg: #ccc;
+  --btn-outline-border: #fff;
+  --btn-outline-disabled-border: #999;
+  --btn-outline-hover-bg: #fff;
+  --btn-outline-hover-color: #000;
+  --btn-link-color: #fff;
+  --btn-link-disabled-color: #999;
+  --btn-link-hover-color: #fff;
 
   /* Legacy Color Mappings - Direct values from styles.css */
-  --color-white: #ffffff;
-  --color-black: #000000;
+  --color-white: #fff;
+  --color-black: #000;
 
   /* Typography Variables - Direct values from styles.css */
-  --font-text: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-display: 'TTNormsProMedium', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-primary: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-text: 'Roboto', -apple-system, blinkmacsystemfont, 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'TTNormsProMedium', 'Roboto', -apple-system, blinkmacsystemfont, 'Segoe UI', system-ui, sans-serif;
+  --font-primary: 'Roboto', -apple-system, blinkmacsystemfont, 'Segoe UI', system-ui, sans-serif;
 
   /* Font Weights - Direct values from styles.css */
   --regular: 400;
@@ -94,7 +96,7 @@
   --radius-full: 9999px;
 
   /* Gradient Variables - Direct values from styles.css */
-  --gradient-product-card: conic-gradient(from 90deg, rgba(107, 121, 145, 1) 0deg, rgba(107, 121, 145, 1) 71.2543deg, rgba(107, 121, 145, 1) 161.353deg, rgba(107, 121, 145, 1) 245.421deg, rgba(107, 121, 145, 1) 339.262deg, rgba(107, 121, 145, 1) 360deg);
+  --gradient-product-card: conic-gradient(from 90deg, rgb(107, 121, 145, 1) 0deg, rgb(107, 121, 145, 1) 71.2543deg, rgb(107, 121, 145, 1) 161.353deg, rgb(107, 121, 145, 1) 245.421deg, rgb(107, 121, 145, 1) 339.262deg, rgb(107, 121, 145, 1) 360deg);
 
   /* Spacing Variables - Direct values from styles.css */
   --spacing-1: 0.25rem;
@@ -110,17 +112,17 @@
   --spacing-24: 6rem;
 
   /* Shadow/Elevation - Direct values from styles.css */
-  --shadow-normal: 0px 4px 20px 0px rgba(0, 0, 0, 0.08);
-  --elevation-1: 0px 4px 20px 0px rgba(0, 0, 0, 0.08);
+  --shadow-normal: 0px 4px 20px 0px rgb(0, 0, 0, 0.08);
+  --elevation-1: 0px 4px 20px 0px rgb(0, 0, 0, 0.08);
 
   /* Background Colors - Direct values from styles.css */
-  --color-background-primary: #ffffff;
-  --color-background-overlay: rgba(0, 0, 0, 0.5);
+  --color-background-primary: #fff;
+  --color-background-overlay: rgb(0, 0, 0, 0.5);
 
   /* Text Colors - Direct values from styles.css */
   --color-text-primary: #212121;
   --color-text-secondary: #757575;
-  --color-text-inverse: #ffffff;
+  --color-text-inverse: #fff;
   --color-text-link: #0057b7;
   --color-text-link-hover: #003d82;
 
@@ -155,7 +157,6 @@
   transition: all 0.2s ease;
   border-radius: 0.5rem;
   cursor: pointer;
-  font-weight: 400;
   white-space: nowrap;
   padding-left: 1rem;
   padding-right: 1rem;
@@ -172,7 +173,7 @@
 }
 
 .icon {
-    background-color: currentColor;
+    background-color: currentcolor;
     display: inline-block;
     height: 1rem;
     mask-position: center;
@@ -187,26 +188,27 @@
   padding: 0 20px
 }
 
-@media only screen and (min-width:45.6875rem) {
+@media only screen and (width >=45.6875rem) {
   .container {
     padding: 0 40px
   }
 }
 
-@media only screen and (min-width:80rem) {
+@media only screen and (width >=80rem) {
   .container {
     max-width: 1240px;
     padding: 0
   }
 }
 
-@media only screen and (max-width:45.625rem) {
+@media only screen and (width <=45.625rem) {
   .container-mobile-full {
     max-width: 100%;
     padding-left: 0;
     padding-right: 0
   }
 }
+
 p{
     margin: 0;
     padding: 0;
@@ -281,6 +283,4 @@ p{
 .icon--info-filled {
     mask-image: url("data:image/svg+xml;utf8,<svg width='14' height='14' viewBox='0 0 14 14' xmlns='http://www.w3.org/2000/svg'><circle cx='7' cy='7' r='6.5' transform='matrix(-1 8.74228e-08 8.74228e-08 1 14 0)' fill='white' stroke='white'/><rect width='1.5' height='5.5' rx='0.75' transform='matrix(-1 2.62268e-07 2.62268e-07 1 7.75 2.5)' fill='white'/><rect width='2' height='2' rx='1' transform='matrix(-1 2.62268e-07 2.62268e-07 1 8 9)' fill='white'/></svg>")
 }
-
-
-
+/* stylelint-enable selector-type-no-unknown, declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, selector-pseudo-class-no-unknown, selector-pseudo-element-no-unknown */

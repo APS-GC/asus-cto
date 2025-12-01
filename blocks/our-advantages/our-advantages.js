@@ -1,10 +1,9 @@
-import { isAuthorEnvironment, safeText } from "../../scripts/utils.js";
-import { transferInstrumentation } from "../../scripts/utils.js";
+import { isAuthorEnvironment, safeText, transferInstrumentation } from '../../scripts/utils.js';
 const pubUrl = 'https://publish-p165753-e1767020.adobeaemcloud.com';
 const itemsStartIndex = 4;
 export default async function decorate(block) {
   const divs = block.children;
-  const title = divs[0].textContent.trim() || "Our Advantages";
+  const title = divs[0].textContent.trim() || 'Our Advantages';
   const itemCount = Number(divs[1].textContent.trim()) || 3;
   const imageAutoplayDuration = Number(divs[2].textContent.trim()) || 5;
   const videoAutoplayDuration = Number(divs[3].textContent.trim()) || 1;
@@ -47,15 +46,15 @@ export default async function decorate(block) {
   const cardNodes = [];
   [...block.children].forEach((card, i) => {
     if (i > itemsStartIndex + itemCount - 1 || i < itemsStartIndex) return;
-    const divs = card.querySelectorAll("div");
+    const divs = card.querySelectorAll('div');
     const headline = safeText(divs.item(0));
     const details = safeText(divs.item(1));
     const video = safeText(divs.item(2));
     const imageAlt = safeText(divs.item(4));
     const buttonText = safeText(divs.item(5));
     const buttonTextLink = safeText(divs.item(6));
-    const isTargetBlank = divs.item(7).textContent === "true" ? 1 : 0;
-    const imageUrl = card.querySelector("img").src;
+    const isTargetBlank = divs.item(7).textContent === 'true' ? 1 : 0;
+    const imageUrl = card.querySelector('img').src;
     const imageHtml = imageUrl?`<img src="${imageUrl}"  alt="${imageAlt}" class="cmp-advantage-card__image" loading="lazy" />`:'<div class="cmp-advantage-card__image" style="background: #efefef;color: #000;padding-top: 120px;font-size: 32px;">Please upload an image.</div>';
     const videoHtml = video ? `<video class="cmp-advantage-card__video" data-src="${pubUrl+video}" playsinline controls></video><button class="cmp-advantage-card__close-video" aria-label="Close video"></button>`:'';
     const mockup = document.createRange().createContextualFragment(`
@@ -84,7 +83,7 @@ export default async function decorate(block) {
     cardNodes.push(mockup);
   });
 
-  mockupContainer.querySelector(".cmp-carousel__content").append(...cardNodes);
+  mockupContainer.querySelector('.cmp-carousel__content').append(...cardNodes);
 
   //move attr
   if (isAuthorEnvironment()) {
@@ -92,23 +91,23 @@ export default async function decorate(block) {
     if (block.firstElementChild) {
       transferInstrumentation(
         block.firstElementChild,
-        mockupContainer.querySelector(".section-heading")
+        mockupContainer.querySelector('.section-heading')
       );
     }
   }
 
-  block.innerHTML = "";
+  block.innerHTML = '';
   block.append(mockupContainer);
 
   // trigger block
-  await import("../../scripts/carousel.js");
-  await import("./uifrontend_advantage-card.js");
+  await import('../../scripts/carousel.js');
+  await import('./uifrontend_advantage-card.js');
  
 
   document.addEventListener(
-    "eds-lazy-event",
+    'eds-lazy-event',
     () => {
-      const container = block.querySelector(".container");
+      const container = block.querySelector('.container');
       if (window.initializeSwiperOnAEMCarousel && container) {
         window.initializeSwiperOnAEMCarousel(container);
       }

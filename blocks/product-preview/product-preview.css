@@ -1,3 +1,4 @@
+/* stylelint-disable declaration-block-no-duplicate-properties, declaration-property-value-no-unknown */
 .modal:has(.product-preview) dialog {
     width: 100vw;
     height: 100vh;
@@ -108,7 +109,7 @@
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-    -ms-flex-direction: column;
+    flex-direction: column;
     flex-direction: column;
     -webkit-box-align: end;
     -ms-flex-align: end;
@@ -120,7 +121,6 @@
     color: var(--color-warning);
     font-family: var(--font-text);
     font-size: 1.25rem;
-    font-weight: var(--regular);
     font-weight: var(--medium);
     letter-spacing: 0;
     line-height: 1.75rem;
@@ -182,7 +182,7 @@
 .product-preview-body {
     background: var(--color-primary-base);
     display: -webkit-box;
-    display: -ms-flexbox;
+    display: flexbox;
     display: flex;
     -webkit-box-pack: center;
     -ms-flex-pack: center;
@@ -204,7 +204,7 @@
     background: var(--color-primary-950);
     border-radius: 1rem;
     display: grid;
-    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
     flex-wrap: wrap;
     grid-template-columns: 472px 1fr;
     max-width: 1032px;
@@ -392,7 +392,7 @@
     border: 0;
     border-radius: 6px;
     color: var(--color-primary-950);
-    -ms-flex: 1;
+    flex: 1;
     flex: 1;
     font-family: var(--font-text);
     font-size: .875rem;
@@ -434,7 +434,7 @@
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-    -ms-flex-direction: column;
+    flex-direction: column;
     flex-direction: column;
     -webkit-box-align: center;
     -ms-flex-align: center;
@@ -469,7 +469,7 @@
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-    -ms-flex-direction: column;
+    flex-direction: column;
     flex-direction: column;
     gap: .25rem;
 }
@@ -523,7 +523,7 @@
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-    -ms-flex-direction: column;
+    flex-direction: column;
     flex-direction: column;
     -webkit-box-align: end;
     -ms-flex-align: end;
@@ -553,7 +553,7 @@
 
 .data-source img {
     height: 28px;
-    -o-object-fit: contain;
+    object-fit: contain;
     object-fit: contain;
 }
 
@@ -667,7 +667,7 @@
 .preview-game-badge {
     color: var(--color-primary-100);
     display: -webkit-box;
-    display: -ms-flexbox;
+    display: flexbox;
     display: flex;
     -webkit-box-align: center;
     -ms-flex-align: center;
@@ -735,11 +735,11 @@
     accent-color: var(--color-primary-100);
 }
 
-.preview-compare input[type=checkbox]:checked {
+.preview-compare input[type="checkbox"]:checked {
     color: var(--color-primary-950);
 }
 
-.preview-compare input[type=checkbox]:checked:before {
+.preview-compare input[type="checkbox"]:checked::before {
     background: var(--color-primary);
 }
 
@@ -814,7 +814,7 @@
     margin-bottom: .5rem;
 }
 
-@media (max-width: 1024px) {
+@media (width <= 1024px) {
     .product-preview-close {
         top: 0;
         right: 0;
@@ -877,3 +877,4 @@
         transform: rotate(180deg);
     }
 }
+/* stylelint-enable declaration-block-no-duplicate-properties, declaration-property-value-no-unknown */

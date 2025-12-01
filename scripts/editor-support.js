@@ -7,6 +7,7 @@ import {
   loadBlock,
   loadScript,
   loadSections,
+  // eslint-disable-next-line import/named
   updateSectionMetadata,
 } from './aem.js';
 

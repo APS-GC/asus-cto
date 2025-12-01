@@ -6,11 +6,12 @@ import { getBlockConfigs } from '../../scripts/configs.js';
 function initializeTooltips(container) {
   const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
 
-  tooltipTriggers.forEach((trigger, index) => {
+  tooltipTriggers.forEach((trigger) => {
     const tooltipId = trigger.getAttribute('aria-describedby');
     const tooltip = document.getElementById(tooltipId);
 
     if (!tooltip) {
+      // eslint-disable-next-line no-console
       console.warn(`Tooltip not found for ID: ${tooltipId}`);
       return;
     }
@@ -89,12 +90,12 @@ function createProductCard(product, config) {
   // Generate badges HTML from productTags
   // Add "In Stock" badge by default if not already present
   const badges = product.productTags || [];
-  const hasInStock = badges.some(badge => badge.toLowerCase() === 'in stock');
+  const hasInStock = badges.some((badge) => badge.toLowerCase() === 'in stock');
   if (!hasInStock) {
     badges.unshift('In Stock'); // Add "In Stock" at the beginning
   }
 
-  const badgesHTML = badges.map(badge => {
+  const badgesHTML = badges.map((badge) => {
     let badgeClass = 'hot-products-badge';
     const badgeLower = badge.toLowerCase();
     if (badgeLower === 'in stock') badgeClass += ' hot-products-badge--in-stock';
@@ -104,7 +105,7 @@ function createProductCard(product, config) {
   // Generate FPS tooltip HTML from gamePriority
   let fpsTooltipHTML = '';
   if (product.gamePriority && product.gamePriority.length > 0) {
-    const fpsRows = product.gamePriority.map(detail => {
+    const fpsRows = product.gamePriority.map((detail) => {
       const game = detail.gameTitle || 'Unknown Game';
       const fps1080 = detail.fullHdFps || '--';
       const fps1440 = detail.quadHdFps || '--';
@@ -199,7 +200,7 @@ function createProductCard(product, config) {
       ` : ''}
 
       <ul class="hot-products-specs">
-        ${(product.keySpec || []).map(spec => `<li>${spec.name || spec}</li>`).join('')}
+        ${(product.keySpec || []).map((spec) => `<li>${spec.name || spec}</li>`).join('')}
       </ul>
 
       <div class="hot-products-estore">
@@ -270,15 +271,17 @@ const DEFAULT_CONFIG = {
   viewAllText: 'View all',
   viewAllLink: '#',
   openLinkInNewTab: false,
-  productPreviewModalPath: '/content/asus-cto/language-master/en/modals/product-preview'
+  productPreviewModalPath: '/content/asus-cto/language-master/en/modals/product-preview',
 };
 
+/* eslint-disable consistent-return */
 async function initializeSwiper(section, config) {
   const swiperContainer = section.querySelector('.hot-products-swiper');
   const prevButton = section.querySelector('.hot-products-button-prev');
   const nextButton = section.querySelector('.hot-products-button-next');
 
   if (!swiperContainer) {
+    // eslint-disable-next-line no-console
     console.warn('Hot Products: Missing swiper container');
     return;
   }
@@ -331,6 +334,7 @@ async function initializeSwiper(section, config) {
 
   return swiper;
 }
+/* eslint-enable consistent-return */
 
 // Handle quick view button click
 async function handleQuickView(product, config) {
@@ -456,6 +460,7 @@ export default async function decorate(block) {
         wrapper.innerHTML = '<div class="hot-products-error">No products available</div>';
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error loading hot products:', error);
       wrapper.innerHTML = '<div class="hot-products-error">Failed to load products. Please try again later.</div>';
     }

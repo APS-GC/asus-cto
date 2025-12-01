@@ -3,7 +3,12 @@
  * Supports authorable hero banner slides with video/image media, CTA buttons, and autoplay settings
  */
 
-import { moveInstrumentation, isUniversalEditor, createOptimizedPicture, loadSwiper } from '../../scripts/scripts.js';
+import {
+  moveInstrumentation,
+  isUniversalEditor,
+  createOptimizedPicture,
+  loadSwiper,
+} from '../../scripts/scripts.js';
 
 // Configuration defaults
 const DEFAULT_IMAGE_AUTOPLAY = 3000;
@@ -17,12 +22,12 @@ function parseHeroBannerConfig(block) {
   const config = {
     imageAutoplayDuration: DEFAULT_IMAGE_AUTOPLAY,
     videoAutoplayDuration: DEFAULT_VIDEO_AUTOPLAY,
-    slides: []
+    slides: [],
   };
 
   // Parse rows from the block
   const rows = [...block.children];
-  
+
   if (rows.length === 0) return config;
 
   let slideStartIndex = 0;
@@ -31,19 +36,19 @@ function parseHeroBannerConfig(block) {
   if (rows.length >= 2) {
     const firstRowCells = [...rows[0].children];
     const secondRowCells = [...rows[1].children];
-    
+
     // Check if these are autoplay duration rows (single values)
     if (firstRowCells.length === 1 && secondRowCells.length === 1) {
       const imageAutoplayValue = parseInt(firstRowCells[0].textContent.trim(), 10);
       const videoAutoplayValue = parseInt(secondRowCells[0].textContent.trim(), 10);
-      
-      if (!isNaN(imageAutoplayValue)) {
+
+      if (!Number.isNaN(imageAutoplayValue)) {
         config.imageAutoplayDuration = imageAutoplayValue * 1000;
       }
-      if (!isNaN(videoAutoplayValue)) {
+      if (!Number.isNaN(videoAutoplayValue)) {
         config.videoAutoplayDuration = videoAutoplayValue * 1000;
       }
-      
+
       slideStartIndex = 2; // Skip first two rows
     }
   }
@@ -51,10 +56,10 @@ function parseHeroBannerConfig(block) {
   // Parse slide data from remaining rows
   rows.slice(slideStartIndex).forEach((row, index) => {
     const cells = [...row.children];
-    
+
     // Debug logging
-    console.log(`Processing row ${index + slideStartIndex}:`, cells.length, 'cells');
-    
+    // console.log(`Processing row ${index + slideStartIndex}:`, cells.length, 'cells');
+
     if (cells.length >= 7) {
       // Extract media information
       let media = '';
@@ -67,7 +72,7 @@ function parseHeroBannerConfig(block) {
         const picture = mediaCell.querySelector('picture');
         const link = mediaCell.querySelector('a');
         const textContent = mediaCell.textContent?.trim();
-        
+
         if (picture) {
           // Extract image source from picture element
           const img = picture.querySelector('img');
@@ -108,23 +113,22 @@ function parseHeroBannerConfig(block) {
         ctaLocation: cells[4]?.textContent?.trim() || 'center-center',
         ctaLink: ctaLink,
         openNewTab: cells[6]?.textContent?.toLowerCase().includes('true') || false,
-        isVideo: isVideo,
-        originalRow: row // Store reference to original row for instrumentation
+        isVideo,
+        originalRow: row, // Store reference to original row for instrumentation
       };
-      
+
       // Debug logging
-      console.log(`Created slide ${index}:`, slide);
-      
+      // console.log(`Created slide ${index}:`, slide);
+
       config.slides.push(slide);
     } else {
-      console.warn(`Row ${index + slideStartIndex} has insufficient cells (${cells.length}), skipping`);
+      // console.warn(`Row ${index + slideStartIndex} has insufficient cells (${cells.length}), skipping`);
     }
   });
 
-  console.log('Final config:', config);
+  // console.log('Final config:', config);
   return config;
 }
-
 
 /**
  * Generate hero banner element for a slide
@@ -142,25 +146,25 @@ function generateHeroBannerHTML(slide, config, index = 0) {
   if (slide.isVideo) {
     const videoWrapper = document.createElement('div');
     videoWrapper.className = 'hero-video-wrapper';
-    
+
     const video = document.createElement('video');
     video.className = 'hero-video';
     video.loop = true;
     video.muted = true;
     video.setAttribute('playsinline', '');
     video.setAttribute('data-autoplay-duration', autoplayDuration);
-    
+
     const source = document.createElement('source');
     source.src = pubUrl + slide.media;
     source.type = 'video/mp4';
-    
+
     video.appendChild(source);
     videoWrapper.appendChild(video);
     heroBanner.appendChild(videoWrapper);
   } else {
     const imageWrapper = document.createElement('div');
     imageWrapper.className = 'hero-image-wrapper';
-    
+
     // Use createOptimizedPicture for responsive images + WebP optimization
     const optimizedPicture = createOptimizedPicture(
       slide.media,
@@ -169,16 +173,16 @@ function generateHeroBannerHTML(slide, config, index = 0) {
       [
         { media: '(min-width: 1200px)', width: '750' },
         { media: '(min-width: 768px)', width: '1024' },
-        { width: '640' }
-      ],
-      isFirstSlide ? 'high' : null // fetchpriority='high' for first slide (LCP boost!)
+        { width: '640' },
+      ], // eslint-disable-line comma-dangle
+      isFirstSlide ? 'high' : null, // fetchpriority='high' for first slide (LCP boost!)
     );
-    
+
     const img = optimizedPicture.querySelector('img');
     if (img) {
       img.className = 'hero-image';
     }
-    
+
     imageWrapper.appendChild(optimizedPicture);
     heroBanner.appendChild(imageWrapper);
   }
@@ -205,12 +209,12 @@ function generateHeroBannerHTML(slide, config, index = 0) {
     ctaButton.className = 'cta-button btn';
     ctaButton.textContent = slide.ctaText;
     ctaButton.setAttribute('aria-label', `${slide.ctaText} ${slide.subtitle}`);
-    
+
     if (slide.openNewTab) {
       ctaButton.target = '_blank';
       ctaButton.rel = 'noopener noreferrer';
     }
-    
+
     heroContent.appendChild(ctaButton);
   }
 
@@ -238,12 +242,12 @@ const manageVideoPlayback = (video, action) => {
       promise = video.pause();
     }
   } else {
-    console.error('Invalid video action:', action);
+    // console.error('Invalid video action:', action);
     return;
   }
 
-  if (promise !== undefined) {
-    promise.catch((e) => console.error(`Video ${action} failed:`, e));
+  if (promise !== undefined) { // eslint-disable-next-line no-unused-vars
+    promise.catch((e) => { /* console.error(`Video ${action} failed:`, e) */ }); // eslint-disable-line no-unused-vars
   }
 };
 
@@ -252,7 +256,7 @@ const manageVideoPlayback = (video, action) => {
  */
 const toggleSliderVideo = (videoPlayPauseBtn) => {
   const activeSlide = document.querySelector('.swiper-slide-active');
-  let activeSlideProdName = document.querySelector('.swiper-slide-active .product-name')?.textContent;
+  const activeSlideProdName = document.querySelector('.swiper-slide-active .product-name')?.textContent;
 
   const activeVideo = activeSlide?.querySelector('video');
   const mediaControls = document.querySelector('.cmp-hero-banner__media-controls');
@@ -260,13 +264,13 @@ const toggleSliderVideo = (videoPlayPauseBtn) => {
   if (activeSlide && activeVideo) {
     if (activeVideo.paused) {
       manageVideoPlayback(activeVideo, 'play');
-      videoPlayPauseBtn?.setAttribute('aria-label', 'Pause ' + activeSlideProdName);
-      videoPlayPauseBtn?.setAttribute('title', 'Pause ' + activeSlideProdName);
+      videoPlayPauseBtn?.setAttribute('aria-label', `Pause ${activeSlideProdName}`);
+      videoPlayPauseBtn?.setAttribute('title', `Pause ${activeSlideProdName}`);
       mediaControls?.classList.remove('paused');
     } else {
       manageVideoPlayback(activeVideo, 'pause');
-      videoPlayPauseBtn?.setAttribute('aria-label', 'Play ' + activeSlideProdName);
-      videoPlayPauseBtn?.setAttribute('title', 'Play ' + activeSlideProdName);
+      videoPlayPauseBtn?.setAttribute('aria-label', `Play ${activeSlideProdName}`);
+      videoPlayPauseBtn?.setAttribute('title', `Play ${activeSlideProdName}`);
       mediaControls?.classList.add('paused');
     }
   }
@@ -277,8 +281,8 @@ const toggleSliderVideo = (videoPlayPauseBtn) => {
  */
 async function initializeSwiper(heroBannerElement, config) {
   const isUE = isUniversalEditor();
-  
-  //Force apply UE authoring class and attributes for CSS targeting
+
+  // Force apply UE authoring class and attributes for CSS targeting
   if (isUE) {
     const heroBanner = heroBannerElement.querySelector('.cmp-hero-banner');
     if (heroBanner) {
@@ -287,15 +291,15 @@ async function initializeSwiper(heroBannerElement, config) {
       document.body.setAttribute('data-aue-behavior', 'true');
     }
   }
-  
+
   // Load Swiper dynamically
   const setupSwiper = async () => {
     try {
       // Dynamically load Swiper library
       await loadSwiper();
-      
+
       const swiperConfig = {
-        loop: true, // Disable loop in UE authoring
+        loop: true, // Disable loop in UE authoring,
         autoplay: {
           delay: config.imageAutoplayDuration,
           disableOnInteraction: false,
@@ -315,12 +319,12 @@ async function initializeSwiper(heroBannerElement, config) {
           prevEl: '.cmp-hero-banner__action--previous',
         },
         on: {
-          slideChange: function() {
+          slideChange() {
             // Update autoplay delay based on current slide media type
             const activeSlide = this.slides[this.activeIndex];
             const video = activeSlide?.querySelector('video');
             const newDelay = video ? config.videoAutoplayDuration : config.imageAutoplayDuration;
-            
+
             // Remove paused class when switching slides
             const mediaControls = document.querySelector('.cmp-hero-banner__media-controls');
             mediaControls?.classList.remove('paused');
@@ -338,14 +342,14 @@ async function initializeSwiper(heroBannerElement, config) {
               this.autoplay.start();
             }
           },
-          slideChangeTransitionEnd: function() {
+          slideChangeTransitionEnd() {
             const activeSlide = this.slides[this.activeIndex];
             const video = activeSlide?.querySelector('video');
-            
+
             if (video) {
               manageVideoPlayback(video, 'play');
             }
-            
+
             // Pause videos in other slides
             this.slides.forEach((slide, index) => {
               if (index !== this.activeIndex) {
@@ -362,7 +366,7 @@ async function initializeSwiper(heroBannerElement, config) {
               activeBullet.style.setProperty('--slide-progress', 1 - progress);
             }
           },
-        }
+        },
       };
 
       const swiper = new window.Swiper(heroBannerElement.querySelector('.swiper'), swiperConfig);
@@ -461,7 +465,7 @@ export default function decorate(block) {
   
   const swiper = document.createElement('div');
   swiper.className = 'swiper swiper-initialized swiper-horizontal swiper-watch-progress swiper-backface-hidden is-autoplay-enabled';
-  
+
   const swiperWrapper = document.createElement('div');
   swiperWrapper.className = 'swiper-wrapper';
   swiperWrapper.setAttribute('aria-live', 'off');

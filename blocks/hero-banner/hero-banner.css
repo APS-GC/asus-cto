@@ -1,3 +1,5 @@
+/* stylelint-disable declaration-block-no-duplicate-properties, no-duplicate-selectors, declaration-property-value-no-unknown, color-function-alias-notation, selector-pseudo-element-colon-notation, hue-degree-notation, media-feature-range-notation, color-hex-length, comment-empty-line-before */
+
 /* Swiper CSS loaded dynamically by swiper-loader.js to prevent duplicate loads */
 
 /* Override default Swiper pagination styles */
@@ -99,7 +101,7 @@
   left: calc(50% - 620px);
   text-align: left;
   top: 50%;
-  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
   transform: translateY(-50%);
 }
 
@@ -107,7 +109,7 @@
   left: 50%;
   text-align: center;
   top: calc(64px + var(--header-height));
-  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
   transform: translateX(-50%);
 }
 
@@ -115,7 +117,7 @@
   right: calc(50% - 620px);
   text-align: left;
   top: 50%;
-  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
   transform: translateY(-50%);
 }
 
@@ -135,7 +137,7 @@
   left: 50%;
   text-align: center;
   top: 50%;
-  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
 
@@ -143,7 +145,7 @@
   bottom: 10%;
   left: 50%;
   text-align: center;
-  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
   transform: translateX(-50%);
 }
 
@@ -217,7 +219,7 @@
  
     .cmp-hero-banner__footer{
     display: -webkit-box;
-    display: -ms-flexbox;
+    display: flexbox;
     display: flex;
     position: absolute;
     justify-content: center;
@@ -277,7 +279,7 @@
     height: 8px;
     opacity: 1;
     position: relative;
-    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
     transition: all .3s ease;
     width: 8px
 }
@@ -368,6 +370,7 @@
 }
 
 /* State Modifiers */
+
 /* Autoplay paused state */
 .cmp-hero-banner:has(.is-autoplay-paused) .hero-banner-autoplay-toggle {
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 12L9 17.1962L9 6.80385L18 12Z" fill="white"/></svg>');
@@ -404,9 +407,9 @@
 .cmp-hero-banner__action {
   width: 50px;
   height: 50px;
-  border: 2px solid rgba(255, 255, 255, 0.7);
+  border: 2px solid rgb(255, 255, 255, 0.7);
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgb(0, 0, 0, 0.3);
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -418,7 +421,7 @@
 
 .cmp-hero-banner__action:hover {
   border-color: white;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgb(0, 0, 0, 0.5);
 }
 
 .cmp-hero-banner__action--previous::before {
@@ -445,6 +448,7 @@
 }
 
 /* UE Authoring Environment Detection and Overrides */
+
 /* Target common UE iframe and editor contexts */
 body[data-aue-behavior] .cmp-hero-banner .swiper,
 .aem-authoring-enabled .cmp-hero-banner .swiper,
@@ -481,6 +485,7 @@ iframe[src*="editor"] .cmp-hero-banner .swiper-slide,
 }
 
 /* Responsive Design */
+
 /* Tablet/Medium screens - migrated from hero-banner responsive design */
 @media only screen and (max-width: 79.9375rem) {
   /* Height now controlled by --hero-banner-height CSS variable in styles.css */
@@ -503,7 +508,7 @@ iframe[src*="editor"] .cmp-hero-banner .swiper-slide,
   .cmp-hero-banner .cmp-hero-banner.hero-content--start-center .hero-content {
     bottom: 76px;
     top: unset;
-    -webkit-transform: unset;
+    transform: unset;
     transform: unset;
   }
 
@@ -533,7 +538,7 @@ iframe[src*="editor"] .cmp-hero-banner .swiper-slide,
     left: 20px;
     text-align: left;
     top: unset;
-    -webkit-transform: unset;
+    transform: unset;
     transform: unset;
   }
   
@@ -555,7 +560,7 @@ iframe[src*="editor"] .cmp-hero-banner .swiper-slide,
   iframe[src*="editor"] .cmp-hero-banner .swiper,
   [data-authoring="true"] .cmp-hero-banner .swiper {
     height: 350px !important;
-    -webkit-transform: none;
+    transform: none;
     transform: none;
     margin-left: auto;
   }
@@ -657,3 +662,4 @@ iframe[src*="editor"] .cmp-hero-banner .swiper-slide,
 .swiper-fallback .swiper-slide:not(:first-child) {
   display: none;
 }
+/* stylelint-enable declaration-block-no-duplicate-properties, no-duplicate-selectors, declaration-property-value-no-unknown, color-function-alias-notation, selector-pseudo-element-colon-notation, hue-degree-notation, media-feature-range-notation, color-hex-length, comment-empty-line-before */

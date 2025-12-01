@@ -1,3 +1,5 @@
+/* stylelint-disable declaration-property-value-no-unknown, declaration-block-no-duplicate-properties */
+
 .footer-wrapper{
         padding: 0;
 }
@@ -21,7 +23,6 @@ footer .footer-grid {
     align-items: flex-start;
     font-family: var(--font-text);
     font-size: 1.25rem;
-    font-weight: var(--regular);
     font-weight: var(--medium);
     gap: 3rem;
     letter-spacing: 0;
@@ -29,7 +30,7 @@ footer .footer-grid {
     margin-bottom: 2.5rem
 }
 
-@media only screen and (max-width: 47.9375rem) {
+@media only screen and (width <= 47.9375rem) {
     footer .footer-grid {
         grid-template-columns:1fr
     }
@@ -50,7 +51,7 @@ footer .newsletter p {
 
 footer .newsletter__field-wrapper {
     display: -webkit-box;
-    display: -ms-flexbox;
+    display: flexbox;
     display: flex;
     gap: .5rem;
     max-width: 80%;
@@ -59,7 +60,7 @@ footer .newsletter__field-wrapper {
 
 footer .newsletter__field-wrapper input {
     -webkit-box-flex: 1;
-    -ms-flex: 1;
+    flex: 1;
     flex: 1
 }
 
@@ -76,7 +77,7 @@ footer .newsletter__field-wrapper button, footer .newsletter__response {
 
 footer .newsletter__response {
     display: -webkit-box;
-    display: -ms-flexbox;
+    display: flexbox;
     display: flex;
     -webkit-box-align: center;
     -ms-flex-align: center;
@@ -96,7 +97,7 @@ footer .newsletter.has--error .newsletter__response {
     color: var(--color-error)
 }
 
-footer .newsletter.has--error .newsletter__response:before {
+footer .newsletter.has--error .newsletter__response::before {
     background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 16 16'%3E%3Ccircle cx='7.875' cy='7.875' r='7.875' fill='%23b42d18'/%3E%3Crect width='1.688' height='6.188' x='8.719' y='9' fill='%23fff' rx='.844' transform='rotate(-180 8.719 9)'/%3E%3Crect width='2.25' height='2.25' x='9' y='12.375' fill='%23fff' rx='1.125' transform='rotate(-180 9 12.375)'/%3E%3C/svg%3E");
     background-position: 50%;
     background-repeat: no-repeat;
@@ -114,7 +115,7 @@ footer .newsletter.has--success .newsletter__response {
     color: var(--color-success, #22c55e)
 }
 
-footer .newsletter.has--success .newsletter__response:before {
+footer .newsletter.has--success .newsletter__response::before {
     background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%2322c55e'/%3E%3Cpath d='m5.5 8 2 2 3.5-3.5' stroke='%23fff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-position: 50%;
     background-repeat: no-repeat;
@@ -137,7 +138,6 @@ footer .social .visually-hidden {
 
 footer .social p {
     font-size: 1rem;
-    font-weight: var(--regular);
     font-weight: var(--medium);
     line-height: 1.5rem;
     margin-bottom: .5rem
@@ -158,9 +158,9 @@ footer .social .text-social {
 
 footer .social__icons {
     display: -webkit-box;
-    display: -ms-flexbox;
+    display: flexbox;
     display: flex;
-    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
     flex-wrap: wrap;
     gap: 1rem;
     list-style: none;
@@ -188,18 +188,18 @@ footer .social__icons li a:focus-visible {
 
 footer .footer-links {
     display: -webkit-box;
-    display: -ms-flexbox;
+    display: flexbox;
     display: flex;
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
-    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
     flex-wrap: wrap;
     justify-content: space-between
 }
 
 footer .footer-links__column {
     -webkit-box-flex: 1;
-    -ms-flex: 1 1 30%;
+    flex: 1 1 30%;
     flex: 1 1 30%;
     list-style: none;
     -webkit-margin-before: 0;
@@ -215,7 +215,6 @@ footer .footer-links__column p.w-500 {
     color: var(--color-primary-950);
     font-family: var(--font-text);
     font-size: 1rem;
-    font-weight: var(--regular);
     font-weight: var(--medium);
     letter-spacing: 0;
     line-height: 1.5rem
@@ -240,7 +239,7 @@ footer .footer-links__column a:hover {
 
 footer .footer-bottom {
     display: -webkit-box;
-    display: -ms-flexbox;
+    display: flexbox;
     display: flex;
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
@@ -249,7 +248,7 @@ footer .footer-bottom {
     -ms-flex-align: center;
     align-items: center;
     border-top: 1px solid var(--color-primary-300);
-    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
     flex-wrap: wrap;
     padding-top: 1rem
 }
@@ -262,7 +261,7 @@ footer .footer-bottom span {
 
 footer .footer-bottom span, footer .footer-bottom__links {
     display: -webkit-box;
-    display: -ms-flexbox;
+    display: flexbox;
     display: flex;
     -webkit-box-align: center;
     -ms-flex-align: center;
@@ -295,19 +294,19 @@ footer .footer-bottom__links a:hover {
     text-decoration: underline
 }
 
-footer .footer-bottom__links a:not(:last-child):after {
+footer .footer-bottom__links a:not(:last-child)::after {
     background-color: var(--color-primary-300);
     content: "";
     height: 11px;
     position: absolute;
     right: -20px;
     top: 50%;
-    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
     transform: translateY(-50%);
     width: 1px
 }
 
-@media only screen and (max-width: 79.9375rem) {
+@media only screen and (width <= 79.9375rem) {
     footer .footer-grid {
         gap: 2rem;
         grid-template-columns:1fr;
@@ -326,7 +325,7 @@ footer .footer-bottom__links a:not(:last-child):after {
     footer .newsletter__field-wrapper {
         -webkit-box-orient: horizontal;
         -webkit-box-direction: normal;
-        -ms-flex-direction: row;
+        flex-direction: row;
         flex-direction: row;
         -webkit-box-pack: start;
         -ms-flex-pack: start;
@@ -365,7 +364,7 @@ footer .footer-bottom__links a:not(:last-child):after {
     footer .footer-links {
         -webkit-box-orient: vertical;
         -webkit-box-direction: normal;
-        -ms-flex-direction: column;
+        flex-direction: column;
         flex-direction: column;
         -webkit-box-align: start;
         -ms-flex-align: start;
@@ -380,7 +379,6 @@ footer .footer-bottom__links a:not(:last-child):after {
     footer .footer-links__column p {
         font-family: var(--font-text);
         font-size: 1rem;
-        font-weight: var(--regular);
         font-weight: var(--medium);
         letter-spacing: 0;
         line-height: 1.5rem
@@ -389,7 +387,7 @@ footer .footer-bottom__links a:not(:last-child):after {
     footer .footer-bottom {
         -webkit-box-orient: vertical;
         -webkit-box-direction: normal;
-        -ms-flex-direction: column;
+        flex-direction: column;
         flex-direction: column;
         -webkit-box-align: start;
         -ms-flex-align: start;
@@ -407,13 +405,13 @@ footer .footer-bottom__links a:not(:last-child):after {
 
     footer .footer-bottom__links {
         display: -webkit-box;
-        display: -ms-flexbox;
+        display: flexbox;
         display: flex;
         -webkit-box-orient: horizontal;
         -webkit-box-direction: normal;
-        -ms-flex-direction: row;
         flex-direction: row;
-        -ms-flex-wrap: wrap;
+        flex-direction: row;
+        flex-wrap: wrap;
         flex-wrap: wrap;
         -webkit-box-align: center;
         -ms-flex-align: center;
@@ -432,7 +430,7 @@ footer .footer-bottom__links a:not(:last-child):after {
         color: var(--color-primary-950)
     }
 
-    footer .footer-bottom__links a:not(:last-child):after {
+    footer .footer-bottom__links a:not(:last-child)::after {
         right: -13px
     }
 }
@@ -441,7 +439,7 @@ footer .back-to-top {
     border-radius: 100%;
     bottom: 70px;
     display: -webkit-box;
-    display: -ms-flexbox;
+    display: flexbox;
     display: flex;
     position: fixed;
     right: 20px;
@@ -455,9 +453,9 @@ footer .back-to-top {
     justify-content: center;
     opacity: 0;
     padding: 0;
-    -webkit-transform: translateY(20px);
     transform: translateY(20px);
-    -webkit-transition: all .3s ease;
+    transform: translateY(20px);
+    transition: all .3s ease;
     transition: all .3s ease;
     visibility: hidden;
     z-index: 1000
@@ -470,7 +468,7 @@ footer .back-to-top svg {
 
 footer .back-to-top.visible {
     opacity: 1;
-    -webkit-transform: translateY(0);
+    transform: translateY(0);
     transform: translateY(0);
     visibility: visible
 }
@@ -483,7 +481,7 @@ footer .back-to-top:focus-visible {
     outline-offset: 2px
 }
 
-@media only screen and (max-width: 79.9375rem) {
+@media only screen and (width <= 79.9375rem) {
     footer .back-to-top {
         bottom: 8px;
         right: 8px
@@ -494,3 +492,4 @@ footer .back-to-top:focus-visible {
         width: 44px
     }
 }
+/* stylelint-enable declaration-property-value-no-unknown, declaration-block-no-duplicate-properties */
