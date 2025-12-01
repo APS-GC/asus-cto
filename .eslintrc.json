@@ -74,7 +74,13 @@
     "prefer-template": "off",
     "indent": "off",
     "space-infix-ops": "off",
-    "import/newline-after-import": "off"
+    "import/newline-after-import": "off",
+    "import/no-import-module-exports": "off",
+    "no-unused-vars": "off",
+    "no-return-await": "off",
+    "prefer-arrow-callback": "off",
+    "func-names": "off",
+    "space-before-function-paren": "off"
   },
   "ignorePatterns": [
     "node_modules/",
