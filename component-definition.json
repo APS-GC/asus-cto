@@ -184,12 +184,15 @@
                 "template": {
                   "name": "Help Me Choose",
                   "model": "help-me-choose",
-                  "title": "Select The Game You Play",
-                  "description": "We will recommend a plan that suits you most!",
-                  "yourBudgetLabel": "Your Budget",
-                  "HelpMeChooseButtonLabel": "Help me choose",
-                  "ResetButtonLabel": "Reset",
-                  "ConfirmButtonLabel": "Confirm"
+                  "title": "Help me choose",
+                  "subtitle": "Tell us your preferred games, budget and chipset, and we will recommend desktops that best suit your needs.",
+                  "budgetText": "Your budget",
+                  "helpmeChooseCTA": "Help me choose",
+                  "resetCTAText": "Reset",
+                  "confirmCTAText": "Confirm",
+                  "minimumBudget": 500,
+                  "maximumBudget": 5000,
+                  "helpMeChooseCTALinkTo": "/content/asus-cto/language-master/en/products/desktops/product-matches"
                 }
               }
             }
@@ -206,10 +209,11 @@
                   "name": "Product Compare",
                   "model": "product-compare",
                   "title": "Product Comparison",
-                  "compareButtonLabel": "View Comparison",
+                  "compareButtonLabel": "VIEW COMPARISON",
                   "clearAllButtonLabel": "Clear All",
-                  "limitErrorMessage": "You have reached the limit of 4 products, please remove one product before adding a new one for comparison.",
-                  "minimumErrorMessage": "Please select at least 2 products to compare."
+                  "limitErrorMessage": "You have reached the limit of 4 products, please remove before adding a new one for comparison.",
+                  "minimumErrorMessage": "Please select at least 2 products to compare.",
+                  "addAnotherProductText": "Add another product from the list"
                 }
               }
             }
@@ -323,30 +327,30 @@
       },
         {
           "title": "Hero Banner",
-          "id": "carousel",
+          "id": "hero-banner",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "Carousel",
-                  "filter": "carousel",
-                  "model": "carousel"
+                  "name": "Hero Banner",
+                  "filter": "hero-banner",
+                  "model": "hero-banner"
                 }
               }
             }
           }
         },
         {
-          "title": "Carousel Slide",
-          "id": "carousel-slide",
+          "title": "Hero Banner Slide",
+          "id": "hero-banner-slide",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
-                  "name": "Carousel Slide",
-                  "model": "carousel-slide"
+                  "name": "Hero Banner Slide",
+                  "model": "hero-banner-slide"
                 }
               }
             }

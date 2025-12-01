@@ -27,19 +27,31 @@ function initializeTooltips(container) {
       const triggerRect = trigger.getBoundingClientRect();
       const tooltipRect = tooltip.getBoundingClientRect();
 
-      let top = triggerRect.bottom + 10;
-      let left = triggerRect.left;
+      let top = triggerRect.top - tooltipRect.height - 10;
+      let left = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2);
+      let position = 'top';
 
-      if (left + 260 > window.innerWidth) {
-        left = window.innerWidth - 270;
+      if (left + tooltipRect.width > window.innerWidth) {
+        left = window.innerWidth - tooltipRect.width - 10;
       }
 
-      if (top + tooltipRect.height > window.innerHeight) {
-        top = triggerRect.top - tooltipRect.height - 10;
+      if (left < 10) {
+        left = 10;
       }
 
+      if (top < 0) {
+        top = triggerRect.bottom + 10;
+        position = 'bottom';
+      }
+
+      // Calculate arrow position relative to trigger center
+      const triggerCenter = triggerRect.left + (triggerRect.width / 2);
+      const arrowLeft = triggerCenter - left;
+
+      tooltip.setAttribute('data-position', position);
       tooltip.style.top = `${top}px`;
       tooltip.style.left = `${left}px`;
+      tooltip.style.setProperty('--arrow-left', `${arrowLeft}px`);
 
       setTimeout(() => {
         tooltip.style.opacity = '1';
@@ -101,8 +113,8 @@ function createProductCard(product, config) {
       return `
         <tr>
           <td>${game}</td>
-          <td>${fps1080 !== '--' ? `${fps1080} FPS` : '--'}</td>
-          <td>${fps1440 !== '--' ? `${fps1440} FPS` : '--'}</td>
+          <td>${fps1080 !== '--' ? fps1080 : '--'}</td>
+          <td>${fps1440 !== '--' ? fps1440 : '--'}</td>
         </tr>
       `;
     }).join('');
@@ -278,8 +290,8 @@ async function initializeSwiper(section, config) {
   await loadSwiper();
 
   const swiper = new window.Swiper(swiperContainer, {
-    slidesPerView: 1.15,
-    spaceBetween: 30,
+    slidesPerView: 1,
+    spaceBetween: 8,
     centeredSlides: true,
     centeredSlidesBounds: true,
     simulateTouch: true,
@@ -294,14 +306,17 @@ async function initializeSwiper(section, config) {
     breakpoints: {
       768: {
         slidesPerView: 2.5,
-        spaceBetween: 24,
         slidesPerGroup: 1,
+        centeredSlides: false,
+        centeredSlidesBounds: false,
       },
       1024: {
         slidesPerView: config.productsToShow,
-        spaceBetween: 32,
+        spaceBetween: 20,
         allowTouchMove: false,
         simulateTouch: false,
+        centeredSlides: false,
+        centeredSlidesBounds: false,
       },
     },
     a11y: {
@@ -405,7 +420,7 @@ export default async function decorate(block) {
 
         const productsToDisplay = products.slice(0, config.productsToShow);
 
-        productsToDisplay.forEach((product) => {
+        productsToDisplay.forEach(product => {
           if (product.hoverImage) {
             const link = document.createElement('link');
             link.rel = 'preload';
@@ -415,7 +430,7 @@ export default async function decorate(block) {
           }
         });
 
-        productsToDisplay.forEach((product) => {
+        productsToDisplay.forEach(product => {
           const card = createProductCard(product, config);
           wrapper.appendChild(card);
 
@@ -438,7 +453,6 @@ export default async function decorate(block) {
           try {
             await loadBazaarvoiceScript();
           } catch (error) {
-            // eslint-disable-next-line no-console
             console.error('Hot Products: Failed to load Bazaarvoice:', error);
           }
         }, { once: true });

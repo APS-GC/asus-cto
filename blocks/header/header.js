@@ -829,19 +829,22 @@ function initializeHeader(block) {
   const mobileAccountToggle = block.querySelector('.mobile-account-toggle');
   const mobileAccountSubmenu = block.querySelector('.mobile-account-submenu');
   const backButton = block.querySelector('.back-button');
-
+  const mobileOverlay = block.querySelector('.mobile-menu-overlay');
+  
   if (mobileAccountToggle && mobileAccountSubmenu) {
     mobileAccountToggle.addEventListener('click', () => {
       const isExpanded = mobileAccountToggle.getAttribute('aria-expanded') === 'true';
       mobileAccountToggle.setAttribute('aria-expanded', !isExpanded);
-      mobileAccountSubmenu.classList.toggle('show', !isExpanded);
+      mobileAccountSubmenu.classList.toggle('active', !isExpanded);
+      mobileOverlay.classList.toggle('submenu-active', !isExpanded);
     });
   }
 
   if (backButton) {
     backButton.addEventListener('click', () => {
       mobileAccountToggle.setAttribute('aria-expanded', 'false');
-      mobileAccountSubmenu.classList.remove('show');
+      mobileAccountSubmenu.classList.remove('active');
+       mobileOverlay.classList.remove('submenu-active');
     });
   }
 

@@ -92,12 +92,13 @@ async function renderProductCompare(block) {
             </div>
          </div>
          <div class="cmp-product-compare__actions">
-            <button class="cmp-button cmp-button--primary" data-action="compare" data-compare-link="./product-comparison.html" aria-label="Compare the selected products">
+            <button class="cmp-button cmp-button--primary" data-action="compare" data-compare-link="${escapeHtml(AuthoredData[6] || '')}" aria-label="Compare the selected products">
             ${escapeHtml(AuthoredData[1] || '')}
             </button>
             <button class="cmp-button cmp-button--tertiary btn btn-link" data-action="clear-all">
             ${escapeHtml(AuthoredData[2] || '')}
             </button>
+            <input type="hidden" data-add-another-text value="${escapeHtml(AuthoredData[5] || '')}" />
          </div>
       </div>
    </div>
@@ -160,6 +161,7 @@ class ProductCompare {
       errorContainer: this.container.querySelector('.cmp-product-compare__error-container'),
       compareBtn: this.container.querySelector("[data-action='compare']"),
       toggleBtn: this.container.querySelector('.cmp-product-compare__toggle'),
+      addAnotherProductText: this.container.querySelector('[data-add-another-text]'),
     };
 
     // Debounced render for smoother updates
@@ -343,7 +345,7 @@ class ProductCompare {
 
     const slot = document.createElement('div');
     slot.className = `cmp-product-compare__slot ${product ? 'is-filled' : 'is-empty'}`;
-    slot.ariaLabel = `Add up to 4 products to compare`;
+    slot.ariaLabel = `${this.dom.addAnotherProductText.value || ''}`;
     slot.role = 'button';
     slot.tabIndex = 0;
     slide.appendChild(slot);
@@ -367,7 +369,7 @@ class ProductCompare {
       slot.innerHTML = `
         <div class="cmp-product-compare__placeholder">
           <span class="cmp-product-compare__add-icon" aria-hidden="true"></span>
-          <span>Add up to 4 products to compare</span>
+          <span>${this.dom.addAnotherProductText.value || ''}</span>
         </div>
       `;
     }

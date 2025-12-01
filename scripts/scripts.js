@@ -169,6 +169,48 @@ export function isUniversalEditor() {
 }
 
 /**
+ * Loads header fragment from the working fragment URL
+ * @returns {Promise<string|null>} Fragment HTML content or null if not found
+ */
+export async function loadHeaderFragment() {
+  //TODO: change this to relative when we base url is changed.
+  const fragmentUrl = '/en/fragments/head.plain.html';
+  try {
+    const response = await fetch(fragmentUrl);
+    if (response.ok) {
+      const html = await response.text();
+      return processFragmentContent(html);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Failed to load header fragment:', error);
+  }
+
+  return null;
+}
+
+/**
+ * Loads footer fragment from the working fragment URL
+ * @returns {Promise<string|null>} Fragment HTML content or null if not found
+ */
+export async function loadFooterFragment() {
+  //TODO: change this to relative when we base url is changed.
+  const fragmentUrl = '/en/fragments/footer.plain.html';
+  try {
+    const response = await fetch(fragmentUrl);
+    if (response.ok) {
+      const html = await response.text();
+      return processFooterFragmentContent(html);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Failed to load footer fragment:', error);
+  }
+
+  return null;
+}
+
+/**
  * Processes fragment content and extracts header block structure
  * @param {string} html Fragment HTML content
  * @returns {string|null} Processed header block content
@@ -358,9 +400,9 @@ async function loadEager(doc) {
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
-    const hasCarousel = main.querySelector('.carousel, .hot-products, .product-preview, .help-me-choose,.our-advantages');
-    if (hasCarousel) { // eslint-disable-next-line no-console
-      loadSwiper().catch((err) => console.error('Failed to preload Swiper:', err));
+    const hasCarousel = main.querySelector('.hero-banner, .hot-products, .product-preview, .help-me-choose,.our-advantages');
+    if (hasCarousel) {
+      loadSwiper().catch(err => console.error('Failed to preload Swiper:', err));
     }
 
     document.body.classList.add('appear');

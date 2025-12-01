@@ -1,66 +1,155 @@
-/* eslint-disable max-classes-per-file */
-
 import { loadCSS, loadScript } from '../../scripts/aem.js';
-import { loadSwiper } from '../../scripts/scripts.js';
+import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
 
-// Helper to load noUiSlider only once
-let noUiSliderPromise = null;
 /**
- * Loads the noUiSlider library, ensuring it's only loaded once.
+ * Decorates the help-me-choose block, initializing the carousel and form.
+ * @param {Element} block - The block element to decorate.
+ * @returns {Promise<void>}
  */
-function loadNoUiSlider() {
-  if (!noUiSliderPromise) {
-    noUiSliderPromise = loadScript(
-      'https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js',
-    ).catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error('Failed to load noUiSlider:', err);
-      throw err;
-    });
-  }
-  return noUiSliderPromise;
+export default async function decorate(block) {
+  // Load noUiSlider only once
+  await loadNoUiSlider();
+  await loadSwiperCSS();
+
+  // Once loaded, render the component
+  await renderHelpMeChoose(block);
+
+  // Initialize existing game forms
+  initSelectGameForms(document.body);
+
+  initFilterComponents(document.body);
+  // Setup a single MutationObserver (if not already)
+  setupSelectGameFormsObserver();
 }
 
+
 /**
- * Loads the Swiper CSS from a CDN, ensuring it is only fetched once.
+ * Renders the Help Me Choose section, including the game list and budget filter.
+ * @param {Element} block - The block element to render the content into.
+ * @returns {Promise<void>}
  */
-let swiperCSSLoaded = null;
-function loadSwiperCSS() {
-  if (!swiperCSSLoaded) {
-    swiperCSSLoaded = loadCSS(
-      'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
-    ).catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error('Failed to load Swiper CSS:', err);
-      throw err;
-    });
-  }
-  return swiperCSSLoaded;
+async function renderHelpMeChoose(block) {
+  const helpMeChooseContainer = document.createElement('div');
+  helpMeChooseContainer.className = 'help-me-choose-container container';
+
+  const authoredRows = [...block.children];
+  const AuthoredData = authoredRows.map(row => row.textContent.trim());
+  console.log('Authored Data:', AuthoredData);
+
+  // Fetch products
+
+  const endpoint = await getApiEndpoint(API_URIS.FETCH_GAME_LIST_EN);
+  const gameList = await fetchGameList(endpoint);
+
+  if(!gameList?.results?.gameList || gameList?.results?.gameList.length == -1) return;
+
+  const lowestPrice = gameList?.results?.lowestPrice || 500;
+  const highestPrice = gameList?.results?.highestPrice || 5000;
+
+  const urlParams = new URLSearchParams(document.location.search);
+  const defaultMinBudget = urlParams.get('min-budget') || 500;
+  const defaultMaxBudget = urlParams.get('max-budget') || 5000;
+  // Build the HTML in a fragment / string, then insert once
+  const html = 
+  
+  AuthoredData[6] === "1" ? `
+  <div class="game-recommendation">
+      <div class="carousel panelcontainer">
+          <div class="section-heading">
+              <div class="section-heading__text-group">
+                  <h2 class="section-heading__title">${escapeHtml(AuthoredData[0] || '')}</h2>
+                  <p class="section-heading__description">${escapeHtml(AuthoredData[1] || '')}</p>
+              </div>
+              <div class="cmp-carousel__actions1_hmc">
+                  <button class="cmp-carousel__action_hmc cmp-carousel__action_hmc--previous" type="button" aria-label="Previous">
+                      <span class="icon icon--arrow-left"></span>
+                  </button>
+                  <button class="cmp-carousel__action_hmc cmp-carousel__action_hmc--next" type="button" aria-label="Next">
+                      <span class="icon icon--arrow-right"></span>
+                  </button>
+              </div>
+          </div>
+
+          <form id="game-selection-form" action="${escapeHtml(AuthoredData[9] || '')}" class="game-form" aria-label="Game selection form" data-select-game-form>
+              <div class="game-carousel-wrapper">
+                  <div class="swiper">
+                      <div class="swiper-wrapper">${generateGameItemsHTML(gameList?.results?.gameList)}</div>
+                      <div class="swiper-pagination"></div>
+                  </div>
+              </div>
+
+              <div class="budget-bar">
+                  <div class="budget-left">
+                      <label for="budget-min-value">${escapeHtml(AuthoredData[2] || 'Your Budget')}:</label>
+                  </div>
+                  <div class="budget-center">${generateBudgetCenterHTML(lowestPrice, highestPrice)}</div>
+                  <input type="hidden" name="min-budget" id="min-budget" value="" />
+                  <input type="hidden" name="max-budget" id="max-budget" value="" />
+                  <div class="budget-actions">
+                      <button type="reset" class="reset-button btn btn-link">${escapeHtml(AuthoredData[4] || 'Reset')}</button>
+                      <button type="submit" class="btn" disabled>${escapeHtml(AuthoredData[3] || 'Help me choose')}</button>
+                  </div>
+              </div>
+          </form>
+      </div>
+    </div>` : `
+ 
+  <div class="filter-bar container-xl"> 
+    <div class="filters-container container">
+        <form class="filters">
+            <div class="selected-games">
+                <p class="selected-games-text">Selected game:</p>
+                <div class="collapsed-view">
+                </div>
+                <div class="expanded-view">${generateGameItemsHTML(gameList?.results?.gameList)}</div>
+            </div>
+            <div class="vertical-divider"></div>
+            <div class="budget">
+                <div class="your-budget">${escapeHtml(AuthoredData[2] || 'Your Budget')}:
+                    <div>
+                        <span class="confirmed-budget-min-value" attr-value="${defaultMinBudget}">${_formatCurrency(lowestPrice)}</span>
+                        <span>-</span>
+                        <span class="confirmed-budget-max-value" attr-value="${defaultMaxBudget}">${_formatCurrency(highestPrice)}</span>
+                    </div>
+                </div>
+                <div class="budget-center">${generateBudgetCenterHTML(lowestPrice, highestPrice)}</div>
+                <input type="hidden" name="min-budget" id="min-budget" value="" />
+                <input type="hidden" name="max-budget" id="max-budget" value="" />
+                <div class="budget-actions">
+                    <button type="reset" class="reset-button btn btn-link">${escapeHtml(AuthoredData[4] || 'Reset')}</button>
+                    <button type="submit" class="btn btn-link">${escapeHtml(AuthoredData[5] || 'Confirm')}</button>
+                </div>
+                
+            </div>
+        </form>
+        <div class="filter-button">
+            Filter 
+         <span class="icon icon--arrow-bottom" id="filter-icon"></span>
+        </div>
+    </div>
+</div>
+`;
+
+  helpMeChooseContainer.innerHTML = html;
+
+  // Move instrumentation
+  // moveInstrumentation(block, helpMeChooseContainer);
+
+  // Replace in DOM
+  block.replaceChildren(...helpMeChooseContainer.children);
+
+  // Initialize carousel *after* DOM insertion
+  initializeSwiperCarousel(block);
 }
 
-function _isHomePage() {
+function _isHomePage(){
   const patterns = [/^\/product-matches\/.+$/];
-  if (patterns.some((regex) => regex.test(window.location.pathname))) {
+  if (patterns.some(regex => regex.test(window.location.pathname))) {
     return false;
   }
   return true;
-}
-
-/**
- * Helper to escape user / config data to prevent XSS
- * @param {string} str - The string to escape.
- * @returns {string} - The escaped string.
- */
-// Helper to escape user / config data to prevent XSS
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
 }
 
 /**
@@ -87,15 +176,38 @@ function generateGameItemsHTML(games) {
     </div>`).join('');
 }
 
-/* ---------------------------------------------
-   * Formats a number as a currency string.
-   * @param {number} value - The number to format.
-   * @returns {string} - The formatted currency string.
-   */
-function _formatCurrency(value) {
-  return `$${(+value || 0).toLocaleString('en-US')}`;
+// Helper to load noUiSlider only once
+let noUiSliderPromise = null;
+/**
+ * Loads the noUiSlider library, ensuring it's only loaded once.
+ */
+function loadNoUiSlider() {
+  if (!noUiSliderPromise) {
+    noUiSliderPromise = loadScript(
+      'https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js'
+    ).catch((err) => {
+      console.error('Failed to load noUiSlider:', err);
+      throw err;
+    });
+  }
+  return noUiSliderPromise;
 }
 
+/**
+ * Loads the Swiper CSS from a CDN, ensuring it is only fetched once.
+ */
+let swiperCSSLoaded = null;
+function loadSwiperCSS() {
+  if (!swiperCSSLoaded) {
+    swiperCSSLoaded = loadCSS(
+      'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css'
+    ).catch((err) => {
+      console.error('Failed to load Swiper CSS:', err);
+      throw err;
+    });
+  }
+  return swiperCSSLoaded;
+}
 /**
  * Generates the HTML for the budget center section, including the slider and inputs/displays.
  * @param {number} lowestPrice - The lowest possible budget price.
@@ -107,7 +219,6 @@ function generateBudgetCenterHTML(lowestPrice, highestPrice) {
   return `
     <input class="budget-value" id="budget-min-value" aria-label="Minimum budget" />
     <div class="budget-separator">to</div>
-    <input class="budget-value" id="budget-max-value" aria-label="Maximum budget" />
     <div class="budget-range-wrapper">
         <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="500" data-max="5000" role="slider" data-step="100" aria-label="Budget range slider" aria-valuemax="${highestPrice}" aria-valuemin="${lowestPrice}" aria-orientation="horizontal" aria-valuenow="${lowestPrice}"
         aria-valuetext="Budget range between ${_formatCurrency(lowestPrice)} to ${_formatCurrency(highestPrice)}"></div>
@@ -116,8 +227,79 @@ function generateBudgetCenterHTML(lowestPrice, highestPrice) {
             <span>$5,000</span>
         </div>
     </div>
+    <input class="budget-value" id="budget-max-value" aria-label="Maximum budget" />
   `;
 }
+
+/**
+ * Sets up a MutationObserver to initialize SelectGameForm components added dynamically.
+ */
+let selectGameObserver = null;
+function setupSelectGameFormsObserver() {
+  if (selectGameObserver) return; // don't create multiple observers
+
+  selectGameObserver = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          initSelectGameForms(node);
+        }
+      }
+    }
+  });
+
+  selectGameObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+/**
+ * Tears down the MutationObserver, disconnecting it from the document body.
+ */
+export function teardownDecorate() {
+  if (selectGameObserver) {
+    selectGameObserver.disconnect();
+    selectGameObserver = null;
+  }
+}
+
+
+/**
+ * Helper to escape user / config data to prevent XSS
+ * @param {string} str - The string to escape.
+ * @returns {string} - The escaped string.
+ */
+// Helper to escape user / config data to prevent XSS
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/**
+* Clamps a value 'v' between a minimum 'a' and a maximum 'b'.
+* @param {number} v - The value to clamp.
+* @param {number} a - The minimum boundary.
+* @param {number} b - The maximum boundary.
+* @returns {number} The clamped value.
+*/
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+/**
+ * Converts a string or number value to an integer, stripping non-numeric characters (except minus sign).
+ * @param {*} v - The value to convert.
+ * @returns {number} The integer value, or 0 if conversion fails.
+ */
+const toNumber = (v) => {
+  if (typeof v === 'number') return v;
+  // Strip non-numeric characters *except* the optional leading minus sign.
+  const n = parseInt(String(v).replace(/[^0-9-]/g, ''), 10);
+  return Number.isNaN(n) ? 0 : n;
+};
 
 // Initialize carousel functionality
 /**
@@ -125,7 +307,6 @@ function generateBudgetCenterHTML(lowestPrice, highestPrice) {
  * @param {Element} block - The block element containing the carousel.
  * @returns {Swiper} - The initialized Swiper instance.
  */
-/* eslint-disable consistent-return */
 async function initializeSwiperCarousel(block) {
   const swiperContainer = block.querySelector('.swiper');
   if (!swiperContainer) return;
@@ -180,150 +361,35 @@ async function initializeSwiperCarousel(block) {
         swiper.navigation.destroy();
         swiper.pagination.destroy();
       },
+      afterInit: function() {
+        const navContainer = this.navigation.nextEl?.parentNode;
+        if (navContainer && this.isBeginning && this.isEnd) {
+          navContainer.style.display = 'none';
+        }
+      },
+      resize: function() {
+        const navContainer = this.navigation.nextEl?.parentNode;
+        if (navContainer) {
+          // Show or hide based on whether both nav buttons are disabled
+          navContainer.style.display = (this.isBeginning && this.isEnd) ? 'none' : '';
+        }
+      },
     },
   });
 
   return swiper;
 }
-/* eslint-enable consistent-return */
 
-/**
- * Renders the Help Me Choose section, including the game list and budget filter.
- * @param {Element} block - The block element to render the content into.
- * @returns {Promise<void>}
- */
-async function renderHelpMeChoose(block) {
-  const helpMeChooseContainer = document.createElement('div');
-  helpMeChooseContainer.className = 'help-me-choose-container container';
 
-  const authoredRows = [...block.children];
-  const AuthoredData = authoredRows.map((row) => row.textContent.trim());
-  // eslint-disable-next-line no-console
-  console.log('Authored Data:', AuthoredData);
+/* ---------------------------------------------
+   * Formats a number as a currency string.
+   * @param {number} value - The number to format.
+   * @returns {string} - The formatted currency string.
+   */
+  function _formatCurrency(value) {
+    return `$${(+value || 0).toLocaleString('en-US')}`;
+  }
 
-  // Fetch products
-
-  const endpoint = await getApiEndpoint(API_URIS.FETCH_GAME_LIST_EN);
-  const gameList = await fetchGameList(endpoint);
-
-  if (!gameList?.results?.gameList || gameList?.results?.gameList.length === -1) return;
-
-  const lowestPrice = gameList?.results?.lowestPrice || 500;
-  const highestPrice = gameList?.results?.highestPrice || 5000;
-
-  const urlParams = new URLSearchParams(document.location.search);
-  const defaultMinBudget = urlParams.get('min-budget') || 500;
-  const defaultMaxBudget = urlParams.get('max-budget') || 5000;
-  // Build the HTML in a fragment / string, then insert once
-  const html = _isHomePage() ? `
-  <div class="game-recommendation">
-      <div class="carousel panelcontainer">
-          <div class="section-heading">
-              <div class="section-heading__text-group">
-                  <h2 class="section-heading__title">${escapeHtml(AuthoredData[0] || '')}</h2>
-                  <p class="section-heading__description">${escapeHtml(AuthoredData[1] || '')}</p>
-              </div>
-              <div class="cmp-carousel__actions1_hmc">
-                  <button class="cmp-carousel__action_hmc cmp-carousel__action_hmc--previous" type="button" aria-label="Previous">
-                      <span class="icon icon--arrow-left"></span>
-                  </button>
-                  <button class="cmp-carousel__action_hmc cmp-carousel__action_hmc--next" type="button" aria-label="Next">
-                      <span class="icon icon--arrow-right"></span>
-                  </button>
-              </div>
-          </div>
-
-          <form id="game-selection-form" onsubmit="event.preventDefault();" action="./product-matches" class="game-form" aria-label="Game selection form" data-select-game-form>
-              <div class="game-carousel-wrapper">
-                  <div class="swiper">
-                      <div class="swiper-wrapper">${generateGameItemsHTML(gameList?.results?.gameList)}</div>
-                      <div class="swiper-pagination"></div>
-                  </div>
-              </div>
-
-              <div class="budget-bar">
-                  <div class="budget-left">
-                      <label for="budget-min-value">${escapeHtml(AuthoredData[2] || 'Your Budget')}:</label>
-                  </div>
-                  <div class="budget-center">${generateBudgetCenterHTML(lowestPrice, highestPrice)}</div>
-                  <input type="hidden" name="min-budget" id="min-budget" value="" />
-                  <input type="hidden" name="max-budget" id="max-budget" value="" />
-                  <div class="budget-actions">
-                      <button type="reset" class="reset-button btn btn-link">${escapeHtml(AuthoredData[4] || 'Reset')}</button>
-                      <button type="submit" class="btn" disabled>${escapeHtml(AuthoredData[3] || 'Help me choose')}</button>
-                  </div>
-              </div>
-          </form>
-      </div>
-    </div>` : `
- 
-  <div class="filter-bar container-xl"> 
-    <div class="filters-container container">
-        <form class="filters">
-            <div class="selected-games">
-                <p class="selected-games-text">Selected game:</p>
-                <div class="collapsed-view">
-                </div>
-                <div class="expanded-view">${generateGameItemsHTML(gameList?.results?.gameList)}</div>
-            </div>
-            <div class="vertical-divider"></div>
-            <div class="budget">
-                <div class="your-budget">${escapeHtml(AuthoredData[2] || 'Your Budget')}:
-                    <div>
-                        <span class="confirmed-budget-min-value" attr-value="${defaultMinBudget}">${_formatCurrency(lowestPrice)}</span>
-                        <span>-</span>
-                        <span class="confirmed-budget-max-value" attr-value="${defaultMaxBudget}">${_formatCurrency(highestPrice)}</span>
-                    </div>
-                </div>
-                <div class="budget-center">${generateBudgetCenterHTML(lowestPrice, highestPrice)}</div>
-                <input type="hidden" name="min-budget" id="min-budget" value="" />
-                <input type="hidden" name="max-budget" id="max-budget" value="" />
-                <div class="budget-actions">
-                    <button type="reset" class="reset-button btn btn-link">${escapeHtml(AuthoredData[4] || 'Reset')}</button>
-                    <button type="submit" class="btn btn-link">${escapeHtml(AuthoredData[5] || 'Confirm')}</button>
-                </div>
-            </div>
-        </form>
-        <div class="filter-button">
-            Filter 
-         <span class="icon icon--arrow-bottom" id="filter-icon"></span>
-        </div>
-    </div>
-</div>
-`;
-
-  helpMeChooseContainer.innerHTML = html;
-
-  // Move instrumentation
-  // moveInstrumentation(block, helpMeChooseContainer);
-
-  // Replace in DOM
-  block.replaceChildren(...helpMeChooseContainer.children);
-
-  // Initialize carousel *after* DOM insertion
-  initializeSwiperCarousel(block);
-}
-
-/**
-* Clamps a value 'v' between a minimum 'a' and a maximum 'b'.
-* @param {number} v - The value to clamp.
-* @param {number} a - The minimum boundary.
-* @param {number} b - The maximum boundary.
-* @returns {number} The clamped value.
-*/
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-
-/**
- * Converts a string or number value to an integer, stripping non-numeric characters (except minus sign).
- * @param {*} v - The value to convert.
- * @returns {number} The integer value, or 0 if conversion fails.
- */
-const toNumber = (v) => {
-  if (typeof v === 'number') return v;
-  // Strip non-numeric characters *except* the optional leading minus sign.
-  const n = parseInt(String(v).replace(/[^0-9-]/g, ''), 10);
-  return Number.isNaN(n) ? 0 : n;
-};
 
 /**
  * Manages the game selection form and budget slider functionality.
@@ -405,7 +471,7 @@ class SelectGameForm {
     slider.noUiSlider.on('update', (values) => {
       const [minVal, maxVal] = values.map(Number);
       this._updateBudgetDisplay(minVal, maxVal);
-      this._updateSubmitButtonState(this._getSelectedGames().length === 0);
+      this._updateSubmitButtonState();
     });
   }
 
@@ -533,6 +599,7 @@ class SelectGameForm {
   }
 }
 
+
 /**
  * Initializes all SelectGameForm components found within a given context.
  * @param {HTMLElement} context - The root element within which to search for and initialize the forms.
@@ -549,47 +616,16 @@ const initSelectGameForms = (context) => {
   });
 };
 
-/**
- * Sets up a MutationObserver to initialize SelectGameForm components added dynamically.
- */
-let selectGameObserver = null;
-function setupSelectGameFormsObserver() {
-  if (selectGameObserver) return; // don't create multiple observers
 
-  selectGameObserver = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      for (const node of mutation.addedNodes) {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          initSelectGameForms(node);
-        }
-      }
-    }
-  });
-
-  selectGameObserver.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
-}
-
-/**
- * Tears down the MutationObserver, disconnecting it from the document body.
- */
-export function teardownDecorate() {
-  if (selectGameObserver) {
-    selectGameObserver.disconnect();
-    selectGameObserver = null;
-  }
-}
-
-// Filter
+// Filter 
 class FilterComponent {
   constructor(container) {
     this.container = container;
     if (!this.container) {
       return;
     }
-
+   
+    
     this.dom = {
       filterButton: this.container.querySelector('.filter-button'),
       icon: this.container.querySelector('#filter-icon'),
@@ -605,7 +641,7 @@ class FilterComponent {
       form: this.container.querySelector('form.filters'),
     };
 
-    this.DEFAULT_BUDGET_RANGE = { min: 500, max: 5000 };
+     this.DEFAULT_BUDGET_RANGE = { min: 500, max: 5000 };
     this.DEFAULT_START_BUDGET = { min: this.dom.confirmedMin.getAttribute('attr-value'), max: this.dom.confirmedMax.getAttribute('attr-value') };
 
     this.allGames = [];
@@ -710,9 +746,9 @@ class FilterComponent {
     }
   }
 
-  _handleReset() { // this.dom.confirmedMin.textContent
-    this.dom.slider?.noUiSlider.set([this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max]);
-    this.dom.games.forEach((cb) => (cb.checked = false)); // eslint-disable-line no-return-assign
+  _handleReset() {//this.dom.confirmedMin.textContent
+    this.dom.slider?.noUiSlider.set([this.DEFAULT_START_BUDGET.min,this.DEFAULT_START_BUDGET.max]);
+    this.dom.games.forEach((cb) => (cb.checked = false));
     this._updateBudgetDisplay(this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max);
   }
 
@@ -729,7 +765,7 @@ class FilterComponent {
     params.set('min-budget', minBudget);
     params.set('max-budget', maxBudget);
     window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
-    // update confirmed state
+    //update confirmed state
     this._hydrateFromUrl();
     if (window.perfectMatchProductInstance) {
       window.perfectMatchProductInstance.loadPerfectMatchProducts({
@@ -769,7 +805,7 @@ class FilterComponent {
       });
     });
   }
-
+  
   /**
    * Handles changes to the budget input fields, validating and formatting the input.
    * @param {HTMLInputElement} input - The input element that triggered the change.
@@ -806,6 +842,7 @@ class FilterComponent {
   }
 
   _updateCollapsedView(gameIds) {
+
     if (!this.dom.collapsedView) return;
     this.dom.collapsedView.innerHTML = '';
 
@@ -827,18 +864,17 @@ class FilterComponent {
   }
 
   // ---- Validation helpers ----
-  // eslint-disable-next-line class-methods-use-this
-  sanitizeText(value) {
+sanitizeText(value){
   // Remove any characters that could be dangerous in HTML context
-    return value.replace(/[<>"]/g, '');
-  }
+  return value.replace(/[<>"]/g, '');
+};
 
-  // eslint-disable-next-line class-methods-use-this
-  validateRange(value, fallback, min, max) {
-    const num = parseInt(value, 10);
-    if (Number.isNaN(num)) return fallback;
-    return Math.min(Math.max(num, min), max); // clamp between min & max
-  }
+validateRange(value, fallback, min, max){
+  const num = parseInt(value, 10);
+  if (isNaN(num)) return fallback;
+  return Math.min(Math.max(num, min), max); // clamp between min & max
+};
+
 
   _hydrateFromUrl() {
     const params = new URLSearchParams(window.location.search);
@@ -884,29 +920,7 @@ const initFilterComponents = (context) => {
   });
 };
 
-/**
- * Decorates the help-me-choose block, initializing the carousel and form.
- * @param {Element} block - The block element to decorate.
- * @returns {Promise<void>}
- */
-export default async function decorate(block) {
-  // Load noUiSlider only once
-  await loadNoUiSlider();
-  await loadSwiperCSS();
-
-  // Once loaded, render the component
-  await renderHelpMeChoose(block);
-
-  // Initialize existing game forms
-  initSelectGameForms(document.body);
-
-  initFilterComponents(document.body);
-  // Setup a single MutationObserver (if not already)
-  setupSelectGameFormsObserver();
-}
-
 // MutationObserver
-// eslint-disable-next-line no-unused-vars
 const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     mutation.addedNodes.forEach((node) => {
