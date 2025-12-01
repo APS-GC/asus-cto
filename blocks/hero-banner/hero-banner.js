@@ -196,7 +196,7 @@ function generateHeroBannerHTML(slide, config, index = 0) {
 
   const headline = document.createElement('h2');
   headline.className = 'headline';
-  headline.textContent = slide.title;
+  headline.innerHTML = slide.title;
   heroContent.appendChild(headline);
 
   if (slide.ctaText && slide.ctaLink) {
