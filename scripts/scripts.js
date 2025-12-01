@@ -428,6 +428,17 @@ async function loadLazy(doc) {
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
+
+  // Initialize global tooltip manager for all tooltip functionality
+  import('./tooltip.js')
+    .then((module) => {
+      if (typeof window.tooltipManager === 'undefined') {
+        window.tooltipManager = new module.default();
+      }
+    })
+    .catch((error) => {
+      console.error('Failed to load tooltip manager:', error);
+    });
 }
 
 /**

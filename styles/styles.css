@@ -7136,6 +7136,169 @@ input[type=checkbox]:checked::after {
   height: 14px;
 }
 
+/* Tooltip trigger with pointer cursor */
+[data-tooltip-trigger] {
+  cursor: pointer;
+}
+
+.tooltip__content {
+  --tooltip-background: var(--color-primary-950);
+  --tooltip-color: var(--color-primary);
+  --tooltip-offset: 0;
+  position: fixed;
+  top: -9999px;
+  left: -9999px;
+  background: var(--tooltip-background);
+  color: var(--tooltip-color);
+  z-index: 99999;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  max-width: 400px;
+  border-radius: 0.5rem;
+  -webkit-transition: opacity 0.2s ease, -webkit-transform 0.2s ease;
+  transition: opacity 0.2s ease, -webkit-transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease, -webkit-transform 0.2s ease;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 1.25rem;
+  font-family: var(--font-text);
+  font-weight: var(--regular);
+  letter-spacing: 0;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  letter-spacing: 0.16px;
+}
+
+.tooltip__content--theme-dark {
+  --tooltip-background: var(--color-primary-50);
+  --tooltip-color: var(--color-primary-950);
+}
+
+.tooltip__content--size-small {
+  max-width: 245px;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-family: var(--font-text);
+  font-weight: var(--regular);
+  letter-spacing: 0;
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+  letter-spacing: 0.24px;
+}
+
+.tooltip__content.tooltip--visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Base arrow */
+.tooltip__content::after {
+  content: "";
+  top: 50%;
+  left: -5px;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="5" height="12" viewBox="0 0 5 12" fill="none"><path d="M5 0.5C4.97696 0.519444 4.95461 0.540181 4.93304 0.562211L0.275596 5.32028C-0.0918658 5.69568 -0.0918658 6.30432 0.275596 6.67972L4.93304 11.4378C4.95461 11.4598 4.97696 11.4806 5 11.5L5 0.5Z" fill="white"/></svg>') center/contain no-repeat;
+  width: 6px;
+  height: 11px;
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.tooltip__content--theme-dark::after {
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="5" height="12" viewBox="0 0 5 12" fill="none"><path d="M5 0.5C4.97696 0.519444 4.95461 0.540181 4.93304 0.562211L0.275596 5.32028C-0.0918658 5.69568 -0.0918658 6.30432 0.275596 6.67972L4.93304 11.4378C4.95461 11.4598 4.97696 11.4806 5 11.5L5 0.5Z" fill="%2316151b" /></svg>') center/contain no-repeat;
+}
+
+/* Arrows by direction */
+.tooltip--position-top {
+  margin-bottom: var(--tooltip-offset);
+}
+
+.tooltip--position-top::after {
+  bottom: -7px;
+  left: 50%;
+  top: unset;
+  -webkit-transform: translateX(-50%) rotate(270deg);
+  transform: translateX(-50%) rotate(270deg);
+}
+
+.tooltip--position-bottom {
+  margin-top: var(--tooltip-offset);
+}
+
+.tooltip--position-bottom::after {
+  top: -7px;
+  left: 50%;
+  -webkit-transform: translateX(-50%) rotate(90deg);
+  transform: translateX(-50%) rotate(90deg);
+}
+
+.tooltip--position-left {
+  margin-right: var(--tooltip-offset);
+}
+
+.tooltip--position-left::after {
+  top: 50%;
+  right: -5px;
+  left: unset;
+  -webkit-transform: translateY(-50%) rotate(180deg);
+  transform: translateY(-50%) rotate(180deg);
+  background-position: left center;
+}
+
+.tooltip--position-right {
+  margin-left: var(--tooltip-offset);
+}
+
+.tooltip--position-right::after {
+  top: 50%;
+  left: -5px;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  background-position: right center;
+}
+
+/* Adjust tooltip position when near viewport edges */
+.tooltip--flip-x.tooltip--position-top,
+.tooltip--flip-x.tooltip--position-bottom {
+  -webkit-transform: translateX(0) !important;
+  transform: translateX(0) !important;
+  left: auto !important;
+  right: 0;
+}
+
+.tooltip--flip-x.tooltip--position-top::after,
+.tooltip--flip-x.tooltip--position-bottom::after {
+  left: auto;
+  right: 12px;
+  -webkit-transform: none;
+  transform: none;
+}
+
+.tooltip--flip-y.tooltip--position-left,
+.tooltip--flip-y.tooltip--position-right {
+  -webkit-transform: translateY(0) !important;
+  transform: translateY(0) !important;
+  top: auto !important;
+  bottom: 0;
+}
+
+.tooltip--flip-y.tooltip--position-left::after,
+.tooltip--flip-y.tooltip--position-right::after {
+  top: auto;
+  bottom: 12px;
+  -webkit-transform: none;
+  transform: none;
+}
+
 /* ========================================================================== 
  * Custom Styling - Starts
  * ========================================================================== */
