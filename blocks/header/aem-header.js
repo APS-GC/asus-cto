@@ -1,9 +1,10 @@
 import { loadHeaderFragment, processFragmentContent } from '../../scripts/scripts.js';
-import {
+import { 
   loadAssetsForComponent,
   loadCustomFragment,
-  initializeBlockInShadowRoot,
+  initializeBlockInShadowRoot
 } from '../../scripts/aem-component-utils.js';
+import { replaceLocaleInUrl } from '../../scripts/configs.js';
 
 /**
  * AEM Header Web Component
@@ -40,7 +41,7 @@ class AEMHeader extends HTMLElement {
         window.asusCto.baseUrl = this.baseUrl || window.location.origin;
       }
     }
-
+    
     // Reload header if already loaded and URL changed
     if (this.isLoaded && (name === 'fragment-url' || name === 'base-url')) {
       this.loadHeader();
@@ -55,13 +56,16 @@ class AEMHeader extends HTMLElement {
     await loadAssetsForComponent(this.shadowRoot, baseUrl, 'header');
   }
 
+
   /**
    * Load header fragment from custom URL
    * @returns {Promise<string|null>} Fragment HTML content or null if not found
    */
   async loadCustomHeaderFragment() {
     const baseUrl = this.baseUrl || window.location.origin;
-    return loadCustomFragment(this.fragmentUrl, baseUrl, loadHeaderFragment, processFragmentContent);
+    const fragmentUrl = await replaceLocaleInUrl(this.fragmentUrl);
+    
+    return await loadCustomFragment(fragmentUrl, baseUrl, loadHeaderFragment, processFragmentContent);
   }
 
   /**
@@ -86,15 +90,18 @@ class AEMHeader extends HTMLElement {
 
       this.isLoaded = true;
       this.dispatchEvent(new CustomEvent('aem-header-loaded', {
-        detail: { success: true },
+        detail: { success: true }
       }));
+
     } catch (error) {
+      console.error('Error loading header:', error);
+      
       // Clear any existing content
       this.shadowRoot.innerHTML = '';
-
+      
       // Dispatch error event for consuming application to handle
       this.dispatchEvent(new CustomEvent('aem-header-error', {
-        detail: { error: error.message },
+        detail: { error: error.message }
       }));
     }
   }
@@ -107,19 +114,21 @@ class AEMHeader extends HTMLElement {
     await initializeBlockInShadowRoot(this.shadowRoot, '.header', 'header', baseUrl);
   }
 
+
   /**
    * Handle external events sent to the header
    */
   async handleHeaderEvent(event) {
-    const { action } = event.detail || {};
-
+    const { action, detail } = event.detail || {};
+    
     switch (action) {
       case 'refresh':
         await this.loadHeader();
         this.dispatchEvent(new CustomEvent('aem-header-refreshed'));
         break;
-
+        
       default:
+        console.warn('Unknown header action:', action);
     }
   }
 
@@ -138,20 +147,21 @@ class AEMHeader extends HTMLElement {
   setupLoginStateMonitoring() {
     // Track initial login state
     this.lastLoginState = localStorage.getItem('isLoggedIn');
-
+    
     // Listen for storage changes (login/logout events)
     this.storageListener = (e) => {
       if (e.key === 'isLoggedIn' || e.key === 'userName') {
         const currentLoginState = localStorage.getItem('isLoggedIn');
         if (currentLoginState !== this.lastLoginState) {
           this.lastLoginState = currentLoginState;
+          console.log('Login state changed, refreshing header...');
           this.refreshHeader();
         }
       }
     };
-
+    
     window.addEventListener('storage', this.storageListener);
-
+    
     // Also listen for storage changes in same window
     this.setupSameWindowStorageListener();
   }
@@ -163,24 +173,25 @@ class AEMHeader extends HTMLElement {
     // Override localStorage methods to detect changes in same window
     const originalSetItem = localStorage.setItem;
     const originalRemoveItem = localStorage.removeItem;
-
+    
     const checkLoginStateChange = () => {
       const currentLoginState = localStorage.getItem('isLoggedIn');
       if (currentLoginState !== this.lastLoginState) {
         this.lastLoginState = currentLoginState;
+        console.log('Login state changed (same window), refreshing header...');
         setTimeout(() => this.refreshHeader(), 100); // Small delay to ensure state is fully updated
       }
     };
-
-    localStorage.setItem = function setItem(key, value) {
+    
+    localStorage.setItem = function(key, value) {
       const result = originalSetItem.call(this, key, value);
       if (key === 'isLoggedIn' || key === 'userName') {
         checkLoginStateChange();
       }
       return result;
     };
-
-    localStorage.removeItem = function removeItem(key) {
+    
+    localStorage.removeItem = function(key) {
       const result = originalRemoveItem.call(this, key);
       if (key === 'isLoggedIn' || key === 'userName') {
         checkLoginStateChange();
@@ -192,10 +203,10 @@ class AEMHeader extends HTMLElement {
   /**
    * Public API: Set user state (for external integration)
    */
-  static setUserState(isLoggedIn, userName = '') {
+  setUserState(isLoggedIn, userName = '') {
     const currentState = localStorage.getItem('isLoggedIn');
     const newState = isLoggedIn ? 'true' : null;
-
+    
     if (newState !== currentState) {
       if (isLoggedIn) {
         localStorage.setItem('isLoggedIn', 'true');
@@ -224,17 +235,20 @@ class AEMHeader extends HTMLElement {
       window.removeEventListener('storage', this.storageListener);
     }
   }
+
 }
 
 // Register the custom element
 customElements.define('aem-header', AEMHeader);
 
 // Make available globally for script tag usage
-window.AEMHeader = AEMHeader;
+if (typeof window !== 'undefined') {
+  window.AEMHeader = AEMHeader;
+}
 
-// // Export for module usage (only when loaded as module)
-// if (typeof module !== 'undefined' && module.exports) {
-//   module.exports = AEMHeader;
-// } else if (typeof define === 'function' && define.amd) {
-//   define([], () => AEMHeader);
-// }
+// Export for module usage (only when loaded as module)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = AEMHeader;
+} else if (typeof define === 'function' && define.amd) {
+  define([], function() { return AEMHeader; });
+}

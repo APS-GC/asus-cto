@@ -160,3 +160,19 @@ export const getBlockConfigs = async (block, defaults = {}, blockName = '') => {
 
   return config;
 };
+
+/**
+ * Replaces {locale} placeholder in URL with locale from configuration
+ * @param {string} url - The URL with {locale} placeholder
+ * @returns {Promise<string>} - URL with locale replaced
+ */
+export const replaceLocaleInUrl = async (url) => {
+  if (!url || !url.includes('{locale}')) {
+    return url;
+  }
+  
+  const locale = await getConfigValue('locale') || 'en';
+  
+  return url.replace('{locale}', locale);
+};
+
