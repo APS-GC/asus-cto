@@ -231,13 +231,7 @@ export default async function decorate(block) {
         data-product-type="hot"
       >
         <div class="cmp-carousel__content cmp-carousel__content--overflow">
-          <div class="swiper">
-            <div class="swiper-wrapper">
-              <div class="cmp-carousel__item swiper-slide">
-                <div class="hot-products-loading">Loading products...</div>
-              </div>
-            </div>
-          </div>
+          <!-- Products will be loaded here -->
         </div>
       </div>
 
@@ -274,7 +268,7 @@ export default async function decorate(block) {
       }
 
       if (products && products.length > 0) {
-        const wrapper = block.querySelector('.swiper-wrapper');
+        const wrapper = block.querySelector('.cmp-carousel__content');
         wrapper.innerHTML = '';
 
         const productsToDisplay = products.slice(0, config.productsToShow);
@@ -291,12 +285,9 @@ export default async function decorate(block) {
         });
 
         // Create product cards
-        productsToDisplay.forEach((product, index) => {
+        productsToDisplay.forEach((product) => {
           const slideItem = document.createElement('div');
-          slideItem.className = `cmp-carousel__item swiper-slide${index === 0 ? ' swiper-slide-active' : ''}`;
-          slideItem.setAttribute('tabindex', '-1');
-          slideItem.setAttribute('role', 'group');
-          slideItem.setAttribute('aria-label', `Slide ${index + 1} of ${productsToDisplay.length}`);
+          slideItem.className = 'cmp-carousel__item';
 
           const card = createProductCard(product, config);
           slideItem.appendChild(card);
@@ -340,8 +331,8 @@ export default async function decorate(block) {
           }
         }, { once: true });
       } else {
-        const wrapper = block.querySelector('.swiper-wrapper');
-        wrapper.innerHTML = '<div class="hot-products-error swiper-slide">No products available</div>';
+        const wrapper = block.querySelector('.cmp-carousel__content');
+        wrapper.innerHTML = '<div class="hot-products-error">No products available</div>';
       }
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -352,8 +343,8 @@ export default async function decorate(block) {
         sectionActionsContainer.classList.remove('is-loading');
       }
 
-      const wrapper = block.querySelector('.swiper-wrapper');
-      wrapper.innerHTML = '<div class="hot-products-error swiper-slide">Failed to load products. Please try again later.</div>';
+      const wrapper = block.querySelector('.cmp-carousel__content');
+      wrapper.innerHTML = '<div class="hot-products-error">Failed to load products. Please try again later.</div>';
     }
   }, 0);
 }
