@@ -6,10 +6,6 @@ ____header_start {
 
 .header-wrapper {
     background-color: var(--color-primary);
-    position: relative;
-}
-
-body:has(.overlap-header) .header-wrapper {
     left: 0;
     position: absolute;
     top: 0;
