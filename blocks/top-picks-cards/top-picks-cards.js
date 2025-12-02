@@ -32,7 +32,7 @@ function generateCardHTML(cardData) {
   
   return `
     <div class="aem-GridColumn aem-GridColumn--default--6 aem-GridColumn--phone--12">
-      <div class="featured-product-card" style="height: 190px;">
+      <div class="featured-product-card">
         <div class="product-image-wrapper">
           <img src="${escapeHtml(imageSrc)}" alt="${escapeHtml(imageAlt)}" class="product-image">
         </div>
