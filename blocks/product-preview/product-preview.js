@@ -407,9 +407,18 @@ async function initializeGallery(block) {
 
 
 export default async function decorate(block) {
-  // Prevent re-decoration (avoid infinite loop in Universal Editor)
-  if (block.dataset.decorated === 'true') {
-    return;
+  // Add main component class for styling
+  block.classList.add('cmp-product-preview');
+  
+  // Check if in Universal Editor and adjust styling
+  const inUE = isUniversalEditor();
+  if (inUE) {
+    // Apply inline styles to override modal positioning for UE
+    block.style.position = 'relative';
+    block.style.inset = 'auto';
+    block.style.zIndex = '1';
+    block.style.background = 'transparent';
+    block.style.minHeight = 'auto';
   }
   
   // Get locale and default configuration
@@ -438,18 +447,14 @@ export default async function decorate(block) {
   // If no product data available
   if (!product) {
     // In Universal Editor, show dummy data for preview
-    if (isUniversalEditor()) {
+    if (inUE) {
       product = getDummyProductData();
     } else {
       // In production, show error message
       block.innerHTML = '<p>Product data not available</p>';
-      block.dataset.decorated = 'true';
       return;
     }
   }
-  
-  // Mark as decorated to prevent re-decoration
-  block.dataset.decorated = 'true';
 
   // Store config in dataset for event listeners
   block.dataset.config = JSON.stringify(config);
@@ -563,6 +568,22 @@ export default async function decorate(block) {
       </div>
     </div>
   `;
+
+  // Apply additional inline styles for UE mode after HTML is rendered
+  if (inUE) {
+    const body = block.querySelector('.cmp-product-preview__body');
+    const topbar = block.querySelector('.cmp-product-preview__topbar');
+    
+    if (body) {
+      body.style.background = 'transparent';
+      body.style.padding = '0';
+      body.style.marginBottom = '0';
+    }
+    
+    if (topbar) {
+      topbar.style.position = 'relative';
+    }
+  }
 
   // Initialize gallery
   await initializeGallery(block);
