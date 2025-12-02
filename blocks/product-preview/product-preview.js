@@ -407,6 +407,11 @@ async function initializeGallery(block) {
 
 
 export default async function decorate(block) {
+  // Prevent re-decoration (avoid infinite loop in Universal Editor)
+  if (block.dataset.decorated === 'true') {
+    return;
+  }
+  
   // Get locale and default configuration
   const locale = await getLocale();
   const defaultConfig = getDefaultConfig(locale);
@@ -438,9 +443,13 @@ export default async function decorate(block) {
     } else {
       // In production, show error message
       block.innerHTML = '<p>Product data not available</p>';
+      block.dataset.decorated = 'true';
       return;
     }
   }
+  
+  // Mark as decorated to prevent re-decoration
+  block.dataset.decorated = 'true';
 
   // Store config in dataset for event listeners
   block.dataset.config = JSON.stringify(config);
