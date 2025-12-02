@@ -7,7 +7,6 @@ const pubUrl = 'https://publish-p165753-e1767020.adobeaemcloud.com';
 // Default values from authoring configuration
 const DEFAULT_CONFIG = {
   title: 'Our Advantages',
-  itemCount: 3,
   imageAutoplayDuration: 5,
   videoAutoplayDuration: 1
 };
@@ -19,7 +18,6 @@ export default async function decorate(block) {
   const config = await getBlockConfigs(block, DEFAULT_CONFIG, 'our-advantages');
 
   const title = config.title || "Our Advantages";
-  const itemCount = config.itemCount || 3;
   const imageAutoplayDuration = config.imageAutoplayDuration || 5;
   const videoAutoplayDuration = config.videoAutoplayDuration || 1;
   const carouselId = `carousel-${Math.random().toString(36).substr(2, 10)}`;
