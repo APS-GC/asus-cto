@@ -3,9 +3,10 @@
  */
 
 import { openModal, createModal } from '../modal/modal.js';
-import { loadSwiper, getLocale, isUniversalEditor } from '../../scripts/scripts.js';
+import { loadSwiper, getLocale } from '../../scripts/scripts.js';
 import { buildBlock, decorateBlock, loadBlock } from '../../scripts/aem.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
+import { isUniversalEditor } from '../../scripts/utils.js';
 
 /**
  * Get dummy product data for authoring mode

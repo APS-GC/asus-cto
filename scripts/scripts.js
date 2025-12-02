@@ -165,12 +165,6 @@ export async function loadSwiper() {
 }
 
 /**
- * Detect if running in Universal Editor environment
- * @returns {boolean} True if running in Universal Editor
- */
-export const isUniversalEditor = () => window.location.href.includes('/universal-editor');
-
-/**
  * Loads header fragment from the working fragment URL
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
