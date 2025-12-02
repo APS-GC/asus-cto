@@ -60,6 +60,10 @@
           width: 16px;
           height: 16px;
         }
+        .icon--arrow-left,
+        .icon--arrow-right {
+          color: #818181;
+        }
       }
 
       &--previous {
@@ -81,7 +85,7 @@
       flex-shrink: 0;
       width: 75px;
       aspect-ratio: 1/1;
-      border: 2px solid transparent;
+      border: 1px solid transparent;
       overflow: hidden;
 
       &:hover:not(.swiper-slide-thumb-active) {

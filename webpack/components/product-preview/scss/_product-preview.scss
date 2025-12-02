@@ -6,7 +6,7 @@
   position: fixed;
   inset: 0;
   background: var(--color-primary-base);
-  z-index: 9999;
+  z-index: 9;
   overflow-y: auto;
   @include mix.p(0);
 
@@ -128,7 +128,9 @@
       border: none;
     }
   }
-
+  .star-rating-wrapper {
+    display: inline-block;
+  }
   .product-preview-image-section {
     flex: 1;
     display: flex;

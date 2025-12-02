@@ -8,11 +8,13 @@
 .cmp-hero__title {
   @include typo.text-display2();
   @include mix.m(2, "b");
+  width: 680px;
 }
 
 .cmp-hero__subtitle {
   @include typo.text-base();
   @include mix.m(0);
+  width: 680px;
 }
 
 .cmp-sidebar {
@@ -71,27 +73,18 @@
 
       .applied-filters__clear {
         display: inline-flex;
-        align-items: center;
-        justify-content: flex-end;
-        background: none;
-        border: none;
         color: var(--color-primary-950);
+        text-decoration: none;
         cursor: pointer;
-        position: relative;
         @include typo.text-small();
-        margin-left: auto;
-        @include mix.p(2, "y");
-        @include mix.p(5, "r");
-        @include mix.p(2, "l");
-
+        &:hover {
+          text-decoration: underline;
+        }
         &::after {
           content: "";
-          position: absolute;
-          right: 0px;
-          top: 50%;
-          transform: translateY(-50%);
           width: 20px;
           height: 20px;
+          @include mix.m(2, "l");
           background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'><path d='M9.16667 17.0255C7.60361 16.8224 6.31007 16.1339 5.28604 14.9599C4.26201 13.7857 3.75 12.4101 3.75 10.8332C3.75 9.98598 3.91722 9.17431 4.25167 8.3982C4.58611 7.62195 5.05458 6.94001 5.65708 6.35237L6.54813 7.24341C6.03632 7.71036 5.65035 8.2523 5.39021 8.86924C5.13007 9.48619 5 10.1408 5 10.8332C5 12.0554 5.39021 13.1326 6.17063 14.0649C6.95104 14.997 7.94972 15.5672 9.16667 15.7755V17.0255ZM10.8333 17.0415V15.7915C12.0364 15.5479 13.0316 14.9649 13.819 14.0424C14.6063 13.1199 15 12.0501 15 10.8332C15 9.44431 14.5139 8.26376 13.5417 7.29154C12.5694 6.31931 11.3889 5.8332 10 5.8332H9.70521L10.8302 6.9582L9.95188 7.83633L7.32375 5.2082L9.95188 2.58008L10.8302 3.4582L9.70521 4.5832H10C11.7436 4.5832 13.2212 5.18897 14.4327 6.40049C15.6442 7.61202 16.25 9.08959 16.25 10.8332C16.25 12.4015 15.7367 13.7701 14.71 14.939C13.6832 16.1078 12.391 16.8086 10.8333 17.0415Z' fill='%23999999'/></svg>");
           background-repeat: no-repeat;
           background-size: 16px 16px;
@@ -110,6 +103,8 @@
     .applied-filter {
       display: flex;
       align-items: center;
+      cursor: pointer;
+      background: none;
       color: var(--color-primary-950);
       border-radius: vars.$border-radius-xxl;
       border: 1px solid var(--color-primary-600);
@@ -117,7 +112,18 @@
       @include typo.text-small();
       @include mix.p(1, "y");
       @include mix.p(3, "x");
-
+      outline-offset: 2px;
+      &:hover {
+        background: var(--color-primary);
+      }
+      &:focus {
+        outline-offset: 2px;
+      }
+      .filter-text {
+        max-width: 7.6875rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
       .remove-filter {
         background: none;
         border: none;
@@ -227,14 +233,13 @@
           border: 1px solid var(--color-primary-600);
           background-color: transparent;
           color: var(--color-primary-950);
-          text-align: center;
           @include typo.text-base();
           @include mix.p(1, "y");
           @include mix.p(3, "x");
 
           &:focus {
             outline: none;
-            border-color: var(--color-primary-950);
+            border-color: var(--color-focus-ring);
           }
         }
 
@@ -259,7 +264,7 @@
           position: absolute;
           width: 100%;
           color: var(--color-primary-700);
-          @include typo.text-xsmall();
+          @include typo.text-tiny();
           @include mix.m(4, "t");
         }
       }
@@ -282,12 +287,21 @@
       display: flex;
       align-items: center;
       min-height: 24px; // Ensure consistent height
-
+      input[type="checkbox"] {
+        margin: 0;
+        vertical-align: middle;
+      }
       label {
+        display: block;
+        vertical-align: middle;
         color: var(--color-primary-950);
         cursor: pointer;
+        padding: 2px 0;
         @include typo.text-small();
-        @include mix.m(2, "l");
+        span {
+          display: inline-block;
+          @include mix.m(1, "l");
+        }
       }
     }
   }
@@ -333,6 +347,7 @@
         display: flex;
         width: 100%;
         @include mix.spacer("gap", 2);
+        align-items: center;
 
         .cmp-product-filter-trigger {
           display: none;
@@ -343,6 +358,7 @@
           @include mix.p(2, "y");
           @include mix.p(4, "x");
           @include typo.text-cta();
+          min-width: 115px;
         }
       }
     }
@@ -386,6 +402,12 @@
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     }
   }
+  .section-actions-container {
+    @include mix.m(8, "t");
+    .section-actions-btn {
+      border-radius: 0;
+    }
+  }
 
   // Hide the "View all" button if there are no more products
   .section-actions-container:not(.has-more) .section-actions-btn {
@@ -407,13 +429,20 @@
   .cmp-hero__title {
     @include typo.text-display3();
     @include mix.m(3, "b");
+    width: 688px;
   }
 
   .cmp-hero__subtitle {
     @include typo.text-small();
+    width: 688px;
   }
 }
-
+@include mix.respond-to("md", "max") {
+  .cmp-hero__title,
+  .cmp-hero__subtitle {
+    width: auto;
+  }
+}
 .sidebar-grid {
   display: grid;
   grid-template-columns: 380px 1fr;
@@ -452,12 +481,14 @@
   .cmp-sidebar {
     display: flex;
     flex-direction: column;
-    height: 100vh; // full viewport height
+    height: 100vh; //fallback for browsers who don't support dvh
+    height: 100dvh; //dynamic viewport height
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    overflow-x: hidden;
     overflow-y: auto;
     padding-bottom: 80px; // space for action buttons
     z-index: 9999; // higher z-index to cover header
@@ -524,6 +555,32 @@
         color: var(--color-primary-100);
         border: none;
       }
+    }
+  }
+}
+
+.floating-filter__plp {
+  @include mix.p(5, "y");
+  background-color: var(--color-primary-base);
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  z-index: 9999;
+  .cmp-product-sort {
+    display: flex;
+    width: 100%;
+    @include mix.spacer("gap", 2);
+    align-items: center;
+
+    .cmp-product-filter-trigger {
+      flex: 0 0 auto;
+      border-radius: vars.$border-radius;
+      cursor: pointer;
+      color: var(--color-primary-100);
+      @include mix.p(2, "y");
+      @include mix.p(4, "x");
+      @include typo.text-cta();
+      min-width: 115px;
     }
   }
 }

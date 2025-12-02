@@ -448,6 +448,216 @@
         "providerImage": "./clientlib-site/images/affirm.svg",
         "tooltip": "Check your purchasing power"
       }
+    },
+    {
+      "id": "rog-rnuc-8aau",
+      "bazaarvoiceProductId": "ASUS_M1_28AAU_P",
+      "name": "ROG NUC (2025)",
+      "model": "RNUC15JNK9X28AAU",
+      "status": ["In Stock", "New", "Deal"],
+      "isAvailable": true,
+      "isCustomizable": false,
+      "buyLink": "./pdp.html",
+      "customizeLink": "./pdp.html",
+      "image": "./clientlib-site/images/products/product-5-image-1.webp",
+      "images": [
+        {
+          "image": "./clientlib-site/images/products/product-1-image-1.webp",
+          "thumbnail": "./clientlib-site/images/products/product-1-thumb-1.webp",
+          "title": "ROG Strix G22CH - Image 1"
+        },
+        {
+          "image": "./clientlib-site/images/products/product-1-image-2.webp",
+          "thumbnail": "./clientlib-site/images/products/product-1-thumb-2.webp",
+          "title": "ROG Strix G22CH - Image 2"
+        },
+        {
+          "image": "./clientlib-site/images/products/product-5-image-1.webp",
+          "thumbnail": "./clientlib-site/images/products/product-1-thumb-3.webp",
+          "title": "ROG Strix G22CH - Image 3"
+        },
+        {
+          "image": "./clientlib-site/images/products/product-1-image-4.webp",
+          "thumbnail": "./clientlib-site/images/products/product-1-thumb-4.webp",
+          "title": "ROG Strix G22CH - Image 4"
+        },
+        {
+          "image": "./clientlib-site/images/products/product-5-image-1.webp",
+          "thumbnail": "./clientlib-site/images/products/product-1-thumb-5.webp",
+          "title": "ROG Strix G22CH - Image 5"
+        },
+        {
+          "image": "./clientlib-site/images/products/product-1-image-6.webp",
+          "thumbnail": "./clientlib-site/images/products/product-1-thumb-6.webp",
+          "title": "ROG Strix G22CH - Image 6"
+        }
+      ],
+      "fps": 235,
+      "benchmarkGame": "Call of Duty: Modern Warfare",
+      "fpsData": [
+        {
+          "game": "COD",
+          "fps1080": 130,
+          "image": "./clientlib-site/images/games/call-of-duty.webp"
+        },
+        {
+          "game": "Alan Wake",
+          "fps1080": 67,
+          "image": "./clientlib-site/images/games/alan-wake.webp"
+        },
+        {
+          "game": "Counter Strike 2",
+          "fps1080": 100,
+          "image": "./clientlib-site/images/games/counter-strike.webp"
+        },
+        {
+          "game": "Fortnite",
+          "fps1080": 82,
+          "image": "./clientlib-site/images/games/fortnite.webp"
+        },
+        {
+          "game": "Baldur's Gate 3",
+          "fps1080": 75,
+          "image": "./clientlib-site/images/games/baldurs-gate.webp"
+        }
+      ],
+      "specs": [
+        "Windows®11 Home",
+        "NVIDIA® GeForce RTX™ 5080",
+        "Intel® Core™ Ultra 9 Processor 275HX",
+        "2TB M.2 2280 NVMe™ PCIe® 4.0 SSD"
+      ],
+      "features": [
+        {
+          "title": "Cutting-Edge GPUs",
+          "description": "NVIDIA Blackwell Architecture"
+        },
+        {
+          "title": "AI-Enhanced Graphics and Performance",
+          "description": "NVIDIA DLSS 4 with Multi Frame Generation"
+        },
+        {
+          "title": "Game-Winning Responsiveness",
+          "description": "NVIDIA Reflex 2 with Frame Warp"
+        }
+      ],
+      "price": "1600",
+      "originalPrice": "1750",
+      "discount": "150",
+      "estorePriceTooltipText": "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.",
+      "purchaseLimit": "A maximum of 5 pieces per customer.",
+      "shippingInfo": "Up to 5 working days to ship.",
+      "installment": {
+        "startingAt": "90/mo",
+        "providerName": "Affirm",
+        "providerImage": "./clientlib-site/images/affirm.svg",
+        "tooltip": "Check your purchasing power"
+      }
+    },
+    {
+      "id": "rog-rnuc-g22ch",
+      "bazaarvoiceProductId": "ASUS_M1_68A0I_P",
+      "name": "ROG NUC (NUC14SRK)",
+      "model": "RNUC14SRKU7168A0I",
+      "status": ["In Stock", "New", "Deal"],
+      "isAvailable": true,
+      "isCustomizable": false,
+      "buyLink": "./pdp.html",
+      "customizeLink": "./pdp.html",
+      "image": "./clientlib-site/images/products/product-3-image-1.webp",
+      "images": [
+        {
+          "image": "./clientlib-site/images/products/product-1-image-1.webp",
+          "thumbnail": "./clientlib-site/images/products/product-1-thumb-1.webp",
+          "title": "ROG Strix G22CH - Image 1"
+        },
+        {
+          "image": "./clientlib-site/images/products/product-6-image-2.webp",
+          "thumbnail": "./clientlib-site/images/products/product-1-thumb-2.webp",
+          "title": "ROG Strix G22CH - Image 2"
+        },
+        {
+          "image": "./clientlib-site/images/products/product-6-image-3.webp",
+          "thumbnail": "./clientlib-site/images/products/product-1-thumb-3.webp",
+          "title": "ROG Strix G22CH - Image 3"
+        },
+        {
+          "image": "./clientlib-site/images/products/product-6-image-4.webp",
+          "thumbnail": "./clientlib-site/images/products/product-1-thumb-4.webp",
+          "title": "ROG Strix G22CH - Image 4"
+        },
+        {
+          "image": "./clientlib-site/images/products/product-6-image-5.webp",
+          "thumbnail": "./clientlib-site/images/products/product-1-thumb-5.webp",
+          "title": "ROG Strix G22CH - Image 5"
+        },
+        {
+          "image": "./clientlib-site/images/products/product-6-image-6.webp",
+          "thumbnail": "./clientlib-site/images/products/product-1-thumb-6.webp",
+          "title": "ROG Strix G22CH - Image 6"
+        }
+      ],
+      "fps": 235,
+      "benchmarkGame": "Call of Duty: Modern Warfare",
+      "fpsData": [
+        {
+          "game": "COD",
+          "fps1080": 130,
+          "image": "./clientlib-site/images/games/call-of-duty.webp"
+        },
+        {
+          "game": "Alan Wake",
+          "fps1080": 67,
+          "image": "./clientlib-site/images/games/alan-wake.webp"
+        },
+        {
+          "game": "Counter Strike 2",
+          "fps1080": 100,
+          "image": "./clientlib-site/images/games/counter-strike.webp"
+        },
+        {
+          "game": "Fortnite",
+          "fps1080": 82,
+          "image": "./clientlib-site/images/games/fortnite.webp"
+        },
+        {
+          "game": "Baldur's Gate 3",
+          "fps1080": 75,
+          "image": "./clientlib-site/images/games/baldurs-gate.webp"
+        }
+      ],
+      "specs": [
+        "Windows®11 Home",
+        "NVIDIA® GeForce RTX™ 4060",
+        "Intel® Core™ Ultra 7 155H Processor",
+        "512G M.2 2280 NVMe™ PCIe® 4.0 SSD"
+      ],
+      "features": [
+        {
+          "title": "Cutting-Edge GPUs",
+          "description": "NVIDIA Blackwell Architecture"
+        },
+        {
+          "title": "AI-Enhanced Graphics and Performance",
+          "description": "NVIDIA DLSS 4 with Multi Frame Generation"
+        },
+        {
+          "title": "Game-Winning Responsiveness",
+          "description": "NVIDIA Reflex 2 with Frame Warp"
+        }
+      ],
+      "price": "1880",
+      "originalPrice": "2000",
+      "discount": "120",
+      "estorePriceTooltipText": "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.",
+      "purchaseLimit": "A maximum of 5 pieces per customer.",
+      "shippingInfo": "Up to 5 working days to ship.",
+      "installment": {
+        "startingAt": "90/mo",
+        "providerName": "Affirm",
+        "providerImage": "./clientlib-site/images/affirm.svg",
+        "tooltip": "Check your purchasing power"
+      }
     }
   ],
   "page": 1,

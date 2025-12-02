@@ -5,12 +5,20 @@
 .cmp-floating-price {
   background: var(--color-primary-950);
   @include mix.p(5, "y");
-  @include mix.p(20, "x");
+  @include mix.p(24, "x");
   bottom: 0;
   color: var(--color-primary);
   position: fixed;
   width: 100%;
   z-index: 10;
+  &.relative {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    opacity: 0.85;
+    /* subtle fade */
+    transform: translateY(0px);
+  }
 
   .cmp-floating-content-left {
     p {
@@ -21,8 +29,15 @@
   .cmp-floating-content-right {
     display: flex;
     @include mix.spacer("gap", 6);
+    justify-content: flex-end;
     .content-section {
       text-align: right;
+      p {
+        @include typo.text-tiny;
+      }
+      .discount-price-text {
+        @include typo.text-bolder;
+      }
       .price {
         color: #c74200;
       }
@@ -40,10 +55,9 @@
       }
     }
     .action-section {
-      icon {
+      .icon {
         width: 16px;
         height: 22px;
-        vertical-align: middle;
       }
       .floating-add-to-cart {
         background: var(--color-primary);

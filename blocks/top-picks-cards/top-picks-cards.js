@@ -1,106 +1,165 @@
-import { moveInstrumentation, createOptimizedPicture } from '../../scripts/scripts.js';
+import { createOptimizedPicture } from '../../scripts/scripts.js';
+import { getBlockConfigs, getBlockFieldOrder } from '../../scripts/configs.js';
 
 // Default values from authoring configuration
-const DEFAULT_VALUES = {
+const DEFAULT_CONFIG = {
+  image: '',
   label: 'Top picks',
+  title: '',
   ctaLinkName: 'View configs',
+  link: ''
 };
 
-export default function decorate(block) {
-  /* change to ul, li */
-  const ul = document.createElement('ul');
-  [...block.children].slice(0, 2).forEach((row) => {
-    const li = document.createElement('li');
-    li.className = 'top-picks-card';
-    moveInstrumentation(row, li);
+/**
+ * Helper function to escape HTML special characters
+ * @param {string} str - The string to escape
+ * @returns {string} - The escaped string
+ */
+function escapeHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
 
-    // Create the product image wrapper
-    const productImageWrapper = document.createElement('div');
-    productImageWrapper.className = 'product-image-wrapper';
+/**
+ * Generates HTML for a single product card
+ * @param {Object} cardData - The card data
+ * @returns {string} - The HTML string for the card
+ */
+function generateCardHTML(cardData) {
+  const { imageSrc, imageAlt, label, title, ctaText, ctaUrl, ctaAriaLabel } = cardData;
+  
+  return `
+    <div class="aem-GridColumn aem-GridColumn--default--6 aem-GridColumn--phone--12">
+      <div class="featured-product-card" style="height: 190px;">
+        <div class="product-image-wrapper">
+          <img src="${escapeHtml(imageSrc)}" alt="${escapeHtml(imageAlt)}" class="product-image">
+        </div>
+        <div class="product-info">
+          <h3 class="label">${escapeHtml(label)}</h3>
+          <h4 class="title">${escapeHtml(title)}</h4>
+          <div class="cta-wrapper"><a href="${escapeHtml(ctaUrl)}" class="cta" aria-label="${escapeHtml(ctaAriaLabel)}">${escapeHtml(ctaText)} <span class="icon icon--arrow-wide-right"></span></a></div>
+        </div>
+      </div>
+    </div>`;
+}
 
-    // Create the product info section
-    const productInfo = document.createElement('div');
-    productInfo.className = 'product-info';
+/**
+ * Parses card data from a row based on field order from block definition
+ * @param {HTMLElement} row - The row element to parse
+ * @param {Array<string>} fieldOrder - Array of field names in order
+ * @param {Object} config - Configuration object with default values
+ * @returns {Object} - Parsed card data
+ */
+function parseCardData(row, fieldOrder, config) {
+  const cardData = {
+    imageSrc: '',
+    imageAlt: '',
+    label: config.label,
+    title: '',
+    ctaText: config.ctaLinkName,
+    ctaUrl: '#'
+  };
 
-    // Process each cell in the row
-    [...row.children].forEach((cell, index) => {
-      if (index === 0 && cell.querySelector('picture')) {
+  const cells = [...row.children];
+  
+  cells.forEach((cell, index) => {
+    const fieldName = fieldOrder[index] || '';
+    
+    switch (fieldName) {
+      case 'image':
         // First cell contains the image
         const picture = cell.querySelector('picture');
         if (picture) {
           const img = picture.querySelector('img');
           if (img) {
-            img.className = 'product-image';
-            img.alt = img.alt || 'Product image';
+            cardData.imageSrc = img.src;
+            cardData.imageAlt = img.alt || 'Product image';
           }
-          productImageWrapper.append(picture);
         }
-      } else if (index === 1) {
-        // Second cell contains category/label - apply default if empty
-        const textContent = cell.textContent.trim();
-        const labelText = textContent || DEFAULT_VALUES.label;
-        const label = document.createElement('h3');
-        label.className = 'label';
-        label.textContent = labelText;
-        productInfo.append(label);
-      } else if (index === 2) {
+        break;
+        
+      case 'label':
+        // Second cell contains category/label
+        const labelText = cell.textContent.trim();
+        if (labelText) {
+          cardData.label = labelText;
+        }
+        break;
+        
+      case 'title':
         // Third cell contains title
-        const textContent = cell.textContent.trim();
-        if (textContent) {
-          const title = document.createElement('h4');
-          title.className = 'title';
-          title.textContent = textContent;
-          productInfo.append(title);
+        const titleText = cell.textContent.trim();
+        if (titleText) {
+          cardData.title = titleText;
         }
-      } else if (index === 3) {
-        // Fourth cell contains the CTA link name - apply default if empty
-        const ctaLinkName = cell.textContent.trim() || DEFAULT_VALUES.ctaLinkName;
-        // Store the CTA link name for use in the next cell
-        li.dataset.ctaLinkName = ctaLinkName;
-      } else if (index === 4) {
+        break;
+        
+      case 'ctaLinkName':
+        // Fourth cell contains the CTA link name
+        const ctaText = cell.textContent.trim();
+        if (ctaText) {
+          cardData.ctaText = ctaText;
+        }
+        break;
+        
+      case 'link':
         // Fifth cell contains the CTA link URL
         const link = cell.querySelector('a');
         if (link) {
-          const ctaWrapper = document.createElement('div');
-          ctaWrapper.className = 'cta-wrapper';
-
-          link.className = 'cta';
-
-          // Use the CTA link name from the previous cell, or fallback to existing text, or use default
-          const ctaLinkName = li.dataset.ctaLinkName || link.textContent.trim() || DEFAULT_VALUES.ctaLinkName;
-          link.textContent = ctaLinkName;
-
-          link.setAttribute('aria-label', `${ctaLinkName} for ${productInfo.querySelector('.title')?.textContent || 'product'}`);
-
-          // Add arrow icon
-          const arrowIcon = document.createElement('span');
-          arrowIcon.className = 'icon icon--arrow-wide-right';
-          link.append(' ', arrowIcon);
-
-          ctaWrapper.append(link);
-          productInfo.append(ctaWrapper);
+          cardData.ctaUrl = link.href;
         }
-        // Clean up the temporary data attribute
-        delete li.dataset.ctaLinkName;
-      }
-    });
-
-    li.append(productImageWrapper, productInfo);
-    ul.append(li);
-  });
-
-  // Optimize images
-  ul.querySelectorAll('picture > img').forEach((img) => {
-    const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '240' }]);
-    const newImg = optimizedPic.querySelector('img');
-    moveInstrumentation(img, newImg);
-    // Preserve the className from the original img
-    if (img.className) {
-      newImg.className = img.className;
+        break;
+        
+      default:
+        break;
     }
-    img.closest('picture').replaceWith(optimizedPic);
   });
+  
+  // Generate aria-label
+  cardData.ctaAriaLabel = `View configurations for ${cardData.title}`;
+  
+  return cardData;
+}
 
+export default async function decorate(block) {
+  // Get configuration using getBlockConfigs
+  const config = await getBlockConfigs(block, DEFAULT_CONFIG, 'top-picks-cards');
+  
+  // Load field order from block definition
+  const fieldOrder = await getBlockFieldOrder('top-picks-cards');
+  
+  // Fallback to default field order if JSON not found
+  const finalFieldOrder = fieldOrder.length > 0 
+    ? fieldOrder 
+    : ['image', 'label', 'title', 'ctaLinkName', 'link'];
+  
+  // Extract data from authored content
+  const cards = [];
+  
+  [...block.children].slice(0, 2).forEach((row) => {
+    const cardData = parseCardData(row, finalFieldOrder, config);
+    cards.push(cardData);
+  });
+  
+  // Generate the HTML structure
+  const gridHTML = `
+    <div class="aem-Grid aem-Grid--12 aem-Grid--custom-spacing-default">
+      ${cards.map(card => generateCardHTML(card)).join('\n')}
+    </div>`;
+  
+  // Clear the block and insert the new HTML
   block.textContent = '';
-  block.append(ul);
+  block.innerHTML = gridHTML;
+  
+  // Optimize images after insertion
+  block.querySelectorAll('img.product-image').forEach((img) => {
+    const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '130' }]);
+    const newImg = optimizedPic.querySelector('img');
+    if (newImg) {
+      newImg.className = 'product-image';
+      img.replaceWith(newImg);
+    }
+  });
 }

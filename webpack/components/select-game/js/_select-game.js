@@ -106,12 +106,30 @@ class SelectGameForm {
         { 'aria-label': 'Budget range maximum value', 'aria-controls': 'max-budget' },
       ],
     });
+    const sliderEl = this.dom.slider;
+    const minHandle = sliderEl.querySelector('.noUi-handle-lower');
+    const maxHandle = sliderEl.querySelector('.noUi-handle-upper');
 
     this.dom.slider.noUiSlider.on('update', (values) => {
       const [minVal, maxVal] = values.map((v) => parseFloat(v));
       this._updateBudgetDisplay(minVal, maxVal);
-      // The slider is a valid input, so the button state check is deferred to change/reset
-      this._updateSubmitButtonState(this._getSelectedGames().length === 0);
+      this._updateSubmitButtonState(false);
+
+      if (minHandle) {
+        let text = `$${minVal}`;
+        if (minVal === min) {
+          text += ', minimum value reached';
+        }
+        minHandle.setAttribute('aria-valuetext', text);
+      }
+
+      if (maxHandle) {
+        let text = `$${maxVal}`;
+        if (maxVal === max) {
+          text += ', maximum value reached';
+        }
+        maxHandle.setAttribute('aria-valuetext', text);
+      }
     });
   }
 
@@ -169,12 +187,13 @@ class SelectGameForm {
     const [currentMin, currentMax] = sliderInstance.get().map(toNumber);
 
     // 2. Clamp against the other handle's position
-    if (isMin) {
-      // The minimum value can't exceed the current maximum value
-      if (v > currentMax) return currentMax;
-    } else {
-      // The maximum value can't be less than the current minimum value
-      if (v < currentMin) return currentMin;
+    // The minimum value can't exceed the current maximum value
+    if (isMin && v > currentMax) {
+      return currentMax;
+    }
+    // The maximum value can't be less than the current minimum value
+    if (!isMin && v < currentMin) {
+      return currentMin;
     }
 
     return v;
@@ -313,6 +332,44 @@ const initSelectGameForms = (context) => {
 
 // Initialize on initial page load
 document.addEventListener('DOMContentLoaded', () => {
+  const mobileWrapper = document.getElementById('maximum-budget-wrapper-mobile');
+  const desktopWrapper = document.getElementById('maximum-budget-wrapper-desktop');
+
+  // Create a placeholder to remember original position in DOM
+  const desktopPlaceholder = document.createComment('desktop-wrapper-placeholder');
+  desktopWrapper?.parentNode?.insertBefore(desktopPlaceholder, desktopWrapper?.nextSibling);
+
+  function moveBudgetContent() {
+    if (!mobileWrapper || !desktopWrapper) return;
+
+    if (window.innerWidth < 1280) {
+      // Move all children to mobile wrapper
+      if (desktopWrapper.children.length > 0) {
+        while (desktopWrapper.firstChild) {
+          mobileWrapper.appendChild(desktopWrapper.firstChild);
+        }
+      }
+    } else {
+      // Move all children back to desktop wrapper
+      if (mobileWrapper.children.length > 0) {
+        while (mobileWrapper.firstChild) {
+          desktopWrapper.appendChild(mobileWrapper.firstChild);
+        }
+      }
+    }
+  }
+
+  // Initial call
+  moveBudgetContent();
+
+  // Re-run on resize (with debounce)
+  let resizeTimer;
+
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(moveBudgetContent, 150);
+  });
+
   initSelectGameForms(document.body);
 
   // Start observing the entire document for changes

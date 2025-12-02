@@ -14,11 +14,7 @@
   .cmp-key-features__images {
     display: flex;
     justify-content: center;
-    @include mix.m(10, "b");
-
-    img {
-      width: 100%;
-    }
+    @include mix.m(8, "b");
   }
   .cmp-key-features__actions {
     display: flex;
@@ -65,5 +61,13 @@
   @include typo.text-display6;
   p {
     @include mix.m(5, "b");
+  }
+}
+
+@include mix.respond-to("md", "max") {
+  .cmp-key-features__images {
+    img {
+      width: 100%;
+    }
   }
 }

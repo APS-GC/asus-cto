@@ -36,13 +36,15 @@
   --color-focus-ring: #{vars.$color-focus-ring};
 
   // Gradients
-  --gradient-product-card: conic-gradient(from 90deg,
+  --gradient-product-card: conic-gradient(
+    from 90deg,
     rgba(107, 121, 145, 1) 0deg,
     rgba(107, 121, 145, 1) 71.2543deg,
     rgba(107, 121, 145, 1) 161.353deg,
     rgba(107, 121, 145, 1) 245.421deg,
     rgba(107, 121, 145, 1) 339.262deg,
-    rgba(107, 121, 145, 1) 360deg);
+    rgba(107, 121, 145, 1) 360deg
+  );
 
   // Swiper resets
   --swiper-pagination-bullet-horizontal-gap: 0;
@@ -81,7 +83,8 @@ p {
   padding: 0;
 }
 
-.sr-only {
+.sr-only,
+.sr-only-fixed {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -90,6 +93,12 @@ p {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+.sr-only-fixed {
+  position: fixed;
+  top: -20px;
+  left: -20px;
 }
 
 /** 
@@ -163,7 +172,6 @@ small,
 
 // TODO: Verify the mobile font sizes with UI team.
 @include mix.respond-to("sm", "max") {
-
   h1,
   .text-h1,
   .text-display1 {
@@ -241,26 +249,26 @@ small,
 }
 
 .section-with-bottom-spacing {
-  padding-bottom: 60px !important;
+  padding-bottom: 120px;
 
   @include mix.respond-to("md", "max") {
-    padding-bottom: 32px !important;
+    @include mix.p(8, "b");
   }
 
   @include mix.respond-to("lg", "max") {
-    padding-bottom: 32px !important;
+    @include mix.p(8, "b");
   }
 }
 
 .section-with-top-spacing {
-  padding-top: 60px !important;
+  @include mix.p(16, "t");
 
   @include mix.respond-to("md", "max") {
-    padding-top: 32px !important;
+    @include mix.p(8, "t");
   }
 
   @include mix.respond-to("lg", "max") {
-    padding-top: 32px !important;
+    @include mix.p(8, "t");
   }
 }
 
@@ -278,7 +286,7 @@ body.no-scroll {
 .section-actions-container {
   display: flex;
   justify-content: center;
-  @include mix.m(5, "t");
+  @include mix.m(8, "t");
 
   .section-actions-btn {
     background-color: var(--color-black-50);
@@ -331,12 +339,14 @@ body.no-scroll {
       display: block;
     }
   }
+
+  @include mix.respond-to("xl", "max") {
+    @include mix.m(5, "t");
+  }
 }
 
 // Gradient animation for background
 .gradient-animation {
-  overflow-x: hidden;
-
   &--active::after {
     content: "";
     position: fixed;
@@ -346,12 +356,14 @@ body.no-scroll {
     height: 100%;
     z-index: -1;
 
-    background: conic-gradient(from 90deg,
-        rgba(24, 36, 75, 1) 0deg,
-        rgba(25, 54, 122, 1) 109.038deg,
-        rgba(89, 21, 67, 1) 188.654deg,
-        rgba(23, 19, 31, 1) 256.154deg,
-        rgba(24, 36, 75, 1) 360deg);
+    background: conic-gradient(
+      from 90deg,
+      rgba(24, 36, 75, 1) 0deg,
+      rgba(25, 54, 122, 1) 109.038deg,
+      rgba(89, 21, 67, 1) 188.654deg,
+      rgba(23, 19, 31, 1) 256.154deg,
+      rgba(24, 36, 75, 1) 360deg
+    );
     filter: blur(150px);
     /* Gaussian blur */
     animation: rotateGradient 20s linear infinite;

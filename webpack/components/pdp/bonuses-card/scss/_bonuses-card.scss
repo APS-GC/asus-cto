@@ -2,14 +2,14 @@
 @use "../../../../site/scss/settings/variables" as vars;
 @use "../../../../site/scss/settings/mixins" as mix;
 
-.cmp-bundles-card {
+.cmp-bonuses-card {
   display: flex;
   flex-direction: column;
   @include mix.spacer(gap, 4);
   @include mix.p(6);
   border: 1px solid var(--color-primary-200);
   border-radius: 8px;
-  min-height: 130px;
+  min-height: 128px;
   position: relative;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -47,7 +47,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  &:has(.bundles-checkbox:checked) {
+  &:has(.bonuses-checkbox:checked) {
     border: 1px solid var(--color-brand-asus);
     background-color: transparent;
     box-shadow: 0 2px 12px rgba(0, 123, 255, 0.25);
@@ -67,7 +67,7 @@
     cursor: not-allowed;
     background-color: var(--color-primary-50);
 
-    .bundles-checkbox:disabled {
+    .bonuses-checkbox:disabled {
       cursor: not-allowed;
       & + .checkbox-checkmark {
         display: none;
@@ -110,7 +110,7 @@
     bottom: 0;
     z-index: 2;
 
-    .bundles-checkbox {
+    .bonuses-checkbox {
       position: absolute;
       opacity: 0;
       cursor: pointer;
@@ -124,7 +124,7 @@
     }
   }
 
-  .cmp-bundles-card__product {
+  .cmp-bonuses-card__product {
     display: flex;
     gap: 1rem;
   }
@@ -145,8 +145,6 @@
       list-style-position: outside;
       margin-bottom: 5px;
       line-height: 1.4;
-      // max-width: 200px;
-      // word-wrap: break-word;
     }
   }
   .bonus-card-bottom {
@@ -156,13 +154,13 @@
     .price {
       text-align: right;
       @include typo.text-base;
-      @include mix.m(2, "b");
       span {
         color: var(--color-warning);
       }
     }
     .select-cta {
       text-align: right;
+      @include mix.m(1, "t");
       .actions {
         @include typo.text-cta;
         text-align: right;
@@ -181,7 +179,7 @@
   background-color: var(--color-primary-50);
 }
 @include mix.respond-to("md", "max") {
-  .cmp-bundles-card {
+  .cmp-bonuses-card {
     @include mix.p(4);
     @include mix.spacer(gap, 2);
     min-height: 100px;

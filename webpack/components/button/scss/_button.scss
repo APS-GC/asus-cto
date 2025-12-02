@@ -71,6 +71,7 @@
   &:focus-visible:not(:disabled) {
     outline: solid 2px var(--color-focus-ring);
     outline-offset: 2px;
+    //box-shadow: 0 0 0 2px var(--color-focus-ring);
   }
 
   // Size variants
@@ -118,6 +119,11 @@
       background-color: transparent;
       color: var(--btn-link-hover-color);
       text-decoration: underline;
+    }
+
+    &:focus-visible:not(:disabled) {
+      outline-color: var(--color-focus-ring);
+      box-shadow: none;
     }
 
     // Size adjustment for link variant

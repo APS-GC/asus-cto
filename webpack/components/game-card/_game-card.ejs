@@ -6,14 +6,16 @@
     value="<%= game.id %>"
     data-name="<%= game.name %>"
     data-image="<%= game.image %>"
+    aria-label="Select <%= game.name %>"
     <%= typeof isChecked !== 'undefined' && isChecked ? 'checked' : '' %>
-    <%= typeof isChecked !== 'undefined' && isChecked ? 'aria-checked=true' : 'aria-checked=false' %>
   />
   <div class="game-details-wrapper">
-    <div class="image-wrapper" aria-hidden="true">
-      <img src="<%= game.image %>" alt="" class="game-image" loading="lazy" />
-      <div class="checkmark-overlay"></div>
+    <div class="image-outer">
+      <div class="image-wrapper" aria-hidden="true">
+        <img src="<%= game.image %>" alt="<%= game.name %>" class="game-image" loading="lazy" />
+      </div>
+      <div class="checkmark-overlay" aria-hidden="true"></div>
     </div>
-    <label class="game-info" for="game-you-play-<%= game.id %>"><%= game.name %></label>
+    <label class="game-info" for="game-you-play-<%= game.id %>" aria-hidden="true"><%= game.name %></label>
   </div>
 </div>

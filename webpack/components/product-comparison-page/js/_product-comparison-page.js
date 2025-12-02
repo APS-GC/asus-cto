@@ -34,14 +34,16 @@ function renderComparisonProductCard(product) {
   } else if (isBuyable && !isCustomizable) {
     button = `<a href='${buyLink}' class="btn btn-sm" aria-label="Buy ${name} now">Buy Now</a>`;
   } else {
-    button = `<button class="btn btn-sm">Notify Me</button>`;
+    button = `<button class="btn btn-sm" aria-label="Notify me ${name}">Notify Me</button>`;
   }
 
   return `
-    <div class="comparison-product-card layout-grid__col layout-grid__col--span-3" data-id="${id}" role="group"">
+    <div class="comparison-product-card comparison-product-card-item" data-id="${id}" role="group"">
       <div class="comparison-product-card__image-container">
-        <button type="button" class="icon icon--close close-button" aria-label="Remove ${name} from comparison" data-id="${id}"></button>
-        <img class="comparison-product-card__image" loading="lazy" src="${image}" alt="Image of ${name}"/>
+        <button class="btn btn-link close-button" aria-label="Remove ${name} from comparison" data-id="${id}">
+          <span class="icon icon--close"></span>
+        </button>
+        <img class="comparison-product-card__image" loading="lazy" src="${image}" alt="Image of ${name}" fetchpriority=high />
       </div>
       <div class="comparison-product-card__info flex">
         <div class="comparison-product-card__info-container flex">
@@ -71,11 +73,13 @@ function renderComparisonProductCard(product) {
 function renderFloatingCard(product) {
   const { id, name, bazaarvoiceProductId, image, price } = product;
   return `
-    <div class="product-comparison-floating-card layout-grid__col layout-grid__col--span-3" data-id="${id}">
-        <span class="icon icon--close close-button-floating-card" data-id="${id}"></span>
+    <div class="product-comparison-floating-card comparison-product-card-item" data-id="${id}">
+    <button class="close-button-floating-card" aria-label="Remove ${name} from comparison" data-id="${id}">
+        <span class="icon icon--close"></span>
+    </button>
         <div class="floating-card-body flex">
           <div class="img-wrapper">
-            <img src="${image}" alt="${name}">
+            <img src="${image}" alt="${name}" loading="lazy" fetchpriority="high" tabindex="0" aria-label="${name} product">
           </div>
             <div class="floating-card-info flex">
                 <small class="floating-card__title ">
@@ -95,8 +99,8 @@ function renderFloatingCard(product) {
 
 function renderEmptyCard() {
   return `
-    <div class="comparison-product-card layout-grid__col layout-grid__col--span-3">
-        <a href="/product-listing.html" aria-label="Add a product to compare" class="comparison-product-card__empty-container">
+    <div class="comparison-product-card comparison-product-card-item">
+        <a href="product-listing.html" aria-label="Add a product to compare" class="comparison-product-card__empty-container">
             <div class="empty-container-contents">
                 <span class="icon-wrapper"><span class="icon icon--plus-white" aria-hidden="true"></span></span>
                 <p>Add to compare</p>
@@ -108,7 +112,7 @@ function renderEmptyCard() {
 
 function renderEmptyFloatingCard() {
   return `
-    <a href="/product-listing.html" class="product-comparison-floating-card layout-grid__col layout-grid__col--span-3">
+    <a href="product-listing.html" class="product-comparison-floating-card comparison-product-card-item">
         <div class="empty-floating-card-contents flex">
           <span class="icon-wrapper"><span class="icon icon--plus-white"></span></span>
           <small>Add to compare</small>
@@ -120,22 +124,22 @@ function renderEmptyFloatingCard() {
 function renderCompetitiveAdvantage(key, products) {
   const allSpecs = products.map((p) => p.specs.find((s) => s.key === key));
 
-  const hasHighlight = allSpecs.some((spec) => spec && spec.highlight);
+  const hasHighlight = allSpecs.some((spec) => spec?.highlight);
   if (!hasHighlight) {
     return '';
   }
 
   let advantageData = '';
   allSpecs.forEach((spec) => {
-    if (spec && spec.highlight) {
+    if (spec?.highlight) {
       advantageData += `
-        <div class="layout-grid__col layout-grid__col--span-3">
+        <div class="comparison-product-card-item">
           <p class="highlight">${spec.highlight}</p>
         </div>
       `;
     } else {
       advantageData += `
-        <div class="layout-grid__col layout-grid__col--span-3">
+        <div class="comparison-product-card-item">
           <p>-</p>
         </div>
       `;
@@ -153,26 +157,26 @@ function renderComparisonRow(label, key, products) {
   allSpecs.forEach((spec) => {
     if (!spec) {
       specData += `
-        <div class="table-cell layout-grid__col layout-grid__col--span-3">
-          <p>-</p>
+        <div class="table-cell comparison-product-card-item">
+          <span>-</span>
         </div>
       `;
     } else if (spec.key === 'color') {
       specData += `
-        <div class="table-cell layout-grid__col layout-grid__col--span-3 flex">
-          <span class="color-block" style="background-color:${spec.colorCode}"></span><p>${spec.value}</p>
+        <div class="table-cell comparison-product-card-item flex">
+          <span class="color-block" style="background-color:${spec.colorCode}"></span><span>${spec.value}</span>
         </div>
       `;
     } else if (typeof spec.value !== 'string') {
       specData += `
-        <div class="table-cell layout-grid__col layout-grid__col--span-3">
-          ${spec.value.map((v) => `<p>${v}</p>`).join('')}
+        <div class="table-cell comparison-product-card-item">
+          ${spec.value.map((v) => `<span>${v}</span>`).join('')}
         </div>
       `;
     } else {
       specData += `
-        <div class="table-cell layout-grid__col layout-grid__col--span-3">
-          <p>${spec.value}</p>
+        <div class="table-cell comparison-product-card-item">
+          <span>${spec.value}</span>
         </div>
       `;
     }
@@ -180,13 +184,17 @@ function renderComparisonRow(label, key, products) {
 
   return `
     <div id="${key}" class="product-comparison-row flex">
-      <h3>${label}</h3>
-      <div class="product-row-info layout-grid layout-grid--cols">
+      <h3 tabindex="0">${label}</h3>
+      <div class="product-row-info product-comparison-grid">
         ${specData}
       </div>
-      <div class="layout-grid layout-grid--cols">
-        ${advantageData}
-      </div>
+      ${
+        advantageData
+          ? `<div class="product-comparison-grid">
+              ${advantageData}
+            </div>`
+          : ''
+      }
     </div>
   `;
 }
@@ -201,11 +209,11 @@ function renderTrailingActionButtons(product) {
   } else if (isBuyable && !isCustomizable) {
     button = `<a href='${buyLink}' class="btn btn-sm" aria-label="Buy ${name} now">Buy Now</a>`;
   } else {
-    button = `<button class="btn btn-sm">Notify Me</button>`;
+    button = `<button class="btn btn-sm" aria-label="Notify me ${name}">Notify Me</button>`;
   }
 
   return `
-    <div class="trailing-action-buttons layout-grid__col layout-grid__col--span-3">
+    <div class="trailing-action-buttons comparison-product-card-item">
       ${button}
     </div>
   `;
@@ -217,11 +225,25 @@ function renderNavigationBullets(rows) {
       ${rows
         .map(
           (row) => `
-          <a href="product-comparison.html#${row.key}"  class="navigation-bullet" aria-label="Go to ${row.label} section"></a>
+          <a href="product-comparison.html#${row.key}"  class="navigation-bullet" aria-label="Go to ${row.label} section">
+            <span class="navigation-bullet-dot"></span>
+            <span class="navigation-bullet-label">${row.label}</span>
+          </a>
         `,
         )
         .join('')}
     </nav>
+    <div class="page-navigation-hover-panel hidden">
+      ${rows
+        .map(
+          (row) => `
+          <a href="product-comparison.html#${row.key}" class="navigation-hover-item" data-key="${row.key}" aria-label="Go to ${row.label} section">
+            <span class="navigation-hover-label">${row.label}</span>
+          </a>
+        `,
+        )
+        .join('')}
+    </div>
   `;
 }
 
@@ -235,7 +257,7 @@ function getAllSpecs(products) {
       }
     });
   });
-  console.log(Array.from(specMap.entries()).map(([key, label]) => ({ key, label })));
+
   return Array.from(specMap.entries()).map(([key, label]) => ({ key, label }));
 }
 
@@ -261,6 +283,17 @@ async function loadProducts(initial = false) {
     actionsContainer.insertAdjacentHTML('beforeend', renderTrailingActionButtons(product));
   });
 
+  const switchContainer = document.querySelector('#switch-container');
+  const floatingCards = floatingContainer.querySelectorAll('.product-comparison-floating-card');
+
+  if (switchContainer) {
+    if (floatingCards.length <= 1) {
+      switchContainer.style.display = 'none';
+    } else {
+      switchContainer.style.display = '';
+    }
+  }
+
   for (let i = products.length; i < 4; i++) {
     container.insertAdjacentHTML('beforeend', renderEmptyCard());
     floatingContainer.insertAdjacentHTML('beforeend', renderEmptyFloatingCard());
@@ -282,6 +315,36 @@ async function loadProducts(initial = false) {
   const bulletsContainer = document.querySelector('.page-navigation');
   const bullets = document.querySelectorAll('.navigation-bullet');
   const rows = document.querySelectorAll('.product-comparison-row');
+  const hoverPanel = document.querySelector('.page-navigation-hover-panel');
+  const hoverItems = document.querySelectorAll('.navigation-hover-item');
+
+  // Handle hover panel visibility - trigger on bullet hover
+  if (bulletsContainer && hoverPanel && bullets.length > 0) {
+    let hoverTimeout;
+
+    const showHoverPanel = () => {
+      clearTimeout(hoverTimeout);
+      hoverPanel.classList.remove('hidden');
+      bulletsContainer.classList.add('hide-bullets');
+    };
+
+    const hideHoverPanel = () => {
+      hoverTimeout = setTimeout(() => {
+        hoverPanel.classList.add('hidden');
+        bulletsContainer.classList.remove('hide-bullets');
+      }, 200);
+    };
+
+    // Trigger on individual bullet hover
+    bullets.forEach((bullet) => {
+      bullet.addEventListener('mouseenter', showHoverPanel);
+      bullet.addEventListener('mouseleave', hideHoverPanel);
+    });
+
+    // Keep panel visible when hovering over it
+    hoverPanel.addEventListener('mouseenter', showHoverPanel);
+    hoverPanel.addEventListener('mouseleave', hideHoverPanel);
+  }
 
   window.addEventListener('scroll', () => {
     if (!bulletsContainer) return;
@@ -295,11 +358,17 @@ async function loadProducts(initial = false) {
 
     // removing 'selected' from all bullets first
     bullets.forEach((bullet) => bullet.classList.remove('selected'));
+    if (hoverItems.length > 0) {
+      hoverItems.forEach((item) => item.classList.remove('selected'));
+    }
 
     if (currentId) {
       const bullet = document.querySelector(`.navigation-bullet[href$="#${currentId}"]`);
+      const hoverItem = document.querySelector(`.navigation-hover-item[data-key="${currentId}"]`);
       if (bullet) bullet.classList.add('selected');
+      if (hoverItem) hoverItem.classList.add('selected');
       bulletsContainer.classList.remove('hidden');
+      // Don't automatically show hover panel - only show on hover
     } else {
       bulletsContainer.classList.add('hidden');
     }
@@ -308,13 +377,17 @@ async function loadProducts(initial = false) {
   count.innerHTML = products.length;
 
   // attach event listeners for close buttons
-  document.querySelectorAll('.close-button').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
+  document.addEventListener('click', (e) => {
+    if (
+      e.target.classList.contains('close-button') ||
+      e.target.classList.contains('close-button-floating-card')
+    ) {
       const id = e.target.dataset.id;
       products = products.filter((p) => p.id !== id);
       loadProducts();
-    });
+    }
   });
+
   document.querySelectorAll('.close-button-floating-card').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       const id = e.target.dataset.id;
@@ -340,51 +413,59 @@ document.addEventListener('DOMContentLoaded', () => {
   const floatingContainer = document.querySelector(
     '.product-comparison-floating-card__container-wrapper',
   );
+  const scrollable = document.querySelector('.scrollable-component');
+  const floating = document.querySelector('.product-comparison-floating-card__container');
+
   const backButton = document.querySelector('#comparison-page-back-button');
   if (backButton) {
     backButton.addEventListener('click', () => {
-      window.location.href = '/product-listing.html';
+      window.location.href = 'product-listing.html';
     });
   }
 
-  if (mainContainer && floatingContainer) {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          floatingContainer.classList.add('hidden');
-        } else {
-          floatingContainer.classList.remove('hidden');
-        }
-      },
-      {
-        root: null,
-        threshold: 0,
-      },
-    );
-    observer.observe(mainContainer);
-  }
+  if (mainContainer && floatingContainer && scrollable && floating) {
+    const toggleFloating = () => {
+      const mainBottom = mainContainer.offsetTop + mainContainer.offsetHeight;
+      const footer = document.querySelector('footer');
+      if (window.scrollY >= mainBottom && window.scrollY < footer.offsetTop - 250) {
+        floatingContainer.classList.add('sticky');
+        // Sync scroll position when floating cards become visible
+        floating.scrollLeft = scrollable.scrollLeft;
+      } else {
+        floatingContainer.classList.remove('sticky');
+      }
+    };
 
-  const scrollable = document.querySelector('.scrollable-component');
-  const floating = document.querySelector('.product-comparison-floating-card__container');
+    toggleFloating(); // run once on load
+    window.addEventListener('scroll', toggleFloating);
+  }
 
   if (scrollable && floating) {
     let isSyncingScrollable = false;
     let isSyncingFloating = false;
 
     scrollable.addEventListener('scroll', () => {
-      if (!isSyncingFloating) {
-        isSyncingScrollable = true;
-        floating.scrollLeft = scrollable.scrollLeft;
+      if (isSyncingScrollable) {
+        isSyncingScrollable = false;
+        return;
       }
-      isSyncingFloating = false;
+      isSyncingFloating = true;
+      floating.scrollLeft = scrollable.scrollLeft;
+      window.requestAnimationFrame(() => {
+        isSyncingFloating = false;
+      });
     });
 
     floating.addEventListener('scroll', () => {
-      if (!isSyncingScrollable) {
-        isSyncingFloating = true;
-        scrollable.scrollLeft = floating.scrollLeft;
+      if (isSyncingFloating) {
+        isSyncingFloating = false;
+        return;
       }
-      isSyncingScrollable = false;
+      isSyncingScrollable = true;
+      scrollable.scrollLeft = floating.scrollLeft;
+      window.requestAnimationFrame(() => {
+        isSyncingScrollable = false;
+      });
     });
   }
 });

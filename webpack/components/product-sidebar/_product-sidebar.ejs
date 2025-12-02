@@ -1,4 +1,4 @@
-<aside 
+<div 
   class="cmp-sidebar"
   id="product-filter-dialog"
 >
@@ -20,7 +20,7 @@
   <div class="cmp-sidebar__applied-filters">
     <div class="applied-filters__header">
       <h2 class="applied-filters__title">Applied filters</h2>
-      <button class="applied-filters__clear btn btn-link" aria-label="Clear all applied filters">Clear all</button>
+      <a href="#" class="applied-filters__clear" aria-label="Clear all applied filters">Clear all</a>
     </div>
     <div class="applied-filters__list" role="list" aria-live="polite" aria-label="Currently applied filters"></div>
   </div>
@@ -36,7 +36,7 @@
   </div>
 
   <!-- Budget -->
-  <div class="cmp-sidebar__budget">
+  <div class="cmp-sidebar__budget" role="group" aria-label="Your budget">
     <!-- Hidden inputs to submit budget values -->
     <input type="hidden" name="minBudget" id="minBudget" value="1100" />
     <input type="hidden" name="maxBudget" id="maxBudget" value="5000" />
@@ -46,9 +46,11 @@
     </div>
     <div class="budget-center">
       <div class="budget-inputs">
-        <input type="text" class="budget-value-input" id="budget-min-value" value="1100" aria-label="Minimum budget" />
-        <span class="budget-separator">to</span>
-        <input type="text" class="budget-value-input" id="budget-max-value" value="5000" aria-label="Maximum budget" />
+        <label for="budget-min-value" class="sr-only">Minimum Budget Value</label>
+        <input type="text" class="budget-value-input" id="budget-min-value" value="1100" />
+        <span class="budget-separator" aria-hidden="true">to</span>
+        <label for="budget-max-value" class="sr-only">Maximum Budget Value</label>
+        <input type="text" class="budget-value-input" id="budget-max-value" value="5000" />
       </div>
       <div class="budget-range-wrapper">
         <div
@@ -58,13 +60,8 @@
           data-min="500"
           data-max="5000"
           data-step="100"
-          role="slider"
-          aria-label="Price range slider"
-          aria-valuemax="5000"
-          aria-valuemin="500"
-          aria-valuenow="1100"
         ></div>
-        <div class="range-labels">
+        <div class="range-labels" aria-hidden="true">
           <span>$500</span>
           <span>$5,000</span>
         </div>
@@ -78,78 +75,101 @@
       {
         id: 'accordion-bb7b39a94e-item-b09e9d5a74',
         title: 'Availability',
-        content: `<ul class="cmp-checkbox-list">
+        content: `<ul class="cmp-checkbox-list" aria-label="filter products by availability">
           <li class="cmp-checkbox">
-            <input type="checkbox" id="in-stock" value="stock">
-            <label for="in-stock">In Stock</label>
+            <label for="in-stock">
+              <input type="checkbox" id="in-stock" value="stock" aria-label="In Stock">
+              <span>In Stock</span>
+            </label>
           </li>
           <li class="cmp-checkbox">
-            <input type="checkbox" id="temporarily-out-of-stock" value="out-of-stock">
-            <label for="temporarily-out-of-stock">Temporarily Out of Stock</label>
+            <label for="temporarily-out-of-stock">
+              <input type="checkbox" id="temporarily-out-of-stock" value="out-of-stock" aria-label="Temporarily Out of Stock"> 
+              <span>Temporarily Out of Stock</span>
+            </label>
           </li>
            <li class="cmp-checkbox">
-            <input type="checkbox" id="all-products" value="all-products">
-            <label for="all-products">All Products</label>
+            <label for="all-products">
+              <input type="checkbox" id="all-products" value="all-products" aria-label="All Products">
+              <span>All Products</span>
+            </label>
           </li>
         </ul>`
       },
       {
         id: 'accordion-bb7b39a94e-item-c6628ce7e9',
         title: 'Product Type',
-        content: `<ul class="cmp-checkbox-list">
+        content: `<ul class="cmp-checkbox-list" aria-label="filter products by product type">
           <li class="cmp-checkbox">
-            <input type="checkbox" id="ready-to-ship" value="ready-to-ship">
-            <label for="ready-to-ship">Ready to Ship</label>
+            <label for="ready-to-ship">
+              <input type="checkbox" id="ready-to-ship" value="ready-to-ship" aria-label="Ready to Ship">
+              <span>Ready to Ship</span>
+            </label>
           </li>
           <li class="cmp-checkbox">
-            <input type="checkbox" id="customizable" value="customizable">
-            <label for="customizable">Customizable</label>
+            <label for="customizable">
+              <input type="checkbox" id="customizable" value="customizable" aria-label="Customizable">
+              <span>Customizable</span>
+            </label>
           </li>
         </ul>`
       },
       {
         id: 'accordion-bb7b39a94e-item-8b82f9685f',
         title: 'Deals & promotions',
-        content: `<ul class="cmp-checkbox-list">
+        content: `<ul class="cmp-checkbox-list" aria-label="Deals & Promotions">
           <li class="cmp-checkbox">
-            <input type="checkbox" id="deals" value="deals">
-            <label for="deals">Deals</label>
+            <label for="deals">
+              <input type="checkbox" id="deals" value="deals" aria-label="Deals">
+              <span>Deals</span>
+            </label>
           </li>
         </ul>`
       },
       {
         id: 'accordion-bb7b39a94e-item-brand-series',
         title: 'By Brand / Series',
-        content: `<ul class="cmp-checkbox-list">
+        content: `<ul class="cmp-checkbox-list" aria-label="By brand/series">
           <li class="cmp-checkbox">
-            <input type="checkbox" id="rog" value="rog">
-            <label for="rog">ROG</label>
+            <label for="rog">
+              <input type="checkbox" id="rog" value="rog" aria-label="ROG">
+              <span>ROG</span>
+            </label>
           </li>
           <li class="cmp-checkbox">
-            <input type="checkbox" id="rog-strix" value="rog-strix">
-            <label for="rog-strix">ROG Strix</label>
+            <label for="rog-strix"><input type="checkbox" id="rog-strix" value="rog-strix" aria-label="ROG Strix">
+              <span>ROG Strix</span>
+            </label>
           </li>
            <li class="cmp-checkbox">
-            <input type="checkbox" id="tuf-gaming" value="tuf-gaming">
-            <label for="tuf-gaming">TUF Gaming</label>
+            <label for="tuf-gaming">
+              <input type="checkbox" id="tuf-gaming" value="tuf-gaming" aria-label="TUF Gaming">
+              <span>TUF Gaming</span>
+            </label>
           </li>
         </ul>`
       },
       {
         id: 'accordion-bb7b39a94e-item-gpu',
         title: 'GPU',
-        content: `<ul class="cmp-checkbox-list">
+        content: `<ul class="cmp-checkbox-list" aria-label="GPU">
           <li class="cmp-checkbox">
-            <input type="checkbox" id="GeForce-RTX-4080" value="GeForce-RTX-4080">
-            <label for="GeForce-RTX-4080">GeForce RTX 4080</label>
+            <label for="GeForce-RTX-4080">
+              <input type="checkbox" id="GeForce-RTX-4080" value="GeForce-RTX-4080" aria-label="GeForce RTX 4080">
+              <span>GeForce RTX 4080</span>
+            </label>
           </li>
           <li class="cmp-checkbox">
-            <input type="checkbox" id="GeForce-RTX-3090" value="GeForce-RTX-3090">
-            <label for="GeForce-RTX-3090">GeForce RTX 3090</label>
+            <label for="GeForce-RTX-3090">
+              <input type="checkbox" id="GeForce-RTX-3090" value="GeForce-RTX-3090" aria-label="GeForce RTX 3090">
+              <span>GeForce RTX 3090</span>
+            </label>
           </li>
            <li class="cmp-checkbox">
-            <input type="checkbox" id="GeForce-RTX-3080" value="GeForce-RTX-3080">
-            <label for="GeForce-RTX-3080">GeForce RTX 3080</label>
+            <label for="GeForce-RTX-3080">
+              <input type="checkbox" id="GeForce-RTX-3080" value="GeForce-RTX-3080" aria-label="GeForce RTX 3080">
+              <span>GeForce RTX 3080</span>
+            </label>
           </li>
         </ul>`,
         expanded: true
@@ -157,30 +177,42 @@
       {
         id: 'accordion-bb7b39a94e-item-cpu',
         title: 'CPU',
-        content: `<ul class="cmp-checkbox-list">
+        content: `<ul class="cmp-checkbox-list" aria-label="CPU">
           <li class="cmp-checkbox">
-            <input type="checkbox" id="13th-Gen-Intel-Core-i7" value="13th-Gen-Intel-Core-i7">
-            <label for="13th-Gen-Intel-Core-i7">13th Gen Intel Core i7</label>
+            <label for="13th-Gen-Intel-Core-i7">
+              <input type="checkbox" id="13th-Gen-Intel-Core-i7" value="13th-Gen-Intel-Core-i7" aria-label="13th Gen Intel Core i7">
+              <span>13th Gen Intel Core i7</span>
+            </label>
           </li>
           <li class="cmp-checkbox">
-            <input type="checkbox" id="13th-Gen-Intel-Core-i5" value="13th-Gen-Intel-Core-i5">
-            <label for="13th-Gen-Intel-Core-i5">13th Gen Intel Core i5</label>
+            <label for="13th-Gen-Intel-Core-i5">
+              <input type="checkbox" id="13th-Gen-Intel-Core-i5" value="13th-Gen-Intel-Core-i5" aria-label="13th Gen Intel Core i5">
+              <span>13th Gen Intel Core i5</span>
+            </label>
           </li>
            <li class="cmp-checkbox">
-            <input type="checkbox" id="11th-Gen-Intel-Core-i7" value="11th-Gen-Intel-Core-i7">
-            <label for="11th-Gen-Intel-Core-i7">11th Gen Intel Core i7</label>
+            <label for="11th-Gen-Intel-Core-i7">
+              <input type="checkbox" id="11th-Gen-Intel-Core-i7" value="11th-Gen-Intel-Core-i7" aria-label="Gen Intel Core i7">
+              <span>Gen Intel Core i7</span>
+            </label>
           </li>
            <li class="cmp-checkbox">
-            <input type="checkbox" id="11th-Gen-Intel-Core-i5" value="11th-Gen-Intel-Core-i5">
-            <label for="11th-Gen-Intel-Core-i5">11th Gen Intel Core i5</label>
+            <label for="11th-Gen-Intel-Core-i5">
+              <input type="checkbox" id="11th-Gen-Intel-Core-i5" value="11th-Gen-Intel-Core-i5" aria-label="11th Gen Intel Core i5">
+              <span>11th Gen Intel Core i5</span>
+            </label>
           </li>
            <li class="cmp-checkbox">
-            <input type="checkbox" id="amd-ryzen-9-3000-series" value="amd-ryzen-9-3000-series">
-            <label for="amd-ryzen-9-3000-series">AMD Ryzen 9 3000 Series</label>
+            <label for="amd-ryzen-9-3000-series">
+              <input type="checkbox" id="amd-ryzen-9-3000-series" value="amd-ryzen-9-3000-series" aria-label="AMD Ryzen 9 3000 Series">
+              <span>AMD Ryzen 9 3000 Series</span>
+            </label>
           </li>
             <li class="cmp-checkbox">
-            <input type="checkbox" id="amd-ryzen-7-5800X-3d" value="amd-ryzen-7-5800X-3d">
-            <label for="amd-ryzen-7-5800X-3d">AMD Ryzen 7 5800X 3D</label>
+            <label for="amd-ryzen-7-5800X-3d">
+              <input type="checkbox" id="amd-ryzen-7-5800X-3d" value="amd-ryzen-7-5800X-3d" aria-label="Ryzen 7 5800X 3D">
+              <span>Ryzen 7 5800X 3D</span>
+              </label>
           </li>
         </ul>`,
         expanded: true
@@ -188,94 +220,126 @@
        {
         id: 'accordion-bb7b39a94e-item-cpu-cooling',
         title: 'CPU cooling',
-        content: `<ul class="cmp-checkbox-list">
+        content: `<ul class="cmp-checkbox-list" aria-label="CPU cooling types">
           <li class="cmp-checkbox">
-            <input type="checkbox" id="liquid" value="liquid">
-            <label for="liquid">Liquid</label>
+            <label for="liquid">
+              <input type="checkbox" id="liquid" value="liquid" aria-label="Liquid">
+              <span>Liquid</span>
+              </label>
           </li>
           <li class="cmp-checkbox">
-            <input type="checkbox" id="air" value="air">
-            <label for="air">Air</label>
+            <label for="air">
+              <input type="checkbox" id="air" value="air" aria-label="Air">
+              <span>Air</span>
+              </label>
           </li>
         </ul>`
       },
            {
         id: 'accordion-bb7b39a94e-item-chipset',
         title: 'Chipset',
-        content: `<ul class="cmp-checkbox-list">
+        content: `<ul class="cmp-checkbox-list" aria-label="Chipset">
           <li class="cmp-checkbox">
-            <input type="checkbox" id="intel-z390" value="intel-z390">
-            <label for="intel-z390">Intel Z390</label>
+            <label for="intel-z390">
+              <input type="checkbox" id="intel-z390" value="intel-z390" aria-label="Intel Z390">
+              <span>Intel Z390</span>
+              </label>
           </li>
           <li class="cmp-checkbox">
-            <input type="checkbox" id="adm-b450" value="adm-b450">
-            <label for="adm-b450">AMD B450</label>
+            <label for="adm-b450">
+              <input type="checkbox" id="adm-b450" value="adm-b450" aria-label="AMD B450">
+              <span>AMD B450</span>
+              </label>
           </li>
         </ul>`
       },
             {
         id: 'accordion-bb7b39a94e-item-memory',
         title: 'Memory',
-        content: `<ul class="cmp-checkbox-list">
+        content: `<ul class="cmp-checkbox-list" aria-label="Memory options">
           <li class="cmp-checkbox">
-            <input type="checkbox" id="64gb" value="64gb">
-            <label for="64gb">64GB</label>
+            <label for="64gb">
+              <input type="checkbox" id="64gb" value="64gb" aria-label="64gb">
+              <span>64GB</span>
+              </label>
           </li>
           <li class="cmp-checkbox">
-            <input type="checkbox" id="32gb" value="32gb">
-            <label for="32gb">32GB</label>
+            <label for="32gb">
+              <input type="checkbox" id="32gb" value="32gb" aria-label="32gb">
+              <span>32GB</span>
+              </label>
           </li>
            <li class="cmp-checkbox">
-            <input type="checkbox" id="16gb" value="16gb">
-            <label for="16gb">16GB</label>
+            <label for="16gb">
+              <input type="checkbox" id="16gb" value="16gb" aria-label="16gb">
+              <span>16GB</span>
+            </label>
           </li>
            <li class="cmp-checkbox">
-            <input type="checkbox" id="8gb" value="8gb">
-            <label for="8gb">8GB</label>
+            <label for="8gb">
+              <input type="checkbox" id="8gb" value="8gb" aria-label="8gb">
+              <span>8GB</span>
+            </label>
           </li>
         </ul>`
       },
        {
         id: 'accordion-bb7b39a94e-item-storage',
         title: 'Storage',
-        content: `<ul class="cmp-checkbox-list">
+        content: `<ul class="cmp-checkbox-list" aria-label="Storage options">
           <li class="cmp-checkbox">
-            <input type="checkbox" id="1tb-and-up" value="1tb-and-up">
-            <label for="1tb-and-up">1TB and up</label>
+            <label for="1tb-and-up">
+              <input type="checkbox" id="1tb-and-up" value="1tb-and-up" aria-label="1TB and up">
+              <span>1TB and up</span>
+              </label>
           </li>
           <li class="cmp-checkbox">
-            <input type="checkbox" id="256gb-512gb" value="256gb-512gb">
-            <label for="256gb-512gb">256GB - 512GB</label>
+            <label for="256gb-512gb">
+              <input type="checkbox" id="256gb-512gb" value="256gb-512gb" aria-label="256GB - 512GB">
+              <span>256GB - 512GB</span>
+              </label>
           </li>
            <li class="cmp-checkbox">
-            <input type="checkbox" id="ssd" value="ssd">
-            <label for="ssd">SSD</label>
+            <label for="ssd">
+              <input type="checkbox" id="ssd" value="ssd" aria-label="SSD">
+              <span>SSD</span>
+              </label>
           </li>
            <li class="cmp-checkbox">
-            <input type="checkbox" id="hdd" value="hdd">
-            <label for="hdd">HDD</label>
+            <label for="hdd">
+              <input type="checkbox" id="hdd" value="hdd" aria-label="HDD">
+              <span>HDD</span>
+              </label>
           </li>
         </ul>`
       },
           {
         id: 'accordion-bb7b39a94e-item-connectivity',
         title: 'Connectivity',
-        content: `<ul class="cmp-checkbox-list">
+        content: `<ul class="cmp-checkbox-list" aria-label="Connectivity filters list">
           <li class="cmp-checkbox">
-            <input type="checkbox" id="type-c-usb-3.2-gen-2" value="type-c-usb-3.2-gen-2">
-            <label for="type-c-usb-3.2-gen-2">Type-C USB 3.2 Gen 2</label>
+            <label for="type-c-usb-3.2-gen-2">
+              <input type="checkbox" id="type-c-usb-3.2-gen-2" value="type-c-usb-3.2-gen-2" aria-label="Type-C USB 3.2 Gen 2">
+              <span>Type-C USB 3.2 Gen 2</span>
+              </label>
           </li>
           <li class="cmp-checkbox">
-            <input type="checkbox" id="type-c-usb-3.2-gen-1" value="type-c-usb-3.2-gen-1">
-            <label for="type-c-usb-3.2-gen-1">Type-C USB 3.2 Gen 1</label>
+            <label for="type-c-usb-3.2-gen-1">
+              <input type="checkbox" id="type-c-usb-3.2-gen-1" value="type-c-usb-3.2-gen-1" aria-label="Type-C USB 3.2 Gen 1">
+              <span>Type-C USB 3.2 Gen 1</span>
+            </label>
           </li>
            <li class="cmp-checkbox">
-            <input type="checkbox" id="type-a-usb-3.2-gen-2" value="type-a-usb-3.2-gen-2">
-            <label for="type-a-usb-3.2-gen-2">Type-A USB 3.2 Gen 2</label>
+            <label for="type-a-usb-3.2-gen-2">
+              <input type="checkbox" id="type-a-usb-3.2-gen-2" value="type-a-usb-3.2-gen-2" aria-label="Type-A USB 3.2 Gen 2">
+              <span>Type-A USB 3.2 Gen 2</span>
+            </label>
           </li>
            <li class="cmp-checkbox">
-            <input type="checkbox" id="type-a-usb-3.2-gen-1" value="type-a-usb-3.2-gen-1">
-            <label for="type-a-usb-3.2-gen-1">Type-A USB 3.2 Gen 1</label>
+            <label for="type-a-usb-3.2-gen-1">
+              <input type="checkbox" id="type-a-usb-3.2-gen-1" value="type-a-usb-3.2-gen-1" aria-label="Type-A USB 3.2 Gen 1">
+              <span>Type-A USB 3.2 Gen 1</span>
+            </label>
           </li>
         </ul>`
       }
@@ -283,9 +347,8 @@
   </div>
 
   <!-- Sticky Footer Actions (mobile only) -->
-<div class="cmp-sidebar__actions">
-  <button class="btn-cancel btn" data-a11y-dialog-hide="product-filter-dialog">Cancel</button>
-  <button class="btn-apply btn">Apply</button>
+  <div class="cmp-sidebar__actions">
+    <button class="btn-cancel btn" data-a11y-dialog-hide="product-filter-dialog">Cancel</button>
+    <button class="btn-apply btn">Apply</button>
+  </div>
 </div>
-</aside>
-

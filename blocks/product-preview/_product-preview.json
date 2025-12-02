@@ -22,40 +22,33 @@
       "fields": [
         {
           "component": "text",
-          "valueType": "string",
           "name": "fpsDetailsModalPath",
           "label": "FPS Details Modal Path",
-          "description": "Path to the FPS details modal content page (default: /content/asus-cto/language-master/en/modals/fps-details)",
-          "value": "/content/asus-cto/language-master/en/modals/fps-details"
+          "valueType": "string",
+          "description": "Path to the FPS details modal fragment"
         },
         {
           "component": "text",
-          "valueType": "string",
           "name": "timeSpyScoreModalPath",
           "label": "Time Spy Score Modal Path",
-          "description": "Path to the Time Spy Score modal content page (default: /content/asus-cto/language-master/en/modals/time-spy-score)",
-          "value": "/content/asus-cto/language-master/en/modals/time-spy-score"
+          "valueType": "string",
+          "description": "Path to the Time Spy Score modal fragment"
         },
         {
           "component": "text",
-          "valueType": "string",
-          "name": "dataSourceTooltip",
-          "label": "Data Source Tooltip",
-          "description": "Tooltip text for the data source information icon (default: All FPS performance data presented are theoretical...)",
-          "value": "All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ."
-        },
-        {
-          "component": "reference",
-          "valueType": "string",
           "name": "threeMarkLogo",
           "label": "3DMark Logo",
-          "description": "Image path for the 3DMark logo displayed in the Time Spy Score section",
-          "validation": {
-            "required": true
-          }
+          "valueType": "string",
+          "description": "Path to the 3DMark logo image"
+        },
+        {
+          "component": "text",
+          "name": "dataSourceTooltip",
+          "label": "Data Source Tooltip",
+          "valueType": "string",
+          "description": "Tooltip text for the data source information icon"
         }
       ]
     }
   ]
 }
-

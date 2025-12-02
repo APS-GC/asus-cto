@@ -4,7 +4,7 @@
       type="radio"
       name="bundles-option-<%= groupId %>"
       class="bundles-radio"
-      id="radio-<%= cardId || 'default' %>"
+      id="radio-<%= bundleItemId || 'default' %>"
       aria-label="<%= name %>"
       data-bundle-name="<%= name %>"
       <% if (typeof isJustThisItem !== 'undefined' && isJustThisItem) { %>data-just-this-item="true" checked<% } %>
@@ -20,14 +20,19 @@
     <div> <p class="price">  <% if (discount) { %>
       <span>SAVE $<%= discount %></span>
     <% } %> <%= price %></p></div>
+
+    <% if (typeof cta !== 'undefined' && cta) { %>
     <div class="select-cta">
-      <button class="actions" aria-label="select-edit-bundle" data-a11y-dialog-show="bundles-info-dialog-<%= cardId || 'default' %>"><%= cta %></button>
+      <button class="actions" aria-label="select-edit-bundle" data-a11y-dialog-show="bundles-info-dialog-<%= bundleItemId || 'default' %>"><%= cta %></button>
     </div>
+    <% } %>
   </div>
  
 </div>
-<%- include('../bundles-bonuses-popup/_bundles-bonuses-popup.ejs', { 
-  popupId: cardId || 'default', 
-  popupTitle: name,
-  <!-- bundleItems: bundleItems || [] -->
-}) %>
+<% if (typeof cta !== 'undefined' && cta) { %>
+  <%- include('../bundles-bonuses-popup/_bundles-bonuses-popup.ejs', { 
+    popupId: bundleItemId || 'default', 
+    popupTitle: name,
+    <!-- bundleItems: bundleItems || [] -->
+  }) %>
+<% } %>
