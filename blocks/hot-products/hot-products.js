@@ -255,10 +255,23 @@ export default async function decorate(block) {
   block.innerHTML = '';
   block.appendChild(mockupContainer);
 
+  // Get the section actions container for loader control
+  const sectionActionsContainer = block.querySelector('.section-actions-container');
+
   // Load products
   setTimeout(async () => {
     try {
+      // Show loader
+      if (sectionActionsContainer) {
+        sectionActionsContainer.classList.add('is-loading');
+      }
+
       const products = await fetchHotProducts(null, config);
+
+      // Hide loader
+      if (sectionActionsContainer) {
+        sectionActionsContainer.classList.remove('is-loading');
+      }
 
       if (products && products.length > 0) {
         const wrapper = block.querySelector('.swiper-wrapper');
@@ -333,6 +346,12 @@ export default async function decorate(block) {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error loading hot products:', error);
+      
+      // Hide loader on error
+      if (sectionActionsContainer) {
+        sectionActionsContainer.classList.remove('is-loading');
+      }
+
       const wrapper = block.querySelector('.swiper-wrapper');
       wrapper.innerHTML = '<div class="hot-products-error swiper-slide">Failed to load products. Please try again later.</div>';
     }
