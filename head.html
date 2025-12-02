@@ -61,7 +61,6 @@
   function getUEPageMetadata(name) {
     // 1. Try traditional meta tags first (for non-UE environments)
     let value = getMetadata(name);
-    console.log(`Metadata for ${name}:`, value);
     if (value) return value;
     
     // 2. Check if we're in UE environment and try to get from page model
@@ -258,17 +257,6 @@
     if (pageBackgroundColor) {
       document.body.classList.add(pageBackgroundColor);
       console.log('Initial page background applied:', pageBackgroundColor);
-    }
-    
-    // Handle overlap header from metadata
-    const overlapHeader = getUEPageMetadata('overlapHeader');
-    console.log(overlapHeader)
-    if (overlapHeader === 'true') {
-      const main = document.querySelector('main');
-      if (main && main.firstElementChild) {
-        main.firstElementChild.classList.add('overlap-header');
-        console.log('Overlap header class applied to first section');
-      }
     }
   });
 
