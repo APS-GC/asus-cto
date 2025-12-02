@@ -64,8 +64,8 @@ export default async function decorate(block) {
       
   const cardNodes = [];
   [...block.children].forEach((card, i) => {
-    if (i > itemsStartIndex + itemCount - 1 || i < itemsStartIndex) return;
-    const divs = card.querySelectorAll('div');
+    if (i < itemsStartIndex) return;
+    const divs = card.querySelectorAll("div");
     const headline = safeText(divs.item(0));
     const details = safeText(divs.item(1));
     const video = safeText(divs.item(2));
