@@ -220,7 +220,7 @@
           }
         },
         {
-          "title": "Product Matches",
+          "title": "Product Matches Page",
           "id": "product-matches-page",
           "plugins": {
             "xwalk": {
@@ -229,7 +229,7 @@
                 "template": {
                   "name": "Product Matches",
                   "model": "product-matches-page",
-                  "title": "Product Matches"
+                  "title": "Product Matches Page"
                 }
               }
             }
