@@ -30,7 +30,7 @@ export default async function decorate(block) {
  */
 async function renderHelpMeChoose(block) {
   const helpMeChooseContainer = document.createElement('div');
-  helpMeChooseContainer.className = 'product-matches-page container';
+  helpMeChooseContainer.className = 'product-matches container';
 
   const authoredRows = [...block.children];
   const AuthoredData = authoredRows.map(row => row.textContent.trim());
@@ -241,7 +241,7 @@ class SimilarProductsManager {
       const contentContainer = this.productGrid.querySelector('.cmp-carousel__content');
       if (contentContainer) contentContainer.innerHTML = '';
       this.actionsContainer.classList.add('is-loading');
-      const response = await fetchGameList("https://dummyjson.com/c/214a-7a07-453d-8cbd"); // await fetchData(`similar-products.json?&sort=${this.currentSort}`);
+      const response = await fetchGameList("https://dummyjson.com/c/ab8c-db9a-4ae0-be8a"); // await fetchData(`similar-products.json?&sort=${this.currentSort}`);
 
       
 
@@ -372,11 +372,11 @@ class SimilarProductsManager {
 }
 
 // document.addEventListener('DOMContentLoaded', () => {
-//   // const sortElement = document.querySelector('#similar-products-sort-by');
-//   // if (sortElement) {
-//   //   const sortManager = new SortDropdownManager(sortElement);
-//   //   sortManager.init();
-//   // }
+  // const sortElement = document.querySelector('#similar-products-sort-by');
+  // if (sortElement) {
+  //   const sortManager = new SortDropdownManager(sortElement);
+  //   sortManager.init();
+  // }
 
 //   const similarProductsManager = new SimilarProductsManager();
 //   similarProductsManager.init();
@@ -485,20 +485,7 @@ function renderProductCard(product, productType) {
           </div>
           <div class="cmp-product-card__body">
             <div class="cmp-product-card__image cmp-image">
-              <button
-                class="cmp-product-card__preview-btn"
-                data-product-id="${id}"
-                data-product-type="${productType}"
-                data-a11y-dialog-show="product-preview-dialog"
-                aria-label="Quick view ${name}"
-              >Quick view</button>
               <img class="cmp-image__image" src="${image}" alt="${name}" />
-              ${
-                // Conditionally render the hover image only if it exists.
-                imageHover
-                  ? `<img class="cmp-image__image--hover" src="${imageHover}" alt="${name}" aria-hidden="true" />`
-                  : ''
-              }
             </div>
             <div class="cmp-product-card__info">
               <div class="cmp-product-card__title">
@@ -709,7 +696,7 @@ class PerfectMatchProduct {
       if (filters.minBudget) params.set('minBudget', filters.minBudget);
       if (filters.maxBudget) params.set('maxBudget', filters.maxBudget);
 
-      this.perfectMatchProducts = await fetchGameList("https://dummyjson.com/c/57ff-ad51-4a29-9d24");
+      this.perfectMatchProducts = await fetchGameList("https://dummyjson.com/c/b08b-30c8-4e50-9a46");
 
       console.log("Perfect Match 3", this.perfectMatchProducts)
 
