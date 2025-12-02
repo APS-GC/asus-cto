@@ -17,7 +17,6 @@ export async function getApiEndpoint(uri) {
   return baseUrl + uri;
 }
 
-
 /**
  * Generic fetch function to make API calls
  * @param {string} endpoint - API endpoint URL
@@ -28,29 +27,29 @@ export async function fetchProductData(endpoint, maxProducts = null) {
   if (!endpoint) {
     throw new Error('No endpoint provided');
   }
-  
+
   try {
     const response = await fetch(endpoint, {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache'
+        'Cache-Control': 'no-cache',
       },
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     // Check if response is actually JSON
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
       throw new Error(`API returned non-JSON content: ${contentType}`);
     }
-    
+
     const data = await response.json();
-    
+
     // Handle different response formats
     let results = [];
     if (data.results && data.results.items && Array.isArray(data.results.items)) {
@@ -65,11 +64,11 @@ export async function fetchProductData(endpoint, maxProducts = null) {
     } else {
       throw new Error('Invalid API response format');
     }
-    
+
     // Only limit if maxProducts is specified
     return maxProducts ? results.slice(0, maxProducts) : results;
-      
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Error fetching from ${endpoint}:`, error);
     throw error;
   }
@@ -81,7 +80,7 @@ export async function fetchProductData(endpoint, maxProducts = null) {
  * @param {object} config - Configuration object (optional)
  * @returns {Promise<Array>} - Array of hot product objects
  */
-export async function fetchHotProducts(maxProducts = null, config = {}) {
+export async function fetchHotProducts(maxProducts = null, config = {}) { // eslint-disable-line no-unused-vars
   const endpoint = await getApiEndpoint(API_URIS.FETCH_HOT_PRODUCTS);
   return fetchProductData(endpoint, maxProducts);
 }
@@ -93,7 +92,7 @@ export async function fetchHotProducts(maxProducts = null, config = {}) {
  */
 export async function fetchGameList(
   endpoint = 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/gameList.json?websiteCode=en',
-  timeoutMs = 5000
+  timeoutMs = 5000,
 ) {
   const controller = new AbortController();
   const signal = controller.signal;
@@ -104,12 +103,13 @@ export async function fetchGameList(
   }, timeoutMs);
 
   try {
+    // eslint-disable-next-line no-console
     console.log(`Attempting to fetch from: ${endpoint}`);
 
     const response = await fetch(endpoint, {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
       },
@@ -124,19 +124,21 @@ export async function fetchGameList(
     }
 
     return await response.json();
-
   } catch (error) {
     clearTimeout(timeoutId);
 
     if (error.name === 'AbortError') {
+      // eslint-disable-next-line no-console
       console.warn(`Fetch aborted (timeout after ${timeoutMs} ms)`);
     } else {
+      // eslint-disable-next-line no-console
       console.warn(`Error fetching from ${endpoint}:`, error.message);
       if (error.message.includes('JSON')) {
+        // eslint-disable-next-line no-console
         console.warn('Likely non-JSON response');
       }
     }
 
-    return [];  // fallback
+    return []; // fallback
   }
 }

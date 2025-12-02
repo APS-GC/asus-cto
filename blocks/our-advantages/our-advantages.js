@@ -65,7 +65,7 @@ export default async function decorate(block) {
   const cardNodes = [];
   [...block.children].forEach((card, i) => {
     if (i > itemsStartIndex + itemCount - 1 || i < itemsStartIndex) return;
-    const divs = card.querySelectorAll("div");
+    const divs = card.querySelectorAll('div');
     const headline = safeText(divs.item(0));
     const details = safeText(divs.item(1));
     const video = safeText(divs.item(2));
@@ -102,7 +102,7 @@ export default async function decorate(block) {
     cardNodes.push(mockup);
   });
 
-  mockupContainer.querySelector(".cmp-carousel__content").append(...cardNodes);
+  mockupContainer.querySelector('.cmp-carousel__content').append(...cardNodes);
 
   //move attr
   if (isAuthorEnvironment()) {
@@ -110,23 +110,23 @@ export default async function decorate(block) {
     if (block.firstElementChild) {
       transferInstrumentation(
         block.firstElementChild,
-        mockupContainer.querySelector(".section-heading")
+        mockupContainer.querySelector('.section-heading')
       );
     }
   }
 
-  block.innerHTML = "";
+  block.innerHTML = '';
   block.append(mockupContainer);
 
   // trigger block
-  await import("../../scripts/carousel.js");
-  await import("./uifrontend_advantage-card.js");
+  await import('../../scripts/carousel.js');
+  await import('./uifrontend_advantage-card.js');
  
 
   document.addEventListener(
-    "eds-lazy-event",
+    'eds-lazy-event',
     () => {
-      const container = block.querySelector(".container");
+      const container = block.querySelector('.container');
       if (window.initializeSwiperOnAEMCarousel && container) {
         window.initializeSwiperOnAEMCarousel(container);
       }

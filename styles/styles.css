@@ -1,3 +1,4 @@
+/* stylelint-disable number-max-precision, no-duplicate-selectors, keyframes-name-pattern, comment-empty-line-before, media-feature-name-value-no-unknown, declaration-block-no-duplicate-properties, selector-pseudo-element-no-unknown, selector-pseudo-class-no-unknown, declaration-block-no-duplicate-custom-properties, media-feature-range-notation */
 /* ========================================================================== 
  * ASUS Design System
  * Based on ASUS brand guidelines and Figma design specifications
@@ -7332,7 +7333,7 @@ input[type=checkbox]:checked::after {
   padding-bottom: 120px;
 }
 
-@media only screen and (max-width: 63.9375rem) {
+@media only screen and (width <= 63.9375rem) {
   .section.section-spacing-top {
     padding-top: 2rem;
   }

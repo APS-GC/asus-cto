@@ -10,7 +10,7 @@ function createProductCard(product, config) {
 
   // Generate badges HTML from productTags
   const badges = product.productTags || [];
-  const hasInStock = badges.some(badge => badge.toLowerCase() === 'in stock');
+  const hasInStock = badges.some((badge) => badge.toLowerCase() === 'in stock');
   if (!hasInStock) {
     badges.unshift('In Stock');
   }
@@ -28,7 +28,7 @@ function createProductCard(product, config) {
   // Generate FPS tooltip HTML from gamePriority
   let fpsTooltipHTML = '';
   if (product.gamePriority && product.gamePriority.length > 0) {
-    const fpsRows = product.gamePriority.map(detail => {
+    const fpsRows = product.gamePriority.map((detail) => {
       const game = detail.gameTitle || 'Unknown Game';
       const fps1080 = detail.fullHdFps || '--';
       const fps1440 = detail.quadHdFps || '--';
@@ -174,7 +174,7 @@ const DEFAULT_CONFIG = {
   viewAllText: 'View all',
   viewAllLink: '#',
   openLinkInNewTab: false,
-  productPreviewModalPath: '/content/asus-cto/language-master/en/modals/product-preview'
+  productPreviewModalPath: '/content/asus-cto/language-master/en/modals/product-preview',
 };
 
 // Handle quick view button click
@@ -331,6 +331,7 @@ export default async function decorate(block) {
         wrapper.innerHTML = '<div class="hot-products-error swiper-slide">No products available</div>';
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error loading hot products:', error);
       const wrapper = block.querySelector('.swiper-wrapper');
       wrapper.innerHTML = '<div class="hot-products-error swiper-slide">Failed to load products. Please try again later.</div>';

@@ -1,6 +1,7 @@
 // import * as noUiSlider from 'nouislider';
 
-import {loadScript, loadCSS} from "../../scripts/aem.js";
+import { loadScript } from '../../scripts/aem.js';
+
 await loadScript('https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.8.1/nouislider.min.js');
 // await loadCSS(`https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.8.1/nouislider.min.css`);
 
@@ -38,8 +39,8 @@ class SelectGameForm {
     }
 
     // Define budget range constants
-    this.DEFAULT_BUDGET_RANGE = {min: 500, max: 5000};
-    this.DEFAULT_START_BUDGET = {min: 1100, max: 5000};
+    this.DEFAULT_BUDGET_RANGE = { min: 500, max: 5000 };
+    this.DEFAULT_START_BUDGET = { min: 1100, max: 5000 };
 
     // Cache DOM elements
     this.dom = {
@@ -77,21 +78,21 @@ class SelectGameForm {
       return;
     }
 
-    const {dataset} = this.dom.slider;
+    const { dataset } = this.dom.slider;
     const min = parseInt(dataset.min || this.DEFAULT_BUDGET_RANGE.min, 10);
     const max = parseInt(dataset.max || this.DEFAULT_BUDGET_RANGE.max, 10);
     // Use the dataset start values, falling back to min and max if needed.
     const start = dataset.start
-        ? JSON.parse(dataset.start)
-        : [this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max];
+      ? JSON.parse(dataset.start)
+      : [this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max];
     const step = dataset.step ? parseInt(dataset.step, 10) : 1;
-
+    // eslint-disable-next-line no-undef
     noUiSlider.create(this.dom.slider, {
       start,
       connect: true,
-      step: step,
+      step,
       margin: step,
-      range: {min, max},
+      range: { min, max },
       // The 'format' is for internal use (reading/writing values)
       format: {
         to: (value) => Math.round(value),
@@ -104,8 +105,8 @@ class SelectGameForm {
       },
       // IMPROVEMENT: Use aria-controls to link the handles to the hidden inputs
       handleAttributes: [
-        {'aria-label': 'Budget range minimum value', 'aria-controls': 'min-budget'},
-        {'aria-label': 'Budget range maximum value', 'aria-controls': 'max-budget'},
+        { 'aria-label': 'Budget range minimum value', 'aria-controls': 'min-budget' },
+        { 'aria-label': 'Budget range maximum value', 'aria-controls': 'max-budget' },
       ],
     });
     const sliderEl = this.dom.slider;
@@ -155,8 +156,8 @@ class SelectGameForm {
    */
   _getSelectedGames() {
     return Array.from(this.dom.games)
-        .filter((input) => input.checked)
-        .map((input) => input.value);
+      .filter((input) => input.checked)
+      .map((input) => input.value);
   }
 
   /**
@@ -164,6 +165,7 @@ class SelectGameForm {
    * @param {number|string} value - The numerical value.
    * @returns {string} The formatted currency string.
    */
+  // eslint-disable-next-line class-methods-use-this
   _formatCurrency(value) {
     const n = Number(value) || 0;
     return `$${n.toLocaleString('en-US')}`;
@@ -337,7 +339,8 @@ document.addEventListener('asus-cto--blocks-help-me-choose', () => {
   initSelectGameForms(document.body);
 
   // Start observing the entire document for changes
-  observer.observe(document.body, {childList: true, subtree: true});
+  // eslint-disable-next-line no-use-before-define
+  observer.observe(document.body, { childList: true, subtree: true });
 });
 
 // Use MutationObserver to initialize components added dynamically (e.g., via AJAX)

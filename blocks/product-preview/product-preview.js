@@ -45,7 +45,7 @@ function createTimeSpyScoreDisplay(score, level) {
     { number: 1, title: 'Entry Gaming', range: '2000–4999' },
     { number: 2, title: 'Intermediate Gaming', range: '5000–6999' },
     { number: 3, title: 'High-Performance Gaming', range: '7000–8999' },
-    { number: 4, title: 'Top-Tier Gaming', range: '9000–10999' }
+    { number: 4, title: 'Top-Tier Gaming', range: '9000–10999' },
   ];
 
   // Generate progress bars (4 bars for 4 visible levels)
@@ -85,18 +85,20 @@ function createTimeSpyScoreDisplay(score, level) {
  * @param {number} score - The Time Spy Score
  */
 function injectTimeSpyScore(score) {
-  if (!score || isNaN(score)) {
+  if (!score || Number.isNaN(score)) {
+    // eslint-disable-next-line no-console
     console.warn('Invalid Time Spy Score:', score);
     return;
   }
 
   const level = getTimeSpyLevel(score);
-  
+
   // Wait for modal content to be fully loaded
   const checkAndInject = () => {
     // Get all modals and find the most recently opened one (last in DOM)
     const allModals = document.querySelectorAll('.modal');
     if (allModals.length === 0) {
+      // eslint-disable-next-line no-console
       console.warn('No modal found');
       return;
     }
@@ -104,8 +106,9 @@ function injectTimeSpyScore(score) {
     // Get the last modal (most recently opened)
     const lastModal = allModals[allModals.length - 1];
     const modalContent = lastModal.querySelector('.modal-content');
-    
+
     if (!modalContent) {
+      // eslint-disable-next-line no-console
       console.warn('Modal content not found');
       setTimeout(checkAndInject, 50);
       return;
@@ -114,7 +117,7 @@ function injectTimeSpyScore(score) {
     // Look for the time-spy-modal class
     const timeSpyContent = modalContent.querySelector('.time-spy-modal');
     const targetContainer = timeSpyContent || modalContent;
-    
+
     // Wait for any content to be loaded
     if (!targetContainer.children.length) {
       setTimeout(checkAndInject, 50);
@@ -124,6 +127,7 @@ function injectTimeSpyScore(score) {
     // Check if score display already exists (by looking for the h2 we'll inject)
     const existingTitle = targetContainer.querySelector('h2');
     if (existingTitle && existingTitle.textContent.includes('3DMark Time Spy Score')) {
+      // eslint-disable-next-line no-console
       console.log('Score display already injected');
       return;
     }
@@ -131,7 +135,7 @@ function injectTimeSpyScore(score) {
     // Create and inject the score display HTML at the beginning
     const scoreHTML = createTimeSpyScoreDisplay(score, level);
     targetContainer.insertAdjacentHTML('afterbegin', scoreHTML);
-    
+    // eslint-disable-next-line no-console
     console.log('Injected Time Spy Score:', score, 'Level:', level);
   };
 
@@ -141,15 +145,15 @@ function injectTimeSpyScore(score) {
 
 function createImageGallery(product) {
   const images = [];
-  
+
   if (product.mainImage) {
     images.push({ image: product.mainImage, thumbnail: product.mainImage, title: product.name });
   }
-  
+
   if (product.hoverImage) {
     images.push({ image: product.hoverImage, thumbnail: product.hoverImage, title: `${product.name} - Alt` });
   }
-  
+
   // Add additional images if available
   if (product.additionalImages && product.additionalImages.length > 0) {
     product.additionalImages.slice(0, 5).forEach((img, idx) => {
@@ -307,7 +311,7 @@ async function initializeGallery(block) {
   if (!mainSwiperEl) return;
 
   const slidesCount = mainSwiperEl.querySelectorAll('.swiper-slide').length;
-  
+
   if (slidesCount === 0) return;
 
   // Dynamically load Swiper library
@@ -359,7 +363,7 @@ export default async function decorate(block) {
   const config = await getBlockConfigs(block, defaultConfig, 'product-preview');
   
   let product = null;
-  
+
   try {
     // Try to get product data from window object first (set by hot-products)
     if (window.__productPreviewData) {
@@ -370,24 +374,26 @@ export default async function decorate(block) {
       product = JSON.parse(block.dataset.product);
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Error parsing product data:', error);
   }
-  
+
   if (!product) {
     block.innerHTML = '<p>Product data not available</p>';
     return;
   }
-  
+
   // Store config in dataset for event listeners
   block.dataset.config = JSON.stringify(config);
 
   const currentPrice = product.specialPrice || product.price;
   const originalPrice = product.specialPrice ? product.price : null;
-  const savings = product.savedPrice || (originalPrice ? (parseFloat(originalPrice) - parseFloat(currentPrice)).toFixed(0) : null);
-  
+  const savings = product.savedPrice
+                  || (originalPrice ? (parseFloat(originalPrice) - parseFloat(currentPrice)).toFixed(0) : null);
+
   // Add "In Stock" badge by default if not already present
   const badges = product.productTags || [];
-  const hasInStock = badges.some(badge => badge.toLowerCase() === 'in stock');
+  const hasInStock = badges.some((badge) => badge.toLowerCase() === 'in stock');
   if (!hasInStock) {
     badges.unshift('In Stock'); // Add "In Stock" at the beginning
   }
@@ -397,7 +403,7 @@ export default async function decorate(block) {
     const divider = index < badges.length - 1 ? '<span class="vertical-divider"></span>' : '';
     return `<span class="tag ${badgeClass}">${badge}</span>${divider}`;
   }).join('');
-  
+
   const specsHTML = (product.keySpec || []).map((spec) => {
     const specName = spec.name || spec;
     return `<li>${specName}</li>`;
@@ -522,6 +528,7 @@ export default async function decorate(block) {
       e.preventDefault();
       const scoreStr = timeSpyScoreButton.dataset.score;
       const score = parseInt(scoreStr, 10);
+      // eslint-disable-next-line no-console
       console.log('Time Spy Score button clicked. Raw score:', scoreStr, 'Parsed score:', score);
       const blockConfig = JSON.parse(block.dataset.config || '{}');
       const timeSpyModalPath = blockConfig.timeSpyScoreModalPath || `/${locale}/modals/time-spy-score`;
@@ -529,10 +536,9 @@ export default async function decorate(block) {
       if (score && !isNaN(score)) {
         injectTimeSpyScore(score);
       } else {
+        // eslint-disable-next-line no-console
         console.error('Invalid score value:', scoreStr);
       }
     });
   }
-
 }
-

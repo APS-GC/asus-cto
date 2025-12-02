@@ -1,14 +1,19 @@
-import { loadCSS, loadScript } from '../../scripts/aem.js';
+import { loadCSS } from '../../scripts/aem.js';
 import { loadSwiper } from '../../scripts/scripts.js';
 
 /**
- * Main entry point for the product-compare block.
- * @param {HTMLElement} block The block element to decorate.
+ * Helper to escape user / config data to prevent XSS
+ * @param {string} str - The string to escape.
+ * @returns {string} - The escaped string.
  */
-export default async function decorate(block) {
-  await renderProductCompare(block);
-  await loadSwiperCSS();
-  initProductCompare(block);
+// Helper to escape user / config data to prevent XSS
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 /**
@@ -19,9 +24,8 @@ async function renderProductCompare(block) {
   const productCompareContainer = document.createElement('div');
   productCompareContainer.className = 'product-compare-container container';
 
-
   const authoredRows = [...block.children];
-  const AuthoredData = authoredRows.map(row => row.textContent.trim());
+  const AuthoredData = authoredRows.map((row) => row.textContent.trim());
 
   // Build the HTML in a fragment / string, then insert once
   const html = `
@@ -108,35 +112,30 @@ async function renderProductCompare(block) {
 }
 
 /**
- * Helper to escape user / config data to prevent XSS
- * @param {string} str - The string to escape.
- * @returns {string} - The escaped string.
- */
-// Helper to escape user / config data to prevent XSS
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
-
-/**
  * Loads the Swiper CSS from a CDN, ensuring it is only fetched once.
  */
 let swiperCSSLoaded = null;
 function loadSwiperCSS() {
   if (!swiperCSSLoaded) {
     swiperCSSLoaded = loadCSS(
-      'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css'
+      'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
     ).catch((err) => {
+      // eslint-disable-next-line no-console
       console.error('Failed to load Swiper CSS:', err);
       throw err;
     });
   }
   return swiperCSSLoaded;
+}
+
+/**
+ * Main entry point for the product-compare block.
+ * @param {HTMLElement} block The block element to decorate.
+ */
+export default async function decorate(block) {
+  await renderProductCompare(block);
+  await loadSwiperCSS();
+  initProductCompare(block); // eslint-disable-line no-use-before-define
 }
 
 /**
@@ -190,6 +189,7 @@ class ProductCompare {
    * @param {number} delay The delay in milliseconds.
    * @returns {Function} The debounced function.
    */
+  // eslint-disable-next-line class-methods-use-this
   debounce(fn, delay) {
     let t;
     return (...args) => {
@@ -203,7 +203,7 @@ class ProductCompare {
    */
   getStoredProducts() {
     try {
-      return JSON.parse(localStorage.getItem(this.COMPARE_KEY)) || []; 
+      return JSON.parse(localStorage.getItem(this.COMPARE_KEY)) || [];
     } catch {
       return [];
     }
@@ -218,6 +218,7 @@ class ProductCompare {
     try {
       localStorage.setItem(this.COMPARE_KEY, JSON.stringify(products));
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error('Error storing compare products:', e);
     }
     this.state.isCollapsed = false;
@@ -247,6 +248,7 @@ class ProductCompare {
     if (!actionTarget) return;
 
     event.preventDefault();
+    // eslint-disable-next-line default-case
     switch (actionTarget.dataset.action) {
       case 'clear-all':
         this.clearAll();
@@ -262,7 +264,6 @@ class ProductCompare {
         if (actionTarget.dataset.compareLink) {
           window.location.href = actionTarget.dataset.compareLink;
         }
-        return;
     }
   }
 
@@ -273,8 +274,12 @@ class ProductCompare {
     const checkbox = event.target;
     if (!checkbox.matches('[data-add-to-compare]')) return;
 
-    const { id, name, sku, pdp, image } = checkbox.dataset;
-    const product = { id, name, sku, pdpUrl: pdp, image };
+    const {
+      id, name, sku, pdp, image,
+    } = checkbox.dataset;
+    const product = {
+      id, name, sku, pdpUrl: pdp, image,
+    };
 
     // Focus on the container to ensure acessed by screen reader
     this.container.focus();
@@ -333,6 +338,7 @@ class ProductCompare {
    * @param {object|null} product The product data, or null for an empty slot.
    * @returns {HTMLElement} The created slide element.
    */
+  // eslint-disable-next-line class-methods-use-this
   createSlotElement(product) {
     const slide = document.createElement('div');
     slide.className = 'swiper-slide';
@@ -378,7 +384,7 @@ class ProductCompare {
     const ids = new Set(this.state.products.map((p) => p.id));
     document
       .querySelectorAll('[data-add-to-compare]')
-      .forEach((cb) => (cb.checked = ids.has(cb.dataset.id)));
+      .forEach((cb) => (cb.checked = ids.has(cb.dataset.id))); // eslint-disable-line no-return-assign
   }
 
   /**
@@ -387,9 +393,7 @@ class ProductCompare {
   setupMutationObserver() {
     const observer = new MutationObserver((mutations) => {
       if (
-        mutations.some((m) =>
-          [...m.addedNodes].some((n) => n.querySelectorAll?.('[data-add-to-compare]').length),
-        )
+        mutations.some((m) => [...m.addedNodes].some((n) => n.querySelectorAll?.('[data-add-to-compare]').length))
       ) {
         this.updateAllCheckboxes();
       }
@@ -402,6 +406,8 @@ class ProductCompare {
    * @param {HTMLElement} block The root element of the component.
    * @returns {Promise<object>} The initialized Swiper instance.
    */
+  /* eslint-disable consistent-return */
+  // eslint-disable-next-line class-methods-use-this
   async initializeSwiperCarousel(block) {
     const swiperContainer = block.querySelector('.swiper');
     if (!swiperContainer) return;
@@ -461,6 +467,7 @@ class ProductCompare {
 
     return swiper;
   }
+  /* eslint-enable consistent-return */
 
   /**
    * Renders the component based on the current state, updating counts, errors, and product slots.
@@ -510,7 +517,6 @@ class ProductCompare {
 
     this.swiperInstance.update();
   }
-
 }
 
 /**

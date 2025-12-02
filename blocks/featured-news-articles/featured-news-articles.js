@@ -1,7 +1,7 @@
 import {
   transferInstrumentation,
   isAuthorEnvironment,
-} from "../../scripts/utils.js";
+} from '../../scripts/utils.js';
 import { loadSwiper } from '../../scripts/scripts.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
 
@@ -109,20 +109,20 @@ export default async function decorate(block) {
 
     const mockup = document.createRange().createContextualFragment(`
       <div class="cmp-carousel__item">
-        <a class="cmp-article-card" href="${articleLink}" aria-label="Read article: ${title}" target="${
-      articleOpenInNewTab ? "_blank" : "_self"
-    }">
+        <a class="cmp-article-card" href="${articleLink}" aria-label="Read article: ${title}" target='${
+      articleOpenInNewTab ? '_blank' : '_self'
+    }'>
           <div class="cmp-article-card__image cmp-image">
             <img class="cmp-image__image" src="${image}" alt="${imageAlt}" loading="lazy">
           </div>
 
           <div class="cmp-article-card__content">
             <p class="cmp-article-card__date">
-              <time datetime="${
-                postedDate ? postedDate.replaceAll("/", "-") : ""
-              }" aria-label="Date">
+              <time datetime='${
+                postedDate ? postedDate.replaceAll('/', '-') : ''
+              }' aria-label="Date">
                 <span aria-hidden="true">
-                  ${postedDate ? transferDate(postedDate) : ""}
+                  ${postedDate ? transferDate(postedDate) : ''}
                 </span>
               </time>
             </p>
@@ -141,7 +141,7 @@ export default async function decorate(block) {
     cardNodes.push(mockup);
   }
 
-  mockupContainer.querySelector(".cmp-carousel__content").append(...cardNodes);
+  mockupContainer.querySelector('.cmp-carousel__content').append(...cardNodes);
 
   //move attr
   if (isAuthorEnvironment()) {
@@ -149,36 +149,36 @@ export default async function decorate(block) {
     if (divs[0]) {
       transferInstrumentation(
         divs[0],
-        mockupContainer.querySelector(".section-heading__title")
+        mockupContainer.querySelector('.section-heading__title')
       );
     }
     //move description
     if (divs[1]) {
       transferInstrumentation(
         divs[1],
-        mockupContainer.querySelector(".section-actions-container")
+        mockupContainer.querySelector('.section-actions-container')
       );
     }
   }
 
-  block.innerHTML = "";
+  block.innerHTML = '';
   block.append(mockupContainer);
 
   await loadSwiper();
-  await import("../../scripts/carousel.js");
+  await import('../../scripts/carousel.js');
 
   if (window.initializeSwiperOnAEMCarousel) {
-    window.initializeSwiperOnAEMCarousel(block.querySelector(".cmp-container"));
+    window.initializeSwiperOnAEMCarousel(block.querySelector('.cmp-container'));
   }
 }
 
 //transfer date format
 function transferDate(dateStr) {
   const date = new Date(dateStr);
-  const formattedDate = date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
+  const formattedDate = date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
   });
   return formattedDate;
 }

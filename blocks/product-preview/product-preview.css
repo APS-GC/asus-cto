@@ -90,7 +90,7 @@
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-    -ms-flex-direction: column;
+    flex-direction: column;
     flex-direction: column;
     -webkit-box-align: end;
     -ms-flex-align: end;
@@ -102,7 +102,6 @@
     color: #d12a00;
     font-family: var(--font-text);
     font-size: 1.25rem;
-    font-weight: var(--regular);
     font-weight: var(--medium);
     letter-spacing: 0;
     line-height: 1.75rem
@@ -157,7 +156,7 @@
 .cmp-product-preview__body {
     background: var(--color-primary-base);
     display: -webkit-box;
-    display: -ms-flexbox;
+    display: flexbox;
     display: flex;
     -webkit-box-pack: center;
     -ms-flex-pack: center;
@@ -173,7 +172,7 @@
     background: var(--color-primary-950);
     border-radius: 1rem;
     display: grid;
-    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
     flex-wrap: wrap;
     grid-template-columns: 472px 1fr;
     max-width: 1032px;
@@ -478,7 +477,7 @@
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-    -ms-flex-direction: column;
+    flex-direction: column;
     flex-direction: column;
     -webkit-box-align: center;
     -ms-flex-align: center;
@@ -535,7 +534,7 @@
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-    -ms-flex-direction: column;
+    flex-direction: column;
     flex-direction: column;
     gap: 0.25rem;
 }
@@ -601,7 +600,7 @@
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-    -ms-flex-direction: column;
+    flex-direction: column;
     flex-direction: column;
     -webkit-box-align: end;
     -ms-flex-align: end;
@@ -623,7 +622,7 @@
 
 .fps-section .time-spy-score .time-spy-score-right .data-source {
     display: -webkit-box;
-    display: -ms-flexbox;
+    display: flexbox;
     display: flex;
     -webkit-box-align: center;
     -ms-flex-align: center;

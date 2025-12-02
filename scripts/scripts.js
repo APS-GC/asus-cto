@@ -144,7 +144,6 @@ export async function loadSwiper() {
           loadScript(
             'https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js',
             {
-              // integrity: 'sha512-Ysw1DcK1P+uYLqprEAzNQJP+J4hTx4t/3X2nbVwszao8wD+9afLjBQYjz7Uk4ADP+Er++mJoScI42ueGtQOzEA==',
               crossorigin: 'anonymous',
               referrerpolicy: 'no-referrer'
             }
