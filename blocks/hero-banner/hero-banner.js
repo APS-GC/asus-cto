@@ -327,7 +327,13 @@ async function initializeSwiper(heroBannerElement, config) {
 
             // Remove paused class when switching slides
             const mediaControls = document.querySelector('.cmp-hero-banner__media-controls');
+            const playPauseBtn = document.querySelector('.hero-banner-autoplay-toggle');
             mediaControls?.classList.remove('paused');
+            this.el.classList.remove('is-autoplay-paused');
+            
+            if (playPauseBtn) {
+              playPauseBtn.setAttribute('aria-label', 'play');
+            }
             
             // Reset inactive bullets progress to 0
             this.pagination.bullets.forEach((bullet, idx) => {
