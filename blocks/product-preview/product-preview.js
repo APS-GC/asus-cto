@@ -2,7 +2,7 @@
  * Product Preview Block
  */
 
-import { openModal } from '../modal/modal.js';
+import { openModal, createModal } from '../modal/modal.js';
 import { loadSwiper, getLocale } from '../../scripts/scripts.js';
 import { buildBlock, decorateBlock, loadBlock } from '../../scripts/aem.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
@@ -16,7 +16,7 @@ function getDefaultConfig(locale) {
   return {
     fpsDetailsModalPath: `/${locale}/modals/fps-details`,
     timeSpyScoreModalPath: `/${locale}/modals/time-spy-score`,
-    threeMarkLogo: './clientlib-site/images/3dmark-logo.svg',
+    threeMarkLogo: '',
     dataSourceTooltip: 'All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ.',
   };
 }
@@ -35,112 +35,76 @@ function getTimeSpyLevel(score) {
 }
 
 /**
- * Create the Time Spy Score display HTML
+ * Create Time Spy Score modal content
  * @param {number} score - The Time Spy Score
- * @param {number} level - The calculated level (1-4)
- * @returns {string} HTML string for score display
+ * @param {Object} config - Configuration object
+ * @returns {Array} Array of DOM nodes
  */
-function createTimeSpyScoreDisplay(score, level) {
+function createTimeSpyScoreContent(score, config) {
+  const level = getTimeSpyLevel(score);
+  
   const levelData = [
-    { number: 1, title: 'Entry Gaming', range: '2000–4999' },
-    { number: 2, title: 'Intermediate Gaming', range: '5000–6999' },
-    { number: 3, title: 'High-Performance Gaming', range: '7000–8999' },
-    { number: 4, title: 'Top-Tier Gaming', range: '9000–10999' },
+    { number: 1, title: 'Entry Gaming', range: '2000–4999', description: 'Provides a basic 1080p gaming experience at low settings—ideal for light or older titles.' },
+    { number: 2, title: 'Intermediate Gaming', range: '5000–6999', description: 'Delivers smooth 1080p gameplay at medium to high settings in mainstream titles.' },
+    { number: 3, title: 'High-Performance Gaming', range: '7000–8999', description: 'Capable of high settings at 1440p or ultra settings at 1080p in modern games.' },
+    { number: 4, title: 'Top-Tier Gaming', range: '9000–10999', description: 'Designed for ultra settings at 1440p or high settings at 4K in demanding AAA titles.' },
   ];
 
-  // Generate progress bars (4 bars for 4 visible levels)
-  const progressBarsHTML = levelData.map((_, index) => {
-    const isActive = index === level - 1 ? ' active' : '';
-    return `<div class="level-bar${isActive}"></div>`;
-  }).join('');
+  const container = document.createElement('div');
+  container.innerHTML = `
+    <button class="back-link" type="button" data-a11y-dialog-hide="time-spy-score-dialog" aria-label="Go back to product preview">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10.75 14.25L5.25 7.75L10.75 1.25" stroke="#181818" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      Back
+    </button>
 
-  // Generate level indicators
-  const levelIndicatorsHTML = levelData.map((data, index) => {
-    const isActive = index === level - 1 ? ' active' : '';
-    return `
-      <div class="level-item">
-        <span class="level-badge${isActive}">Level ${data.number}</span>
-        <div class="level-title">${data.title}</div>
-        <div class="level-range">${data.range}</div>
-      </div>
-    `;
-  }).join('');
-
-  return `
-    <h2 class="time-spy-score-title">3DMark Time Spy Score</h2>
-    <div class="time-spy-score-display">
-      <div class="time-spy-score-value">${score.toLocaleString()}</div>
-      <div class="level-progress">
-        ${progressBarsHTML}
-      </div>
-      <div class="level-indicators">
-        ${levelIndicatorsHTML}
+    <div class="dialog-section">
+      <h2 id="time-spy-score-title">3DMark Time Spy Score</h2>
+      <div class="score-value">${score.toLocaleString()}</div>
+    </div>
+    
+    <div class="dialog-section">
+      <div class="score-levels-bar">
+        ${levelData.map((data) => `
+          <div class="score-level${data.number === level ? ' current' : ''}" data-level="${data.number}">
+            <span class="score-badge">Level ${data.number}</span>
+            <div class="score-title">${data.title}</div>
+            <div class="score-range">${data.range}</div>
+          </div>
+        `).join('')}
       </div>
     </div>
+
+    <div class="dialog-section">
+      <h3 class="dialog-section-title">What does the 3DMark score mean?</h3>
+      <p>
+        The 3DMark score is a benchmark score that measures the performance of a computer's
+        graphics hardware, primarily for gaming. The higher the score, the stronger performance.
+      </p>
+    </div>
+
+    ${levelData.map((data) => `
+      <div class="dialog-section">
+        <h3 class="dialog-section-title">Level ${data.number}: ${data.title}</h3>
+        <p>${data.description}</p>
+      </div>
+    `).join('')}
+
+    <div class="dialog-section">
+      <p>
+        Note that all performance data presented are theoretical and may vary in real-world usage.
+        The Time Spy Score is based on third-party testing conducted by UL and is provided for
+        reference purposes only. Actual performance may differ.
+      </p>
+    </div>
+
+    <div class="dialog-section">
+      <img src="./clientlib-site/images/3dmark.webp" alt="3DMark Logo" loading="lazy">
+    </div>
   `;
-}
 
-/**
- * Inject Time Spy Score display into modal
- * @param {number} score - The Time Spy Score
- */
-function injectTimeSpyScore(score) {
-  if (!score || Number.isNaN(score)) {
-    // eslint-disable-next-line no-console
-    console.warn('Invalid Time Spy Score:', score);
-    return;
-  }
-
-  const level = getTimeSpyLevel(score);
-
-  // Wait for modal content to be fully loaded
-  const checkAndInject = () => {
-    // Get all modals and find the most recently opened one (last in DOM)
-    const allModals = document.querySelectorAll('.modal');
-    if (allModals.length === 0) {
-      // eslint-disable-next-line no-console
-      console.warn('No modal found');
-      return;
-    }
-
-    // Get the last modal (most recently opened)
-    const lastModal = allModals[allModals.length - 1];
-    const modalContent = lastModal.querySelector('.modal-content');
-
-    if (!modalContent) {
-      // eslint-disable-next-line no-console
-      console.warn('Modal content not found');
-      setTimeout(checkAndInject, 50);
-      return;
-    }
-
-    // Look for the time-spy-modal class
-    const timeSpyContent = modalContent.querySelector('.time-spy-modal');
-    const targetContainer = timeSpyContent || modalContent;
-
-    // Wait for any content to be loaded
-    if (!targetContainer.children.length) {
-      setTimeout(checkAndInject, 50);
-      return;
-    }
-
-    // Check if score display already exists (by looking for the h2 we'll inject)
-    const existingTitle = targetContainer.querySelector('h2');
-    if (existingTitle && existingTitle.textContent.includes('3DMark Time Spy Score')) {
-      // eslint-disable-next-line no-console
-      console.log('Score display already injected');
-      return;
-    }
-
-    // Create and inject the score display HTML at the beginning
-    const scoreHTML = createTimeSpyScoreDisplay(score, level);
-    targetContainer.insertAdjacentHTML('afterbegin', scoreHTML);
-    // eslint-disable-next-line no-console
-    console.log('Injected Time Spy Score:', score, 'Level:', level);
-  };
-
-  // Start checking after a short delay
-  setTimeout(checkAndInject, 150);
+  return Array.from(container.childNodes);
 }
 
 function createImageGallery(product) {
@@ -517,7 +481,7 @@ export default async function decorate(block) {
       e.preventDefault();
       const blockConfig = JSON.parse(block.dataset.config || '{}');
       const fpsModalPath = blockConfig.fpsDetailsModalPath || `/${locale}/modals/fps-details`;
-      await openModal(fpsModalPath, true, 'fps-dialog', ['dialog--boxed']);
+      await openModal(fpsModalPath, true, 'fps-dialog', ['dialog--boxed', 'cmp-fps-dialog'], 'fps-content');
     });
   }
 
@@ -528,17 +492,20 @@ export default async function decorate(block) {
       e.preventDefault();
       const scoreStr = timeSpyScoreButton.dataset.score;
       const score = parseInt(scoreStr, 10);
-      // eslint-disable-next-line no-console
-      console.log('Time Spy Score button clicked. Raw score:', scoreStr, 'Parsed score:', score);
-      const blockConfig = JSON.parse(block.dataset.config || '{}');
-      const timeSpyModalPath = blockConfig.timeSpyScoreModalPath || `/${locale}/modals/time-spy-score`;
-      await openModal(timeSpyModalPath, true, 'time-spy-score-dialog', ['dialog--boxed']);
-      if (score && !isNaN(score)) {
-        injectTimeSpyScore(score);
-      } else {
+      
+      if (!score || Number.isNaN(score)) {
         // eslint-disable-next-line no-console
         console.error('Invalid score value:', scoreStr);
+        return;
       }
+
+      // eslint-disable-next-line no-console
+      console.log('Time Spy Score button clicked. Score:', score);
+      
+      const blockConfig = JSON.parse(block.dataset.config || '{}');
+      const contentNodes = createTimeSpyScoreContent(score, blockConfig);
+      const { showModal } = await createModal(contentNodes, true, 'time-spy-score-dialog', ['dialog--boxed', 'cmp-time-spy-score-dialog']);
+      showModal();
     });
   }
 }

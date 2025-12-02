@@ -1,5 +1,6 @@
 import { createOptimizedPicture } from '../../scripts/scripts.js';
 import { getBlockConfigs, getBlockFieldOrder } from '../../scripts/configs.js';
+import { equalheight } from '../../scripts/utils.js';
 
 // Default values from authoring configuration
 const DEFAULT_CONFIG = {
@@ -32,7 +33,7 @@ function generateCardHTML(cardData) {
   
   return `
     <div class="aem-GridColumn aem-GridColumn--default--6 aem-GridColumn--phone--12">
-      <div class="featured-product-card" style="height: 190px;">
+      <div class="featured-product-card">
         <div class="product-image-wrapper">
           <img src="${escapeHtml(imageSrc)}" alt="${escapeHtml(imageAlt)}" class="product-image">
         </div>
@@ -162,4 +163,23 @@ export default async function decorate(block) {
       img.replaceWith(newImg);
     }
   });
+
+  // Apply equal height to cards after DOM is ready
+  setTimeout(() => {
+    equalheight('.featured-product-card');
+  }, 100);
+
+  // Setup resize handler with debouncing for performance
+  const handleResize = () => {
+    clearTimeout(window.equalHeightTimer);
+    window.equalHeightTimer = setTimeout(() => {
+      equalheight('.featured-product-card');
+    }, 150);
+  };
+
+  // Add resize listener if not already added
+  if (!window.equalHeightResizeAttached) {
+    window.addEventListener('resize', handleResize);
+    window.equalHeightResizeAttached = true;
+  }
 }
