@@ -731,7 +731,8 @@ function initializeTooltips(container) {
             { valid: space.left > tooltipRect.width + padding, left: triggerRect.left - tooltipRect.width - padding, top: triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2, currentPosition: 'left', priority: space.left },
           ];
           const valid = positions.filter((p) => p.valid);
-          return valid.length > 0 ? valid.reduce((best, cur) => (cur.priority > best.priority ? cur : best)) : positions[0];
+          return valid.length > 0 ? 
+            valid.reduce((best, cur) => (cur.priority > best.priority ? cur : best)) : positions[0];
         },
       };
       

@@ -1,7 +1,7 @@
 import {
   transferInstrumentation,
   isAuthorEnvironment,
-} from "../../scripts/utils.js";
+} from '../../scripts/utils.js';
 import { loadSwiper } from '../../scripts/scripts.js';
 const itemsStartIndex = 5;
 export default async function decorate(block) {
@@ -13,7 +13,7 @@ export default async function decorate(block) {
             <div class="section-heading">
               <div class="section-heading__text-group">
                 <h2 class="section-heading__title">${
-                  divs[0].textContent.trim() || "Featured News Articles"
+                  divs[0].textContent.trim() || 'Featured News Articles'
                 }</h2>
               </div>
               <div class="section-heading__action-buttons cmp-carousel__actions">
@@ -32,11 +32,11 @@ export default async function decorate(block) {
           </div>
         </div>
         <div class="section-actions-container">
-          <a class="section-actions-btn btn btn-link" href="${divs[2].textContent.trim()}" target="${
-    divs[3].textContent?.trim().toLowerCase() === "true" ? "_blank" : "_self"
-  }">
+          <a class='section-actions-btn btn btn-link' href='${divs[2].textContent.trim()}' target='${
+    divs[3].textContent?.trim().toLowerCase() === 'true' ? '_blank' : '_self'
+  }'>
             ${
-              divs[1]?.textContent?.trim() || "See all News Articles"
+              divs[1]?.textContent?.trim() || 'See all News Articles'
             }<img src="${`${window.hlx.codeBasePath}/icons/icon-arrow.svg`}" alt="Arrow Right">
             </a>
         </div>`);
@@ -45,34 +45,34 @@ export default async function decorate(block) {
   for (let i = itemsStartIndex; i < divs.length; i++) {
     if (i-itemsStartIndex > itemCount - 1) break;
     const subDivs = divs[i].children;
-    const title = subDivs[0] ? subDivs[0].textContent?.trim() : "";
-    const summary = subDivs[1] ? subDivs[1].textContent?.trim() : "";
+    const title = subDivs[0] ? subDivs[0].textContent?.trim() : '';
+    const summary = subDivs[1] ? subDivs[1].textContent?.trim() : '';
     const image = subDivs[2]
-      ? subDivs[2].querySelector("img")?.getAttribute("src")
-      : "";
-    const imageAlt = subDivs[3] ? subDivs[3].textContent?.trim() : "";
-    const postedDate = subDivs[4] ? subDivs[4].textContent?.trim() : "";
-    const articleLink = subDivs[5] ? subDivs[5].textContent?.trim() : "";
+      ? subDivs[2].querySelector('img')?.getAttribute('src')
+      : '';
+    const imageAlt = subDivs[3] ? subDivs[3].textContent?.trim() : '';
+    const postedDate = subDivs[4] ? subDivs[4].textContent?.trim() : '';
+    const articleLink = subDivs[5] ? subDivs[5].textContent?.trim() : '';
     const articleOpenInNewTab = subDivs[6]
-      ? subDivs[6].textContent?.trim().toLowerCase() === "true"
+      ? subDivs[6].textContent?.trim().toLowerCase() === 'true'
       : false;
 
     const mockup = document.createRange().createContextualFragment(`
       <div class="cmp-carousel__item">
-        <a class="cmp-article-card" href="${articleLink}" aria-label="Read article: ${title}" target="${
-      articleOpenInNewTab ? "_blank" : "_self"
-    }">
+        <a class="cmp-article-card" href="${articleLink}" aria-label="Read article: ${title}" target='${
+      articleOpenInNewTab ? '_blank' : '_self'
+    }'>
           <div class="cmp-article-card__image cmp-image">
             <img class="cmp-image__image" src="${image}" alt="${imageAlt}" loading="lazy">
           </div>
 
           <div class="cmp-article-card__content">
             <p class="cmp-article-card__date">
-              <time datetime="${
-                postedDate ? postedDate.replaceAll("/", "-") : ""
-              }" aria-label="Date">
+              <time datetime='${
+                postedDate ? postedDate.replaceAll('/', '-') : ''
+              }' aria-label="Date">
                 <span aria-hidden="true">
-                  ${postedDate ? transferDate(postedDate) : ""}
+                  ${postedDate ? transferDate(postedDate) : ''}
                 </span>
               </time>
             </p>
@@ -91,7 +91,7 @@ export default async function decorate(block) {
     cardNodes.push(mockup);
   }
 
-  mockupContainer.querySelector(".cmp-carousel__content").append(...cardNodes);
+  mockupContainer.querySelector('.cmp-carousel__content').append(...cardNodes);
 
   //move attr
   if (isAuthorEnvironment()) {
@@ -99,36 +99,36 @@ export default async function decorate(block) {
     if (divs[0]) {
       transferInstrumentation(
         divs[0],
-        mockupContainer.querySelector(".section-heading__title")
+        mockupContainer.querySelector('.section-heading__title')
       );
     }
     //move description
     if (divs[1]) {
       transferInstrumentation(
         divs[1],
-        mockupContainer.querySelector(".section-actions-container")
+        mockupContainer.querySelector('.section-actions-container')
       );
     }
   }
 
-  block.innerHTML = "";
+  block.innerHTML = '';
   block.append(mockupContainer);
 
   await loadSwiper();
-  await import("../../scripts/carousel.js");
+  await import('../../scripts/carousel.js');
 
   if (window.initializeSwiperOnAEMCarousel) {
-    window.initializeSwiperOnAEMCarousel(block.querySelector(".cmp-container"));
+    window.initializeSwiperOnAEMCarousel(block.querySelector('.cmp-container'));
   }
 }
 
 //transfer date format
 function transferDate(dateStr) {
   const date = new Date(dateStr);
-  const formattedDate = date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
+  const formattedDate = date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
   });
   return formattedDate;
 }

@@ -3,7 +3,7 @@ import { moveInstrumentation, createOptimizedPicture } from '../../scripts/scrip
 // Default values from authoring configuration
 const DEFAULT_VALUES = {
   label: 'Top picks',
-  ctaLinkName: 'View configs'
+  ctaLinkName: 'View configs',
 };
 
 export default function decorate(block) {
@@ -13,15 +13,15 @@ export default function decorate(block) {
     const li = document.createElement('li');
     li.className = 'top-picks-card';
     moveInstrumentation(row, li);
-    
+
     // Create the product image wrapper
     const productImageWrapper = document.createElement('div');
     productImageWrapper.className = 'product-image-wrapper';
-    
+
     // Create the product info section
     const productInfo = document.createElement('div');
     productInfo.className = 'product-info';
-    
+
     // Process each cell in the row
     [...row.children].forEach((cell, index) => {
       if (index === 0 && cell.querySelector('picture')) {
@@ -63,20 +63,20 @@ export default function decorate(block) {
         if (link) {
           const ctaWrapper = document.createElement('div');
           ctaWrapper.className = 'cta-wrapper';
-          
+
           link.className = 'cta';
-          
+
           // Use the CTA link name from the previous cell, or fallback to existing text, or use default
           const ctaLinkName = li.dataset.ctaLinkName || link.textContent.trim() || DEFAULT_VALUES.ctaLinkName;
           link.textContent = ctaLinkName;
-          
+
           link.setAttribute('aria-label', `${ctaLinkName} for ${productInfo.querySelector('.title')?.textContent || 'product'}`);
-          
+
           // Add arrow icon
           const arrowIcon = document.createElement('span');
           arrowIcon.className = 'icon icon--arrow-wide-right';
           link.append(' ', arrowIcon);
-          
+
           ctaWrapper.append(link);
           productInfo.append(ctaWrapper);
         }
@@ -84,11 +84,11 @@ export default function decorate(block) {
         delete li.dataset.ctaLinkName;
       }
     });
-    
+
     li.append(productImageWrapper, productInfo);
     ul.append(li);
   });
-  
+
   // Optimize images
   ul.querySelectorAll('picture > img').forEach((img) => {
     const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '240' }]);
@@ -100,7 +100,7 @@ export default function decorate(block) {
     }
     img.closest('picture').replaceWith(optimizedPic);
   });
-  
+
   block.textContent = '';
   block.append(ul);
 }
