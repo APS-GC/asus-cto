@@ -6,11 +6,12 @@ import { getBlockConfigs } from '../../scripts/configs.js';
 function initializeTooltips(container) {
   const tooltipTriggers = container.querySelectorAll('[data-tooltip-trigger]');
 
-  tooltipTriggers.forEach((trigger, index) => {
+  tooltipTriggers.forEach((trigger) => {
     const tooltipId = trigger.getAttribute('aria-describedby');
     const tooltip = document.getElementById(tooltipId);
 
     if (!tooltip) {
+      // eslint-disable-next-line no-console
       console.warn(`Tooltip not found for ID: ${tooltipId}`);
       return;
     }
@@ -26,19 +27,31 @@ function initializeTooltips(container) {
       const triggerRect = trigger.getBoundingClientRect();
       const tooltipRect = tooltip.getBoundingClientRect();
 
-      let top = triggerRect.bottom + 10;
-      let left = triggerRect.left;
+      let top = triggerRect.top - tooltipRect.height - 10;
+      let left = triggerRect.left + (triggerRect.width / 2) - (tooltipRect.width / 2);
+      let position = 'top';
 
-      if (left + 260 > window.innerWidth) {
-        left = window.innerWidth - 270;
+      if (left + tooltipRect.width > window.innerWidth) {
+        left = window.innerWidth - tooltipRect.width - 10;
       }
 
-      if (top + tooltipRect.height > window.innerHeight) {
-        top = triggerRect.top - tooltipRect.height - 10;
+      if (left < 10) {
+        left = 10;
       }
 
+      if (top < 0) {
+        top = triggerRect.bottom + 10;
+        position = 'bottom';
+      }
+
+      // Calculate arrow position relative to trigger center
+      const triggerCenter = triggerRect.left + (triggerRect.width / 2);
+      const arrowLeft = triggerCenter - left;
+
+      tooltip.setAttribute('data-position', position);
       tooltip.style.top = `${top}px`;
       tooltip.style.left = `${left}px`;
+      tooltip.style.setProperty('--arrow-left', `${arrowLeft}px`);
 
       setTimeout(() => {
         tooltip.style.opacity = '1';
@@ -77,12 +90,12 @@ function createProductCard(product, config) {
   // Generate badges HTML from productTags
   // Add "In Stock" badge by default if not already present
   const badges = product.productTags || [];
-  const hasInStock = badges.some(badge => badge.toLowerCase() === 'in stock');
+  const hasInStock = badges.some((badge) => badge.toLowerCase() === 'in stock');
   if (!hasInStock) {
     badges.unshift('In Stock'); // Add "In Stock" at the beginning
   }
 
-  const badgesHTML = badges.map(badge => {
+  const badgesHTML = badges.map((badge) => {
     let badgeClass = 'hot-products-badge';
     const badgeLower = badge.toLowerCase();
     if (badgeLower === 'in stock') badgeClass += ' hot-products-badge--in-stock';
@@ -92,7 +105,7 @@ function createProductCard(product, config) {
   // Generate FPS tooltip HTML from gamePriority
   let fpsTooltipHTML = '';
   if (product.gamePriority && product.gamePriority.length > 0) {
-    const fpsRows = product.gamePriority.map(detail => {
+    const fpsRows = product.gamePriority.map((detail) => {
       const game = detail.gameTitle || 'Unknown Game';
       const fps1080 = detail.fullHdFps || '--';
       const fps1440 = detail.quadHdFps || '--';
@@ -100,8 +113,8 @@ function createProductCard(product, config) {
       return `
         <tr>
           <td>${game}</td>
-          <td>${fps1080 !== '--' ? `${fps1080} FPS` : '--'}</td>
-          <td>${fps1440 !== '--' ? `${fps1440} FPS` : '--'}</td>
+          <td>${fps1080 !== '--' ? fps1080 : '--'}</td>
+          <td>${fps1440 !== '--' ? fps1440 : '--'}</td>
         </tr>
       `;
     }).join('');
@@ -187,7 +200,7 @@ function createProductCard(product, config) {
       ` : ''}
 
       <ul class="hot-products-specs">
-        ${(product.keySpec || []).map(spec => `<li>${spec.name || spec}</li>`).join('')}
+        ${(product.keySpec || []).map((spec) => `<li>${spec.name || spec}</li>`).join('')}
       </ul>
 
       <div class="hot-products-estore">
@@ -258,15 +271,17 @@ const DEFAULT_CONFIG = {
   viewAllText: 'View all',
   viewAllLink: '#',
   openLinkInNewTab: false,
-  productPreviewModalPath: '/content/asus-cto/language-master/en/modals/product-preview'
+  productPreviewModalPath: '/content/asus-cto/language-master/en/modals/product-preview',
 };
 
+/* eslint-disable consistent-return */
 async function initializeSwiper(section, config) {
   const swiperContainer = section.querySelector('.hot-products-swiper');
   const prevButton = section.querySelector('.hot-products-button-prev');
   const nextButton = section.querySelector('.hot-products-button-next');
 
   if (!swiperContainer) {
+    // eslint-disable-next-line no-console
     console.warn('Hot Products: Missing swiper container');
     return;
   }
@@ -275,8 +290,8 @@ async function initializeSwiper(section, config) {
   await loadSwiper();
 
   const swiper = new window.Swiper(swiperContainer, {
-    slidesPerView: 1.15,
-    spaceBetween: 30,
+    slidesPerView: 1,
+    spaceBetween: 8,
     centeredSlides: true,
     centeredSlidesBounds: true,
     simulateTouch: true,
@@ -291,15 +306,18 @@ async function initializeSwiper(section, config) {
     breakpoints: {
       768: {
         slidesPerView: 2.5,
-        spaceBetween: 24,
         slidesPerGroup: 1,
+        centeredSlides: false,
+        centeredSlidesBounds: false,
       },
-            1024: {
-                slidesPerView: config.productsToShow,
-                spaceBetween: 32,
-                allowTouchMove: false,
-                simulateTouch: false,
-            },
+      1024: {
+        slidesPerView: config.productsToShow,
+        spaceBetween: 20,
+        allowTouchMove: false,
+        simulateTouch: false,
+        centeredSlides: false,
+        centeredSlidesBounds: false,
+      },
     },
     a11y: {
       prevSlideMessage: 'Previous slide',
@@ -316,6 +334,7 @@ async function initializeSwiper(section, config) {
 
   return swiper;
 }
+/* eslint-enable consistent-return */
 
 // Handle quick view button click
 async function handleQuickView(product, config) {
@@ -401,46 +420,47 @@ export default async function decorate(block) {
 
         const productsToDisplay = products.slice(0, config.productsToShow);
 
-      productsToDisplay.forEach(product => {
-        if (product.hoverImage) {
-          const link = document.createElement('link');
-          link.rel = 'preload';
-          link.as = 'image';
-          link.href = product.hoverImage;
-          document.head.appendChild(link);
-        }
-      });
+        productsToDisplay.forEach(product => {
+          if (product.hoverImage) {
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.as = 'image';
+            link.href = product.hoverImage;
+            document.head.appendChild(link);
+          }
+        });
 
-      productsToDisplay.forEach(product => {
-        const card = createProductCard(product, config);
-        wrapper.appendChild(card);
+        productsToDisplay.forEach(product => {
+          const card = createProductCard(product, config);
+          wrapper.appendChild(card);
 
-        // Add quick view event listener
-        const quickViewBtn = card.querySelector('.hot-products-quick-view');
-        if (quickViewBtn) {
-          quickViewBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleQuickView(product, config);
-          });
-        }
-      });
+          // Add quick view event listener
+          const quickViewBtn = card.querySelector('.hot-products-quick-view');
+          if (quickViewBtn) {
+            quickViewBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleQuickView(product, config);
+            });
+          }
+        });
 
-      initializeTooltips(section);
+        initializeTooltips(section);
 
-      await initializeSwiper(section, config);
+        await initializeSwiper(section, config);
 
-      window.addEventListener('delayed-loaded', async () => {
-        try {
-          await loadBazaarvoiceScript();
-        } catch (error) {
-          console.error('Hot Products: Failed to load Bazaarvoice:', error);
-        }
-      }, { once: true });
+        window.addEventListener('delayed-loaded', async () => {
+          try {
+            await loadBazaarvoiceScript();
+          } catch (error) {
+            console.error('Hot Products: Failed to load Bazaarvoice:', error);
+          }
+        }, { once: true });
       } else {
         wrapper.innerHTML = '<div class="hot-products-error">No products available</div>';
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error loading hot products:', error);
       wrapper.innerHTML = '<div class="hot-products-error">Failed to load products. Please try again later.</div>';
     }

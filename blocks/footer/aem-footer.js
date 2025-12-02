@@ -5,6 +5,7 @@ import {
   initializeBlockInShadowRoot
 } from '../../scripts/aem-component-utils.js';
 import { optimizeFooterImages } from './footer.js';
+import { replaceLocaleInUrl } from '../../scripts/configs.js';
 
 // Footer configuration - calculated once for the entire module
 const FooterConfig = {
@@ -70,7 +71,9 @@ class AEMFooter extends HTMLElement {
    */
   async loadCustomFooterFragment() {
     const baseUrl = this.baseUrl || window.location.origin;
-    return await loadCustomFragment(this.fragmentUrl, baseUrl, loadFooterFragment, processFooterFragmentContent);
+    const fragmentUrl = await replaceLocaleInUrl(this.fragmentUrl);
+    
+    return await loadCustomFragment(fragmentUrl, baseUrl, loadFooterFragment, processFooterFragmentContent);
   }
 
 

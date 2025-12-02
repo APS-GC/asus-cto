@@ -43,7 +43,7 @@ async function renderHelpMeChoose(block) {
   const endpoint = await getApiEndpoint(API_URIS.FETCH_GAME_LIST_EN);
   const gameList = await fetchGameList(endpoint);
 
-  if(!gameList?.results?.gameList || gameList?.results?.gameList.length == -1) return;
+  if(!gameList?.results?.gameList || gameList?.results?.gameList.length === -1) return;
 
   const lowestPrice = gameList?.results?.lowestPrice || 500;
   const highestPrice = gameList?.results?.highestPrice || 5000;
@@ -54,7 +54,7 @@ async function renderHelpMeChoose(block) {
   // Build the HTML in a fragment / string, then insert once
   const html = 
   
-  AuthoredData[6] === "1" ? `
+  AuthoredData[6] === '1' ? `
   <div class="game-recommendation">
       <div class="carousel panelcontainer">
           <div class="section-heading">
@@ -360,6 +360,19 @@ async function initializeSwiperCarousel(block) {
       beforeDestroy: () => {
         swiper.navigation.destroy();
         swiper.pagination.destroy();
+      },
+      afterInit: function() {
+        const navContainer = this.navigation.nextEl?.parentNode;
+        if (navContainer && this.isBeginning && this.isEnd) {
+          navContainer.style.display = 'none';
+        }
+      },
+      resize: function() {
+        const navContainer = this.navigation.nextEl?.parentNode;
+        if (navContainer) {
+          // Show or hide based on whether both nav buttons are disabled
+          navContainer.style.display = (this.isBeginning && this.isEnd) ? 'none' : '';
+        }
       },
     },
   });
@@ -733,7 +746,7 @@ class FilterComponent {
     }
   }
 
-  _handleReset() {//this.dom.confirmedMin.textContent
+  _handleReset() { //this.dom.confirmedMin.textContent
     this.dom.slider?.noUiSlider.set([this.DEFAULT_START_BUDGET.min,this.DEFAULT_START_BUDGET.max]);
     this.dom.games.forEach((cb) => (cb.checked = false));
     this._updateBudgetDisplay(this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max);

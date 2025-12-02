@@ -13,6 +13,7 @@ import {
   decorateBlock,
   loadBlock,
 } from './aem.js';
+import { getConfigValue } from './configs.js';
 
 /**
  * Moves all the attributes from a given elmenet to another given element.
@@ -134,7 +135,6 @@ export async function loadSwiper() {
           loadScript(
             'https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js',
             {
-              // integrity: 'sha512-Ysw1DcK1P+uYLqprEAzNQJP+J4hTx4t/3X2nbVwszao8wD+9afLjBQYjz7Uk4ADP+Er++mJoScI42ueGtQOzEA==',
               crossorigin: 'anonymous',
               referrerpolicy: 'no-referrer'
             }
@@ -181,7 +181,7 @@ export function isUniversalEditor() {
  */
 export async function loadHeaderFragment() {
   //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = '/en/fragments/head.plain.html';
+  const fragmentUrl = `/${await getConfigValue('locale')}/fragments/head.plain.html`;
   try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
@@ -202,7 +202,7 @@ export async function loadHeaderFragment() {
  */
 export async function loadFooterFragment() {
   //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = '/en/products/desktops/footer.plain.html';
+  const fragmentUrl = `/${await getConfigValue('locale')}/fragments/footer.plain.html`;
   try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
