@@ -6,6 +6,94 @@ import { openModal, createModal } from '../modal/modal.js';
 import { loadSwiper, getLocale } from '../../scripts/scripts.js';
 import { buildBlock, decorateBlock, loadBlock } from '../../scripts/aem.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
+import { isUniversalEditor } from '../../scripts/utils.js';
+
+/**
+ * Get dummy product data for authoring mode
+ * @returns {Object} Dummy product object with all fields populated
+ */
+function getDummyProductData() {
+  return {
+    sku: 'DEMO-SKU-001',
+    externalId: 'DEMO-001',
+    name: 'ASUS ROG Strix G16 Gaming Laptop',
+    modelName: 'G614JV-AS73',
+    mainImage: './clientlib-site/images/products/laptop-main.webp',
+    hoverImage: './clientlib-site/images/products/laptop-hover.webp',
+    additionalImages: [
+      './clientlib-site/images/products/laptop-view1.webp',
+      './clientlib-site/images/products/laptop-view2.webp',
+      './clientlib-site/images/products/laptop-view3.webp'
+    ],
+    price: '1899.99',
+    specialPrice: '1699.99',
+    savedPrice: '200',
+    productTags: ['In Stock', 'Best Seller', 'Free Shipping'],
+    gameTitle: 'Cyberpunk 2077',
+    fps: '120',
+    keyFeatures: [
+      {
+        name: 'Powerful Performance',
+        description: 'Intel Core i7-13650HX processor delivers exceptional gaming power'
+      },
+      {
+        name: 'Stunning Graphics',
+        description: 'NVIDIA GeForce RTX 4060 with 8GB GDDR6 for immersive visuals'
+      },
+      {
+        name: 'Fast Display',
+        description: '16" QHD 240Hz display for smooth, responsive gameplay'
+      }
+    ],
+    keySpec: [
+      'Intel Core i7-13650HX Processor',
+      'NVIDIA GeForce RTX 4060 8GB',
+      '16GB DDR5 RAM',
+      '1TB PCIe SSD',
+      '16" QHD 240Hz Display',
+      'RGB Backlit Keyboard'
+    ],
+    gamePriority: [
+      {
+        gameTitle: 'Cyberpunk 2077',
+        fullHdFps: '120',
+        quadHdFps: '85',
+        imageUrl: './clientlib-site/images/games/cyberpunk.webp'
+      },
+      {
+        gameTitle: 'Call of Duty: Modern Warfare',
+        fullHdFps: '144',
+        quadHdFps: '95',
+        imageUrl: './clientlib-site/images/games/cod.webp'
+      },
+      {
+        gameTitle: 'Fortnite',
+        fullHdFps: '165',
+        quadHdFps: '120',
+        imageUrl: './clientlib-site/images/games/fortnite.webp'
+      },
+      {
+        gameTitle: 'Valorant',
+        fullHdFps: '240',
+        quadHdFps: '180',
+        imageUrl: './clientlib-site/images/games/valorant.webp'
+      },
+      {
+        gameTitle: 'Apex Legends',
+        fullHdFps: '155',
+        quadHdFps: '110',
+        imageUrl: './clientlib-site/images/games/apex.webp'
+      },
+      {
+        gameTitle: 'Overwatch 2',
+        fullHdFps: '190',
+        quadHdFps: '140',
+        imageUrl: './clientlib-site/images/games/overwatch.webp'
+      }
+    ],
+    timeSpyOverallScore: 8500
+  };
+}
 
 /**
  * Get default configuration for product preview with locale
@@ -16,7 +104,7 @@ function getDefaultConfig(locale) {
   return {
     fpsDetailsModalPath: `/${locale}/modals/fps-details`,
     timeSpyScoreModalPath: `/${locale}/modals/time-spy-score`,
-    threeMarkLogo: '',
+    threeMarkLogo: './clientlib-site/images/3dmark.webp',
     dataSourceTooltip: 'All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ.',
   };
 }
@@ -319,6 +407,20 @@ async function initializeGallery(block) {
 
 
 export default async function decorate(block) {
+  // Add main component class for styling
+  block.classList.add('cmp-product-preview');
+  
+  // Check if in Universal Editor and adjust styling
+  const inUE = isUniversalEditor();
+  if (inUE) {
+    // Apply inline styles to override modal positioning for UE
+    block.style.position = 'relative';
+    block.style.inset = 'auto';
+    block.style.zIndex = '1';
+    block.style.background = 'transparent';
+    block.style.minHeight = 'auto';
+  }
+  
   // Get locale and default configuration
   const locale = await getLocale();
   const defaultConfig = getDefaultConfig(locale);
@@ -342,9 +444,16 @@ export default async function decorate(block) {
     console.error('Error parsing product data:', error);
   }
 
+  // If no product data available
   if (!product) {
-    block.innerHTML = '<p>Product data not available</p>';
-    return;
+    // In Universal Editor, show dummy data for preview
+    if (inUE) {
+      product = getDummyProductData();
+    } else {
+      // In production, show error message
+      block.innerHTML = '<p>Product data not available</p>';
+      return;
+    }
   }
 
   // Store config in dataset for event listeners
@@ -459,6 +568,22 @@ export default async function decorate(block) {
       </div>
     </div>
   `;
+
+  // Apply additional inline styles for UE mode after HTML is rendered
+  if (inUE) {
+    const body = block.querySelector('.cmp-product-preview__body');
+    const topbar = block.querySelector('.cmp-product-preview__topbar');
+    
+    if (body) {
+      body.style.background = 'transparent';
+      body.style.padding = '0';
+      body.style.marginBottom = '0';
+    }
+    
+    if (topbar) {
+      topbar.style.position = 'relative';
+    }
+  }
 
   // Initialize gallery
   await initializeGallery(block);

@@ -7,6 +7,16 @@ export function isAuthorEnvironment() {
   return false;
 }
 
+/**
+ * Detect if running in Universal Editor environment
+ * Universal Editor loads pages in an iframe within the author environment
+ * @returns {boolean} True if running in Universal Editor
+ */
+export const isUniversalEditor = () => {
+  const isInIframe = window.self !== window.top;
+  return isAuthorEnvironment() && isInIframe;
+};
+
 export function whatBlockIsThis(element) {
   let currentElement = element;
 
