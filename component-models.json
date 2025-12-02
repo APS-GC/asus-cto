@@ -1266,6 +1266,18 @@
     ]
   },
   {
+    "id": "product-matches",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": ""  
+      }
+    ]
+  },
+  {
     "id": "featured-news-articles",
     "fields": [
       {
