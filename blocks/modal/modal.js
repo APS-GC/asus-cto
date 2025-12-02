@@ -148,7 +148,11 @@ export async function createModal(contentNodes, modal = true, dialogId = 'dialog
     showModal: () => {
       dialogContainer.setAttribute('aria-hidden', 'false');
       // reset scroll position
-      setTimeout(() => { dialogContent.scrollTop = 0; }, 0);
+      setTimeout(() => { 
+        dialogContent.scrollTop = 0;
+        // Focus the dialog container so keyboard events (ESC) work
+        dialogContainer.focus();
+      }, 0);
       document.body.classList.add('modal-open');
     },
     closeModal: () => closeDialog(dialogContainer),
