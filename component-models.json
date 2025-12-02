@@ -228,6 +228,14 @@
             "value": "page-bg-primary"
           }
         ]
+      },
+      {
+        "component": "boolean",
+        "name": "overlapHeader",
+        "label": "Overlap Header",
+        "description": "Enable to allow Top Section to overlap with header",
+        "valueType": "boolean",
+        "value": false
       }
     ]
   },
