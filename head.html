@@ -261,6 +261,7 @@
     
     // Handle overlap header from metadata
     const overlapHeader = getUEPageMetadata('overlapHeader');
+    console.log(overlapHeader)
     if (overlapHeader === 'true') {
       const main = document.querySelector('main');
       if (main && main.firstElementChild) {
