@@ -274,22 +274,7 @@
       console.log('Applied page background class:', pageBackgroundColor);
     }
   }
-  
-  function updateOverlapHeader() {
-    const overlapHeader = getUEPageMetadata('overlapHeader');
-    const main = document.querySelector('main');
-    
-    if (main && main.firstElementChild) {
-      if (overlapHeader === 'true') {
-        main.firstElementChild.classList.add('overlap-header');
-        console.log('Overlap header enabled');
-      } else {
-        main.firstElementChild.classList.remove('overlap-header');
-        console.log('Overlap header disabled');
-      }
-    }
-  }
-  
+
   // Enhanced UE event handling
   function handleUEPageUpdate(event) {
     console.log('UE page update detected:', event.detail);
@@ -302,7 +287,6 @@
       console.log('Page metadata update detected, refreshing background...');
       setTimeout(() => {
         updatePageBackground();
-        updateOverlapHeader();
         
         // Also trigger a complete page refresh of metadata processing
         const main = document.querySelector('main');
