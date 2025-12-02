@@ -5,13 +5,17 @@ ____header_start {
 }
 
 .header-wrapper {
+    position: relative;
     background-color: var(--color-primary);
-    left: 0;
+  }
+  
+  body:has(.overlap-header) .header-wrapper {
     position: absolute;
     top: 0;
+    left: 0;
     width: 100%;
-    z-index: 999
-}
+    z-index: 999;
+  }
 
 .cmp-header {
     display: -webkit-box;
