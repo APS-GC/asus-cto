@@ -707,3 +707,6 @@ section:has(.cmp-carousel) {
     }
 }
 /* stylelint-enable declaration-property-value-no-unknown, declaration-block-no-duplicate-properties */
+h3.cmp-article-card__title{
+    margin-bottom:0;
+}
