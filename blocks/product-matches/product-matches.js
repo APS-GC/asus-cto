@@ -30,7 +30,7 @@ export default async function decorate(block) {
  */
 async function renderHelpMeChoose(block) {
   const helpMeChooseContainer = document.createElement('div');
-  helpMeChooseContainer.className = 'help-me-choose-container container';
+  helpMeChooseContainer.className = 'product-matches-page container';
 
   const authoredRows = [...block.children];
   const AuthoredData = authoredRows.map(row => row.textContent.trim());

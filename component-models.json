@@ -1266,7 +1266,7 @@
     ]
   },
   {
-    "id": "product-matches-page",
+    "id": "product-matches",
     "fields": [
       {
         "component": "text",
