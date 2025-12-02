@@ -12,6 +12,7 @@ import {
   buildBlock,
   decorateBlock,
   loadBlock,
+  getMetadata,
 } from './aem.js';
 import { getConfigValue } from './configs.js';
 
@@ -380,6 +381,11 @@ async function loadEager(doc) {
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
+    const overlapHeader = getMetadata('overlapheader');
+    if (overlapHeader === 'true' && main.firstElementChild) {
+      main.firstElementChild.classList.add('overlap-header');
+    }
+    
     decorateMain(main);
     const hasCarousel = main.querySelector('.hero-banner, .hot-products, .product-preview, .help-me-choose,.our-advantages');
     if (hasCarousel) {
