@@ -11,7 +11,7 @@ const DEFAULT_CONFIG = {
   videoAutoplayDuration: 1
 };
 
-const itemsStartIndex = 4;
+const itemsStartIndex = 3;
 
 export default async function decorate(block) {
   // Get configuration using getBlockConfigs
