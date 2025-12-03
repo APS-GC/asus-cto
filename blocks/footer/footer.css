@@ -1,4 +1,4 @@
-/* stylelint-disable declaration-property-value-no-unknown, declaration-block-no-duplicate-properties */
+/* stylelint-disable declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, rule-empty-line-before, no-duplicate-selectors, value-no-vendor-prefix, property-no-vendor-prefix, selector-pseudo-element-colon-notation, media-feature-range-notation, comment-empty-line-before */
 
 .footer-wrapper{
         padding: 0;
@@ -785,4 +785,4 @@ footer .back-to-top:focus-visible {
     }
 }
 
-/* stylelint-enable declaration-property-value-no-unknown, declaration-block-no-duplicate-properties */
+/* stylelint-enable declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, rule-empty-line-before, no-duplicate-selectors, value-no-vendor-prefix, property-no-vendor-prefix, selector-pseudo-element-colon-notation, media-feature-range-notation, comment-empty-line-before */

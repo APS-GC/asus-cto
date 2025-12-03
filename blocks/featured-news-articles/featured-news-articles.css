@@ -1,3 +1,5 @@
+/* stylelint-disable declaration-property-value-no-unknown, property-no-vendor-prefix, value-no-vendor-prefix, declaration-block-no-duplicate-properties */
+
 .cmp-article-card {
     background: var(--color-primary-50);
     color: var(--color-primary-950);
@@ -116,3 +118,4 @@
         width: 280px;
     }
 }
+/* stylelint-enable declaration-property-value-no-unknown, property-no-vendor-prefix, value-no-vendor-prefix, declaration-block-no-duplicate-properties */

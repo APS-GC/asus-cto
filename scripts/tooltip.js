@@ -8,7 +8,7 @@ class TooltipManager {
         this.currentVisibleTooltip = null;
         this.config = {
             boundaryPadding: options.boundaryPadding || 13, // 8px spacing + 5px arrow size
-            focusShowWithinMs: options.focusShowWithinMs || 1000, // only show on focus if keyboard interaction happened within this ms
+            focusShowWithinMs: options.focusShowWithinMs || 1000,
         };
 
         // Track last user interaction (keyboard vs pointer)
@@ -344,7 +344,6 @@ class TooltipManager {
         };
 
         // The value of `sanitized` is strictly validated against a fixed whitelist.
-        // eslint-disable-next-line security/detect-object-injection
         return strategies[sanitized]();
     }
 

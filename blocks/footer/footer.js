@@ -596,7 +596,7 @@ function optimizeFooterImages(container) {
 }
 
 export default function decorate(block) {
-  if(block.querySelector('div.footer')?.className !== 'footer') return
+  if(block.querySelector('div.footer')?.className !== 'footer') return;
 
   const data = parseFooterData(block);
 

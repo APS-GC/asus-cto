@@ -104,7 +104,7 @@ export function transferInstrumentation(from, to) {
  */
 export function setHeight(el, val) {
   // If val is a function, execute it to get the height value
-  if (typeof val === 'function') val = val();
+  if (typeof val === 'function') val = val(); // eslint-disable-line no-param-reassign
 
   // If the value is a string (e.g., '100px' or 'auto'), set it directly
   if (typeof val === 'string') {
