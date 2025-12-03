@@ -199,8 +199,4 @@ export default async function decorate(block) {
   setupAccordionHandlers(block);
 }
 
-/**
- * Export helper functions for use by other blocks
- */
-export { buildAccordionHTML, setupAccordionHandlers, generateId };
 
