@@ -1,1 +1,76 @@
 /* add global styles that can be loaded post LCP here */
+.budget-range-slider {
+    --slider-height: 4px;
+    --slider-handle-height: 32px;
+    --slider-handle-width: 8px;
+    height: var(--slider-height);
+    position: relative;
+    background: none;
+    border-radius: 0px;
+    border: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.budget-range-slider .noUi-connects {
+    background: -webkit-gradient(linear, left top, right top, from(rgba(255, 255, 255, 0.1)), to(rgba(255, 255, 255, 0.8)));
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.8) 100%);
+    border: none;
+    height: var(--slider-height);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border-radius: 0px;
+    cursor: pointer;
+}
+
+.budget-range-slider .noUi-connects .noUi-connect {
+    background: transparent;
+    border-radius: 999px;
+    border: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.budget-range-slider .noUi-handle {
+    width: var(--slider-handle-width);
+    height: var(--slider-handle-height);
+    background-color: var(--color-primary-950);
+    border: none;
+    border-radius: 1000px;
+    top: calc(var(--slider-handle-height, 16) / 2 * -1 + 1px);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+.budget-range-slider .noUi-handle::before,
+.budget-range-slider .noUi-handle::after {
+    display: none;
+}
+
+.budget-range-slider .noUi-handle:focus-visible {
+    outline-offset: 1px;
+}
+
+.budget-range-slider .noUi-handle-lower {
+    right: calc(var(--slider-handle-width) / -2);
+}
+
+.budget-range-slider .noUi-handle-upper {
+    right: calc(var(--slider-handle-width) / -2);
+}
+
+@media only screen and (max-width: 63.9375rem) {
+    .budget-range-slider {
+        --slider-handle-height: 24px;
+        --slider-handle-width: 6px;
+        margin: 10px 0;
+    }
+}
+
+@media only screen and (max-width: 79.9375rem) {
+    .budget-range-slider .noUi-touch-area {
+        width: 24px;
+        margin-left: -9px;
+    }
+}
