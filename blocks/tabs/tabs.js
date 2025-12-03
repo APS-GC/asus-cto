@@ -90,7 +90,6 @@ function handleTabKeyDown(event, allTabs, allPanels) {
     case 'Enter':
     case ' ':
       if (currentIndex >= 0 && currentIndex < allTabs.length) {
-        // eslint-disable-next-line security/detect-object-injection
         activateTab(allTabs[currentIndex], allTabs, allPanels);
       }
       event.preventDefault();
@@ -109,7 +108,6 @@ function handleTabKeyDown(event, allTabs, allPanels) {
 
   if (newIndex !== undefined && newIndex !== currentIndex) {
     if (newIndex >= 0 && newIndex < allTabs.length) {
-      // eslint-disable-next-line security/detect-object-injection
       activateTab(allTabs[newIndex], allTabs, allPanels);
     }
   }
@@ -316,7 +314,6 @@ export function activateTabByIndex(container, index) {
   const panels = Array.from(container.querySelectorAll('[role="tabpanel"]'));
 
   if (index >= 0 && index < tabs.length) {
-    // eslint-disable-next-line security/detect-object-injection
     activateTab(tabs[index], tabs, panels);
   }
 }

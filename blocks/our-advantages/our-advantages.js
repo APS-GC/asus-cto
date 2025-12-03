@@ -1,5 +1,5 @@
-import { isAuthorEnvironment, safeText } from "../../scripts/utils.js";
-import { transferInstrumentation } from "../../scripts/utils.js";
+import { isAuthorEnvironment, safeText } from '../../scripts/utils.js';
+import { transferInstrumentation } from '../../scripts/utils.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
 
 const pubUrl = 'https://publish-p165753-e1767020.adobeaemcloud.com';
@@ -17,7 +17,7 @@ export default async function decorate(block) {
   // Get configuration using getBlockConfigs
   const config = await getBlockConfigs(block, DEFAULT_CONFIG, 'our-advantages');
 
-  const title = config.title || "Our Advantages";
+  const title = config.title || 'Our Advantages';
   const imageAutoplayDuration = config.imageAutoplayDuration || 5;
   const videoAutoplayDuration = config.videoAutoplayDuration || 1;
   const carouselId = `carousel-${Math.random().toString(36).substr(2, 10)}`;
@@ -63,15 +63,15 @@ export default async function decorate(block) {
   const cardNodes = [];
   [...block.children].forEach((card, i) => {
     if (i < itemsStartIndex) return;
-    const divs = card.querySelectorAll("div");
+    const divs = card.querySelectorAll('div');
     const headline = safeText(divs.item(0));
     const details = safeText(divs.item(1));
     const video = safeText(divs.item(2));
     const imageAlt = safeText(divs.item(4));
     const buttonText = safeText(divs.item(5));
     const buttonTextLink = safeText(divs.item(6));
-    const isTargetBlank = divs.item(7).textContent === "true" ? 1 : 0;
-    const imageUrl = card.querySelector("img").src;
+    const isTargetBlank = divs.item(7).textContent === 'true' ? 1 : 0;
+    const imageUrl = card.querySelector('img').src;
     const itemId = `${carouselId}-item-${Math.random().toString(36).substr(2, 9)}`;
     const imageHtml = imageUrl?`<img src="${imageUrl}"  alt="${imageAlt}" class="cmp-advantage-card__image" loading="lazy" />`:'<div class="cmp-advantage-card__image" style="background: #efefef;color: #000;padding-top: 120px;font-size: 32px;">Please upload an image.</div>';
     const videoHtml = video ? `<video class="cmp-advantage-card__video" data-src="${pubUrl+video}" playsinline controls></video><button class="cmp-advantage-card__close-video" aria-label="Close video"></button>`:'';
