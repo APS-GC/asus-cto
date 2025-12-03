@@ -23,7 +23,7 @@ export default async function decorate(block) {
   const itemCount = config.itemCount || 7;
   
   const mockupContainer = document.createRange().createContextualFragment(`
-        <div class="cmp-container container">
+        <div class="cmp-container">
           <div class="carousel panelcontainer">
             <div class="section-heading">
               <div class="section-heading__text-group">
