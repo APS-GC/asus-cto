@@ -16,3 +16,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+function handleStickyForFloatingAddtoCartWindow() {
+  const div = document.querySelector('.cmp-floating-price');
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  const windowHeight = window.innerHeight;
+  const documentHeight = document.documentElement.scrollHeight;
+  const atBottom = scrollTop + windowHeight >= documentHeight - 10;
+
+  if (atBottom) {
+    div.classList.add('relative');
+  } else {
+    div.classList.remove('relative');
+  }
+}
+
+let timeout;
+window.addEventListener('scroll', () => {
+  clearTimeout(timeout);
+  timeout = setTimeout(handleStickyForFloatingAddtoCartWindow, 50);
+});
+
+handleStickyForFloatingAddtoCartWindow();

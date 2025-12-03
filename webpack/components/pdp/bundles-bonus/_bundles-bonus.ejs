@@ -6,7 +6,7 @@
 %>
 <div class="cmp-bundles-bonuses" data-has-bundles="true" data-has-bonuses="true">
    <div class="container">
-      <div class="layout-grid m-bottom cmp-bundles-wrapper" data-content-type="bundles">
+      <div class="layout-grid layout-grid--gap-2 m-bottom cmp-bundles-wrapper" data-content-type="bundles">
          <div class="layout-grid__col layout-grid__col--span-4 layout-grid__col--md-span-12">
             <div class="bundles-section">
                <div class="section-heading">
@@ -18,18 +18,18 @@
             <h3>Choose a bundle</h3>
             <div class="cmp-bundles__component-list">    
                <%- include('../bundles-card/_bundles-card.ejs', { groupId: 'bundles' ,
-                  name: 'Just this item' ,discount:'' ,price: '' ,cta: '', cardId: 'bundle1', isJustThisItem: true }) %>
+                  name: 'Just this item' ,discount:'' ,price: '' ,cta: '', bundleItemId: 'bundle1', isJustThisItem: true }) %>
                <%- include('../bundles-card/_bundles-card.ejs', { groupId: 'bundles' ,
-                  name: 'ASUS ROG Elite Gaming Bundle' ,label:'ASUS ROG Elite Gaming Bundle', discount:'',price: '+ $350.00' , cta: '', cardId: 'bundle2' }) %>
+                  name: 'ASUS ROG Elite Gaming Bundle' ,label:'ASUS ROG Elite Gaming Bundle', discount:'',price: '+ $350.00' , cta: '', bundleItemId: 'bundle2' }) %>
                <%- include('../bundles-card/_bundles-card.ejs', { groupId: 'bundles' ,
-                  name: 'ROG Strix Overkill & Office 365 bundle' ,label:'ROG Strix Overkill & Office 365 bundle', discount:'', price: '' ,cta: 'Select options', cardId: 'bundle3' ,
+                  name: 'ROG Strix Overkill & Office 365 bundle' ,label:'ROG Strix Overkill & Office 365 bundle', discount:'', price: '' ,cta: 'Select options', bundleItemId: 'bundle3' ,
                   }) %>
                <%- include('../bundles-card/_bundles-card.ejs', { groupId: 'bundles' ,
-                  name: 'ROG Slayer Ultimate Pack' ,label:'ROG Slayer Ultimate Pack', discount:'80', price: '+ $350.00' , cta: 'Select options', cardId: 'bundle4' }) %>
+                  name: 'ROG Slayer Ultimate Pack' ,label:'ROG Slayer Ultimate Pack', discount:'80', price: '+ $350.00' , cta: 'Select options', bundleItemId: 'bundle4' }) %>
             </div>
          </div>
       </div>
-      <div class="layout-grid cmp-bonus-container cmp-bonuses-wrapper" data-bonus-visibility="visible" data-content-type="bonuses">
+      <div class="layout-grid layout-grid--gap-2 cmp-bonus-container cmp-bonuses-wrapper" data-bonus-visibility="visible" data-content-type="bonuses">
          <div class="layout-grid__col layout-grid__col--span-4 layout-grid__col--md-span-12">
             <div class="cmp-bonus-section">
                <div class="section-heading">
@@ -47,13 +47,13 @@
                <div  class="cmp-bundles__component-list">
                   <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
                      image: './clientlib-site/images/marshmellow.webp',
-                     name: 'ASUS Marshmallow' , label:'ASUS Marshmallow Wireless mouse', price: '' ,cta: '', index: 0 ,cardId: 'bonus1'}) %>
+                     name: 'ASUS Marshmallow' , label:'ASUS Marshmallow Wireless mouse', price: '' , cta: '', index: 0 ,bonusItemId: 'bonus1'}) %>
                   <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
                      image: './clientlib-site/images/bagpack.webp',
-                     name: 'ASUS ProArt Backpack' , label:'ASUS ProArt Backpack', price: '' ,cta: 'select options', index: 1 ,cardId: 'bonus2'}) %>
+                     name: 'ASUS ProArt Backpack' , label:'ASUS ProArt Backpack', price: '' , cta: 'select options', index: 1 ,bonusItemId: 'bonus2'}) %>
                   <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
                      image: './clientlib-site/images/grey-mouse.webp',
-                     name: 'ROG Mouse Ace L' , label:'ROG Mouse Ace L', price: '' ,cta: '', index: 2 ,cardId: 'bonus3'}) %>
+                     name: 'ROG Mouse Ace L' , label:'ROG Mouse Ace L', price: '' , cta: '', index: 2 ,bonusItemId: 'bonus3'}) %>
                </div>
             </div>
             <div class="cmp-bonus-section">
@@ -62,13 +62,13 @@
                <div  class="cmp-bundles__component-list">
                   <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
                   image: './clientlib-site/images/marshmellow.webp',
-                  name: 'ASUS Marshmallow' , label:'ASUS Marshmallow Wireless mouse', price: '' ,cta: '', index: 0 ,cardId: 'bonus4'}) %>
+                  name: 'ASUS Marshmallow' , label:'ASUS Marshmallow Wireless mouse', price: '' ,cta: '', index: 0 ,bonusItemId: 'bonus4'}) %>
                <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
                   image: './clientlib-site/images/bagpack.webp',
-                  name: 'ASUS ProArt Backpack' , label:'ASUS ProArt Backpack', price: '' ,cta: '', index: 1 ,cardId: 'bonus5'}) %>
+                  name: 'ASUS ProArt Backpack' , label:'ASUS ProArt Backpack', price: '' ,cta: '', index: 1 ,bonusItemId: 'bonus5'}) %>
                <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
                   image: './clientlib-site/images/grey-mouse.webp',
-                  name: 'ROG Mouse Ace L' , label:'ROG Mouse Ace L', price: '' ,cta: '', index: 2 ,cardId: 'bonus6'}) %>
+                  name: 'ROG Mouse Ace L' , label:'ROG Mouse Ace L', price: '' ,cta: '', index: 2 ,bonusItemId: 'bonus6'}) %>
                </div>
             </div>
             <div class="cmp-bonus-section">
@@ -77,16 +77,16 @@
                <div  class="cmp-bundles__component-list">
                   <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
                      image: './clientlib-site/images/marshmellow.webp',
-                     name: 'ASUS Marshmallow' , label:'ASUS Marshmallow Wireless mouse', price: '' ,cta: '', index: 0 ,cardId: 'bonus7', showCheckmark: bonusSection3.max >= 2 }) %>
+                     name: 'ASUS Marshmallow' , label:'ASUS Marshmallow Wireless mouse', price: '' ,cta: '', index: 0 ,bonusItemId: 'bonus7', showCheckmark: bonusSection3.max >= 2 }) %>
                   <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
                      image: './clientlib-site/images/bagpack.webp',
-                     name: 'ASUS ProArt Backpack' , label:'ASUS ProArt Backpack', price: '' ,cta: '', index: 1 ,cardId: 'bonus8', showCheckmark: bonusSection3.max >= 2 }) %>
+                     name: 'ASUS ProArt Backpack' , label:'ASUS ProArt Backpack', price: '' ,cta: '', index: 1 ,bonusItemId: 'bonus8', showCheckmark: bonusSection3.max >= 2 }) %>
                   <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
                      image: './clientlib-site/images/grey-mouse.webp',
-                     name: 'ROG Mouse Ace L' , label:'ROG Mouse Ace L', price: '' ,cta: '', index: 2 ,cardId: 'bonus9', showCheckmark: bonusSection3.max >= 2 }) %>
+                     name: 'ROG Mouse Ace L' , label:'ROG Mouse Ace L', price: '' ,cta: '', index: 2 ,bonusItemId: 'bonus9', showCheckmark: bonusSection3.max >= 2 }) %>
                      <%- include('../bonuses-card/_bonuses-card.ejs', { groupId: 'bonus' ,
                      image: './clientlib-site/images/grey-mouse.webp',
-                     name: 'ROG Mouse Ace L' , label:'ROG Moonstone Ace L', price: '' ,cta: '', index: 2 ,cardId: 'bonus9', showCheckmark: bonusSection3.max >= 2 }) %>
+                     name: 'ROG Mouse Ace L' , label:'ROG Moonstone Ace L', price: '' ,cta: '', index: 2 ,bonusItemId: 'bonus10', showCheckmark: bonusSection3.max >= 2 }) %>
                </div>
             </div>
          </div>
@@ -99,3 +99,5 @@
       </div>
    </div>
 </div>
+
+   

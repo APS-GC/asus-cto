@@ -11,7 +11,9 @@
   --tooltip-background: var(--color-primary-950);
   --tooltip-color: var(--color-primary);
   --tooltip-offset: 0;
-  position: absolute;
+  position: fixed;
+  top: -9999px;
+  left: -9999px;
   background: var(--tooltip-background);
   color: var(--tooltip-color);
   z-index: 99999;
@@ -62,6 +64,11 @@
   position: absolute;
   z-index: 1;
   pointer-events: none;
+}
+
+.tooltip__content--theme-dark::after {
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="5" height="12" viewBox="0 0 5 12" fill="none"><path d="M5 0.5C4.97696 0.519444 4.95461 0.540181 4.93304 0.562211L0.275596 5.32028C-0.0918658 5.69568 -0.0918658 6.30432 0.275596 6.67972L4.93304 11.4378C4.95461 11.4598 4.97696 11.4806 5 11.5L5 0.5Z" fill="%2316151b" /></svg>')
+    center / contain no-repeat;
 }
 
 /* Arrows by direction */

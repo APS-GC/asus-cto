@@ -3,70 +3,41 @@
  * Supports authorable hero banner slides with video/image media, CTA buttons, and autoplay settings
  */
 
-import {
-  moveInstrumentation,
-  isUniversalEditor,
-  createOptimizedPicture,
-  loadSwiper,
-} from '../../scripts/scripts.js';
+import { moveInstrumentation, createOptimizedPicture, loadSwiper } from '../../scripts/scripts.js';
+import { getBlockConfigs } from '../../scripts/configs.js';
+import { isUniversalEditor } from '../../scripts/utils.js';
 
 // Configuration defaults
-const DEFAULT_IMAGE_AUTOPLAY = 3000;
-const DEFAULT_VIDEO_AUTOPLAY = 3000;
+const DEFAULT_CONFIG = {
+  imageAutoplayDuration: 5,
+  videoAutoplayDuration: 8
+};
+
 const pubUrl = 'https://publish-p165753-e1767020.adobeaemcloud.com';
+const CONFIG_ROWS_COUNT = 2; // Number of configuration rows before slides
 
 /**
- * Parse hero banner configuration from block data
+ * Parse hero banner slides from block data
  */
-function parseHeroBannerConfig(block) {
-  const config = {
-    imageAutoplayDuration: DEFAULT_IMAGE_AUTOPLAY,
-    videoAutoplayDuration: DEFAULT_VIDEO_AUTOPLAY,
-    slides: [],
-  };
-
-  // Parse rows from the block
+function parseHeroBannerSlides(block, slideStartIndex) {
+  const slides = [];
   const rows = [...block.children];
-
-  if (rows.length === 0) return config;
-
-  let slideStartIndex = 0;
-
-  // Check if first two rows contain autoplay duration settings
-  if (rows.length >= 2) {
-    const firstRowCells = [...rows[0].children];
-    const secondRowCells = [...rows[1].children];
-
-    // Check if these are autoplay duration rows (single values)
-    if (firstRowCells.length === 1 && secondRowCells.length === 1) {
-      const imageAutoplayValue = parseInt(firstRowCells[0].textContent.trim(), 10);
-      const videoAutoplayValue = parseInt(secondRowCells[0].textContent.trim(), 10);
-
-      if (!Number.isNaN(imageAutoplayValue)) {
-        config.imageAutoplayDuration = imageAutoplayValue * 1000;
-      }
-      if (!Number.isNaN(videoAutoplayValue)) {
-        config.videoAutoplayDuration = videoAutoplayValue * 1000;
-      }
-
-      slideStartIndex = 2; // Skip first two rows
-    }
-  }
-
-  // Parse slide data from remaining rows
+  
+  // Parse slide data from rows after configuration
   rows.slice(slideStartIndex).forEach((row, index) => {
     const cells = [...row.children];
 
     // Debug logging
-    // console.log(`Processing row ${index + slideStartIndex}:`, cells.length, 'cells');
-
+    console.log(`Processing slide row ${index + slideStartIndex}:`, cells.length, 'cells');
+    
+    // Support both 7-cell (legacy) and 8-cell (new with mediaAlt) formats
     if (cells.length >= 7) {
       // Extract media information
       let media = '';
       let mediaAlt = '';
       let isVideo = false;
 
-      // Check third cell for media content
+      // Check third cell for media content (index 2)
       const mediaCell = cells[2];
       if (mediaCell) {
         const picture = mediaCell.querySelector('picture');
@@ -91,16 +62,37 @@ function parseHeroBannerConfig(block) {
         }
       }
 
-      // Extract CTA link properly
-      let ctaLink = '';
-      const ctaLinkCell = cells[5];
-      if (ctaLinkCell) {
-        const linkElement = ctaLinkCell.querySelector('a');
-        if (linkElement) {
-          ctaLink = linkElement.href;
+      // Support both 7-cell and 8-cell formats
+      let ctaText, ctaLocation, ctaLink, openNewTab;
+      if (cells.length >= 8) {
+        // New 8-cell format: title, subtitle, media, mediaAlt, ctaText, ctaLocation, ctaLink, openNewTab
+        mediaAlt = cells[3]?.textContent?.trim() || mediaAlt;
+        ctaText = cells[4]?.textContent?.trim() || '';
+        ctaLocation = cells[5]?.textContent?.trim() || 'center-center';
+        
+        const ctaLinkCell = cells[6];
+        if (ctaLinkCell) {
+          const linkElement = ctaLinkCell.querySelector('a');
+          ctaLink = linkElement ? linkElement.href : (ctaLinkCell.textContent?.trim() || '');
         } else {
-          ctaLink = ctaLinkCell.textContent?.trim() || '';
+          ctaLink = '';
         }
+        
+        openNewTab = cells[7]?.textContent?.toLowerCase().includes('true') || false;
+      } else {
+        // Legacy 7-cell format: title, subtitle, media, ctaText, ctaLocation, ctaLink, openNewTab
+        ctaText = cells[3]?.textContent?.trim() || '';
+        ctaLocation = cells[4]?.textContent?.trim() || 'center-center';
+        
+        const ctaLinkCell = cells[5];
+        if (ctaLinkCell) {
+          const linkElement = ctaLinkCell.querySelector('a');
+          ctaLink = linkElement ? linkElement.href : (ctaLinkCell.textContent?.trim() || '');
+        } else {
+          ctaLink = '';
+        }
+        
+        openNewTab = cells[6]?.textContent?.toLowerCase().includes('true') || false;
       }
 
       const slide = {
@@ -109,25 +101,25 @@ function parseHeroBannerConfig(block) {
         subtitle: cells[1]?.textContent?.trim() || '',
         media: media,
         mediaAlt: mediaAlt || 'Hero Banner slide media',
-        ctaText: cells[3]?.textContent?.trim() || '',
-        ctaLocation: cells[4]?.textContent?.trim() || 'center-center',
+        ctaText: ctaText,
+        ctaLocation: ctaLocation,
         ctaLink: ctaLink,
-        openNewTab: cells[6]?.textContent?.toLowerCase().includes('true') || false,
-        isVideo,
-        originalRow: row, // Store reference to original row for instrumentation
+        openNewTab: openNewTab,
+        isVideo: isVideo,
+        originalRow: row // Store reference to original row for instrumentation
       };
 
       // Debug logging
-      // console.log(`Created slide ${index}:`, slide);
-
-      config.slides.push(slide);
+      console.log(`Created slide ${index}:`, slide);
+      
+      slides.push(slide);
     } else {
       // console.warn(`Row ${index + slideStartIndex} has insufficient cells (${cells.length}), skipping`);
     }
   });
 
-  // console.log('Final config:', config);
-  return config;
+  console.log('Parsed slides:', slides);
+  return slides;
 }
 
 /**
@@ -327,7 +319,13 @@ async function initializeSwiper(heroBannerElement, config) {
 
             // Remove paused class when switching slides
             const mediaControls = document.querySelector('.cmp-hero-banner__media-controls');
+            const playPauseBtn = document.querySelector('.hero-banner-autoplay-toggle');
             mediaControls?.classList.remove('paused');
+            this.el.classList.remove('is-autoplay-paused');
+            
+            if (playPauseBtn) {
+              playPauseBtn.setAttribute('aria-label', 'play');
+            }
             
             // Reset inactive bullets progress to 0
             this.pagination.bullets.forEach((bullet, idx) => {
@@ -432,10 +430,59 @@ async function initializeSwiper(heroBannerElement, config) {
 }
 
 /**
+ * Determine where slide rows start based on block structure
+ */
+function getSlideStartIndex(block) {
+  const rows = [...block.children];
+  
+  // Check if first rows are single-cell config rows (Universal Editor format)
+  if (rows.length >= CONFIG_ROWS_COUNT) {
+    const firstRowCells = [...rows[0].children];
+    const secondRowCells = [...rows[1].children];
+    
+    // If first 2 rows have exactly 1 cell each, they are config rows
+    if (firstRowCells.length === 1 && secondRowCells.length === 1) {
+      return CONFIG_ROWS_COUNT;
+    }
+    
+    // Check for key-value config rows (2 cells each)
+    if (firstRowCells.length === 2 && secondRowCells.length === 2) {
+      return CONFIG_ROWS_COUNT;
+    }
+  }
+  
+  // Default: no config rows, slides start at 0
+  return 0;
+}
+
+/**
  * Main decoration function
  */
-export default function decorate(block) {
-  const config = parseHeroBannerConfig(block);
+export default async function decorate(block) {
+  const rows = [...block.children];
+  
+  // Determine where slides start
+  const slideStartIndex = getSlideStartIndex(block);
+  
+  // Create a temporary block element with only config rows for getBlockConfigs
+  const configBlock = document.createElement('div');
+  for (let i = 0; i < slideStartIndex && i < rows.length; i++) {
+    configBlock.appendChild(rows[i].cloneNode(true));
+  }
+  
+  // Get configuration using getBlockConfigs
+  const config = await getBlockConfigs(configBlock, DEFAULT_CONFIG, 'hero-banner');
+  
+  // Convert seconds to milliseconds
+  config.imageAutoplayDuration = (config.imageAutoplayDuration || DEFAULT_CONFIG.imageAutoplayDuration) * 1000;
+  config.videoAutoplayDuration = (config.videoAutoplayDuration || DEFAULT_CONFIG.videoAutoplayDuration) * 1000;
+  
+  // Parse slides from remaining rows
+  config.slides = parseHeroBannerSlides(block, slideStartIndex);
+  
+  console.log('Final config:', config);
+  console.log('Slide start index:', slideStartIndex);
+  console.log('Total slides:', config.slides.length);
   
   if (config.slides.length === 0) {
     // Fallback content if no slides configured

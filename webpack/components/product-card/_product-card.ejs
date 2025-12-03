@@ -36,7 +36,7 @@
       <div class="cmp-product-card__compare">
         <input type="checkbox" class="cmp-product-card__compare-checkbox" id="compare-<%= id %>" data-id="<%= id %>"
           data-name="<%= name %>" data-model="<%= model %>" data-sku="<%= model %>" data-image="<%= image %>"
-          data-pdp="/product-detail/<%= id %>" data-add-to-compare />
+          data-pdp="/product-detail/<%= id %>" data-add-to-compare aria-label="Add <%= name %> to compare" />
 
         <label for="compare-<%= id %>" class="cmp-product-card__compare-label">Compare</label>
       </div>
@@ -104,7 +104,7 @@
       </div>
     </div>
 
-    <div class="cmp-product-card__price-block">
+    <div class="cmp-product-card__price-block" aria-label="Current price $<%= price %>, Original price $<%= originalPrice %>, save $<%= discount %>">
       <span class="cmp-product-card__price">$<%= price %></span>
       <span class="cmp-product-card__original-price">$<%= originalPrice %></span>
       <span class="cmp-product-card__discount">SAVE $<%= discount %></span>

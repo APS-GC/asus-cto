@@ -1,4 +1,4 @@
-<div class="cmp-bundles-card<%= index === 0 ? ' bonus-out-of-stock' : '' %>">
+<div class="cmp-bonuses-card<%= index === 0 ? ' bonus-out-of-stock' : '' %>">
   <% if (typeof showCheckmark !== 'undefined' && showCheckmark) { %>
     <div class="checkmark-indicator">
       <span class="checkmark-icon selected-state">✓</span>
@@ -7,15 +7,15 @@
   <div class="checkbox-overlay">
     <input
       type="checkbox"
-      name="bundles-option-<%= groupId %>"
-      class="bundles-checkbox<% if (index === 0) { %> bonus-out-of-stock<% } %>"
-      id="checkbox-<%= cardId %>"
+      name="bonuses-option-<%= groupId %>"
+      class="bonuses-checkbox<% if (index === 0) { %> bonus-out-of-stock<% } %>"
+      id="checkbox-<%= bonusItemId %>"
       aria-label="<%= label %>"
       <% if (index === 0) { %>disabled<% } %>
     />
     <div class="checkbox-checkmark"></div>
   </div>
-  <div class="cmp-bundles-card__product">
+  <div class="cmp-bonuses-card__product">
     <span><img src="<%= image %>" alt="<%= name %>"></span>
     <p class="cmp-product-name"><%= name %></p> <span><img src="./clientlib-site/images/External-link.webp" alt="external-link" aria-label="external-link"></span>
   </div>
@@ -23,10 +23,15 @@
 
   <div class="bonus-card-bottom">
     <div>  <p class="price"><%= price %></p></div>
+
+    <% if (typeof cta !== 'undefined' && cta) { %>
     <div class="select-cta">
-      <button class="actions" aria-label="select-edit-bonus" data-a11y-dialog-show="select-bonus-dialog" data-action="Select"><%= cta %></button>
+      <button class="actions" aria-label="select-edit-bonus" data-a11y-dialog-show="select-bonus-dialog-<%= bonusItemId %>" data-action="Select"><%= cta %></button>
     </div>
+    <% } %>
   </div>
 </div>
 
-<%- include('../bonus-selection-popup/_bonus-selection-popup.ejs') %>
+<% if (typeof cta !== 'undefined' && cta) { %>
+  <%- include('../bonus-selection-popup/_bonus-selection-popup.ejs', {popupId: bonusItemId}) %> 
+<% } %>

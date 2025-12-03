@@ -7,6 +7,16 @@ export function isAuthorEnvironment() {
   return false;
 }
 
+/**
+ * Detect if running in Universal Editor environment
+ * Universal Editor loads pages in an iframe within the author environment
+ * @returns {boolean} True if running in Universal Editor
+ */
+export const isUniversalEditor = () => {
+  const isInIframe = window.self !== window.top;
+  return isAuthorEnvironment() && isInIframe;
+};
+
 export function whatBlockIsThis(element) {
   let currentElement = element;
 
@@ -84,4 +94,83 @@ export function transferInstrumentation(from, to) {
         (attr) => attr.startsWith('data-aue-') || attr.startsWith('data-richtext-'),
       ),
   );
+}
+
+/**
+ * Helper function to set the height of an element.
+ * Handles number and string values.
+ * @param {HTMLElement} el - The element to set height on
+ * @param {number|string|Function} val - The height value (number in pixels, string, or function returning height)
+ */
+export function setHeight(el, val) {
+  // If val is a function, execute it to get the height value
+  if (typeof val === 'function') val = val();
+
+  // If the value is a string (e.g., '100px' or 'auto'), set it directly
+  if (typeof val === 'string') {
+    el.style.height = val;
+  } else {
+    el.style.height = val + 'px';
+  }
+}
+
+/**
+ * Sets equal height for elements that are on the same visual row.
+ * @param {string} containerSelector - The CSS selector for the elements to be resized (e.g., '.featured-product-card').
+ */
+export function equalheight(containerSelector) {
+  // Use let/const for proper scoping
+  let currentTallest = 0;
+  let currentRowStart = 0;
+  let rowDivs = []; // Use array literal for better practice
+
+  const elements = document.querySelectorAll(containerSelector);
+
+  if (elements.length === 0) return;
+
+  // 1. Reset height of all elements to 'auto' for accurate measurement
+  elements.forEach((el) => {
+    el.style.height = 'auto';
+  });
+
+  // 2. Iterate and group elements by row
+  elements.forEach((el) => {
+    // Get the top position relative to the nearest positioned ancestor (or the document body)
+    const topPosition = el.offsetTop;
+
+    // Get the element's current computed height as a number
+    // We use offsetHeight which is generally more reliable for element sizing
+    // and includes padding/border if box-sizing: border-box is used.
+    const elementHeight = el.offsetHeight;
+
+    // Check if a new row has started
+    if (currentRowStart !== topPosition) {
+      // 3. If a new row starts, apply the max height to the ENDED row
+      if (rowDivs.length > 0) {
+        rowDivs.forEach((div) => {
+          setHeight(div, currentTallest);
+        });
+      }
+
+      // Reset for the new row
+      rowDivs = [];
+      currentRowStart = topPosition;
+      currentTallest = elementHeight;
+      rowDivs.push(el);
+    } else {
+      // 4. Still in the same row
+      rowDivs.push(el);
+      // Update the tallest height in the current row
+      if (elementHeight > currentTallest) {
+        currentTallest = elementHeight;
+      }
+    }
+  });
+
+  // 5. Apply the max height to the LAST row, which is outside the loop
+  if (rowDivs.length > 0) {
+    rowDivs.forEach((div) => {
+      setHeight(div, currentTallest);
+    });
+  }
 }

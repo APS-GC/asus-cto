@@ -31,15 +31,15 @@
     .cmp-tech-specs__item {
       display: flex;
       flex-direction: column;
-      @include mix.spacer(gap, 4);
+      @include mix.spacer(gap, 3);
       h3 {
-        @include typo.text-display4;
+        @include typo.text-tech-specs;
       }
       ul {
         list-style: none;
         @include mix.p(0);
         @include mix.m(0);
-        @include typo.text-display7;
+        @include typo.text-small;
         color: var(--color-primary-700);
       }
     }
@@ -50,7 +50,7 @@
   .cmp-tech-specs {
     .section-heading {
       h2 {
-        @include typo.text-display4;
+        @include typo.text-tech-specs;
       }
     }
     .cmp-tech-specs-details {
@@ -65,7 +65,7 @@
           @include typo.text-base;
         }
         ul {
-          @include typo.text-display7;
+          @include typo.text-small;
         }
       }
     }

@@ -54,7 +54,7 @@ function renderProductCard(product, productType) {
     .map(
       (detail) => `
         <tr>
-            <td>${detail.game}</td>
+            <th scope="row">${detail.game}</th>
             <td>${detail.fps1080 ?? '--'}</td>
             <td>${detail.fps1440 ?? '--'}</td>
         </tr>
@@ -87,7 +87,7 @@ function renderProductCard(product, productType) {
         <div class="cmp-product-card">
           <div class="cmp-product-card__header">
             <div class="cmp-product-card__status">${statusHtml}</div>
-            ${bundleMessage ? `<div class="cmp-product-card__bundle-message">${bundleMessage.replace('Bundle and ', 'Bundle and <span class="cmp-product-card__bundle-message-break">')}</span></div>` : ''}
+            ${bundleMessage ? `<div class="cmp-product-card__bundle-message">${bundleMessage}</div>` : ''}
           </div>
           <div class="cmp-product-card__body">
             <div class="cmp-product-card__image cmp-image">
@@ -126,7 +126,9 @@ function renderProductCard(product, productType) {
                 <input
                   type="checkbox"
                   class="cmp-product-card__compare-checkbox"
+                  nameFv="compare-${id}"
                   id="compare-${id}"
+                  name="compare-${id}"
                   data-id="${id}"
                   data-name="${name}"
                   data-model="${model}"
@@ -135,7 +137,7 @@ function renderProductCard(product, productType) {
                   data-pdp="/product-detail/${id}"
                   data-add-to-compare
                 />
-                <label for="compare-${id}" class="cmp-product-card__compare-label">Compare</label>
+                <label for="compare-${id}" class="cmp-product-card__compare-label" aria-label="Add ${name} to compare">Compare</label>
               </div>
             </div>
             <div class="cmp-product-card__fps">
@@ -148,7 +150,7 @@ function renderProductCard(product, productType) {
               >FPS: ${fps}</button>
               <div id="fps-details-${id}" class="tooltip__content" role="tooltip">
                 <table class="cmp-product-card__fps-table">
-                  <thead><tr><th>Game FPS</th><th>1080P</th><th>1440P</th></tr></thead>
+                  <thead><tr><th scope="col">Game FPS</th><th scope="col">1080P</th><th scope="col">1440P</th></tr></thead>
                   <tbody>${fpsDetailsHtml}</tbody>
                 </table>
               </div>
@@ -162,7 +164,7 @@ function renderProductCard(product, productType) {
                     class="cmp-product-card__estore-icon"
                     data-tooltip-trigger
                     aria-describedby="estore-price-info-${id}"
-                    data-tooltip-position="top"
+                    data-tooltip-position="y"
                     aria-label="Information about ASUS estore price"
                   >
                   </button>
@@ -175,14 +177,15 @@ function renderProductCard(product, productType) {
                 </div>
               </div>
             </div>
-            <div class="cmp-product-card__price-block">
-              <span class="cmp-product-card__price">$${price}</span>
+            <div class="cmp-product-card__price-block" role="group"
+            aria-label="Current price $${price} ${originalPrice ? `, Original price $${originalPrice},` : ''} ${discount ? `Save $${discount}` : ''}">
+              <span class="cmp-product-card__price" aria-hidden="true">$${price}</span>
               ${
                 originalPrice
-                  ? `<span class="cmp-product-card__original-price">$${originalPrice}</span>`
+                  ? `<span class="cmp-product-card__original-price" aria-hidden="true">$${originalPrice}</span>`
                   : ''
               }
-              ${discount ? `<span class="cmp-product-card__discount">SAVE $${discount}</span>` : ''}
+              ${discount ? `<span class="cmp-product-card__discount" aria-hidden="true">SAVE $${discount}</span>` : ''}
             </div>
           </div>
           <div class="cmp-product-card__footer">
@@ -193,7 +196,7 @@ function renderProductCard(product, productType) {
 }
 
 function prepareProductAction(productName, isAvailable, isCustomizable, buyLink, customizeLink) {
-  var productActionsHtml = '';
+  let productActionsHtml = '';
 
   if (isAvailable && !isCustomizable) {
     productActionsHtml = `<a class="btn" href="${buyLink}" aria-label="Buy now ${productName}">Buy now</a>`;
@@ -209,6 +212,7 @@ function prepareProductAction(productName, isAvailable, isCustomizable, buyLink,
 
   return productActionsHtml;
 }
+
 /**
  * Asynchronously fetches product data based on the component's configuration,
  * renders each product into a card, and appends them to the designated container.

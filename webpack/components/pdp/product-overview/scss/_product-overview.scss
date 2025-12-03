@@ -22,6 +22,20 @@
     .product-gallery__main-carousel[data-show-image-gallery-modal="true"] {
       cursor: pointer;
     }
+
+    .product-gallery__thumbs-carousel-wrapper {
+      position: relative;
+      @include mix.p(9, "x");
+
+      .carousel__actions {
+        .carousel__action {
+          .icon {
+            width: 18px;
+            height: 18px;
+          }
+        }
+      }
+    }
   }
 
   .product-overview__info-section {
@@ -55,6 +69,8 @@
         img {
           object-fit: contain;
           object-position: center top;
+          height: 100%;
+          width: 100%;
         }
       }
 
@@ -66,7 +82,7 @@
       .benefit-title {
         color: var(--color-primary-100);
         margin-bottom: 2px; // TODO: Check with UI team if we can keep it multiples of 4
-        @include typo.text-bold;
+        @include typo.pdp-features-text();
       }
 
       .benefit-description {
@@ -117,7 +133,7 @@
     display: flex;
     color: var(--color-primary-100);
     align-items: center;
-    @include typo.text-small();
+    @include typo.pdp-font();
     @include mix.spacer("gap", 2);
     @include mix.m(3, "t");
 
@@ -150,7 +166,7 @@
       @include mix.m(4, "t");
 
       strong {
-        @include typo.text-bold();
+        @include typo.pdp-features-text();
         color: var(--color-primary-100);
       }
     }

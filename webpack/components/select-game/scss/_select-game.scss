@@ -44,8 +44,8 @@
         background-color: var(--color-primary-100);
         color: var(--color-primary-950);
         letter-spacing: 0.16px;
-        @include mix.p(2, 'y');
-        @include mix.p(4, 'x');
+        @include mix.p(2, "y");
+        @include mix.p(4, "x");
         @include typo.text-small();
       }
 
@@ -118,12 +118,12 @@
       }
     }
   }
-
-  @include mix.respond-to("lg", "max") {
+  @include mix.respond-to("xl", "max") {
     .game-form {
       @include mix.spacer(gap, 5);
     }
-
+  }
+  @include mix.respond-to("xl", "max") {
     .budget-bar {
       flex-direction: column;
       align-items: flex-start;

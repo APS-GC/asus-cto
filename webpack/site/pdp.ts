@@ -12,6 +12,7 @@ import '../components/tabs/js/_tabs.js';
 import '../components/tooltip/js/_tooltip.js';
 
 // Global components
+import '../components/footer/js/_footer.js';
 import '../components/header/js/_header.js';
 import '../components/image-gallery/js/_image-gallery.js';
 import '../site/scripts/_star-rating.js';

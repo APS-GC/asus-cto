@@ -11,7 +11,7 @@
           {
             "name": "Gradient",
             "value": "gradient-animation"
-          }, 
+          },
           {
             "name": "Gradient Animation",
             "value": "gradient-animation-active"
@@ -228,6 +228,14 @@
             "value": "page-bg-primary"
           }
         ]
+      },
+      {
+        "component": "boolean",
+        "name": "overlapHeader",
+        "label": "Overlap Header",
+        "description": "Enable to allow Top Section to overlap with header",
+        "valueType": "boolean",
+        "value": false
       }
     ]
   },
@@ -524,7 +532,7 @@
       }
     ]
   },
-   {
+  {
     "id": "footer",
     "fields": [
        {
@@ -580,23 +588,23 @@
     ]
   },
   {
-      "id": "footer-icon",
-      "fields": [
-        {
-          "component": "reference",
-          "valueType": "string",
-          "name": "iconImage",
-          "label": "Icon Image",
-          "multi": false
-        },
-        {
+    "id": "footer-icon",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "iconImage",
+        "label": "Icon Image",
+        "multi": false
+      },
+      {
         "component": "aem-content",
         "name": "iconURL",
         "label": "Footer Icon URL",
         "description": "URL the Footer Icon should link to"
-        }
-      ]
-    },
+      }
+    ]
+  },
   {
     "id": "article-card-item",
     "fields": [
@@ -743,7 +751,7 @@
       },
       {
         "component": "number",
-        "name": "videoAutoplayDuration", 
+        "name": "videoAutoplayDuration",
         "label": "Video Autoplay Duration (seconds)",
         "value": 8,
         "validation": {
@@ -766,7 +774,7 @@
         }
       },
       {
-        "component": "text", 
+        "component": "text",
         "name": "subtitle",
         "label": "Subtitle",
         "valueType": "string"
@@ -802,44 +810,44 @@
         "label": "CTA Button Location",
         "valueType": "string",
         "options": [
-            {
-              "name": "Start Top",
-              "value": "start-top"
-            },
-            {
-              "name": "Start Center",
-              "value": "start-center"
-            },
-            {
-              "name": "star bottom",
-              "value": "start-bottom"
-            },
-            {
-              "name": "Center Top",
-              "value": "center-top"
-            },
-            {
-              "name": "Center Center",
-              "value": "center-center"
-            },
-            {
-              "name": "Center Bottom",
-              "value": "center-bottom"
-            },
-            {
-              "name": "End Top",
-              "value": "end-top"
-            },
-            {
-              "name": "End Center",
-              "value": "end-center"
-            },
-            {
-              "name": "End Bottom:",
-              "value": "end-bottom"
-            }
-          ],
-          "value": "center-center"
+          {
+            "name": "Start Top",
+            "value": "start-top"
+          },
+          {
+            "name": "Start Center",
+            "value": "start-center"
+          },
+          {
+            "name": "star bottom",
+            "value": "start-bottom"
+          },
+          {
+            "name": "Center Top",
+            "value": "center-top"
+          },
+          {
+            "name": "Center Center",
+            "value": "center-center"
+          },
+          {
+            "name": "Center Bottom",
+            "value": "center-bottom"
+          },
+          {
+            "name": "End Top",
+            "value": "end-top"
+          },
+          {
+            "name": "End Center",
+            "value": "end-center"
+          },
+          {
+            "name": "End Bottom:",
+            "value": "end-bottom"
+          }
+        ],
+        "value": "center-center"
       },
       {
         "component": "aem-content",
@@ -857,53 +865,53 @@
     ]
   },
   {
-      "id": "top-picks-card",
-      "fields": [
-        {
-          "component": "reference",
-          "valueType": "string",
-          "name": "image",
-          "label": "Product Image",
-          "description": "Upload or select a product image",
-          "multi": false
-        },
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "label",
-          "label": "Product Label/Category",
-          "description": "Small label text (e.g., 'Top picks', 'Featured', etc.)",
-          "value": "Top picks"
-        },
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "title",
-          "label": "Product Title",
-          "description": "Main product title or name",
-          "value": "",
-          "validation": {
-            "required": true
-          }
-        },
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "ctaLinkName",
-          "label": "CTA Link Name",
-          "description": "Text for the call-to-action button (e.g., 'View configs', 'Learn more')",
-          "value": "View configs"
-        },
-        {
-          "component": "aem-content",
-          "name": "link",
-          "label": "Call-to-Action Link",
-          "description": "Link URL for the call-to-action",
-          "valueType": "string"
+    "id": "top-picks-card",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Product Image",
+        "description": "Upload or select a product image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "label",
+        "label": "Product Label/Category",
+        "description": "Small label text (e.g., 'Top picks', 'Featured', etc.)",
+        "value": "Top picks"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Product Title",
+        "description": "Main product title or name",
+        "value": "",
+        "validation": {
+          "required": true
         }
-      ]
-    },
-    {
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaLinkName",
+        "label": "CTA Link Name",
+        "description": "Text for the call-to-action button (e.g., 'View configs', 'Learn more')",
+        "value": "View configs"
+      },
+      {
+        "component": "aem-content",
+        "name": "link",
+        "label": "Call-to-Action Link",
+        "description": "Link URL for the call-to-action",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
     "id": "product-card",
     "fields": [
       {
@@ -1104,52 +1112,59 @@
         "valueType": "string",
         "name": "title",
         "label": "Title",
-        "value": ""  
+        "value": "Select The Game You Play"
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "subtitle",
         "label": "Subtitle",
-        "value": ""
+        "value": "We will recommend a plan that suits you most!"
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "budgetText",
         "label": "Budget Text",
-        "value": ""
+        "value": "Your Budget"
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "helpmeChooseCTA",
         "label": "Help Me Choose CTA",
-        "value": ""
+        "value": "Help me choose"
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "resetCTAText",
         "label": "Reset CTA Text",
-        "value": ""
+        "value": "Reset"
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "confirmCTAText",
         "label": "Confirm CTA Text",
-        "value": ""
+        "value": "Confirm"
       },
       {
         "component": "select",
         "valueType": "string",
         "name": "style",
         "label": "Style",
+        "value": "1",
         "options": [
-          { "name": "Option 1", "value": "0" },
-          { "name": "Option 2", "value": "1" }
-        ] 
+          {
+            "name": "Carousel with Form",
+            "value": "1"
+          },
+          {
+            "name": "Filter Bar",
+            "value": "0"
+          }
+        ]
       },
       {
         "component": "number",
@@ -1170,7 +1185,7 @@
         "valueType": "string",
         "name": "helpMeChooseCTALinkTo",
         "label": "Help me Choose CTA LinkTo",
-        "value": ""
+        "value": "./product-matches"
       }
     ]
   },
@@ -1182,7 +1197,7 @@
         "valueType": "string",
         "name": "title",
         "label": "Title",
-        "value": ""  
+        "value": ""
       },
       {
         "component": "text",
@@ -1190,7 +1205,7 @@
         "name": "compareButtonLabel",
         "label": "View Comparison Button Text",
         "value": ""
-      },      
+      },
       {
         "component": "text",
         "valueType": "string",
@@ -1318,105 +1333,94 @@
     ]
   },
   {
-      "id": "our-advantages",
-      "fields": [
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "title",
-          "label": "Title",
-          "value": "Our Advantages"
-        },
-        {
-          "component": "number",
-          "name": "itemCount",
-          "label": "Number of Items",
-          "value": 3,
-          "description": "Number of advantage cards to display in the carousel (max: 4)",
-          "validation": {
-            "min": 1,
-            "max": 4
-          }
-        },
-        {
-          "component": "number",
-          "name": "imageAutoplayDuration",
-          "label": "Image Autoplay Duration (seconds)",
-          "value": 5,
-          "validation": {
-            "min": 1,
-            "max": 30
-          }
-        },
-        {
-          "component": "number",
-          "name": "videoAutoplayDuration",
-          "label": "Video Autoplay Duration (seconds)",
-          "value": 1,
-          "validation": {
-            "min": 1,
-            "max": 30
-          }
+    "id": "our-advantages",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": "Our Advantages"
+      },
+      {
+        "component": "number",
+        "name": "imageAutoplayDuration",
+        "label": "Image Autoplay Duration (seconds)",
+        "value": 5,
+        "validation": {
+          "min": 1,
+          "max": 30
         }
-      ]
-    },
-    {
-      "id": "our-advantage",
-      "fields": [
-        {
-          "component": "text",
-          "name": "title",
-          "value": "",
-          "label": "Headline",
-          "valueType": "string",
-          "required": true
-        },
-        {
-          "component": "text",
-          "name": "details",
-          "value": "",
-          "label": "Details",
-          "valueType": "string"
-        },
-        {
-          "component": "reference",
-          "valueType": "string",
-          "name": "video",
-          "label": "Video Media",
-          "multi": false
-        },
-        {
-          "component": "reference",
-          "valueType": "string",
-          "name": "media",
-          "label": "Cover Image",
-          "multi": false
-        },
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "imageAlt",
-          "label": "Image Alt"
-        },
-        {
-          "component": "text",
-          "name": "navigation",
-          "value": "",
-          "label": "Navigation Button Text",
-          "valueType": "string"
-        },
-        {
-          "component": "aem-content",
-          "valueType": "string",
-          "name": "link",
-          "label": "Navigation Button LinkTo"
-        },
-        {
-          "component": "boolean",
-          "valueType": "boolean",
-          "name": "articleOpenInNewTab",
-          "label": "Select to open in new tab"
+      },
+      {
+        "component": "number",
+        "name": "videoAutoplayDuration",
+        "label": "Video Autoplay Duration (seconds)",
+        "value": 1,
+        "validation": {
+          "min": 1,
+          "max": 30
         }
-      ]
-    }
+      }
+    ]
+  },
+  {
+    "id": "our-advantage",
+    "fields": [
+      {
+        "component": "text",
+        "name": "title",
+        "value": "",
+        "label": "Headline",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "text",
+        "name": "details",
+        "value": "",
+        "label": "Details",
+        "valueType": "string"
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "video",
+        "label": "Video Media",
+        "multi": false
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "media",
+        "label": "Cover Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Image Alt"
+      },
+      {
+        "component": "text",
+        "name": "navigation",
+        "value": "",
+        "label": "Navigation Button Text",
+        "valueType": "string"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "label": "Navigation Button LinkTo"
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "articleOpenInNewTab",
+        "label": "Select to open in new tab"
+      }
+    ]
+  }
 ]

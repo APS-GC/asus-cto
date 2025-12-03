@@ -2,6 +2,21 @@ import { loadCSS, loadScript } from '../../scripts/aem.js';
 import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
+import { getBlockConfigs } from '../../scripts/configs.js';
+
+// Default configuration
+const DEFAULT_CONFIG = {
+  title: 'Select The Game You Play',
+  subtitle: 'We will recommend a plan that suits you most!',
+  budgetText: 'Your Budget',
+  helpmeChooseCTA: 'Help me choose',
+  resetCTAText: 'Reset',
+  confirmCTAText: 'Confirm',
+  style: '1',
+  minimumBudget: 500,
+  maximumBudget: 5000,
+  helpMeChooseCTALinkTo: './product-matches',
+};
 
 /**
  * Decorates the help-me-choose block, initializing the carousel and form.
@@ -34,12 +49,9 @@ async function renderHelpMeChoose(block) {
   const helpMeChooseContainer = document.createElement('div');
   helpMeChooseContainer.className = 'help-me-choose-container container';
 
-  const authoredRows = [...block.children];
-  const AuthoredData = authoredRows.map(row => row.textContent.trim());
-  console.log('Authored Data:', AuthoredData);
+  const config = await getBlockConfigs(block, DEFAULT_CONFIG, 'help-me-choose');
 
   // Fetch products
-
   const endpoint = await getApiEndpoint(API_URIS.FETCH_GAME_LIST_EN);
   const gameList = await fetchGameList(endpoint);
 
@@ -49,47 +61,49 @@ async function renderHelpMeChoose(block) {
   const highestPrice = gameList?.results?.highestPrice || 5000;
 
   const urlParams = new URLSearchParams(document.location.search);
-  const defaultMinBudget = urlParams.get('min-budget') || 500;
-  const defaultMaxBudget = urlParams.get('max-budget') || 5000;
+  const defaultMinBudget = parseInt(urlParams.get('min-budget'), 10) || lowestPrice;
+  const defaultMaxBudget = parseInt(urlParams.get('max-budget'), 10) || highestPrice;
   // Build the HTML in a fragment / string, then insert once
   const html = 
   
-  AuthoredData[6] === '1' ? `
+  config.style === 1 ? `
   <div class="game-recommendation">
       <div class="carousel panelcontainer">
           <div class="section-heading">
               <div class="section-heading__text-group">
-                  <h2 class="section-heading__title">${escapeHtml(AuthoredData[0] || '')}</h2>
-                  <p class="section-heading__description">${escapeHtml(AuthoredData[1] || '')}</p>
+                  <h2 class="section-heading__title">${escapeHtml(config.title)}</h2>
+                  <p class="section-heading__description">${escapeHtml(config.subtitle)}</p>
               </div>
-              <div class="cmp-carousel__actions1_hmc">
-                  <button class="cmp-carousel__action_hmc cmp-carousel__action_hmc--previous" type="button" aria-label="Previous">
-                      <span class="icon icon--arrow-left"></span>
+              <div class="section-heading__action-buttons cmp-carousel__actions">
+                  <button class="cmp-carousel__action cmp-carousel__action--previous" type="button" aria-label="Previous slide">
+                      <span class="sr-only">Previous Button</span>
                   </button>
-                  <button class="cmp-carousel__action_hmc cmp-carousel__action_hmc--next" type="button" aria-label="Next">
-                      <span class="icon icon--arrow-right"></span>
+                  <button class="cmp-carousel__action cmp-carousel__action--next" type="button" aria-label="Next slide">
+                      <span class="sr-only">Next Button</span>
                   </button>
               </div>
           </div>
 
-          <form id="game-selection-form" action="${escapeHtml(AuthoredData[9] || '')}" class="game-form" aria-label="Game selection form" data-select-game-form>
-              <div class="game-carousel-wrapper">
+          <form id="game-selection-form" action="${escapeHtml(config.helpMeChooseCTALinkTo)}" class="game-form" aria-label="Game selection form" data-select-game-form>
+              <div id="carousel-4e80c7e13l" class="cmp-carousel" role="group" aria-live="off" aria-roledescription="carousel" data-slides-per-view="auto" data-slides-per-view-tablet="6" data-slides-per-view-desktop="6" data-loop-slides="false">
+                  <div class="cmp-carousel__content cmp-carousel__content--overflow" aria-atomic="false" aria-live="polite">
                   <div class="swiper">
-                      <div class="swiper-wrapper">${generateGameItemsHTML(gameList?.results?.gameList)}</div>
+                      <div class="swiper-wrapper">${generateGameItemsHTML(gameList?.results?.gameList, true)}</div>
                       <div class="swiper-pagination"></div>
+                      </div>
                   </div>
               </div>
 
-              <div class="budget-bar">
+              <div class="budget-bar" role="group" aria-label="Your budget">
                   <div class="budget-left">
-                      <label for="budget-min-value">${escapeHtml(AuthoredData[2] || 'Your Budget')}:</label>
+                      <div id="budget-range-label">${escapeHtml(config.budgetText)}:</div>
                   </div>
                   <div class="budget-center">${generateBudgetCenterHTML(lowestPrice, highestPrice)}</div>
                   <input type="hidden" name="min-budget" id="min-budget" value="" />
                   <input type="hidden" name="max-budget" id="max-budget" value="" />
                   <div class="budget-actions">
-                      <button type="reset" class="reset-button btn btn-link">${escapeHtml(AuthoredData[4] || 'Reset')}</button>
-                      <button type="submit" class="btn" disabled>${escapeHtml(AuthoredData[3] || 'Help me choose')}</button>
+                      <button type="reset" class="reset-button btn btn-link">${escapeHtml(config.resetCTAText)}</button>
+                      <button type="submit" class="btn" disabled>${escapeHtml(config.helpmeChooseCTA)}</button>
                   </div>
               </div>
           </form>
@@ -98,36 +112,35 @@ async function renderHelpMeChoose(block) {
  
   <div class="filter-bar container-xl"> 
     <div class="filters-container container">
+        <button class="filter-button btn btn-link" aria-label="Filter dropdown">
+            Filter 
+            <span class="icon icon--arrow-bottom" id="filter-icon"></span>
+        </button>
         <form class="filters">
             <div class="selected-games">
                 <p class="selected-games-text">Selected game:</p>
                 <div class="collapsed-view">
                 </div>
-                <div class="expanded-view">${generateGameItemsHTML(gameList?.results?.gameList)}</div>
+                <div class="expanded-view">${generateGameItemsHTML(gameList?.results?.gameList, false)}</div>
             </div>
             <div class="vertical-divider"></div>
-            <div class="budget">
-                <div class="your-budget">${escapeHtml(AuthoredData[2] || 'Your Budget')}:
+            <div class="budget" id="budget">
+                <div class="your-budget">${escapeHtml(config.budgetText)}: 
                     <div>
-                        <span class="confirmed-budget-min-value" attr-value="${defaultMinBudget}">${_formatCurrency(lowestPrice)}</span>
+                        <span class="confirmed-budget-min-value">${_formatCurrency(defaultMinBudget)}</span>
                         <span>-</span>
-                        <span class="confirmed-budget-max-value" attr-value="${defaultMaxBudget}">${_formatCurrency(highestPrice)}</span>
+                        <span class="confirmed-budget-max-value">${_formatCurrency(defaultMaxBudget)}</span>
                     </div>
                 </div>
-                <div class="budget-center">${generateBudgetCenterHTML(lowestPrice, highestPrice)}</div>
-                <input type="hidden" name="min-budget" id="min-budget" value="" />
-                <input type="hidden" name="max-budget" id="max-budget" value="" />
+                <div class="budget-center">${generateFilterBudgetCenterHTML(lowestPrice, highestPrice)}</div>
+                <input type="hidden" name="min-budget" id="min-budget" value="${defaultMinBudget}" />
+                <input type="hidden" name="max-budget" id="max-budget" value="${defaultMaxBudget}" />
                 <div class="budget-actions">
-                    <button type="reset" class="reset-button btn btn-link">${escapeHtml(AuthoredData[4] || 'Reset')}</button>
-                    <button type="submit" class="btn btn-link">${escapeHtml(AuthoredData[5] || 'Confirm')}</button>
+                    <button type="reset" class="reset-button btn btn-link">${escapeHtml(config.resetCTAText)}</button>
+                    <button type="submit" class="btn btn-link">${escapeHtml(config.confirmCTAText)}</button>
                 </div>
-                
             </div>
         </form>
-        <div class="filter-button">
-            Filter 
-         <span class="icon icon--arrow-bottom" id="filter-icon"></span>
-        </div>
     </div>
 </div>
 `;
@@ -157,23 +170,30 @@ function _isHomePage(){
  * @param {Array} games - The list of game objects.
  * @returns {string} The generated HTML string.
  */
-function generateGameItemsHTML(games) {
+function generateGameItemsHTML(games, isCarousel = true) {
   if (!games || !Array.isArray(games)) {
     return '';
   }
-  return games.map((game) => `
-    <div class="swiper-slide">
+  
+  const wrapperClass = isCarousel ? 'cmp-carousel__item swiper-slide' : '';
+  
+  return games.map((game) => {
+    const gameItemHTML = `
         <div class="game-item">
-            <input type="checkbox" id="game-you-play-${game.gameId}" name="games" value="${escapeHtml(game.gameId)}" data-name="${escapeHtml(game.gameTitle)}" data-image="${escapeHtml(game.imageUrl)}" aria-checked="false" />
+            <input type="checkbox" id="game-you-play-${game.gameId}" name="games" value="${escapeHtml(game.gameId)}" data-name="${escapeHtml(game.gameTitle)}" data-image="${escapeHtml(game.imageUrl)}" aria-label="Select ${escapeHtml(game.gameTitle)}" />
             <div class="game-details-wrapper">
-                <div class="image-wrapper" aria-hidden="true">
-                    <img src="${escapeHtml(game.imageUrl)}" alt="${escapeHtml(game.gameTitle)}" class="game-image" loading="lazy" />
-                    <div class="checkmark-overlay"></div>
+                <div class="image-outer">
+                    <div class="image-wrapper" aria-hidden="true">
+                        <img src="${escapeHtml(game.imageUrl)}" alt="${escapeHtml(game.gameTitle)}" class="game-image" loading="lazy" />
+                    </div>
+                    <div class="checkmark-overlay" aria-hidden="true"></div>
                 </div>
-                <label class="game-info" for="game-you-play-${game.gameId}">${escapeHtml(game.gameTitle)}</label>
+                <label class="game-info" for="game-you-play-${game.gameId}" aria-hidden="true">${escapeHtml(game.gameTitle)}</label>
             </div>
-        </div>
-    </div>`).join('');
+        </div>`;
+    
+    return isCarousel ? `<div class="${wrapperClass}">${gameItemHTML}</div>` : gameItemHTML;
+  }).join('');
 }
 
 // Helper to load noUiSlider only once
@@ -217,17 +237,44 @@ function loadSwiperCSS() {
  */
 function generateBudgetCenterHTML(lowestPrice, highestPrice) {
   return `
-    <input class="budget-value" id="budget-min-value" aria-label="Minimum budget" />
-    <div class="budget-separator">to</div>
+    <label for="budget-min-value" class="sr-only-fixed">Minimum Budget Value</label>
+    <input class="budget-value" id="budget-min-value" value="${_formatCurrency(lowestPrice)}" />
+    <div class="budget-separator" aria-hidden="true">to</div>
+    <div id="maximum-budget-wrapper-mobile"></div>
     <div class="budget-range-wrapper">
-        <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="500" data-max="5000" role="slider" data-step="100" aria-label="Budget range slider" aria-valuemax="${highestPrice}" aria-valuemin="${lowestPrice}" aria-orientation="horizontal" aria-valuenow="${lowestPrice}"
-        aria-valuetext="Budget range between ${_formatCurrency(lowestPrice)} to ${_formatCurrency(highestPrice)}"></div>
-        <div class="range-labels">
+        <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="500" data-max="5000" data-step="100"></div>
+        <div class="range-labels" aria-hidden="true">
             <span>$500</span>
             <span>$5,000</span>
         </div>
     </div>
-    <input class="budget-value" id="budget-max-value" aria-label="Maximum budget" />
+    <div id="maximum-budget-wrapper-desktop">
+        <label for="budget-max-value" class="sr-only-fixed">Maximum Budget Value</label>
+        <input class="budget-value" id="budget-max-value" value="${_formatCurrency(highestPrice)}" />
+    </div>
+  `;
+}
+
+/**
+ * Generates the HTML for the filter-bar budget center section.
+ * @param {number} lowestPrice - The lowest possible budget price.
+ * @param {number} highestPrice - The highest possible budget price.
+ * @returns {string} The generated HTML string for the filter-bar budget center.
+ */
+function generateFilterBudgetCenterHTML(lowestPrice, highestPrice) {
+  return `
+    <label for="budget-min-value" class="sr-only">Min Value</label>
+    <input class="budget-value" id="budget-min-value" />
+    <div class="budget-separator" aria-hidden="true">to</div>
+    <label for="budget-max-value" class="sr-only">Max Value</label>
+    <input class="budget-value" id="budget-max-value" />
+    <div class="budget-range-wrapper">
+        <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="500" data-max="5000" data-step="100"></div>
+        <div class="range-labels" aria-hidden="true">
+            <span>$500</span>
+            <span>$5,000</span>
+        </div>
+    </div>
   `;
 }
 
@@ -320,8 +367,8 @@ async function initializeSwiperCarousel(block) {
     spaceBetween: 16,
 
     navigation: {
-      nextEl: block.querySelector('.cmp-carousel__action_hmc--next'),
-      prevEl: block.querySelector('.cmp-carousel__action_hmc--previous'),
+      nextEl: block.querySelector('.cmp-carousel__action--next'),
+      prevEl: block.querySelector('.cmp-carousel__action--previous'),
     },
     pagination: {
       el: block.querySelector('.swiper-pagination'),
@@ -412,10 +459,16 @@ class SelectGameForm {
       maxBudgetInput: this.form.querySelector('#max-budget'),
       minBudgetValue: this.form.querySelector('#budget-range').getAttribute('aria-valuenow'),
       maxBudgetValue: this.form.querySelector('#budget-range').getAttribute('aria-valuemax'),
+      mobileWrapper: this.form.querySelector('#maximum-budget-wrapper-mobile'),
+      desktopWrapper: this.form.querySelector('#maximum-budget-wrapper-desktop'),
     };
 
     this.DEFAULT_BUDGET_RANGE = { min: 500, max: 5000 };
     this.DEFAULT_START_BUDGET = { min: this.dom.minBudgetInput.value, max: this.dom.maxBudgetInput.value };
+    
+    // Store placeholder for desktop wrapper position
+    this.desktopPlaceholder = null;
+    this.resizeTimer = null;
   }
 
   /**
@@ -427,6 +480,7 @@ class SelectGameForm {
     this._initSlider();
     this._bindEvents();
     this._setupBudgetInputHandlers();
+    this._initResponsiveBudgetWrappers();
 
     this._updateSubmitButtonState(this._getSelectedGames().length === 0);
   }
@@ -597,6 +651,54 @@ class SelectGameForm {
 
     slider.set(isMin ? [validated, currMax] : [currMin, validated]);
   }
+
+  /**
+   * Initializes responsive budget wrapper behavior.
+   * Creates a placeholder and sets up resize listener to move content between mobile and desktop wrappers.
+   */
+  _initResponsiveBudgetWrappers() {
+    const { mobileWrapper, desktopWrapper } = this.dom;
+    
+    if (!mobileWrapper || !desktopWrapper) return;
+
+    // Create a placeholder comment to remember original position in DOM
+    this.desktopPlaceholder = document.createComment('desktop-wrapper-placeholder');
+    desktopWrapper.parentNode?.insertBefore(this.desktopPlaceholder, desktopWrapper.nextSibling);
+
+    // Initial call to position content correctly
+    this._moveBudgetContent();
+
+    // Add resize listener with debounce
+    window.addEventListener('resize', () => {
+      clearTimeout(this.resizeTimer);
+      this.resizeTimer = setTimeout(() => this._moveBudgetContent(), 150);
+    });
+  }
+
+  /**
+   * Moves budget max value content between mobile and desktop wrappers based on screen size.
+   */
+  _moveBudgetContent() {
+    const { mobileWrapper, desktopWrapper } = this.dom;
+    
+    if (!mobileWrapper || !desktopWrapper) return;
+
+    if (window.innerWidth < 1280) {
+      // Move all children to mobile wrapper
+      if (desktopWrapper.children.length > 0) {
+        while (desktopWrapper.firstChild) {
+          mobileWrapper.appendChild(desktopWrapper.firstChild);
+        }
+      }
+    } else {
+      // Move all children back to desktop wrapper
+      if (mobileWrapper.children.length > 0) {
+        while (mobileWrapper.firstChild) {
+          desktopWrapper.appendChild(mobileWrapper.firstChild);
+        }
+      }
+    }
+  }
 }
 
 
@@ -642,7 +744,15 @@ class FilterComponent {
     };
 
      this.DEFAULT_BUDGET_RANGE = { min: 500, max: 5000 };
-    this.DEFAULT_START_BUDGET = { min: this.dom.confirmedMin.getAttribute('attr-value'), max: this.dom.confirmedMax.getAttribute('attr-value') };
+    // Parse the budget values from the text content (format: "$1,100")
+    const parseBudgetValue = (text) => {
+      const num = parseInt(text.replace(/[$,]/g, ''), 10);
+      return isNaN(num) ? 0 : num;
+    };
+    this.DEFAULT_START_BUDGET = { 
+      min: parseBudgetValue(this.dom.confirmedMin?.textContent || '500'), 
+      max: parseBudgetValue(this.dom.confirmedMax?.textContent || '5000') 
+    };
 
     this.allGames = [];
   }

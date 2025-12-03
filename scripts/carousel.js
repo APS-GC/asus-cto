@@ -332,11 +332,11 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
     },
     autoplay: false,
     breakpoints: {
-      768: {
+      731: {
         slidesPerView: slidesPerViewTablet,
         spaceBetween: spaceBetweenTablet,
       },
-      1024: {
+      1280: {
         slidesPerView: slidesPerViewDesktop,
         spaceBetween: spaceBetweenDesktop,
       },

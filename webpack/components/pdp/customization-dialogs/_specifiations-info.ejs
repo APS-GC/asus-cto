@@ -24,29 +24,29 @@
             <p>Graphic Card</p>
             <div class="specification-table-content">
                <div class="specification-table-content__item">
-                  <p>NVIDIA&#174; GeForce RTX&#8482; 4080 Dual Desktop GPU</p>
+                  <span class="icon icon--info-white"></span>  <p>NVIDIA&#174; GeForce RTX&#8482; 4080 Dual Desktop GPU</p>
                </div>
-               <div class="specification-table-content__item--new">  <span > <img src="./clientlib-site/images/arrow-right.webp" alt="arrow-right"></span>   <span > <img src="./clientlib-site/images/blue-tick.webp" alt="blue-tick"></span> NVIDIA&#174; GeForce RTX&#8482;4080 Dual Desktop GPU</div>
+               <div class="specification-table-content__item--new">  <span class="icon icon--right-arrow"></span> <span class="icon icon--info-blue"></span> <span> NVIDIA&#174; GeForce RTX&#8482;4080 Dual Desktop GPU</span></div>
             </div>
          </div>
          <div class="specification-table-content-section">
             <p>Memory</p>
             <div class="specification-table-content">
                <div class="specification-table-content__item">
-                  <p>16GB</p>
+                  <span class="icon icon--info-white"></span>  <p>16GB</p>
                </div>
-               <div class="specification-table-content__item--new">  <span > <img src="./clientlib-site/images/arrow-right.webp" alt="arrow-right"></span>   <span > <img src="./clientlib-site/images/blue-tick.webp" alt="blue-tick"></span>32GB</div>
+               <div class="specification-table-content__item--new">  <span class="icon icon--right-arrow"></span>    <span class="icon icon--info-blue"></span><span>32GB</span></div>
             </div>
          </div>
          <div class="specification-table-content-section">
             <p>Storage</p>
             <div class="specification-table-content">
                <div class="specification-table-content__item">
-                  <p>1TB M.2 NVMe&#8482;
+                  <span class="icon icon--info-white"></span> <span>1TB M.2 NVMe&#8482;
                      PCIe&#174; 4.0 SSD storage
-                  </p>
+                  </span>
                </div>
-               <div class="specification-table-content__item--new"> <span > <img src="./clientlib-site/images/arrow-right.webp" alt="arrow-right"></span>  <span > <img src="./clientlib-site/images/blue-tick.webp" alt="blue-tick"></span>2TB M.2 NVMe&#8482;
+               <div class="specification-table-content__item--new">  <span class="icon icon--right-arrow"></span> <span class="icon icon--info-blue"></span>2TB M.2 NVMe&#8482;
                   PCIe&#174; 4.0 SSD storage
                </div>
             </div>
@@ -55,9 +55,8 @@
       <div class="specification-info-footer">
          <div class="price">
             <div>Total price change</div>
-            <div> + $1,200.00</div>
          </div>
-         <div> <input type="checkbox"  name="checkbox" value="checkbox" aria-label="Do not Show again"> <label for="checkbox">Don’t show this again.</label> Click on <span><img src="./clientlib-site/images/info-filled.webp" alt="notification-info"></span> icon on the options anytime to see this reminder again</div>
+         <div> <input type="checkbox" class="spec-checkmark" id="confirmation-checkmark-<%= specificationId %>"  name="confirmation-checkbox" value="checkbox" aria-label="Do not Show again"> <label for="confirmation-checkmark-<%= specificationId %>">Don’t show this again.</label> Click on  <span class="icon icon--info-white-filled"></span> icon on the options anytime to see this reminder again</div>
          <div class="actions"> <button type="button"  data-a11y-dialog-hide="specifications-info-dialog"
             aria-label="Close dialog" class="btn cancel-btn">Cancel</button> <button type="button" class="btn accept-btn">Accept</button></div>
       </div>

@@ -31,7 +31,7 @@ const customEffectSettings = {
     next: { translate: [250, 0, 0], scale: 0.8 },
   },
   breakpoints: {
-    768: {
+    730: {
       creativeEffect: {
         limitProgress: 1,
         prev: { translate: [-400, 0, 0], scale: 0.51 },
@@ -347,7 +347,7 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
     },
     autoplay: false,
     breakpoints: {
-      768: {
+      731: {
         slidesPerView: slidesPerViewTablet,
         spaceBetween: spaceBetweenTablet,
       },
@@ -373,6 +373,11 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
                 slide.dataset.swiperAutoplay = (slideVideo.duration + 1) * 1000;
               });
             }
+          }
+
+          if (swiper.isLocked) {
+            slide.removeAttribute('aria-label');
+            slide.removeAttribute('role');
           }
         });
 
@@ -451,6 +456,8 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
           progressEl.style.transition = 'none';
           progressEl.style.transform = 'scaleX(0)';
         });
+
+        window.dispatchEvent(new CustomEvent('swiper-slide-change', { detail: swiper }));
       },
       autoplayStart(swiper) {
         // Add autoplay class to swiper element

@@ -1,0 +1,172 @@
+@use "../../../../site/scss/settings/mixins" as mix;
+@use "../../../../site/scss/settings/typography" as typo;
+@use "../../../../site/scss/settings/variables" as vars;
+
+.fps-section {
+  background: var(--color-primary-900);
+  border-radius: vars.$border-radius-xl;
+  width: 100%;
+  @include mix.p(8);
+  @include mix.m(10, "t");
+
+  .fps-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    @include mix.m(4, "b");
+
+    .fps-title {
+      color: var(--color-primary-100);
+      @include typo.text-display4();
+    }
+
+    .fps-info-group {
+      display: flex;
+      align-items: center;
+      @include mix.spacer("gap", 2);
+
+      .fps-info {
+        color: var(--color-info);
+        cursor: pointer;
+        text-decoration: none;
+        border: none;
+        background-color: transparent;
+        display: flex;
+        align-items: center;
+        @include typo.pdp-font();
+        @include mix.spacer("gap", 1);
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  .fps-tabs-wrapper {
+    @include mix.m(4, "t");
+
+    .cmp-tabs[data-style="solid"] {
+      @include mix.p(0);
+    }
+    .cmp-tabs__tabpanel {
+      @include mix.m(0, "t");
+    }
+    .fps-scores {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      @include mix.spacer("gap", 1);
+      @include mix.m(4, "t");
+
+      .fps-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        img {
+          max-width: 100%;
+          object-fit: contain;
+          border-radius: vars.$border-radius;
+          @include mix.m(2, "b");
+        }
+
+        span {
+          color: var(--color-primary-200);
+          @include typo.text-small();
+        }
+      }
+    }
+
+    .fps-scores-empty {
+      color: var(--color-primary-400);
+      text-align: center;
+      @include mix.p(8);
+      @include typo.text-small;
+    }
+  }
+
+  .time-spy-score {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; // Changed from flex-start to center for vertical alignment
+    @include mix.m(8, "t");
+
+    .time-spy-score-left {
+      display: flex;
+      flex-direction: column;
+      @include mix.spacer("gap", 1);
+
+      .time-spy-score-label {
+        display: flex;
+        @include mix.spacer("gap", 1);
+        flex-direction: column;
+        align-items: flex-start;
+
+        .label {
+          color: var(--color-primary-100);
+          @include typo.pdp-font();
+        }
+      }
+
+      .score {
+        color: var(--color-primary-100);
+        @include typo.text-display4();
+      }
+    }
+
+    .time-spy-score-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      .time-spy-score-info {
+        display: flex;
+        align-items: flex-start;
+        @include mix.spacer("gap", 1);
+
+        .time-spy-score-btn {
+          @include mix.reset-button;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          @include mix.spacer("gap", 1);
+
+          &,
+          .icon,
+          .time-spy-text {
+            color: var(--color-info);
+          }
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+  .data-from {
+    color: var(--color-primary-300);
+    @include typo.text-small();
+  }
+
+  .data-source {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    @include mix.spacer("gap", 1);
+    @include mix.m(8, "t");
+
+    img {
+      height: 28px;
+      object-fit: contain;
+    }
+
+    button {
+      color: var(--color-primary);
+    }
+  }
+
+  @include mix.respond-to("md", "max") {
+    @include mix.p(5);
+  }
+}

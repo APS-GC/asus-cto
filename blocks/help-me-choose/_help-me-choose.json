@@ -1,0 +1,108 @@
+{
+  "definitions": [
+    {
+      "title": "Help Me Choose",
+      "id": "help-me-choose",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Help Me Choose",
+              "model": "help-me-choose"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "help-me-choose",
+      "fields": [
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "title",
+          "label": "Title",
+          "value": "Select The Game You Play"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "subtitle",
+          "label": "Subtitle",
+          "value": "We will recommend a plan that suits you most!"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "budgetText",
+          "label": "Budget Text",
+          "value": "Your Budget"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "helpmeChooseCTA",
+          "label": "Help Me Choose CTA",
+          "value": "Help me choose"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "resetCTAText",
+          "label": "Reset CTA Text",
+          "value": "Reset"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "confirmCTAText",
+          "label": "Confirm CTA Text",
+          "value": "Confirm"
+        },
+        {
+          "component": "select",
+          "valueType": "string",
+          "name": "style",
+          "label": "Style",
+          "value": "1",
+          "options": [
+            {
+              "name": "Carousel with Form",
+              "value": "1"
+            },
+            {
+              "name": "Filter Bar",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "component": "number",
+          "valueType": "number",
+          "name": "minimumBudget",
+          "label": "Minimum Budget",
+          "value": 500
+        },
+        {
+          "component": "number",
+          "valueType": "number",
+          "name": "maximumBudget",
+          "label": "Maximum Budget",
+          "value": 5000
+        },
+        {
+          "component": "aem-content",
+          "valueType": "string",
+          "name": "helpMeChooseCTALinkTo",
+          "label": "Help me Choose CTA LinkTo",
+          "value": "./product-matches"
+        }
+      ]
+    }
+  ],
+  "filters": []
+}
+

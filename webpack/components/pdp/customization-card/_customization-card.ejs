@@ -2,16 +2,19 @@
   <div class="radio-overlay">
     <input
       type="radio"
-      name="customization-option-<%= groupId %>"
+      name="customization-option-<%= specId %>"
       class="customization-radio" aria-label="<%= name %>"
     />
     <div class="radio-checkmark"></div>
   </div>
-  <div>
-    <p class="cmp-product-name"><%= name %></p>
+  <div class="cmp-product-card__name">
+   <p  class="cmp-product-name"> <% if(icon){ %>
+    <span class=" <%= icon %>"></span>
+    <% } %><span><%= name %></p></span>
   </div>
   <div>
+  
     <p class="price"><%= price %></p>
   </div>
-  <%- include('../customization-dialogs/_specifiations-info.ejs') %>
+  <%- include('../customization-dialogs/_specifiations-info.ejs' , {specificationId: specId}) %>
 </div>

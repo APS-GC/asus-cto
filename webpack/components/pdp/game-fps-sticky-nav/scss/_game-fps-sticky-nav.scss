@@ -7,10 +7,11 @@
   top: -100%;
   width: 100%;
   z-index: 9;
+  margin-bottom: -2px;
 
   .cmp-game-fps-sticky-nav {
     background-color: var(--color-primary);
-    @include mix.p(8);
+    @include mix.p(8, "y");
 
     &__left {
       display: flex;
@@ -236,6 +237,14 @@
 
     .web-only {
       display: none;
+    }
+  }
+}
+
+@include mix.respond-to("xl", "max") {
+  .cmp-game-fps-sticky-navigation {
+    .fps-scores {
+      flex-wrap: nowrap;
     }
   }
 }

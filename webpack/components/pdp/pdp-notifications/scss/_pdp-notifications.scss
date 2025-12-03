@@ -4,9 +4,13 @@
 
 .cmp-pdp-notifications-container {
   .cmp-pdp-notifications {
-    padding: 1rem;
+    padding: 1.5rem;
     border-radius: 5px;
-    min-height: 100px;
+    &__header {
+      .icon {
+        vertical-align: middle;
+      }
+    }
     &__title {
       @include typo.text-base;
       @include mix.m(2, "l");
@@ -14,12 +18,15 @@
     }
     &__subtitle {
       @include typo.text-small;
+      @include mix.m(1, "t");
+      .icon {
+        vertical-align: text-top;
+      }
     }
     &__actions {
       @include mix.m(2, "t");
       padding: 1rem;
       border-radius: 5px;
-      min-height: 100px;
     }
   }
   .warning {
@@ -46,6 +53,8 @@
           flex-basis: 50%;
           max-width: 200px;
           word-break: break-word;
+          display: flex;
+          @include mix.spacer("gap", 2);
         }
       }
       .specification-table-content-section {
@@ -60,6 +69,10 @@
         word-break: break-word;
         display: flex;
         @include mix.spacer("gap", 2);
+        .icon {
+          width: 14px;
+          height: 14px;
+        }
       }
     }
     .specification-info-footer {

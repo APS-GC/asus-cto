@@ -13,6 +13,7 @@ import '../components/tooltip/js/_tooltip.js';
 
 // Global components
 import '../components/advantage-card/js/_advantage-card.js';
+import '../components/footer/js/_footer.js';
 import '../components/header/js/_header.js';
 import '../components/hero-banner/js/_hero-banner.js';
 import '../components/image-gallery/js/_image-gallery.js';
@@ -34,3 +35,6 @@ import '../components/product-comparison-page/js/_product-comparison-page.js';
 
 // PLP specific components
 import '../components/product-sidebar/js/_product-sidebar.js';
+
+// News articles specific components
+import '../components/news-articles/js/_news-articles.js';
