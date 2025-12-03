@@ -1422,5 +1422,146 @@
         "label": "Select to open in new tab"
       }
     ]
+  },
+  {
+    "id": "product-listing",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Page Title",
+        "description": "Main heading for the product listing page (e.g., 'Gaming Desktops')",
+        "value": "Gaming Desktops"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "subtitle",
+        "label": "Page Subtitle",
+        "description": "Subtitle text displayed below the title",
+        "value": "View all gaming desktops or filter for what you want."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "bannerImage",
+        "label": "Banner Image",
+        "description": "Hero banner image for the top of the page",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "compareLabel",
+        "label": "Compare Label",
+        "description": "Text for the compare checkbox label on product cards",
+        "value": "Compare"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "buyNowText",
+        "label": "Buy Now Button Text",
+        "description": "Text for the buy now call-to-action button",
+        "value": "Buy now"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "quickViewText",
+        "label": "Quick View Button Text",
+        "description": "Text for the quick view button on product cards",
+        "value": "Quick view"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "estoreLabel",
+        "label": "Estore Price Label",
+        "description": "Label text for the estore price section",
+        "value": "ASUS estore price"
+      },
+      {
+        "component": "richtext",
+        "name": "estoreTooltip",
+        "label": "Estore Price Tooltip",
+        "description": "Tooltip content explaining the estore price",
+        "valueType": "string",
+        "value": "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "showMoreText",
+        "label": "Show More Button Text",
+        "description": "Text for the 'Show more' pagination button",
+        "value": "Show more"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "filterInfoText",
+        "label": "Filter Info Text",
+        "description": "Informational text shown in the sidebar filter section",
+        "value": "Selecting filter(s) will refresh the results and may change the availability of other options."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "appliedFiltersTitle",
+        "label": "Applied Filters Title",
+        "description": "Title for the applied filters section",
+        "value": "Applied filters"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "clearAllText",
+        "label": "Clear All Text",
+        "description": "Text for the clear all filters button",
+        "value": "Clear all"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "noMatchesTitle",
+        "label": "No Matches Title",
+        "description": "Title shown when no products match the filters",
+        "value": "No matches"
+      },
+      {
+        "component": "richtext",
+        "name": "noMatchesDescription",
+        "label": "No Matches Description",
+        "description": "Description text shown when no products match the filters",
+        "valueType": "string",
+        "value": "Oops.. Seems like we did not find item that matches your search. Please use a different search term, relax your criteria, or check out our hottest products below."
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "minimumBudget",
+        "label": "Minimum Budget",
+        "description": "Minimum value for the budget range slider",
+        "value": 500
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "maximumBudget",
+        "label": "Maximum Budget",
+        "description": "Maximum value for the budget range slider",
+        "value": 5000
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "productsPerPage",
+        "label": "Products Per Page",
+        "description": "Number of products to show per page",
+        "value": 6
+      }
+    ]
   }
 ]
