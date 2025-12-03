@@ -1,0 +1,87 @@
+.cmp-accordion {
+    border-top: 1px solid var(--color-primary-300);
+}
+
+.cmp-accordion .cmp-accordion__item {
+    border-bottom: 1px solid var(--color-primary-300);
+}
+
+.cmp-accordion .cmp-accordion__item .cmp-accordion__header {
+    color: var(--color-primary-950);
+}
+
+.cmp-accordion .cmp-accordion__item .cmp-accordion__button {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 100%;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+    font-family: var(--font-text);
+    font-weight: var(--regular);
+    letter-spacing: 0;
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    font-weight: var(--medium);
+}
+
+.cmp-accordion .cmp-accordion__item .cmp-accordion__button .cmp-accordion__title {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+}
+
+.cmp-accordion .cmp-accordion__item .cmp-accordion__button .cmp-accordion__icon {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+    -webkit-transition: -webkit-transform 0.3s ease;
+    transition: -webkit-transform 0.3s ease;
+    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, -webkit-transform 0.3s ease;
+}
+
+.cmp-accordion .cmp-accordion__item .cmp-accordion__button .cmp-accordion__icon::before {
+    content: "";
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none"><path d="M20.25 17L12 8.45L3.75 17" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.cmp-accordion .cmp-accordion__item .cmp-accordion__panel {
+    max-height: 0;
+    opacity: 0;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    color: var(--color-primary-700);
+    padding-bottom: 1.25rem;
+}
+
+.cmp-accordion .cmp-accordion__item[data-cmp-expanded] .cmp-accordion__button {
+    padding-bottom: 0.75rem;
+}
+
+.cmp-accordion .cmp-accordion__item[data-cmp-expanded] .cmp-accordion__button .cmp-accordion__icon {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+}
+
+.cmp-accordion .cmp-accordion__item[data-cmp-expanded] .cmp-accordion__panel {
+    max-height: 100%;
+    opacity: 1;
+}
