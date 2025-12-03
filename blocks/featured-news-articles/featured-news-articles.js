@@ -28,7 +28,7 @@ export default async function decorate(block) {
             <div class="section-heading">
               <div class="section-heading__text-group">
                 <h2 class="section-heading__title">${
-                  config.title || "Featured News Articles"
+                  config.title || 'Featured News Articles'
                 }</h2>
               </div>
               <div class="section-heading__action-buttons cmp-carousel__actions">
@@ -48,10 +48,10 @@ export default async function decorate(block) {
         </div>
         <div class="section-actions-container">
           <a class="section-actions-btn btn btn-link" href="${config.seeAllButtonLinkTo || ''}" target="${
-    config.openLinkInNewTab === true || config.openLinkInNewTab === 'true' ? "_blank" : "_self"
+    config.openLinkInNewTab === true || config.openLinkInNewTab === 'true' ? '_blank' : '_self'
   }">
             ${
-              config.seeAllButtonText || "See all News Articles"
+              config.seeAllButtonText || 'See all News Articles'
             }<img src="${`${window.hlx.codeBasePath}/icons/icon-arrow.svg`}" alt="Arrow Right">
             </a>
         </div>`);
@@ -66,12 +66,12 @@ export default async function decorate(block) {
     
     // Parse article data dynamically based on field order
     const articleData = {
-      title: "",
-      summary: "",
-      image: "",
-      imageAlt: "",
-      postedDate: "",
-      articleLink: "",
+      title: '',
+      summary: '',
+      image: '',
+      imageAlt: '',
+      postedDate: '',
+      articleLink: '',
       articleOpenInNewTab: false
     };
     
@@ -81,25 +81,25 @@ export default async function decorate(block) {
       
       switch(fieldName) {
         case 'articleTitle':
-          articleData.title = cell.textContent?.trim() || "";
+          articleData.title = cell.textContent?.trim() || '';
           break;
         case 'articleSummary':
-          articleData.summary = cell.textContent?.trim() || "";
+          articleData.summary = cell.textContent?.trim() || '';
           break;
         case 'media':
-          articleData.image = cell.querySelector("img")?.getAttribute("src") || "";
+          articleData.image = cell.querySelector('img')?.getAttribute('src') || '';
           break;
         case 'imageAlt':
-          articleData.imageAlt = cell.textContent?.trim() || "";
+          articleData.imageAlt = cell.textContent?.trim() || '';
           break;
         case 'postedDate':
-          articleData.postedDate = cell.textContent?.trim() || "";
+          articleData.postedDate = cell.textContent?.trim() || '';
           break;
         case 'articleLinkTo':
-          articleData.articleLink = cell.textContent?.trim() || "";
+          articleData.articleLink = cell.textContent?.trim() || '';
           break;
         case 'articleOpenInNewTab':
-          articleData.articleOpenInNewTab = cell.textContent?.trim().toLowerCase() === "true";
+          articleData.articleOpenInNewTab = cell.textContent?.trim().toLowerCase() === 'true';
           break;
       }
     });

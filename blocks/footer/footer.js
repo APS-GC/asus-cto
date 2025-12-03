@@ -20,6 +20,7 @@ function parseFragmentContent(block) {
     // First, try to find the root footer div
     const footerDiv = block.querySelector('.footer') || block;
     
+    
     // Get all direct children of the footer
     const footerChildren = Array.from(footerDiv.children);
     
@@ -63,7 +64,6 @@ function parseFragmentContent(block) {
       }
     });
 
-
     const parsedData = {
       newsletterLabel: '',
       newsletterPlaceholder: '',
@@ -92,143 +92,87 @@ function parseFragmentContent(block) {
     // 12th div: show Global
     // 13th+ divs: Social Media Icons with Images and Links
     
-    for (let index = 0; index < contentDivs.length; index++) {
-      const div = contentDivs[index];
-      const textContent = div.textContent?.trim();
-      
-      if (index === 0) {
-        // 1st div: Newsletter Label
-        if (textContent) {
-          parsedData.newsletterLabel = textContent;
-        }
-      } else if (index === 1) {
-        // 2nd div: Newsletter Placeholder
-        if (textContent) {
-          parsedData.newsletterPlaceholder = textContent;
-        }
-      } else if (index === 2) {
-        // 3rd div: Newsletter Button Text
-        if (textContent) {
-          parsedData.newsletterButtonText = textContent;
-        }
-      } else if (index === 3) {
-        // 4th div: Social Label
-        if (textContent) {
-          parsedData.socialLabel = textContent;
-        }
-      } else if (index === 4) {
-        // 5th div: Column 1 Title
-        if (textContent) {
-          parsedData.footerColumns[0] = { columnTitle: textContent, links: [] };
-        }
-      } else if (index === 5) {
-        // 6th div: Column 1 Links
-        const linksList = div.querySelector('ul');
-        if (linksList && parsedData.footerColumns[0]) {
-          const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[0].links = Array.from(links).map(link => {
-            const href = link.getAttribute('href') || '#';
-            return {
-              linkText: link.textContent?.trim() || '',
-              linkUrl: href
-            };
-          });
-        }
-      } else if (index === 6) {
-        // 7th div: Column 2 Title
-        if (textContent) {
-          parsedData.footerColumns[1] = { columnTitle: textContent, links: [] };
-        }
-      } else if (index === 7) {
-        // 8th div: Column 2 Links
-        const linksList = div.querySelector('ul');
-        if (linksList && parsedData.footerColumns[1]) {
-          const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[1].links = Array.from(links).map(link => {
-            const href = link.getAttribute('href') || '#';
-            return {
-              linkText: link.textContent?.trim() || '',
-              linkUrl:  FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
-            };
-          });
-        }
-      } else if (index === 8) {
-        // 9th div: Column 3 Title
-        if (textContent) {
-          parsedData.footerColumns[2] = { columnTitle: textContent, links: [] };
-        }
-      } else if (index === 9) {
-        // 10th div: Column 3 Links
-        const linksList = div.querySelector('ul');
-        if (linksList && parsedData.footerColumns[2]) {
-          const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[2].links = Array.from(links).map(link => {
-            const href = link.getAttribute('href') || '#';
-            return {
-              linkText: link.textContent?.trim() || '',
-              linkUrl: FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
-            };
-          });
-        }
-      } else if (index === 10) {
-        // 11th div: Legal Links
-        const linksList = div.querySelector('ul');
-        if (linksList) {
-          const links = linksList.querySelectorAll('li a');
-          parsedData.legalLinks = Array.from(links).map(link => {
-            const href = link.getAttribute('href') || '#';
-            return {
-              linkText: link.textContent?.trim() || '',
-              linkUrl: FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
-            };
-          });
-        }
-      } else if (index === 11) {
-        // 12th div: show Global
-        if (textContent) {
-          parsedData.showGlobal = textContent.toLowerCase() === 'true' || textContent.toLowerCase() === 'yes';
-        }
-      } else if (index >= 12) {
-        // 13th+ divs: Social Media Icons with Images and Links
-        // Structure is pairs of consecutive divs: picture div + URL div
-        
-        const isEvenIndex = (index - 12) % 2 === 0;
-        
-        if (isEvenIndex) {
-          // This should be a picture div, pair it with the next div for URL
-          const pictureDiv = div;
-          const urlDiv = contentDivs[index + 1];
-          
-          
-          const picture = pictureDiv.querySelector('picture img');
-          let url = '#';
-          
-          if (urlDiv) {
-            const urlLink = urlDiv.querySelector('a');
-            const urlText = urlDiv.textContent?.trim();
-            url = urlLink?.href || urlText || '#';
-          }
-          
-          
-          if (picture && url && url !== '#') {
-            const socialPlatforms = ['facebook', 'x', 'instagram', 'tiktok', 'youtube', 'discord', 'twitch', 'thread'];
-            const platformIndex = Math.floor((index - 12) / 2); // Divide by 2 since we have pairs
-            const platform = socialPlatforms[platformIndex] || `social${platformIndex + 1}`;
-            
-            
-            parsedData.socialLinks.push({
-              platform: platform,
-              url: url,
-              icon: picture.getAttribute('src') || '',
-              altText: picture.getAttribute('alt') || platform.charAt(0).toUpperCase() + platform.slice(1),
-              originalElement: picture, // Store reference to original image element for moveInstrumentation
-              actualDiv: pictureDiv
+    contentDivs.forEach((div, index) => {
+      try {
+        const textContent = div.textContent?.trim();
+
+        switch (index) {
+          case 0: // Newsletter Label
+            parsedData.newsletterLabel = textContent;
+            break;
+          case 1: // Newsletter Placeholder
+            parsedData.newsletterPlaceholder = textContent;
+            break;
+          case 2: // Newsletter Button Text
+            parsedData.newsletterButtonText = textContent;
+            break;
+          case 3: { // Main content - Footer Columns
+            const linksLists = div.querySelectorAll('ul');
+            const listHeads = div.querySelectorAll('p');
+            linksLists.forEach((ul, i) => {
+              const column = { columnTitle: listHeads[i]?.textContent || '', links: [] };
+              const links = ul.querySelectorAll('li a');
+              column.links = Array.from(links).map(link => ({
+                linkText: link.textContent?.trim() || '',
+                linkUrl: link.getAttribute('href') || '#'
+              }));
+              parsedData.footerColumns.push(column);
             });
+            break;
           }
+          case 4: { // Privacy policy & Legal Links
+            const links = div.querySelectorAll('a');
+            parsedData.legalLinks = Array.from(links).map(link => {
+              const href = link.getAttribute('href') || '#';
+              return {
+                linkText: link.textContent?.trim() || '',
+                linkUrl: FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
+              };
+            });
+            break;
+          }
+          case 5: // Follow us label
+            parsedData.socialLabel = textContent;
+            break;
+          case 6: // Show Global
+            parsedData.showGlobal = textContent.toLowerCase() === 'true' || textContent.toLowerCase() === 'yes';
+            break;
+          default:
+            // Social icons start from index 7 and come in pairs
+            if (index >= 7 && (index - 7) % 2 === 0) {
+              const socialPlatforms = ['facebook', 'x', 'instagram', 'tiktok', 'youtube', 'discord', 'twitch', 'thread'];
+              const platformIndex = Math.floor((index - 7) / 2);
+              const platform = socialPlatforms[platformIndex] || `social${platformIndex + 1}`;
+
+            const pictureDiv = div;
+            const urlDiv = contentDivs[index + 1];
+            const picture = pictureDiv.querySelector('picture img');
+
+            let url = '#';
+            if (urlDiv) {
+              const urlLink = urlDiv.querySelector('a');
+              const urlText = urlDiv.textContent?.trim();
+              url = urlLink?.href || urlText || '#';
+            }
+
+            if (picture && url && url !== '#') {
+              parsedData.socialLinks.push({
+                platform: platform,
+                url: url,
+                icon: picture.getAttribute('src') || '',
+                altText: picture.getAttribute('alt') || platform.charAt(0).toUpperCase() + platform.slice(1),
+                originalElement: picture, // Store reference to original image element for moveInstrumentation
+                actualDiv: pictureDiv
+              });
+            }
+            }
+            break;
         }
-        // Skip odd indices as they are processed as part of the pairs
+      } catch (error) {
+        console.error(`Error processing content div at index ${index}:`, error);
+        // Continue to the next iteration
       }
-    }
+    });
 
     // Filter out empty columns
     parsedData.footerColumns = parsedData.footerColumns.filter(col => col && col.columnTitle);
@@ -652,6 +596,8 @@ function optimizeFooterImages(container) {
 }
 
 export default function decorate(block) {
+  if(block.querySelector('div.footer')?.className !== 'footer') return;
+
   const data = parseFooterData(block);
 
   // Create the footer structure using parsed data to match reference exactly

@@ -1,4 +1,4 @@
-/* stylelint-disable max-line-length */
+/* stylelint-disable max-line-length, font-family-name-quotes */
 
 @font-face {
   font-family: Roboto;
@@ -35,3 +35,4 @@
   src: local("TTNormsProMedium"),
     url("../fonts/tt-norms-pro-500.woff2") format("woff2");
 }
+/* stylelint-enable max-line-length, font-family-name-quotes */
