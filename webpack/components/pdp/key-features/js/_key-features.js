@@ -25,12 +25,12 @@ function toggleContent(button) {
   // Toggle content visibility using hidden attribute (better for accessibility)
   if (isExpanded) {
     contentWrapper.setAttribute('aria-hidden', 'true');
-    buttonText.textContent = 'See More';
+    buttonText.textContent = 'Show more';
     icon.classList.remove('icon--arrow-top');
     icon.classList.add('icon--arrow-bottom');
   } else {
     contentWrapper.setAttribute('aria-hidden', 'false');
-    buttonText.textContent = 'See Less';
+    buttonText.textContent = 'Show less';
     icon.classList.remove('icon--arrow-bottom');
     icon.classList.add('icon--arrow-top');
   }

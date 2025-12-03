@@ -29,19 +29,24 @@
   .image-wrapper {
     position: relative;
     border-radius: vars.$border-radius;
-    overflow: hidden;
     transition: border 0.2s ease;
     border: 1px solid var(--color-primary-600);
+    overflow: hidden;
 
     .game-image {
       width: 100%;
       display: block;
     }
+  }
+
+  .image-outer {
+    position: relative;
+    overflow: hidden;
 
     .checkmark-overlay {
       position: absolute;
-      bottom: 0px;
-      right: 0px;
+      bottom: 0;
+      right: 0;
       width: 40px;
       height: 40px;
       background-color: transparent;
@@ -49,14 +54,18 @@
       display: none;
       align-items: center;
       justify-content: center;
-      border-top-left-radius: vars.$border-radius;
+      border-radius: vars.$border-radius 0;
     }
   }
+
   input[type="checkbox"]:hover + .game-details-wrapper .game-info {
     text-decoration: underline;
   }
-  input[type="checkbox"]:checked + .game-details-wrapper .image-wrapper {
-    border: 3px solid var(--color-info);
+
+  input[type="checkbox"]:checked + .game-details-wrapper {
+    .image-wrapper {
+      border: 3px solid var(--color-info);
+    }
 
     .checkmark-overlay {
       display: flex;
@@ -88,15 +97,17 @@
     @include typo.text-small();
   }
 
-  @include mix.respond-to("lg", "max") {
-    .image-wrapper {
-      .checkmark-overlay {
-        width: 32px;
-        height: 32px;
-      }
+  @include mix.respond-to("xl", "max") {
+    .checkmark-overlay {
+      width: 32px;
+      height: 32px;
     }
 
-    input[type="checkbox"]:checked + .game-details-wrapper .image-wrapper {
+    .game-details-wrapper {
+      @include mix.spacer("gap", 2);
+    }
+
+    input[type="checkbox"]:checked + .game-details-wrapper {
       .checkmark-overlay {
         &::after {
           content: "";

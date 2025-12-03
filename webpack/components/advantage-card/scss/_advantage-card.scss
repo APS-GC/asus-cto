@@ -1,14 +1,16 @@
 @use "../../../site/scss/settings/typography" as typo;
 @use "../../../site/scss/settings/variables" as vars;
 @use "../../../site/scss/settings/mixins" as mix;
-
+.advantage-card__start {
+  background-color: #0f0f10;
+}
 .cmp-advantage-card {
   position: relative;
-  border-radius: vars.$border-radius-xl;
-  overflow: hidden;
   max-width: 100%;
   aspect-ratio: 25 / 16;
   text-align: center;
+  border-radius: vars.$border-radius-xl;
+  overflow: hidden;
 
   &__heading {
     @include typo.text-display2();
@@ -26,6 +28,7 @@
       height: 100%;
       object-fit: cover;
       display: block;
+      outline: 0;
     }
 
     .cmp-advantage-card__close-video {
@@ -33,11 +36,21 @@
       border: none;
       top: 1.25rem;
       right: 1.25rem;
-      width: 32px;
-      height: 32px;
+      width: 48px;
+      height: 48px;
       cursor: pointer;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M19 1L1 19M1 1L19 19" stroke="%23999999" stroke-width="2" stroke-linecap="round"/></svg>')
-        center/18px no-repeat;
+      border-radius: 50%;
+      background: url('data:image/svg+xml,<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(%23clip0_26713_50066)"><foreignObject x="-4" y="-4" width="56" height="56"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(2px);clip-path:url(%23bgblur_1_26713_50066_clip_path);height:100%;width:100%"></div></foreignObject><path data-figma-bg-blur-radius="4" d="M24 48C37.2548 48 48 37.2548 48 24C48 10.7452 37.2548 0 24 0C10.7452 0 0 10.7452 0 24C0 37.2548 10.7452 48 24 48Z" fill="%234D4D4D" fill-opacity="0.64"/></g><rect x="0.5" y="0.5" width="47" height="47" rx="23.5" stroke="%23999999"/><path d="M33 15L15 33M15 15L33 33" stroke="%23999999" stroke-width="2" stroke-linecap="round"/><defs><clipPath id="bgblur_1_26713_50066_clip_path" transform="translate(4 4)"><path d="M24 48C37.2548 48 48 37.2548 48 24C48 10.7452 37.2548 0 24 0C10.7452 0 0 10.7452 0 24C0 37.2548 10.7452 48 24 48Z"/></clipPath><clipPath id="clip0_26713_50066"><rect width="48" height="48" rx="24" fill="white"/></clipPath></defs></svg>');
+
+      &:hover,
+      &:focus,
+      &:focus-visible {
+        background: url('data:image/svg+xml,<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(%23clip0_26713_50066)"><foreignObject x="-4" y="-4" width="56" height="56"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(2px);clip-path:url(%23bgblur_1_26713_50066_clip_path);height:100%;width:100%"></div></foreignObject><path data-figma-bg-blur-radius="4" d="M24 48C37.2548 48 48 37.2548 48 24C48 10.7452 37.2548 0 24 0C10.7452 0 0 10.7452 0 24C0 37.2548 10.7452 48 24 48Z" fill="%234D4D4D" fill-opacity="0.64"/></g><rect x="0.5" y="0.5" width="47" height="47" rx="23.5" stroke="%23999999"/><path d="M33 15L15 33M15 15L33 33" stroke="white" stroke-width="2" stroke-linecap="round"/><defs><clipPath id="bgblur_1_26713_50066_clip_path" transform="translate(4 4)"><path d="M24 48C37.2548 48 48 37.2548 48 24C48 10.7452 37.2548 0 24 0C10.7452 0 0 10.7452 0 24C0 37.2548 10.7452 48 24 48Z"/></clipPath><clipPath id="clip0_26713_50066"><rect width="48" height="48" rx="24" fill="white"/></clipPath></defs></svg>');
+      }
+
+      &:focus-visible {
+        outline-offset: 2px;
+      }
     }
 
     .cmp-advantage-card__video,
@@ -92,6 +105,11 @@
       display: block;
     }
   }
+
+  &:has(.cmp-advantage-card__video:focus-visible) {
+    outline: 2px solid var(--color-focus-ring);
+  }
+
   @include mix.respond-to("sm", "max") {
     aspect-ratio: 16 / 25;
 
@@ -118,4 +136,12 @@
       }
     }
   }
+
+  &:has(.cmp-advantage-card) {
+    overflow: visible;
+  }
+}
+
+.advantage-card__end {
+  background-color: #0f0f10;
 }

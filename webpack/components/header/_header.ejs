@@ -4,35 +4,33 @@
   <header class="experiencefragment">
     <div class="cmp-experiencefragment">
       <div class="cmp-container cmp-header container">
-
         <!-- Logo navigation -->
         <div class="navigation">
           <nav class="cmp-navigation" itemscope itemtype="http://schema.org/SiteNavigationElement"
             aria-label="Main Navigation">
-            <a href="./index.html" aria-label="Asus Logo" title="ASUS Logo" class="cmp-navigation__item--logo">
+            <a href="./index.html" aria-label="Asus Logo, ROG Logo and Gaming PC Custom Builder" title="Asus Logo, ROG Logo and Gaming PC Custom Builder" class="cmp-navigation__item--logo">
               <!-- ASUS Logo -->
               <div class="logo-item logo-item--asus">
                 <div class="logo-wrapper">
-                  <img src="./clientlib-site/images/logo-asus.svg" alt="ASUS Logo" class="logo-default" width="87" height="20" />
+                  <img src="./clientlib-site/images/logo-asus.svg" alt="ASUS Logo" class="logo-default" fetchpriority="high" />
                 </div>
               </div>
               <!-- ROG Logo -->
               <div class="logo-item logo-item--rog">
                 <div class="logo-wrapper">
-                  <img src="./clientlib-site/images/logo-rog.svg" alt="ROG Logo" class="logo-default" width="135" height="26" />
+                  <img src="./clientlib-site/images/logo-rog.svg" alt="ROG Logo" class="logo-default" fetchpriority="high" />
                 </div>
               </div>
               <!-- Gaming PC Custom Builder -->
               <div title="Gaming PC Custom Builder" class="logo-item logo-item--gaming">
-                <img src="./clientlib-site/images/gaming_pc_logo.svg" alt="Gaming PC Custom Builder Logo" width="104" height="22" />
+                <img src="./clientlib-site/images/gaming_pc_logo.svg" alt="Gaming PC Custom Builder Logo" class="logo-default" fetchpriority="high" />
               </div>
             </a>
           </nav>
         </div>
-
         <!-- Site navigation -->
         <div class="sitenavigation">
-          <nav class="cmp-sitenavigation" aria-label="Site Navigation">
+          <nav class="cmp-sitenavigation" aria-label="Navigation">
             <ul class="cmp-sitenavigation__group cmp-sitenavigation__group--main">
               <li class="cmp-sitenavigation__item cmp-sitenavigation__item--desktop">
                 <a class="cmp-sitenavigation__item-link" href="./product-listing.html">All Desktops</a>
@@ -44,7 +42,6 @@
                 <a class="cmp-sitenavigation__item-link" href="./news-articles.html">News & Articles</a>
               </li>
             </ul>
-
             <!-- Icons -->
             <ul class="cmp-sitenavigation__group cmp-sitenavigation__group--icons">
               <li class="cmp-sitenavigation__item cmp-sitenavigation__item--search hidden">
@@ -57,7 +54,7 @@
                   <button 
                     class="cmp-sitenavigation__item-link mini-cart-toggle"
                     id="mini-cart-toggle"
-                    aria-label="Shopping cart"
+                    aria-label="cart"
                     aria-haspopup="dialog"
                     aria-expanded="false"
                     aria-controls="mini-cart-container"
@@ -71,23 +68,27 @@
                     aria-modal="true" 
                     aria-labelledby="mini-cart-title" 
                     aria-hidden="true"
+                    tabindex="-1"
                   >
-                    <button class="mini-cart__close" aria-label="Close mini cart"></button>
-                    <h4 id="mini-cart-title" class="cart-summary"></h4>
+                    <button class="mini-cart__close" aria-label="Close mini cart">
+                      <span class="mini-cart__close-icon"></span>
+                    </button>
+                    <div id="mini-cart-title" class="cart-summary"></div>
                   </div>
                 </div>
               </li>
               <li class="cmp-sitenavigation__item cmp-sitenavigation__item--profile">
                 <div class="profile-dropdown">
                   <!-- Dev Note: Based on the logged-in class the green dot will be visible on the profile icon -->
-                  <button class="cmp-sitenavigation__item-link profile-toggle logged-in" aria-label="Member Account" aria-expanded="false">
+                  <button class="profile-toggle logged-in" aria-label="Member Account" aria-expanded="false">
                     <span class="icon icon--profile"></span>
                   </button>
                   <ul class="profile-menu">
                     <li class="profile-menu__header">
-                      <button class="profile-menu__close" aria-label="Close profile menu">
+                      <button class="profile-menu__close" aria-label="Close profile menu"><span class="close_icon"></span>
                       </button>
                     </li>
+                    <li class="profile-menu__user-name">User Name</li>
                     <li class="profile-menu__item"><a href="#">Login</a></li>
                     <li class="profile-menu__item"><a href="#">My Account</a></li>
                     <li class="profile-menu__item"><a href="#">Product Registration</a></li>
@@ -98,7 +99,7 @@
                 </div>
               </li>
               <li class="cmp-sitenavigation__item cmp-sitenavigation__item--menu-toggle">
-                <button id="header-hamburger-menu-toggle" class="btn btn-link" aria-label="Toggle Menu">
+                <button id="header-hamburger-menu-toggle" class="btn btn-link" aria-label="Menu">
                   <span class="icon icon--hamburger"></span>
                   <span class="icon icon--close"></span>
                 </button>
@@ -109,7 +110,6 @@
       </div>
     </div>
   </header>
-
   <!-- Mobile menu -->
   <div class="mobile-menu-overlay" id="mobile-menu-dialog" aria-labelledby="mobile-menu-title" aria-hidden="true" data-a11y-dialog-native>
     <div class="mobile-menu-container">
@@ -118,7 +118,6 @@
         <li><a href="./product-listing.html" class="px-6">All Desktops</a></li>
         <li><a href="./help-me-choose.html" class="px-6">Help Me Choose</a></li>
         <li><a href="./news-articles.html" class="px-6">News & Articles</a></li>
-
         <!-- Search -->
         <li class="px-6 hidden">
           <div class="mobile-search">
@@ -126,7 +125,6 @@
             <input type="text" placeholder="Enter keywords" title="Enter keywords"/>
           </div>
         </li>
-
         <!-- Account -->
         <li class="mobile-account-section">
           <button class="mobile-account-toggle px-6 d-flex-align mobile-account-link" aria-expanded="false">

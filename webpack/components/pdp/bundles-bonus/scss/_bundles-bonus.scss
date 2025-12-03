@@ -24,6 +24,7 @@
         color: var(--color-warning);
         @include mix.m(3, "b");
         @include mix.m(3, "t");
+        @include typo.text-bolder;
       }
       &-instructions {
         @include mix.m(6, "b");

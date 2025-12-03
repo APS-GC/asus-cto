@@ -121,14 +121,12 @@
     @include mix.m(1, "b");
 
     .bonus-label {
-      // @include typo.text-sm();
       font-weight: var(--medium);
       color: var(--color-primary-700);
       @include mix.m(1, "r");
     }
 
     .bonus-value {
-      // @include typo.text-sm();
       color: var(--color-primary-900);
       font-weight: var(--regular);
     }

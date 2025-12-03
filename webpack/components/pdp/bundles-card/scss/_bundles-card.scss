@@ -9,7 +9,7 @@
   @include mix.p(6);
   border: 1px solid var(--color-primary-200);
   border-radius: 8px;
-  min-height: 130px;
+  min-height: 128px;
   position: relative;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -64,8 +64,6 @@
       list-style-position: outside;
       margin-bottom: 5px;
       line-height: 1.4;
-      // max-width: 200px;
-      // word-wrap: break-word;
     }
   }
   .bundle-card-bottom {

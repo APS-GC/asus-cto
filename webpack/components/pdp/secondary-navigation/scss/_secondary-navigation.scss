@@ -27,6 +27,7 @@
       .cmp-tabs__tab {
         flex-shrink: 0;
         width: auto;
+        @include mix.p(6, "y");
       }
     }
   }

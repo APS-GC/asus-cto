@@ -1,6 +1,6 @@
 [
   {
-    "id": "rog-g700-2025",
+    "id": "rog-g700-2025_B",
     "bazaarvoiceProductId": "ASUS_M1_25392_P",
     "name": "ROG G700 (2025)",
     "model": "G700TF-XS776",
@@ -130,7 +130,7 @@
     }
   },
   {
-    "id": "rog-strix-g13chr",
+    "id": "rog-strix-g13chr_c",
     "bazaarvoiceProductId": "ASUS_M1_25392_P",
     "name": "ROG Strix G13CHR",
     "model": "G13CHR-51440F199W",
@@ -233,7 +233,9 @@
         "description": "NVIDIA Reflex 2 with Frame Warp"
       }
     ],
-    "price": "1,080",
+     "price": "999",
+    "originalPrice": "1,099",
+    "discount": "100",
     "estorePriceTooltipText": "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.",
     "purchaseLimit": "A maximum of 5 pieces per customer.",
     "shippingInfo": "Up to 5 working days to ship.",
@@ -245,7 +247,7 @@
     }
   },
   {
-    "id": "rog-strix-g10dk",
+    "id": "rog-strix-g10dk_G",
     "bazaarvoiceProductId": "ASUS_M1_25392_P",
     "name": "ROG Strix G10DK G10DK",
     "model": "G10DK(SPNL)-BBR54S-CB",

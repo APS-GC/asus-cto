@@ -10,6 +10,8 @@ class TooltipManager {
     // Track last user interaction (keyboard vs pointer)
     this.lastInteraction = { type: null, time: 0 };
 
+    this.showTooltipTimeout = null;
+
     this.init();
   }
 
@@ -66,10 +68,42 @@ class TooltipManager {
 
     document.addEventListener('keydown', this._onKeyDown, true);
     document.addEventListener('pointerdown', this._onPointerDown, true);
-    document.addEventListener('visibilitychange', this._onVisibilityChange, true);
+    window.addEventListener('scroll', this.updateVisibleTooltipPosition.bind(this));
 
-    window.addEventListener('resize', this.hideAllTooltips.bind(this));
-    window.addEventListener('scroll', this.hideAllTooltips.bind(this), { passive: true });
+    // Setup document click handler to hide tooltips if clicked outside
+    let startX, startY, moved;
+
+    document.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      startX = t.clientX;
+      startY = t.clientY;
+      moved = false;
+    });
+
+    document.addEventListener('touchmove', (e) => {
+      const t = e.touches[0];
+      const dx = Math.abs(t.clientX - startX);
+      const dy = Math.abs(t.clientY - startY);
+      if (dx > 10 || dy > 10) moved = true;
+    });
+
+    document.addEventListener('touchend', (e) => {
+      if (!moved) {
+        if (this.currentVisibleTooltip && this.currentVisibleTooltip?.trigger !== e.target) {
+          this.hideTooltip(this.currentVisibleTooltip.trigger);
+        }
+      }
+    });
+
+    // Hide tooltips on swiper change
+    window.addEventListener('swiper-slide-change', () => {
+      this.hideAllTooltips();
+    });
+
+    // Setup resize observer for tooltip content
+    this.resizeObserver = new ResizeObserver(() => {
+      this.updateVisibleTooltipPosition();
+    });
   }
 
   registerInitialTooltips() {
@@ -94,10 +128,9 @@ class TooltipManager {
     }
 
     // Accessibility attributes
-    trigger.setAttribute('aria-haspopup', 'dialog');
-    trigger.setAttribute('aria-expanded', 'false');
     tooltip.setAttribute('role', 'tooltip');
     tooltip.setAttribute('aria-hidden', 'true');
+    tooltip.setAttribute('aria-live', 'polite');
 
     // Initial off-screen style
     tooltip.style.position = 'fixed';
@@ -145,7 +178,6 @@ class TooltipManager {
     // Attach listeners
     if (isTouch) {
       trigger.addEventListener('click', onTap); // use click, more reliable on iOS
-      document.addEventListener('click', onDocTap);
     } else {
       trigger.addEventListener('mouseenter', onHoverIn);
       trigger.addEventListener('mouseleave', onHoverOut);
@@ -160,10 +192,13 @@ class TooltipManager {
       listeners: { onHoverIn, onHoverOut, onFocus, onBlur, onTap, onDocTap, onTooltipHoverOut },
       hideTimeout: null,
     });
+
+    // Observe tooltip content for changes
+    this.resizeObserver.observe(tooltip);
   }
 
   showTooltip(trigger) {
-    setTimeout(() => {
+    this.showTooltipTimeout = setTimeout(() => {
       const tooltipData = this.tooltips.get(trigger);
       if (!tooltipData) return;
 
@@ -189,13 +224,14 @@ class TooltipManager {
       element.style.visibility = prevVisibility || '';
 
       element.setAttribute('aria-hidden', 'false');
-      trigger.setAttribute('aria-expanded', 'true');
 
       this.currentVisibleTooltip = { trigger, element };
     }, 100);
   }
 
   hideTooltip(trigger) {
+    clearTimeout(this.showTooltipTimeout);
+
     const tooltipData = this.tooltips.get(trigger);
     if (!tooltipData) return;
 
@@ -204,7 +240,6 @@ class TooltipManager {
     // If it's currently visible, remove classes / attributes immediately
     element.classList.remove('tooltip--visible');
     element.setAttribute('aria-hidden', 'true');
-    trigger.setAttribute('aria-expanded', 'false');
 
     if (this.currentVisibleTooltip?.trigger === trigger) {
       this.currentVisibleTooltip = null;
@@ -246,20 +281,21 @@ class TooltipManager {
         const canPlaceRight = space.right > tooltipRect.width + padding;
         return {
           left: canPlaceRight
-            ? triggerRect.right + padding
-            : triggerRect.left - tooltipRect.width - padding,
+            ? triggerRect.right + padding // ✅ Default: right
+            : triggerRect.left - tooltipRect.width - padding, // fallback: left
           top: triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2,
           currentPosition: canPlaceRight ? 'right' : 'left',
         };
       },
+
       y: () => {
-        const canPlaceBottom = space.bottom > tooltipRect.height + padding;
+        const canPlaceTop = space.top > tooltipRect.height + padding;
         return {
-          top: canPlaceBottom
-            ? triggerRect.bottom + padding
-            : triggerRect.top - tooltipRect.height - padding,
+          top: canPlaceTop
+            ? triggerRect.top - tooltipRect.height - padding // ✅ Default: top
+            : triggerRect.bottom + padding, // fallback: bottom
           left: triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2,
-          currentPosition: canPlaceBottom ? 'bottom' : 'top',
+          currentPosition: canPlaceTop ? 'top' : 'bottom',
         };
       },
       auto: () => {
@@ -335,8 +371,8 @@ class TooltipManager {
 
     tooltip.style.position = 'fixed';
     // Ensure we don't place negative values; keep inside viewport padding
-    tooltip.style.top = `${Math.max(padding, Math.round(posResult.top))}px`;
-    tooltip.style.left = `${Math.max(padding, Math.round(posResult.left))}px`;
+    tooltip.style.top = `${Math.round(posResult.top)}px`;
+    tooltip.style.left = `${Math.round(posResult.left)}px`;
 
     this.updatePositionClass(tooltip, posResult.currentPosition);
   }
@@ -372,7 +408,6 @@ class TooltipManager {
     document.removeEventListener('keydown', this._onKeyDown, true);
     document.removeEventListener('pointerdown', this._onPointerDown, true);
     document.removeEventListener('visibilitychange', this._onVisibilityChange, true);
-    window.removeEventListener('resize', this.updateVisibleTooltipPosition);
     window.removeEventListener('scroll', this.updateVisibleTooltipPosition, { passive: true });
 
     // Remove per-trigger listeners and restore DOM if needed

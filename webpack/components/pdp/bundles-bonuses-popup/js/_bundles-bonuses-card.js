@@ -109,46 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleConfirmAction(selectedValues) {
     // No validation required - allow any combination of selections
 
-    // Process the data (but don't close dialog here anymore)
-    const processedData = {
-      timestamp: new Date().toISOString(),
-      selections: selectedValues,
-      summary: {
-        colour: selectedValues.colour?.label || 'Not selected',
-        spec: selectedValues.spec?.label || 'Not selected',
-      },
-    };
     return true;
-  }
-
-  /**
-   * Show validation error for missing selections
-   * @param {Array} missingSelections - Array of missing selection names
-   */
-  function showValidationError(missingSelections) {
-    // Alternatively, you could highlight the missing sections
-    missingSelections.forEach((name) => {
-      highlightMissingSelection(name);
-    });
-  }
-
-  /**
-   * Highlight missing selection sections
-   * @param {string} selectionName - Name of the missing selection
-   */
-  function highlightMissingSelection(selectionName) {
-    const radioGroup = document.querySelector(`input[name="${selectionName}"]`);
-    if (radioGroup) {
-      const container = radioGroup.closest('.cmp-custom__popup-content__item__text__options');
-      if (container) {
-        container.classList.add('radio-error-border');
-
-        // Remove highlight after 3 seconds
-        setTimeout(() => {
-          container.classList.remove('radio-error-border');
-        }, 3000);
-      }
-    }
   }
 
   /**
@@ -185,9 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
       featuresContainer.classList.remove('opacity-7');
       featuresContainer.classList.add('opacity-1');
     }, 100);
-
-    // Get bundle card identifier for logging
-    const bundleCardId = bundleCard.querySelector('input[type="radio"]')?.id || 'unknown';
   }
 
   /**
@@ -292,6 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       return JSON.parse(storedData);
     } catch (error) {
+      console.debug('Failed to parse storedData:', error);
       return null;
     }
   }
@@ -312,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Preselect radio buttons based on stored values
     Object.keys(storedValues).forEach((name) => {
       const storedValue = storedValues[name];
-      if (storedValue && storedValue.id) {
+      if (storedValue?.id) {
         const radioButton = document.querySelector(
           `.cmp-bundles-dialog input[name="${name}"][id="${storedValue.id}"]`,
         );
@@ -327,7 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
               container.classList.remove('bg-color-radio');
             }, 1000);
           }
-        } else {
         }
       }
     });

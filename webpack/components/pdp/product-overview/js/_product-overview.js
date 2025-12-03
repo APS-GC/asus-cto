@@ -157,4 +157,50 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
+  setupAccessibility();
 });
+
+function setupAccessibility() {
+  const container = document.querySelector('.cmp-select-wrapper').closest('.choices');
+  const mobileContainer = document.querySelector('.cmp-select-wrapper-mob').closest('.choices');
+  if (!container || !mobileContainer) return;
+
+  const inner = container.querySelector('.choices__inner');
+  if (!inner) return;
+
+  // Move ARIA attributes from `.choices` to `.choices__inner`
+  const ariaAttrs = ['role', 'aria-label', 'aria-expanded', 'aria-haspopup', 'tabindex'];
+  ariaAttrs.forEach((attr) => {
+    const val = container.getAttribute(attr);
+    if (val !== null) {
+      inner.setAttribute(attr, val);
+      container.removeAttribute(attr);
+    }
+  });
+
+  // Ensure correct combobox semantics on `.choices__inner`
+  inner.setAttribute('role', 'combobox');
+  inner.setAttribute('aria-haspopup', 'listbox');
+  inner.setAttribute('aria-expanded', 'false');
+
+  // Dropdown list should have role="listbox"
+  const dropdownList = container.querySelector('.choices__list--dropdown .choices__list');
+  if (dropdownList) {
+    dropdownList.setAttribute('role', 'listbox');
+    dropdownList.setAttribute('tabindex', '-1');
+  }
+
+  // Remove role/aria-selected from the single item display
+  const singleItem = container.querySelector('.choices__list--single .choices__item');
+  if (singleItem) {
+    singleItem.removeAttribute('role');
+    singleItem.removeAttribute('aria-selected');
+  }
+
+  // Get aria label from select box and add to cobmobox and listbox
+  const ariaLabel = this.selectElement.getAttribute('aria-label');
+  if (ariaLabel) {
+    inner.setAttribute('aria-label', ariaLabel);
+    dropdownList.setAttribute('aria-label', ariaLabel);
+  }
+}

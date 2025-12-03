@@ -3,17 +3,32 @@ import {
   isAuthorEnvironment,
 } from '../../scripts/utils.js';
 import { loadSwiper } from '../../scripts/scripts.js';
+import { getBlockConfigs } from '../../scripts/configs.js';
+
+// Default values from authoring configuration
+const DEFAULT_CONFIG = {
+  title: 'Featured News Articles',
+  seeAllButtonText: 'See all News Articles',
+  seeAllButtonLinkTo: '',
+  openLinkInNewTab: false,
+  itemCount: 7
+};
+
 const itemsStartIndex = 5;
 export default async function decorate(block) {
+  // Get configuration using getBlockConfigs
+  const config = await getBlockConfigs(block, DEFAULT_CONFIG, 'featured-news-articles');
+  
   const divs = block.children;
-  const itemCount = Number(divs[4].textContent.trim()) || 7;
+  const itemCount = config.itemCount || 7;
+  
   const mockupContainer = document.createRange().createContextualFragment(`
         <div class="cmp-container container">
           <div class="carousel panelcontainer">
             <div class="section-heading">
               <div class="section-heading__text-group">
                 <h2 class="section-heading__title">${
-                  divs[0].textContent.trim() || 'Featured News Articles'
+                  config.title || 'Featured News Articles'
                 }</h2>
               </div>
               <div class="section-heading__action-buttons cmp-carousel__actions">
@@ -32,30 +47,65 @@ export default async function decorate(block) {
           </div>
         </div>
         <div class="section-actions-container">
-          <a class='section-actions-btn btn btn-link' href='${divs[2].textContent.trim()}' target='${
-    divs[3].textContent?.trim().toLowerCase() === 'true' ? '_blank' : '_self'
-  }'>
+          <a class="section-actions-btn btn btn-link" href="${config.seeAllButtonLinkTo || ''}" target="${
+    config.openLinkInNewTab === true || config.openLinkInNewTab === 'true' ? '_blank' : '_self'
+  }">
             ${
-              divs[1]?.textContent?.trim() || 'See all News Articles'
+              config.seeAllButtonText || 'See all News Articles'
             }<img src="${`${window.hlx.codeBasePath}/icons/icon-arrow.svg`}" alt="Arrow Right">
             </a>
         </div>`);
-
+  
+  // Extract article fields from the models (featured-news-article model)
+  const articleFields = ['articleTitle', 'articleSummary', 'media', 'imageAlt', 'postedDate', 'articleLinkTo', 'articleOpenInNewTab'];
+  
   const cardNodes = [];
   for (let i = itemsStartIndex; i < divs.length; i++) {
     if (i-itemsStartIndex > itemCount - 1) break;
     const subDivs = divs[i].children;
-    const title = subDivs[0] ? subDivs[0].textContent?.trim() : '';
-    const summary = subDivs[1] ? subDivs[1].textContent?.trim() : '';
-    const image = subDivs[2]
-      ? subDivs[2].querySelector('img')?.getAttribute('src')
-      : '';
-    const imageAlt = subDivs[3] ? subDivs[3].textContent?.trim() : '';
-    const postedDate = subDivs[4] ? subDivs[4].textContent?.trim() : '';
-    const articleLink = subDivs[5] ? subDivs[5].textContent?.trim() : '';
-    const articleOpenInNewTab = subDivs[6]
-      ? subDivs[6].textContent?.trim().toLowerCase() === 'true'
-      : false;
+    
+    // Parse article data dynamically based on field order
+    const articleData = {
+      title: '',
+      summary: '',
+      image: '',
+      imageAlt: '',
+      postedDate: '',
+      articleLink: '',
+      articleOpenInNewTab: false
+    };
+    
+    // Map cells to fields
+    Array.from(subDivs).forEach((cell, index) => {
+      const fieldName = articleFields[index];
+      
+      switch(fieldName) {
+        case 'articleTitle':
+          articleData.title = cell.textContent?.trim() || '';
+          break;
+        case 'articleSummary':
+          articleData.summary = cell.textContent?.trim() || '';
+          break;
+        case 'media':
+          articleData.image = cell.querySelector('img')?.getAttribute('src') || '';
+          break;
+        case 'imageAlt':
+          articleData.imageAlt = cell.textContent?.trim() || '';
+          break;
+        case 'postedDate':
+          articleData.postedDate = cell.textContent?.trim() || '';
+          break;
+        case 'articleLinkTo':
+          articleData.articleLink = cell.textContent?.trim() || '';
+          break;
+        case 'articleOpenInNewTab':
+          articleData.articleOpenInNewTab = cell.textContent?.trim().toLowerCase() === 'true';
+          break;
+      }
+    });
+    
+    const { title, summary, image, imageAlt, postedDate, articleLink, articleOpenInNewTab } = articleData;
+
 
     const mockup = document.createRange().createContextualFragment(`
       <div class="cmp-carousel__item">

@@ -25,6 +25,10 @@ class ProductCompare {
 
   init() {
     if (!this.container) return;
+    if (window.location.pathname.endsWith('product-comparison.html')) {
+      this.container.classList.add('is-hidden');
+      return;
+    }
 
     this.render();
     this.updateAllCheckboxes();
@@ -105,21 +109,22 @@ class ProductCompare {
     const { id, name, sku, pdp, image } = checkbox.dataset;
     const product = { id, name, sku, pdpUrl: pdp, image };
 
-    // Focus on the container to ensure acessed by screen reader
-    this.container.focus();
-
     if (checkbox.checked) {
       if (this.state.products.length >= this.COMPARE_LIMIT) {
         this.showError('limit');
         checkbox.checked = false;
         return;
       }
+
       if (!this.state.products.some((p) => p.id === id)) {
         this.storeProducts([...this.state.products, product]);
       }
     } else {
       this.removeProduct(id);
     }
+
+    // Focus on the container to ensure acessed by screen reader
+    this.container.focus();
   }
 
   // --- Actions ---
@@ -148,31 +153,36 @@ class ProductCompare {
     const slide = document.createElement('div');
     slide.className = 'swiper-slide';
 
-    const slot = document.createElement('div');
-    slot.className = `cmp-product-compare__slot ${product ? 'is-filled' : 'is-empty'}`;
-    slot.ariaLabel = `Add up to 4 products to compare`;
-    slot.role = 'button';
-    slot.tabIndex = 0;
-    slide.appendChild(slot);
-
     if (product) {
+      const slot = document.createElement('div');
+      slot.className = `cmp-product-compare__slot is-filled`;
+      slot.ariaLabel = `Product ${product.name} added for the comparison`;
+      slot.role = 'group';
+      slide.appendChild(slot);
       slot.innerHTML = `
         <div class="cmp-product-compare__item">
-          <a href="${product.pdpUrl}" class="cmp-product-compare__link">
-            <div class="cmp-product-compare__image-block">
-              <img src="${product.image}" alt="${product.name}" class="cmp-product-compare__image"/>
+          <a href="pdp.html" class="cmp-product-compare__link">
+            <div class="cmp-product-compare__image-block" aria-hidden="true">
+              <img src="${product.image}" alt="${product.name}" class="cmp-product-compare__image" />
             </div>
             <div class="cmp-product-compare__text-block">
               <div class="cmp-product-compare__name">${product.name}</div>
               <div class="cmp-product-compare__sku">${product.sku}</div>
             </div>
           </a>
-          <button class="cmp-product-compare__remove" data-id="${product.id}" aria-label="Remove product"></button>
+          <button class="cmp-product-compare__remove" data-id="${product.id}" aria-label="Remove ${product.name} from comparison"></button>
         </div>
       `;
     } else {
+      const slot = document.createElement('a');
+      slot.className = `cmp-product-compare__slot is-empty`;
+      slot.ariaLabel = `Add up to 4 products to compare`;
+      slot.role = 'button';
+      slot.tabIndex = 0;
+      slot.href = 'product-listing.html';
+      slide.appendChild(slot);
       slot.innerHTML = `
-        <div class="cmp-product-compare__placeholder">
+        <div class="cmp-product-compare__placeholder" >
           <span class="cmp-product-compare__add-icon" aria-hidden="true"></span>
           <span>Add up to 4 products to compare</span>
         </div>
@@ -210,6 +220,10 @@ class ProductCompare {
 
     if (this.dom.toggleBtn) {
       this.dom.toggleBtn.setAttribute('aria-expanded', String(!this.state.isCollapsed));
+      const div = document.querySelector('.cmp-product-compare');
+      setTimeout(() => {
+        div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 300);
     }
 
     this.dom.countSpan.textContent = productCount;
@@ -220,14 +234,6 @@ class ProductCompare {
     this.dom.errorContainer.querySelectorAll('[data-error]').forEach((el) => {
       el.hidden = true;
     });
-
-    if (productCount >= this.COMPARE_LIMIT && !this.state.isCollapsed) {
-      this.showError('limit');
-    }
-
-    if (productCount === 1 && !this.state.isCollapsed) {
-      this.showError('minimum');
-    }
 
     const swiperInstance = this.dom.list.querySelector('.swiper').swiperInstance;
     swiperInstance.removeAllSlides();
@@ -249,6 +255,30 @@ class ProductCompare {
 // Init
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.querySelector('[data-compare-container]');
-  container.setAttribute('tabindex', '0');
+  container.setAttribute('tabindex', '-1');
   if (container) new ProductCompare(container).init();
 });
+
+function handleStickyForCompareWindow() {
+  if (document.querySelector('.cmp-product-compare__slot.is-filled')) {
+    const div = document.querySelector('.cmp-product-compare');
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    const atBottom = scrollTop + windowHeight >= documentHeight - 10;
+
+    if (atBottom) {
+      div.classList.add('relative');
+    } else {
+      div.classList.remove('relative');
+    }
+  }
+}
+
+let timeout;
+window.addEventListener('scroll', () => {
+  clearTimeout(timeout);
+  timeout = setTimeout(handleStickyForCompareWindow, 50);
+});
+
+handleStickyForCompareWindow();

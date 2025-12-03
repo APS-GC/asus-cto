@@ -58,5 +58,44 @@
     ></script>
 
     <script src="https://apps.bazaarvoice.com/deployments/asustek/cto_main_site_black/production/en_US/bv.js" defer></script>
+
+    <script>
+      window.AsusAPIConfig = {
+        appID: '',
+        system: 'cto',
+        websitePath: 'us',
+        websiteID: 1,
+        language: "en-us",
+        eliteToken: '',
+        simplifyHeader: false,
+        simplifyFooter: false,
+        showECFooter: false,
+        isHasCookieBanner: true,
+        cookieBannerHold: false,
+        cookieBannerElement: document.body,
+        reminderElement: document.body,
+        reminder: async function (reminderWebsiteCode) {
+          const data = {
+            reminderURL: reminderWebsiteCode ? `https://www.asus.com/${reminderWebsiteCode}` : "",
+          }
+          return data;
+        },
+        theme: "cto",
+        campaignId: "639b84ea-ca6a-4f5e-a554-ce0c6e4bbb9e",
+        zIndex: 11900,
+        development: false,
+        pageKey: "",
+        corsID: "",
+        customSiteId: "",
+        pageType: "",
+      };
+    </script>
+    <!-- Header/Footer API --> <!-- The subscribeform.min.js script is loaded by default -->
+    <!-- Header/Footer is not required -->
+    <!-- <script src="https://dlcdnimgs.asus.com/vendor/public/js/asus_config.min.js"></script> -->
+    <!-- CookieBanner API -->
+    <script src="https://dlcdnimgs.asus.com/vendor/cookie-banner/js/alert-info.js"></script>
+    <!-- SubscribeForm API -->
+    <script src="https://dlcdnimgs.asus.com/vendor/subscribe-form/js/subscribeform.min.js"></script>
   </body>
 </html>

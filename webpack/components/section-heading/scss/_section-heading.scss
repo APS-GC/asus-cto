@@ -59,7 +59,7 @@
     flex-shrink: 0; // Prevent arrows from shrinking
   }
 
-  @include mix.respond-to("lg", "max") {
+  @include mix.respond-to("xl", "max") {
     @include mix.m(5, "b");
 
     &__text-group {
@@ -78,6 +78,20 @@
 
     .section-heading__action-buttons {
       @include mix.spacer(gap, 3);
+    }
+  }
+}
+
+// Product matches page specific: left align heading on tablet
+.product-matches-page {
+  @include mix.respond-to("lg", "max") {
+    .section-heading.content-center {
+      justify-content: flex-start;
+      text-align: left;
+
+      .section-heading__text-group {
+        align-items: flex-start;
+      }
     }
   }
 }
