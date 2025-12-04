@@ -622,22 +622,26 @@ export default async function decorate(block) {
     trackPromotionView(promotions);
   }, 500);
 
-  // Track indicator clicks
-  block.querySelectorAll('.cmp-hero-banner__indicator').forEach((indicator, index) => {
-    indicator.addEventListener('click', () => {
-      const bannerPosition = `hero_banner_${blockPosition}_${index + 1}`;
-      
-      // Check current autoplay state (play or pause)
-      const swiperElement = block.querySelector('.swiper');
-      const isPaused = swiperElement?.classList.contains('is-autoplay-paused');
-      const currentState = isPaused ? 'pause' : 'play';
-      
-      trackIndicatorBannerClick({
-        bannerPosition: bannerPosition,
-        indicatorAction: currentState
+  // Track indicator clicks (wait for Swiper to initialize)
+  setTimeout(() => {
+    const indicators = block.querySelectorAll('.cmp-hero-banner__indicator');
+    
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        const bannerPosition = `hero_banner_${blockPosition}_${index + 1}`;
+        
+        // Check current autoplay state (play or pause)
+        const swiperElement = block.querySelector('.swiper');
+        const isPaused = swiperElement?.classList.contains('is-autoplay-paused');
+        const currentState = isPaused ? 'pause' : 'play';
+  
+        trackIndicatorBannerClick({
+          bannerPosition: bannerPosition,
+          indicatorAction: currentState
+        });
       });
     });
-  });
+  }, 600);
 
   // Track promotionClick when CTA is clicked
   block.querySelectorAll('.cta-button').forEach((ctaButton, index) => {
