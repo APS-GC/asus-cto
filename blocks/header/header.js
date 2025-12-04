@@ -1,5 +1,5 @@
 import { createOptimizedPictureExternal, createOptimizedPicture, moveInstrumentation } from '../../scripts/scripts.js';
-
+import {callSSOValidation} from '../../scripts/api-service.js'
 // Header configuration - calculated once for the entire module
 const HeaderConfig = {
   get baseUrl() {
@@ -858,6 +858,9 @@ function initializeHeader(block) {
       }
     });
   }
+
+
+  callSSOValidation();
 }
 
 // Forward declaration for refreshHeader
@@ -1171,4 +1174,5 @@ export default function decorate(block) {
 
   // Add header functionality
   initializeHeader(block); // eslint-disable-line no-use-before-define
+
 }
