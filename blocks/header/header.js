@@ -1,5 +1,6 @@
 import { createOptimizedPictureExternal, createOptimizedPicture, moveInstrumentation } from '../../scripts/scripts.js';
 import { getUserData, logout } from './sso.js';
+const LOGIN_URL = `https://dev-account.asus.com/hk/loginform.aspx?returnUrl=${location.href}?login_background=general_white`;
 // Header configuration - calculated once for the entire module
 const HeaderConfig = {
   get baseUrl() {
@@ -754,7 +755,12 @@ function initializeHeader(block) {
             // trigger ssoLogout
             ssoLogout(block);
             e.preventDefault();
-          } 
+          } else{
+            if(!isLoggedIn){
+              e.preventDefault();
+              location.href = LOGIN_URL;
+            }
+          }
         }
         // eslint-disable-next-line no-empty
         // For other items, you can add actual navigation logic here
@@ -773,15 +779,18 @@ function initializeHeader(block) {
           index, isLoggedIn, combinedMenuLength: combinedMenuItems.length, linkText: link.textContent,
         });
 
-        link.addEventListener('click', (e) => {
-        if (link.textContent.toUpperCase() === 'SIGN OUT') {
-          if (isLoggedIn) {
-            // trigger ssoLogout
-            ssoLogout(block);
-            e.preventDefault();
-          } 
-        }
-      });
+          if (link.textContent.toUpperCase() === 'SIGN OUT') {
+            if (isLoggedIn) {
+              // trigger ssoLogout
+              ssoLogout(block);
+              e.preventDefault();
+            } 
+          }else{
+            if(!isLoggedIn){
+              e.preventDefault();
+              location.href = LOGIN_URL;
+            }
+          }
         // For other items, you can add actual navigation logic here
       });
     }
