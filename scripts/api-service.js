@@ -6,6 +6,7 @@
 
 import { API_URIS } from '../constants/api-constants.js';
 import { getConfigValue } from './configs.js';
+import { getCookie } from './cookie.js'
 
 /**
  * Get full API endpoint URL
@@ -145,23 +146,17 @@ export async function fetchGameList(
 
 /**
  * Call SSO validation API
- * @param {Object} params - Request parameters
- * @param {string} params.ticket - Auth ticket
- * @param {string} params.type - Validation type, e.g. 'check'
+ * @param {string} type - Validation type, e.g. 'check' 'user' 'logout'
  * @returns {Promise<Object>} API response data
  */
-export async function callSSOValidation(params) {
+export async function callSSOValidation(type='check') {
   const ssoEndpoint = 'https://211051-ssointegrationapi-stage.adobeioruntime.net/api/v1/web/app-builder-integration-api/sso';
-  // Hardcoded for testing
-  const p = {
-    ticket: '7f01e92a44d043a5b1943e483cbd1954',
-    type: 'check'
-  }
-
+  const aTicket = getCookie('aTicket') || '7f01e92a44d043a5b1943e483cbd1954'
+  if(!aTicket)return;
+  const url = `${ssoEndpoint}?ticket=${aTicket}&type=${type}`
   try {
-    const response = await fetch(ssoEndpoint, {
+    const response = await fetch(url, {
       method:"get",
-      params:p,
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -169,17 +164,8 @@ export async function callSSOValidation(params) {
       mode: 'cors',
       timeout: 30000,
     });
-
-    
-    const data = response.json();
-    debugger
-    if (response.status !== 200) {
-      throw new Error(`Request failed, status code: ${response.status}`);
-    }
-
-    return response.data;
+    return await response.json();
   } catch (error) {
-    debugger
     console.error("SSO API call error:", error.message);
     throw new Error(`SSO validation failed: ${error.message}`);
   }

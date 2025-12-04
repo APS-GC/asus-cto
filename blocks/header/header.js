@@ -1,5 +1,5 @@
 import { createOptimizedPictureExternal, createOptimizedPicture, moveInstrumentation } from '../../scripts/scripts.js';
-import {callSSOValidation} from '../../scripts/api-service.js'
+import { getUserData, logout } from './sso.js';
 // Header configuration - calculated once for the entire module
 const HeaderConfig = {
   get baseUrl() {
@@ -470,7 +470,16 @@ function buildNavigation(navigationItems, showProfile, showCart, profileMenuItem
     ? [...profileMenuItems, ...(profileMenuLoggedInItems || [])]
     : profileMenuItems;
 
-  const profileMenuHTML = currentProfileMenuItems.map((item, index) => `
+  //unique menu
+  let uniqueMenuItems = Array.from(new Map(
+    currentProfileMenuItems.map(item => [item.linkText, item])
+  ).values());
+
+  uniqueMenuItems = uniqueMenuItems.filter(r=>r.linkText.toUpperCase() !== (isLoggedIn ? 'LOGIN' : 'SIGH OUT'))
+
+  
+
+  const profileMenuHTML = uniqueMenuItems.map((item, index) => `
     <li class="profile-menu__item" data-menu-index="${index}"><a href="${item.linkUrl}">${item.linkText}</a></li>
   `).join('');
 
@@ -532,7 +541,14 @@ function buildMobileMenu(navigationItems, profileMenuItems, profileMenuLoggedInI
     ? [...profileMenuItems, ...(profileMenuLoggedInItems || [])]
     : profileMenuItems;
 
-  const mobileProfileItems = currentMobileProfileMenuItems.map((item, index) => `
+  //unique menu
+  let uniqueMenuItems = Array.from(new Map(
+    currentMobileProfileMenuItems.map(item => [item.linkText, item])
+  ).values());
+
+  uniqueMenuItems = uniqueMenuItems.filter(r=>r.linkText.toUpperCase() !== (isLoggedIn ? 'LOGIN' : 'SIGH OUT'))
+
+  const mobileProfileItems = uniqueMenuItems.map((item, index) => `
     <li data-mobile-menu-index="${index}"><a href="${item.linkUrl}">${item.linkText}</a></li>
   `).join('');
 
@@ -567,18 +583,18 @@ function buildMobileMenu(navigationItems, profileMenuItems, profileMenuLoggedInI
 }
 
 // Mock login function
-function mockLogin() {
-  localStorage.setItem('isLoggedIn', 'true');
-  localStorage.setItem('userName', 'John Doe');
+async function ssoLogin(block) {
+  await getUserData();
   // Automatically add items to cart for logged-in user
   localStorage.setItem('hasCartItems', 'true');
+  refreshHeader(block);// eslint-disable-line no-use-before-define
 }
 
-// Mock logout function
-function mockLogout() {
-  localStorage.removeItem('isLoggedIn');
-  localStorage.removeItem('userName');
+async function ssoLogout(block){
+  await logout();
+  refreshHeader(block);// eslint-disable-line no-use-before-define
 }
+
 
 // Mock cart data for testing
 function getMockCartData() {
@@ -732,12 +748,10 @@ function initializeHeader(block) {
         if (index === 0) {
           if (!isLoggedIn) {
             // First item when not logged in - trigger login
-            mockLogin();
-            refreshHeader(block);// eslint-disable-line no-use-before-define
+            ssoLogin(block);
           } else {
-            // First item when logged in - trigger logout
-            mockLogout();
-            refreshHeader(block);// eslint-disable-line no-use-before-define
+            // First item when logged in - trigger ssoLogout
+            ssoLogout(block);
           }
         } // eslint-disable-next-line no-empty
         // For other items, you can add actual navigation logic here
@@ -763,14 +777,12 @@ function initializeHeader(block) {
             // First item when not logged in - trigger login
             // eslint-disable-next-line no-console
             console.log('Triggering mobile login');
-            mockLogin();
-            refreshHeader(block);// eslint-disable-line no-use-before-define
+            ssoLogin(block);
           } else {
-            // First item when logged in - trigger logout
+            // First item when logged in - trigger ssoLogout
             // eslint-disable-next-line no-console
-            console.log('Triggering mobile logout (first item when logged in)');
-            mockLogout();
-            refreshHeader(block);// eslint-disable-line no-use-before-define
+            console.log('Triggering mobile ssoLogout (first item when logged in)');
+            ssoLogout(block);
           }
         } else {
           // eslint-disable-next-line no-console
@@ -820,8 +832,7 @@ function initializeHeader(block) {
       e.preventDefault();
       // eslint-disable-next-line no-console
       console.log('Cart sign-in clicked');
-      mockLogin();
-      refreshHeader(block);// eslint-disable-line no-use-before-define
+      ssoLogin(block);
     });
   }
 
@@ -858,16 +869,13 @@ function initializeHeader(block) {
       }
     });
   }
-
-
-  callSSOValidation();
 }
 
 // Forward declaration for refreshHeader
 let refreshHeader;
 
 // Refresh header function to re-render with current login state
-refreshHeader = (block) => {
+refreshHeader = async (block) => {
   // Use stored original data instead of re-parsing from modified DOM
   let data;
   if (block._originalHeaderData) {
@@ -1065,8 +1073,7 @@ async function updateMiniCartDisplay(block) {
       e.preventDefault();
       // eslint-disable-next-line no-console
       console.log('Cart sign-in clicked');
-      mockLogin();
-      refreshHeader(block);// eslint-disable-line no-use-before-define
+      ssoLogin(block);
     });
   }
 }
@@ -1085,8 +1092,8 @@ function mockClearCart() {
 if (typeof window !== 'undefined') {
   window.mockAddToCart = mockAddToCart;
   window.mockClearCart = mockClearCart;
-  window.mockLogin = mockLogin;
-  window.mockLogout = mockLogout;
+  window.ssoLogin = ssoLogin;
+  window.ssoLogout = ssoLogout;
 
   // Add function to refresh mini cart for testing
   window.refreshMiniCart = () => {
@@ -1132,7 +1139,8 @@ function optimizeLogoImages(block) {
   });
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
+  
   const data = parseHeaderData(block);
 
   // Store original parsed data for use in refreshHeader function
@@ -1173,6 +1181,7 @@ export default function decorate(block) {
   optimizeLogoImages(block);
 
   // Add header functionality
-  initializeHeader(block); // eslint-disable-line no-use-before-define
+  //initializeHeader(block); // eslint-disable-line no-use-before-define
 
+  ssoLogin(block);
 }
