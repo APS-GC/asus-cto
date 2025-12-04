@@ -14,6 +14,7 @@ export default async function decorate(block) {
   await loadSwiperCSS();
   await loadSwiper();
   await import('../../scripts/carousel.js');
+  await loadChoisesJs();
 
   // Once loaded, render the component
   await renderHelpMeChoose(block);
@@ -161,6 +162,26 @@ async function renderHelpMeChoose(block) {
 }
 
 
+
+
+
+// Helper to load noUiSlider only once
+let noChoisePromise = null;
+/**
+ * Loads the noUiSlider library, ensuring it's only loaded once.
+ */
+function loadChoisesJs() {
+  if (!noChoisePromise) {
+    noChoisePromise = loadScript(
+      'https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js'
+    ).catch((err) => {
+      console.error('Failed to load noUiSlider:', err);
+      throw err;
+    });
+  }
+  return noChoisePromise;
+}
+
 // Helper to load noUiSlider only once
 let noUiSliderPromise = null;
 /**
@@ -257,27 +278,41 @@ async transform(input) {
     isCustomizable: true,  // as per target example
     buyLink: "./pdp.html",        // placeholder (no equivalent in source)
     customizeLink: "./pdp.html",  // placeholder
-    image: item.mainImage || null,
-    imageHover: item.hoverImage || null,
-    images: (item.additionalImages || []).map((imgUrl, idx) => ({
-      image: imgUrl,
-      thumbnail: imgUrl,    // no separate thumbnail in source; using same URL
-      title: `${item.name} - Image ${idx + 1}`
-    })),
-    // fps / benchmarkGame / fpsData are not derivable from source — using placeholders
-    fps: null,
-    benchmarkGame: null,
-    fpsData: [],
+    image: item?.mainImage || item.productCardContent?.mainImage || null,
+    imageHover: item?.hoverImage || item?.productCardContent?.hoverImage || null,
+    images: (item.productPreviewPopupCF && item.productPreviewPopupCF.additionalImages) 
+              ? item.productPreviewPopupCF.additionalImages.map(url => ({
+                  image: url,
+                  thumbnail: url,
+                  title: item.name + " image"
+                }))
+              : [],
+    fps: (() => {
+      const gp = item.gamePriority && item.gamePriority[0];
+      return gp ? parseInt(gp.fullHdFps, 10) : null;
+    })(),
+
+
+
+    benchmarkGame: (item.gamePriority && item.gamePriority[0]?.gameTitle) || null,
+    fpsData: item.gamePriority 
+        ? item.gamePriority.map(g => ({
+            game: g.gameTitle,
+            fps1080: parseInt(g.fullHdFps, 10),
+            fps1440: parseInt(g.quadHdFps, 10),
+            image: item?.productCardContent?.mainImage || null
+          }))
+        : [],
     timeSpyScore: {
-      score: item.timeSpyOverallScore || null,
-      level: null,  // not in source
+      score: item.timeSpyOverallScore || item.productCardContent.timeSpyOverallScore || null,
+      level: 4,
       source: {
-        image: null,
+        image: item?.productCardContent?.mainImage || null,
         name: "3DMark",
         tooltip: "FPS data is theoretical and may vary."
       }
     },
-    specs: (item.keySpec || []).map(k => k.name),
+    specs: item.keySpec ? item.keySpec.map(spec => spec.name) : [],
     features: [],  // no equivalent in source; left empty
     price: item.specialPrice || item.price,
     originalPrice: item.price,
@@ -295,7 +330,7 @@ async transform(input) {
       const contentContainer = this.productGrid.querySelector('.cmp-carousel__content');
       if (contentContainer) contentContainer.innerHTML = '';
       this.actionsContainer.classList.add('is-loading');
-      const response = await fetchGameList("https://dummyjson.com/c/fd47-48c0-44a0-9b8f", 'GET', {}); // Section 2: Explore more gaming desktops
+      const response = await fetchGameList("https://dummyjson.com/c/8c1e-2df4-42dd-b5f0", 'GET', {}); // Section 2: Explore more gaming desktops
       
 
 
@@ -431,18 +466,16 @@ async transform(input) {
   }
 }
 
-// document.addEventListener('DOMContentLoaded', () => {
-  // const sortElement = document.querySelector('#similar-products-sort-by');
-  // if (sortElement) {
-  //   const sortManager = new SortDropdownManager(sortElement);
-  //   sortManager.init();
-  // }
 
-//   const similarProductsManager = new SimilarProductsManager();
-//   similarProductsManager.init();
-// });
 
 const initsimilarProductsForms = (context) => {
+
+  const sortElement = document.querySelector('#similar-products-sort-by');
+  if (sortElement) {
+    const sortManager = new SortDropdownManager(sortElement);
+    sortManager.init();
+  }
+
   // Select all elements marked with the data attribute
   const similarProductsManager = new SimilarProductsManager();
   similarProductsManager.init();
@@ -731,7 +764,6 @@ class PerfectMatchProduct {
   }
 
   async init(container) {
-    console.log("Perfect Match 1")
     this.container = container;
     this.sectionHeading = document.querySelector('.section-heading');
     if (!this.container) {
@@ -742,7 +774,6 @@ class PerfectMatchProduct {
     );
 
     await this.loadPerfectMatchProducts();
-    console.log("Perfect Match 2")
 
     // Add resize listener to handle viewport changes
     window.addEventListener('resize', () => this.handleResize());
@@ -753,7 +784,7 @@ transformItem(item, matchType) {
   return {
     
     id: item.sku.toLowerCase().replace(/[^a-z0-9]/g, "-"),  // example slugify
-    bazaarvoiceProductId: item.partNo + "_P",              // example mapping
+    bazaarvoiceProductId: item.externalId || null,            // example mapping
     name: item.name,
     model: item.modelName,
     matchType: {
@@ -765,15 +796,19 @@ transformItem(item, matchType) {
              matchType === "customerChoice" ? "Customer Choice" :
              matchType === "goodDeal" ? "Good Deal" : matchType
     },
-    status: [ "In Stock", "New", "Deal"],  // example — adapt as you like
+    status: [
+      // infer from productTags or buyButtonStatus
+      ...(item?.productCardContent?.productTags || item?.productTags || []),
+      item.buyButtonStatus === "In Stock" ? "In Stock" : null
+    ].filter(Boolean),
     isAvailable: item.buyButtonStatus !== "Notify Me",
     isCustomizable: true,            // set as per your logic
     buyLink: "./pdp.html",           // you may build from item.productCardContent.urlKey
     customizeLink: "./pdp.html",
-    image: item.productCardContent.mainImage || null,
-    imageHover: item.productCardContent.hoverImage || null,
-    images: (item.productPreviewPopupCF && item.productPreviewPopupCF.additionalImages) 
-              ? item.productPreviewPopupCF.additionalImages.map(url => ({
+    image: item?.mainImage || item.productCardContent?.mainImage || null,
+    imageHover: item?.hoverImage || item?.productCardContent?.hoverImage || null,
+    images: (item?.productPreviewPopupCF && item?.productPreviewPopupCF?.additionalImages) 
+              ? item?.productPreviewPopupCF?.additionalImages?.map(url => ({
                   image: url,
                   thumbnail: url,
                   title: item.name + " image"
@@ -789,24 +824,28 @@ transformItem(item, matchType) {
             game: g.gameTitle,
             fps1080: parseInt(g.fullHdFps, 10),
             fps1440: parseInt(g.quadHdFps, 10),
-            image: item.productCardContent.mainImage || null
+            image: item?.productCardContent?.mainImage || null
           }))
         : [],
     timeSpyScore: {
-      score: item.productCardContent.timeSpyOverallScore || null,
+      score: item.timeSpyOverallScore || item.productCardContent.timeSpyOverallScore || null,
       level: 4,
       source: {
-        image: item.productCardContent.mainImage || null,
+        image: item?.productCardContent?.mainImage || null,
         name: "3DMark",
-        tooltip: "Performance may vary depending on system configuration."
+        tooltip: "FPS data is theoretical and may vary."
       }
     },
     specs: item.keySpec ? item.keySpec.map(spec => spec.name) : [],
     // Optional/custom fields — adapt as needed
     features: [],  // you may compute based on spec or other logic
-    price: item.specialPrice,
+    price: item.specialPrice || item.price,
     originalPrice: item.price,
-    discount: 0 // adapt if you have specialPrice/price comparison
+    discount: item.savedPrice || null,
+    estorePriceTooltipText: "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.",
+    purchaseLimit: null,
+    shippingInfo: null,
+    installment: null
   };
 }
 
@@ -1046,3 +1085,299 @@ const initPerfectMatchComponents = (context) => {
   perfectMatchProduct.init(document.querySelector('.perfect-match-products-container'));
   window.perfectMatchProductInstance = perfectMatchProduct;
 };
+
+
+
+
+// 
+/**
+ * Sort Dropdown Manager
+ */
+export class SortDropdownManager {
+  constructor(selectElement) {
+    this.selectElement = selectElement;
+    this.choicesInstance = null;
+  }
+
+  init() {
+    if (!this.selectElement) return;
+
+    this.choicesInstance = new Choices(this.selectElement, {
+      searchEnabled: false,
+      itemSelectText: '',
+      shouldSort: false,
+      allowHTML: false,
+      removeItemButton: false,
+      duplicateItemsAllowed: false,
+      addItemFilter: null,
+      customProperties: {},
+    });
+
+    this.selectElement._choicesInstance = this.choicesInstance;
+
+    // Wait for Choices.js to finish its initial DOM manipulation
+    setTimeout(() => {
+      this.setupAccessibility();
+      this.setupEventListeners();
+    }, 100);
+  }
+
+  setupAccessibility() {
+    const container = this.selectElement.closest('.choices');
+    if (!container) return;
+
+    const inner = container.querySelector('.choices__inner');
+    if (!inner) return;
+
+    // Move ARIA attributes from `.choices` to `.choices__inner`
+    const ariaAttrs = ['role', 'aria-label', 'aria-expanded', 'aria-haspopup', 'tabindex'];
+    ariaAttrs.forEach((attr) => {
+      const val = container.getAttribute(attr);
+      if (val !== null) {
+        inner.setAttribute(attr, val);
+        container.removeAttribute(attr);
+      }
+    });
+
+    // Ensure correct combobox semantics on `.choices__inner`
+    inner.setAttribute('role', 'combobox');
+    inner.setAttribute('aria-haspopup', 'listbox');
+    inner.setAttribute('aria-expanded', 'false');
+
+    // Dropdown list should have role="listbox"
+    const dropdownList = container.querySelector('.choices__list--dropdown .choices__list');
+    if (dropdownList) {
+      dropdownList.setAttribute('role', 'listbox');
+      dropdownList.setAttribute('tabindex', '-1');
+    }
+
+    // Remove role/aria-selected from the single item display
+    const singleItem = container.querySelector('.choices__list--single .choices__item');
+    if (singleItem) {
+      singleItem.removeAttribute('role');
+      singleItem.removeAttribute('aria-selected');
+    }
+
+    // Get aria label from select box and add to cobmobox and listbox
+    const ariaLabel = this.selectElement.getAttribute('aria-label');
+    if (ariaLabel) {
+      inner.setAttribute('aria-label', ariaLabel);
+      dropdownList.setAttribute('aria-label', ariaLabel);
+    }
+  }
+
+  handleDropdownOpen() {
+    const container = this.selectElement.closest('.choices');
+    if (!container) return;
+
+    const inner = container.querySelector('.choices__inner');
+    if (!inner) return;
+
+    // Hide the redundant single-item display
+    const singleItem = container.querySelector('.choices__list--single');
+    if (singleItem) {
+      singleItem.setAttribute('aria-hidden', 'true');
+    }
+
+    // Update aria-expanded on `.choices__inner`
+    inner.setAttribute('aria-expanded', 'true');
+
+    // Set aria-activedescendant to selected item
+    const selectedOption = container.querySelector('.choices__item--choice.is-selected');
+    if (selectedOption) {
+      inner.setAttribute('aria-activedescendant', selectedOption.id);
+    }
+  }
+
+  handleDropdownClose() {
+    const container = this.selectElement.closest('.choices');
+    if (!container) return;
+
+    const inner = container.querySelector('.choices__inner');
+    if (!inner) return;
+
+    // Re-enable single-item display
+    const singleItem = container.querySelector('.choices__list--single');
+    if (singleItem) {
+      singleItem.removeAttribute('aria-hidden');
+    }
+
+    // Update aria-expanded on `.choices__inner`
+    inner.setAttribute('aria-expanded', 'false');
+
+    // Clear aria-activedescendant
+    inner.removeAttribute('aria-activedescendant');
+  }
+
+  updateAriaSelected(newValue) {
+    const container = this.selectElement.closest('.choices');
+    if (!container) return;
+
+    const allOptions = container.querySelectorAll('.choices__item--choice');
+    allOptions.forEach((option) => {
+      option.setAttribute('aria-selected', 'false');
+    });
+
+    const newSelectedOption = container.querySelector(
+      `.choices__item--choice[data-value="${newValue}"]`,
+    );
+    if (newSelectedOption) {
+      newSelectedOption.setAttribute('aria-selected', 'true');
+    }
+  }
+
+  setupEventListeners() {
+    this.selectElement.addEventListener('change', (event) => {
+      const value = event.detail?.value;
+
+      document.dispatchEvent(
+        new CustomEvent('product-sort-applied', {
+          detail: { sort: value },
+        }),
+      );
+
+      // Announce the selected value for screen readers
+      const selectedOption = this.selectElement.querySelector(`option[value="${value}"]`);
+      if (selectedOption) {
+        this.announceSelection(selectedOption.textContent);
+      }
+    });
+  }
+
+  announceSelection(selectedText) {
+    const announcement = document.createElement('div');
+    announcement.setAttribute('aria-live', 'polite');
+    announcement.setAttribute('aria-atomic', 'true');
+    announcement.className = 'sr-only-fixed';
+    announcement.textContent = `${selectedText} selected`;
+    document.body.appendChild(announcement);
+    setTimeout(() => {
+      if (document.body.contains(announcement)) document.body.removeChild(announcement);
+    }, 1000);
+  }
+}
+
+/* -------------------------------
+ * Initialize modules on DOMContentLoaded
+ * ------------------------------*/
+document.addEventListener('DOMContentLoaded', () => {
+  const sortElement = document.querySelector('#sort-by');
+  const floatingSortElement = document.querySelector('#sort-by-floating');
+  const mainFloatingContainer = document.querySelector('.floating-filter__plp');
+  let sortManager, floatingSortManager;
+
+  if (sortElement && floatingSortElement) {
+    floatingSortManager = new SortDropdownManager(floatingSortElement);
+    floatingSortManager.init();
+    sortManager = new SortDropdownManager(sortElement);
+    sortManager.init();
+    const syncDropdowns = (source, target) => {
+      source.addEventListener('change', (e) => {
+        const newValue = e.detail?.value || source.value;
+        const targetChoices = target.choicesInstance || target._choicesInstance;
+        const customSource = source.closest('.choices');
+        source.setAttribute('aria-label', newValue);
+        customSource.setAttribute('aria-label', newValue);
+        if (target.value === newValue) return;
+
+        if (targetChoices && typeof targetChoices.setChoiceByValue === 'function') {
+          targetChoices.setChoiceByValue(newValue);
+        } else {
+          target.value = newValue;
+          target.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+    };
+
+    syncDropdowns(sortElement, floatingSortElement);
+    syncDropdowns(floatingSortElement, sortElement);
+  }
+
+  const onScreenSort = document.querySelector('#sort-by-onscreen');
+  if (window.innerWidth < 1280 && onScreenSort) {
+    const sortElementOffsetTop = onScreenSort.offsetTop;
+    const sortElementHeight = onScreenSort.offsetHeight;
+
+    window.addEventListener('scroll', () => {
+      const scrollPosition = window.scrollY;
+
+      if (scrollPosition >= sortElementOffsetTop + sortElementHeight) {
+        mainFloatingContainer.classList.remove('hidden');
+      } else {
+        mainFloatingContainer.classList.add('hidden');
+      }
+    });
+  }
+
+  const filterManager = new ProductSidebarFilter();
+  filterManager.init();
+
+  const listingManager = new ProductListingManager();
+  listingManager.init();
+
+  const filterTrigger = document.querySelectorAll(
+    '[data-a11y-dialog-show="product-filter-dialog"]',
+  );
+
+  const filterDialog = document.getElementById('product-filter-dialog');
+
+  if (filterDialog && matchMedia('(min-width: 1280px)').matches) {
+    filterDialog.removeAttribute('role');
+  }
+
+  if (filterTrigger.length && filterDialog) {
+    const dialog = new A11yDialog(filterDialog);
+
+    filterTrigger.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        filterDialog.classList.add('dialog-container');
+        dialog.show();
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      if (!matchMedia('(max-width: 1280px)').matches) {
+        filterDialog.classList.remove('dialog-container');
+        filterDialog.removeAttribute('aria-hidden');
+        filterDialog.removeAttribute('aria-modal');
+        filterDialog.removeAttribute('role');
+      }
+    });
+  }
+
+  /*
+  //Converting <aside> (desktop) to <div> (mobile) 
+  const asideFilters = document.getElementById('product-filter-dialog');
+
+  function switchAsideToDiv(asideElement) {
+    const divElement = document.createElement('div');
+    divElement.innerHTML = asideElement.innerHTML;
+
+    // Copy attributes from the aside to the div
+    for (const attr of asideElement.attributes) {
+      divElement.setAttribute(attr.name, attr.value);
+    }
+    divElement.classList.add('dialog-container'); 
+    asideElement.replaceWith(divElement);
+    divElement.setAttribute('role', 'dialog');
+    return divElement;
+  }
+
+  if (matchMedia('(max-width: 1280px)').matches) {
+    if (asideFilters) {
+      switchAsideToDiv(asideFilters);
+    }
+  } else {
+    asideFilters.removeAttribute('role');
+  }
+*/
+
+  // Custom listeners for choices
+  document.addEventListener('mouseover', (e) => {
+    const item = e.target.closest('.choices__item--choice');
+    if (!item) return;
+
+    // Remove highlight class from hovered item
+    item.classList.remove('is-highlighted');
+  });
+});

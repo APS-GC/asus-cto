@@ -128,7 +128,8 @@ export async function fetchGameList(
         'Cache-Control': 'no-cache',
       },
       mode: 'cors',
-      signal
+      signal,
+      body: isNotEmptyObject(params) ? JSON.stringify(params) : null,
     });
 
     clearTimeout(timeoutId);
