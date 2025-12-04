@@ -6,6 +6,7 @@
 import { moveInstrumentation, createOptimizedPicture, loadSwiper } from '../../scripts/scripts.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
 import { isUniversalEditor } from '../../scripts/utils.js';
+import { trackPromotionView, trackPromotionClick } from '../../scripts/google-data-layer.js';
 
 // Configuration defaults
 const DEFAULT_CONFIG = {
@@ -606,4 +607,51 @@ export default async function decorate(block) {
 
   // Initialize Swiper hero banner
   initializeSwiper(heroBannerWrapper, config);
+
+  // Track promotionView for all visible slides
+  setTimeout(() => {
+    const promotions = config.slides.map((slide, index) => ({
+      id: slide.media || `hero_banner_slide_${index + 1}`,
+      name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
+      position: `hero_banner_1_${index + 1}`
+    }));
+    trackPromotionView(promotions);
+  }, 500);
+
+  // Track promotionClick when CTA is clicked
+  block.querySelectorAll('.cta-button').forEach((ctaButton, index) => {
+    ctaButton.addEventListener('click', (e) => {
+      const slide = config.slides[index];
+      
+      // Only prevent default if it's a link (to allow time for tracking)
+      if (ctaButton.href) {
+        e.preventDefault();
+        const targetUrl = ctaButton.href;
+        const openInNewTab = ctaButton.target === '_blank';
+        
+        // Track the click
+        trackPromotionClick({
+          id: slide.media || `hero_banner_slide_${index + 1}`,
+          name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
+          position: `hero_banner_1_${index + 1}`
+        });
+        
+        // Navigate after a short delay to ensure tracking fires
+        setTimeout(() => {
+          if (openInNewTab) {
+            window.open(targetUrl, '_blank', 'noopener,noreferrer');
+          } else {
+            window.location.href = targetUrl;
+          }
+        }, 10000);
+      } else {
+        // No href, just track
+        trackPromotionClick({
+          id: slide.media || `hero_banner_slide_${index + 1}`,
+          name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
+          position: `hero_banner_1_${index + 1}`
+        });
+      }
+    });
+  });
 }
