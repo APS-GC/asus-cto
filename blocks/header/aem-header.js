@@ -5,6 +5,7 @@ import {
   initializeBlockInShadowRoot
 } from '../../scripts/aem-component-utils.js';
 import { replaceLocaleInUrl } from '../../scripts/configs.js';
+import {callSSOValidation} from '../../scripts/api-service.js'
 
 /**
  * AEM Header Web Component
@@ -252,3 +253,5 @@ if (typeof module !== 'undefined' && module.exports) {
 } else if (typeof define === 'function' && define.amd) {
   define([], function() { return AEMHeader; });
 }
+
+callSSOValidation();

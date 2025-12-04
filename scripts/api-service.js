@@ -142,3 +142,41 @@ export async function fetchGameList(
     return []; // fallback
   }
 }
+
+/**
+ * Call SSO validation API
+ * @param {Object} params - Request parameters
+ * @param {string} params.ticket - Auth ticket
+ * @param {string} params.type - Validation type, e.g. 'check'
+ * @returns {Promise<Object>} API response data
+ */
+export async function callSSOValidation(params) {
+  const ssoEndpoint = 'https://211051-ssointegrationapi-stage.adobeioruntime.net/api/v1/web/app-builder-integration-api/sso';
+  // Hardcoded for testing
+  const p = {
+    ticket: '7f01e92a44d043a5b1943e483cbd1954',
+    type: 'check'
+  }
+
+  try {
+    const response = await axios.get(ssoEndpoint, {
+      params:p,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      timeout: 30000,
+    });
+
+    debugger
+    if (response.status !== 200) {
+      throw new Error(`Request failed, status code: ${response.status}`);
+    }
+
+    return response.data;
+  } catch (error) {
+    debugger
+    console.error("SSO API call error:", error.message);
+    throw new Error(`SSO validation failed: ${error.message}`);
+  }
+}
