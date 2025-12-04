@@ -147,13 +147,12 @@ export async function fetchGameList(
 /**
  * Call SSO validation API
  * @param {string} type - Validation type, e.g. 'check' 'user' 'logout'
+ * @param {string} aTicket
  * @returns {Promise<Object>} API response data
  */
-export async function callSSOValidation(type='check') {
+export async function callSSOValidation(type='check', aTicket) {
   const ssoEndpoint = 'https://211051-ssointegrationapi-stage.adobeioruntime.net/api/v1/web/app-builder-integration-api/sso';
-  const aTicket = getCookie('aTicket') || '7f01e92a44d043a5b1943e483cbd1954'
-  if(!aTicket)return;
-  const url = `${ssoEndpoint}?ticket=${aTicket}&type=${type}`
+  const url = `${ssoEndpoint}?ticket=${aTicket}&type=${type}`;
   try {
     const response = await fetch(url, {
       method:"get",

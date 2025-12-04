@@ -475,9 +475,11 @@ function buildNavigation(navigationItems, showProfile, showCart, profileMenuItem
     currentProfileMenuItems.map(item => [item.linkText, item])
   ).values());
 
-  uniqueMenuItems = uniqueMenuItems.filter(r=>r.linkText.toUpperCase() !== (isLoggedIn ? 'LOGIN' : 'SIGH OUT'))
-
-  
+  if(isLoggedIn){
+    uniqueMenuItems = uniqueMenuItems.filter(r=>r.linkText.toUpperCase() !== 'LOGIN')
+  }else{
+    uniqueMenuItems = JSON.parse(JSON.stringify(profileMenuLoggedInItems));
+  }
 
   const profileMenuHTML = uniqueMenuItems.map((item, index) => `
     <li class="profile-menu__item" data-menu-index="${index}"><a href="${item.linkUrl}">${item.linkText}</a></li>
@@ -546,7 +548,11 @@ function buildMobileMenu(navigationItems, profileMenuItems, profileMenuLoggedInI
     currentMobileProfileMenuItems.map(item => [item.linkText, item])
   ).values());
 
-  uniqueMenuItems = uniqueMenuItems.filter(r=>r.linkText.toUpperCase() !== (isLoggedIn ? 'LOGIN' : 'SIGH OUT'))
+  if(isLoggedIn){
+    uniqueMenuItems = uniqueMenuItems.filter(r=>r.linkText.toUpperCase() !== 'LOGIN')
+  }else{
+    uniqueMenuItems = JSON.parse(JSON.stringify(profileMenuLoggedInItems));
+  }
 
   const mobileProfileItems = uniqueMenuItems.map((item, index) => `
     <li data-mobile-menu-index="${index}"><a href="${item.linkUrl}">${item.linkText}</a></li>
@@ -739,21 +745,18 @@ function initializeHeader(block) {
   // Mock Login/Logout functionality for desktop profile menu
   const profileMenuItemElements = block.querySelectorAll('.profile-menu__item[data-menu-index]');
 
-  profileMenuItemElements.forEach((item, index) => {
+  profileMenuItemElements.forEach((item) => {
     const link = item.querySelector('a');
     if (link) {
       link.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        if (index === 0) {
-          if (!isLoggedIn) {
-            // First item when not logged in - trigger login
-            ssoLogin(block);
-          } else {
-            // First item when logged in - trigger ssoLogout
+        if (link.textContent.toUpperCase() === 'SIGN OUT') {
+          if (isLoggedIn) {
+            // trigger ssoLogout
             ssoLogout(block);
-          }
-        } // eslint-disable-next-line no-empty
+            e.preventDefault();
+          } 
+        }
+        // eslint-disable-next-line no-empty
         // For other items, you can add actual navigation logic here
       });
     }
@@ -765,29 +768,20 @@ function initializeHeader(block) {
     const link = item.querySelector('a');
     if (link) {
       link.addEventListener('click', (e) => {
-        e.preventDefault();
-
         // eslint-disable-next-line no-console
         console.log('Mobile menu clicked:', {
           index, isLoggedIn, combinedMenuLength: combinedMenuItems.length, linkText: link.textContent,
         });
 
-        if (index === 0) {
-          if (!isLoggedIn) {
-            // First item when not logged in - trigger login
-            // eslint-disable-next-line no-console
-            console.log('Triggering mobile login');
-            ssoLogin(block);
-          } else {
-            // First item when logged in - trigger ssoLogout
-            // eslint-disable-next-line no-console
-            console.log('Triggering mobile ssoLogout (first item when logged in)');
+        link.addEventListener('click', (e) => {
+        if (link.textContent.toUpperCase() === 'SIGN OUT') {
+          if (isLoggedIn) {
+            // trigger ssoLogout
             ssoLogout(block);
-          }
-        } else {
-          // eslint-disable-next-line no-console
-          console.log('No action for this mobile menu item');
+            e.preventDefault();
+          } 
         }
+      });
         // For other items, you can add actual navigation logic here
       });
     }
