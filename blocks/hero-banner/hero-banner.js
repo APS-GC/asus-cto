@@ -608,12 +608,12 @@ export default async function decorate(block) {
   // Initialize Swiper hero banner
   initializeSwiper(heroBannerWrapper, config);
 
+  // Determine block position (how many hero-banner blocks appear before this one)
+  const allHeroBanners = document.querySelectorAll('.hero-banner');
+  const blockPosition = Array.from(allHeroBanners).indexOf(block) + 1;
+
   // Track promotionView for all visible slides
   setTimeout(() => {
-    // Determine block position (how many hero-banner blocks appear before this one)
-    const allHeroBanners = document.querySelectorAll('.hero-banner');
-    const blockPosition = Array.from(allHeroBanners).indexOf(block) + 1;
-    
     const promotions = config.slides.map((slide, index) => ({
       id: slide.media || `hero_banner_slide_${index + 1}`,
       name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
@@ -626,10 +626,6 @@ export default async function decorate(block) {
   block.querySelectorAll('.cta-button').forEach((ctaButton, index) => {
     ctaButton.addEventListener('click', (e) => {
       const slide = config.slides[index];
-      
-      // Determine block position
-      const allHeroBanners = document.querySelectorAll('.hero-banner');
-      const blockPosition = Array.from(allHeroBanners).indexOf(block) + 1;
       
       // Only prevent default if it's a link (to allow time for tracking)
       if (ctaButton.href) {
