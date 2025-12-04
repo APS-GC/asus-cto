@@ -6,7 +6,7 @@
 import { moveInstrumentation, createOptimizedPicture, loadSwiper } from '../../scripts/scripts.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
 import { isUniversalEditor } from '../../scripts/utils.js';
-import { trackPromotionView, trackPromotionClick } from '../../scripts/google-data-layer.js';
+import { trackPromotionView, trackPromotionClick, trackCTABannerClick, trackIndicatorBannerClick } from '../../scripts/google-data-layer.js';
 
 // Configuration defaults
 const DEFAULT_CONFIG = {
@@ -622,10 +622,28 @@ export default async function decorate(block) {
     trackPromotionView(promotions);
   }, 500);
 
+  // Track indicator clicks
+  block.querySelectorAll('.cmp-hero-banner__indicator').forEach((indicator, index) => {
+    indicator.addEventListener('click', () => {
+      const bannerPosition = `hero_banner_${blockPosition}_${index + 1}`;
+      
+      // Check current autoplay state (play or pause)
+      const swiperElement = block.querySelector('.swiper');
+      const isPaused = swiperElement?.classList.contains('is-autoplay-paused');
+      const currentState = isPaused ? 'pause' : 'play';
+      
+      trackIndicatorBannerClick({
+        bannerPosition: bannerPosition,
+        indicatorAction: currentState
+      });
+    });
+  });
+
   // Track promotionClick when CTA is clicked
   block.querySelectorAll('.cta-button').forEach((ctaButton, index) => {
     ctaButton.addEventListener('click', (e) => {
       const slide = config.slides[index];
+      const bannerPosition = `hero_banner_${blockPosition}_${index + 1}`;
       
       // Only prevent default if it's a link (to allow time for tracking)
       if (ctaButton.href) {
@@ -633,11 +651,17 @@ export default async function decorate(block) {
         const targetUrl = ctaButton.href;
         const openInNewTab = ctaButton.target === '_blank';
         
-        // Track the click
+        // Track Enhanced Ecommerce promotionClick
         trackPromotionClick({
           id: slide.media || `hero_banner_slide_${index + 1}`,
           name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
-          position: `hero_banner_${blockPosition}_${index + 1}`
+          position: bannerPosition
+        });
+        
+        // Track custom data layer CTA click
+        trackCTABannerClick({
+          bannerPosition: bannerPosition,
+          buttonText: slide.ctaText || 'CTA'
         });
         
         // Navigate after a short delay to ensure tracking fires
@@ -653,7 +677,13 @@ export default async function decorate(block) {
         trackPromotionClick({
           id: slide.media || `hero_banner_slide_${index + 1}`,
           name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
-          position: `hero_banner_${blockPosition}_${index + 1}`
+          position: bannerPosition
+        });
+        
+        // Track custom data layer CTA click
+        trackCTABannerClick({
+          bannerPosition: bannerPosition,
+          buttonText: slide.ctaText || 'CTA'
         });
       }
     });

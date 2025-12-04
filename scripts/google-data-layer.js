@@ -68,3 +68,94 @@ export function trackPromotionClick(promotion) {
     }
   });
 }
+
+/**
+ * Get page path suffix for tracking (e.g., "/home/cto/rog")
+ * Extracts from URL or defaults to "/home/cto/rog"
+ */
+function getPagePathSuffix() {
+  const path = window.location.pathname;
+  const segments = path.split('/').filter(Boolean);
+  
+  if (segments.length >= 3) {
+    return `/${segments.slice(-3).join('/')}`;
+  }
+  
+  return '/home/cto/rog';
+}
+
+/**
+ * Generic Custom Data Layer Event Tracker
+ * @param {Object} params - Tracking parameters
+ * @param {string} params.eventName - GA4 event name (e.g., 'cta_banner_home_cto_rog')
+ * @param {string} params.eventType - Type of interaction (e.g., 'cta', 'indicator', 'button')
+ * @param {string} params.componentPosition - Component position (e.g., 'hero_banner_1_1', 'card_2_3')
+ * @param {string} params.actionDetail - Detail about the action (e.g., button text, slide number)
+ * @param {string} [params.action='clicked'] - Action type (default: 'clicked')
+ * @param {string} [params.eventValue=''] - Optional event value
+ */
+export function trackCustomEvent({ 
+  eventName, 
+  eventType, 
+  componentPosition, 
+  actionDetail, 
+  action = 'clicked',
+  eventValue = '' 
+}) {
+  const pagePath = getPagePathSuffix();
+  const category = `${eventType}/${componentPosition}${pagePath}`;
+  const label = `${actionDetail}/${eventType}/${componentPosition}${pagePath}`;
+  
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: 'data_layer_event',
+    event_name_ga4: eventName,
+    event_category_DL: category,
+    event_action_DL: action,
+    event_label_DL: label,
+    event_value_DL: eventValue
+  });
+}
+
+/**
+ * Convenience function: Track CTA click (any component)
+ * @param {Object} params - Tracking parameters
+ * @param {string} params.componentPosition - Component position (e.g., "hero_banner_1_1", "card_2_3")
+ * @param {string} params.buttonText - CTA button text
+ * @param {string} [params.eventName] - Custom event name (auto-generated if not provided)
+ */
+export function trackCTAClick({ componentPosition, buttonText, eventName }) {
+  const defaultEventName = eventName || 'cta_banner_home_cto_rog';
+  
+  trackCustomEvent({
+    eventName: defaultEventName,
+    eventType: 'cta',
+    componentPosition,
+    actionDetail: buttonText
+  });
+}
+
+/**
+ * Convenience function: Track indicator/pagination click (any component)
+ * @param {Object} params - Tracking parameters
+ * @param {string} params.componentPosition - Component position (e.g., "hero_banner_1_1", "carousel_2_1")
+ * @param {string} params.indicatorAction - Indicator action (e.g., "1", "2", "play", "pause")
+ * @param {string} [params.eventName] - Custom event name (auto-generated if not provided)
+ */
+export function trackIndicatorClick({ componentPosition, indicatorAction, eventName }) {
+  const defaultEventName = eventName || 'indicator_banner_home_cto_rog';
+  
+  trackCustomEvent({
+    eventName: defaultEventName,
+    eventType: 'indicator',
+    componentPosition,
+    actionDetail: indicatorAction
+  });
+}
+
+// Legacy aliases for backward compatibility
+export const trackCTABannerClick = ({ bannerPosition, buttonText, eventName }) => 
+  trackCTAClick({ componentPosition: bannerPosition, buttonText, eventName });
+
+export const trackIndicatorBannerClick = ({ bannerPosition, indicatorAction, eventName }) => 
+  trackIndicatorClick({ componentPosition: bannerPosition, indicatorAction, eventName });
