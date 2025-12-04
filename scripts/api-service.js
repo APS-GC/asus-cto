@@ -85,6 +85,16 @@ export async function fetchHotProducts(maxProducts = null, config = {}) { // esl
   return fetchProductData(endpoint, maxProducts);
 }
 
+function isNotEmptyObject(obj) {
+  if (!obj || typeof obj !== 'object') return false;
+  for (let key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Fetches a list of games from a specified API endpoint, with fallback options and a timeout.
  * @param {string} [endpoint] - The API endpoint to fetch the game list from.
@@ -92,8 +102,12 @@ export async function fetchHotProducts(maxProducts = null, config = {}) { // esl
  */
 export async function fetchGameList(
   endpoint = 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/gameList.json?websiteCode=en',
-  timeoutMs = 5000,
+  mode = 'GET',
+  params = {},
+  timeoutMs = 5000
 ) {
+
+  console.log("Perfect Match >>> ", JSON.stringify(params))
   const controller = new AbortController();
   const signal = controller.signal;
 
@@ -107,14 +121,14 @@ export async function fetchGameList(
     console.log(`Attempting to fetch from: ${endpoint}`);
 
     const response = await fetch(endpoint, {
-      method: 'GET',
+      method: mode,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
       },
       mode: 'cors',
-      signal,
+      signal
     });
 
     clearTimeout(timeoutId);

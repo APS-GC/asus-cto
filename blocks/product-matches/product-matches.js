@@ -236,16 +236,76 @@ class SimilarProductsManager {
     }
   }
 
-  async fetchProducts() { // Explore More
+async transform(input) {
+  if (!input?.results?.items) return [];
+
+  return input.results.items.map(item => ({
+    id: item.sku.toLowerCase().replace(/\s+/g, '-'),            // e.g. "90PF05T1-M00NN0" → "90pf05t1-m00nn0"
+    bazaarvoiceProductId: item.externalId || null,
+    name: item.name,
+    model: item.modelName || null,
+    matchType: {
+      id: "best-fit",
+      label: "Best Fit"
+    },
+    status: [
+      // infer from productTags or buyButtonStatus
+      ...(item.productTags || []),
+      item.buyButtonStatus === "In Stock" ? "In Stock" : null
+    ].filter(Boolean),
+    isAvailable: (item.buyButtonStatus !== "Notify Me"),  // example condition
+    isCustomizable: true,  // as per target example
+    buyLink: "./pdp.html",        // placeholder (no equivalent in source)
+    customizeLink: "./pdp.html",  // placeholder
+    image: item.mainImage || null,
+    imageHover: item.hoverImage || null,
+    images: (item.additionalImages || []).map((imgUrl, idx) => ({
+      image: imgUrl,
+      thumbnail: imgUrl,    // no separate thumbnail in source; using same URL
+      title: `${item.name} - Image ${idx + 1}`
+    })),
+    // fps / benchmarkGame / fpsData are not derivable from source — using placeholders
+    fps: null,
+    benchmarkGame: null,
+    fpsData: [],
+    timeSpyScore: {
+      score: item.timeSpyOverallScore || null,
+      level: null,  // not in source
+      source: {
+        image: null,
+        name: "3DMark",
+        tooltip: "FPS data is theoretical and may vary."
+      }
+    },
+    specs: (item.keySpec || []).map(k => k.name),
+    features: [],  // no equivalent in source; left empty
+    price: item.specialPrice || item.price,
+    originalPrice: item.price,
+    discount: item.savedPrice || null,
+    estorePriceTooltipText: "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.",
+    purchaseLimit: null,
+    shippingInfo: null,
+    installment: null
+  }));
+}
+
+
+  async fetchProducts() { // Per
     try {
       const contentContainer = this.productGrid.querySelector('.cmp-carousel__content');
       if (contentContainer) contentContainer.innerHTML = '';
       this.actionsContainer.classList.add('is-loading');
-      const response = await fetchGameList("https://dummyjson.com/c/ab8c-db9a-4ae0-be8a"); // await fetchData(`similar-products.json?&sort=${this.currentSort}`);
-
+      const response = await fetchGameList("https://dummyjson.com/c/fd47-48c0-44a0-9b8f", 'GET', {}); // Section 2: Explore more gaming desktops
       
 
-      const products = response || []; // Change response.products
+
+      // Example usage:
+      const source = { /* your JSON object above */ };
+      const result = await this.transform(response);
+
+      
+      console.log("Section 2" , result)
+      const products = result || []; // Change response.products
       this.allProducts = [...this.allProducts, ...products];
       this.totalProducts = response.totalProducts || this.allProducts.length;
       this.hasMore = Boolean(response.hasMore);
@@ -667,6 +727,7 @@ class PerfectMatchProduct {
     this.mobileBreakpoint = 700; // Mobile breakpoint in pixels
     this.productType = 'perfect-match';
     this.res = [];
+    this.path = "/content/dam/asuscto/us";
   }
 
   async init(container) {
@@ -687,6 +748,84 @@ class PerfectMatchProduct {
     window.addEventListener('resize', () => this.handleResize());
   }
 
+
+transformItem(item, matchType) {
+  return {
+    
+    id: item.sku.toLowerCase().replace(/[^a-z0-9]/g, "-"),  // example slugify
+    bazaarvoiceProductId: item.partNo + "_P",              // example mapping
+    name: item.name,
+    model: item.modelName,
+    matchType: {
+      id:  matchType === "bestFit" ? "best-fit" :
+             matchType === "customerChoice" ? "customer-choice" :
+             matchType === "goodDeal" ? "good-deal" : matchType,
+             
+      label: matchType === "bestFit" ? "Best Fit" :
+             matchType === "customerChoice" ? "Customer Choice" :
+             matchType === "goodDeal" ? "Good Deal" : matchType
+    },
+    status: [ "In Stock", "New", "Deal"],  // example — adapt as you like
+    isAvailable: item.buyButtonStatus !== "Notify Me",
+    isCustomizable: true,            // set as per your logic
+    buyLink: "./pdp.html",           // you may build from item.productCardContent.urlKey
+    customizeLink: "./pdp.html",
+    image: item.productCardContent.mainImage || null,
+    imageHover: item.productCardContent.hoverImage || null,
+    images: (item.productPreviewPopupCF && item.productPreviewPopupCF.additionalImages) 
+              ? item.productPreviewPopupCF.additionalImages.map(url => ({
+                  image: url,
+                  thumbnail: url,
+                  title: item.name + " image"
+                }))
+              : [],
+    fps: (() => {
+      const gp = item.gamePriority && item.gamePriority[0];
+      return gp ? parseInt(gp.fullHdFps, 10) : null;
+    })(),
+    benchmarkGame: (item.gamePriority && item.gamePriority[0]?.gameTitle) || null,
+    fpsData: item.gamePriority 
+        ? item.gamePriority.map(g => ({
+            game: g.gameTitle,
+            fps1080: parseInt(g.fullHdFps, 10),
+            fps1440: parseInt(g.quadHdFps, 10),
+            image: item.productCardContent.mainImage || null
+          }))
+        : [],
+    timeSpyScore: {
+      score: item.productCardContent.timeSpyOverallScore || null,
+      level: 4,
+      source: {
+        image: item.productCardContent.mainImage || null,
+        name: "3DMark",
+        tooltip: "Performance may vary depending on system configuration."
+      }
+    },
+    specs: item.keySpec ? item.keySpec.map(spec => spec.name) : [],
+    // Optional/custom fields — adapt as needed
+    features: [],  // you may compute based on spec or other logic
+    price: item.specialPrice,
+    originalPrice: item.price,
+    discount: 0 // adapt if you have specialPrice/price comparison
+  };
+}
+
+  async transformAll(input) {
+
+    // console.log("Perfect Match HHHHH", input.data['bestFit'])
+    const result = [];
+    const categories = ["bestFit","customerChoice","goodDeal"];
+    for (const cat of categories) {
+      const group = input.data[cat];
+      if (group && Array.isArray(group.items)) {
+        group.items.forEach(item => {
+          result.push(this.transformItem(item, cat));
+        });
+      }
+    }
+    return result;
+  }
+
   async loadPerfectMatchProducts(filters = {}) {
     this.container.innerHTML = '';
     this.actionsContainer.classList.add('is-loading');
@@ -698,9 +837,18 @@ class PerfectMatchProduct {
       if (filters.maxBudget) params.set('maxBudget', filters.maxBudget);
 
 
-      this.perfectMatchProducts = await fetchGameList("https://dummyjson.com/c/b08b-30c8-4e50-9a46"); // Perfect Match
-
-      console.log("Perfect Match 3", this.perfectMatchProducts)
+      // https://publish-p165753-e1767020.adobeaemcloud.com/graphql/execute.json/asuscto/fetchHelpMeChooseResults
+      this.res = await fetchGameList("https://dummyjson.com/c/1ba4-f02d-47a2-aac3",'POST',
+        {
+          "query": "",
+          "variables": {
+              "path": this.path || "/content/dam/asuscto/us",
+              "lowerPrice": filters.minBudget || 500,
+              "highPrice": filters.maxBudget || 1500
+          }
+      }
+      ); // Section 1 : We have found your perfect matches!
+      this.perfectMatchProducts = await this.transformAll(this.res);
 
     } catch (error) {
       console.error('Failed to load perfect match products:', error);
