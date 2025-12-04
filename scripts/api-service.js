@@ -160,7 +160,7 @@ export async function callSSOValidation(params) {
 
   try {
     const response = await fetch(ssoEndpoint, {
-      method:"post",
+      method:"get",
       params:p,
       headers: {
         Accept: "application/json",
