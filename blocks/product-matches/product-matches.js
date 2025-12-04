@@ -1309,12 +1309,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const filterManager = new ProductSidebarFilter();
-  filterManager.init();
-
-  const listingManager = new ProductListingManager();
-  listingManager.init();
-
   const filterTrigger = document.querySelectorAll(
     '[data-a11y-dialog-show="product-filter-dialog"]',
   );
@@ -1344,34 +1338,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-  /*
-  //Converting <aside> (desktop) to <div> (mobile) 
-  const asideFilters = document.getElementById('product-filter-dialog');
-
-  function switchAsideToDiv(asideElement) {
-    const divElement = document.createElement('div');
-    divElement.innerHTML = asideElement.innerHTML;
-
-    // Copy attributes from the aside to the div
-    for (const attr of asideElement.attributes) {
-      divElement.setAttribute(attr.name, attr.value);
-    }
-    divElement.classList.add('dialog-container'); 
-    asideElement.replaceWith(divElement);
-    divElement.setAttribute('role', 'dialog');
-    return divElement;
-  }
-
-  if (matchMedia('(max-width: 1280px)').matches) {
-    if (asideFilters) {
-      switchAsideToDiv(asideFilters);
-    }
-  } else {
-    asideFilters.removeAttribute('role');
-  }
-*/
-
   // Custom listeners for choices
   document.addEventListener('mouseover', (e) => {
     const item = e.target.closest('.choices__item--choice');
