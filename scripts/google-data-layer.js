@@ -71,16 +71,9 @@ export function trackPromotionClick(promotion) {
 
 /**
  * Get page path suffix for tracking (e.g., "/home/cto/rog")
- * Extracts from URL or defaults to "/home/cto/rog"
+ * Always returns "/home/cto/rog" for consistent tracking
  */
 function getPagePathSuffix() {
-  const path = window.location.pathname;
-  const segments = path.split('/').filter(Boolean);
-  
-  if (segments.length >= 3) {
-    return `/${segments.slice(-3).join('/')}`;
-  }
-  
   return '/home/cto/rog';
 }
 
