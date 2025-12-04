@@ -609,7 +609,7 @@ export default async function decorate(block) {
   initializeSwiper(heroBannerWrapper, config);
 
   // Determine block position (how many hero-banner blocks appear before this one)
-  const allHeroBanners = document.querySelectorAll('.hero-banner');
+  const allHeroBanners = document.querySelectorAll('.hero-banner.block');
   const blockPosition = Array.from(allHeroBanners).indexOf(block) + 1;
 
   // Track promotionView for all visible slides
