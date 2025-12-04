@@ -23,7 +23,6 @@ export default async function decorate(block) {
   initsimilarProductsForms(document.body)
 }
 
-
 /**
  * Renders the Help Me Choose section, including the game list and budget filter.
  * @param {Element} block - The block element to render the content into.
@@ -161,10 +160,6 @@ async function renderHelpMeChoose(block) {
 
 }
 
-
-
-
-
 // Helper to load noUiSlider only once
 let noChoisePromise = null;
 /**
@@ -214,8 +209,6 @@ function loadSwiperCSS() {
   }
   return swiperCSSLoaded;
 }
-
-
 
 class SimilarProductsManager {
   constructor() {
@@ -466,8 +459,6 @@ async transform(input) {
   }
 }
 
-
-
 const initsimilarProductsForms = (context) => {
 
   const sortElement = document.querySelector('#similar-products-sort-by');
@@ -480,7 +471,6 @@ const initsimilarProductsForms = (context) => {
   const similarProductsManager = new SimilarProductsManager();
   similarProductsManager.init();
 };
-
 
 /**
  * Renders the HTML markup for a single product card using the provided product data.
@@ -1086,10 +1076,6 @@ const initPerfectMatchComponents = (context) => {
   window.perfectMatchProductInstance = perfectMatchProduct;
 };
 
-
-
-
-// 
 /**
  * Sort Dropdown Manager
  */
