@@ -170,6 +170,8 @@ export async function callSSOValidation(params) {
       timeout: 30000,
     });
 
+    
+    const data = response.json();
     debugger
     if (response.status !== 200) {
       throw new Error(`Request failed, status code: ${response.status}`);
