@@ -755,12 +755,12 @@ function initializeHeader(block) {
             // trigger ssoLogout
             ssoLogout(block);
             e.preventDefault();
-          } else{
+          }
+        } else{
             if(!isLoggedIn){
               e.preventDefault();
               location.href = LOGIN_URL;
             }
-          }
         }
         // eslint-disable-next-line no-empty
         // For other items, you can add actual navigation logic here
