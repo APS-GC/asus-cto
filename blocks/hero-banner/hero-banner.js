@@ -643,7 +643,7 @@ export default async function decorate(block) {
           } else {
             window.location.href = targetUrl;
           }
-        }, 10000);
+        }, 300);
       } else {
         // No href, just track
         trackPromotionClick({
