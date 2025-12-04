@@ -561,28 +561,28 @@ footer .back-to-top:focus-visible {
 }
 
 /* Navigation Columns */
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > div {
     column-count: 3;
     column-gap: 2rem;
     margin: 1.25rem auto;
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > p {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > div > p {
   font-weight: bold;
   margin: 0 0 0.3em;
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > ul {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > div > ul {
   list-style: none;
   margin: 0 0 1.2em;
   padding: 0;
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > ul li {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > div > ul li {
   margin: 0.2em 0;
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > ul > li > a {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > div > ul > li > a {
     color: var(--color-primary-600);
     display: inline-block;
     font-family: var(--font-text);
@@ -594,19 +594,19 @@ footer .back-to-top:focus-visible {
     text-decoration: none
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > ul > li > a:hover {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > div > ul > li > a:hover {
     color: var(--color-primary-950);
     text-decoration: underline
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > p,
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > ul {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > div > p,
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > div > ul {
   break-inside: avoid-column;            /* avoid breaking inside these blocks */
   -webkit-column-break-inside: avoid;    /* WebKit fallback */
   page-break-inside: avoid;              /* legacy / print fallback */
 }
 
-.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > p {
+.footer-wrapper .footer:not(.experiencefragment) > div:nth-of-type(4) > div > div > p {
   break-after: avoid-column;             /* avoid a column break immediately after <p> */
   -webkit-column-break-after: avoid;
 }
