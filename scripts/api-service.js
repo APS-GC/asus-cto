@@ -159,12 +159,14 @@ export async function callSSOValidation(params) {
   }
 
   try {
-    const response = await axios.get(ssoEndpoint, {
+    const response = await fetch(ssoEndpoint, {
+      method:"post",
       params:p,
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
+      mode: 'cors',
       timeout: 30000,
     });
 
