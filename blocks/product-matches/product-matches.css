@@ -1,4 +1,11 @@
 
+@media only screen and (min-width: 80rem) {
+    .product-matches-wrapper .container {
+        max-width: 1240px;
+        padding: 0px;
+    }
+}
+
 .section-with-bottom-spacing {
     padding-bottom: 120px
 }
@@ -1598,7 +1605,9 @@ body.no-scroll {
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
-    gap: 2rem
+    gap: 2rem;
+    overflow: auto;
+    scrollbar-width: none;
 }
 
 .similar-products-container .section-heading {

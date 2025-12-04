@@ -236,7 +236,7 @@ class SimilarProductsManager {
     }
   }
 
-  async fetchProducts() {
+  async fetchProducts() { // Explore More
     try {
       const contentContainer = this.productGrid.querySelector('.cmp-carousel__content');
       if (contentContainer) contentContainer.innerHTML = '';
@@ -666,6 +666,7 @@ class PerfectMatchProduct {
     this.swiperInstance = null;
     this.mobileBreakpoint = 700; // Mobile breakpoint in pixels
     this.productType = 'perfect-match';
+    this.res = [];
   }
 
   async init(container) {
@@ -696,7 +697,8 @@ class PerfectMatchProduct {
       if (filters.minBudget) params.set('minBudget', filters.minBudget);
       if (filters.maxBudget) params.set('maxBudget', filters.maxBudget);
 
-      this.perfectMatchProducts = await fetchGameList("https://dummyjson.com/c/b08b-30c8-4e50-9a46");
+
+      this.perfectMatchProducts = await fetchGameList("https://dummyjson.com/c/b08b-30c8-4e50-9a46"); // Perfect Match
 
       console.log("Perfect Match 3", this.perfectMatchProducts)
 
@@ -711,7 +713,6 @@ class PerfectMatchProduct {
       this.renderNoMatchProducts();
       return;
     }
-
     this.renderProducts();
   }
 
@@ -789,24 +790,26 @@ class PerfectMatchProduct {
     this.container.innerHTML = '';
 
     this.perfectMatchProducts.forEach((product) => {
-      try {
-        // Create carousel item wrapper
-        const carouselItem = document.createElement('div');
-        carouselItem.className = 'cmp-carousel__item cmp-perfect-match-product__item';
-        
-        // Use global product card renderer (same as homepage)
-        const cardHtml = window.renderProductCard(product, this.productType);
-        carouselItem.innerHTML = cardHtml;
+        try {
+          // Create carousel item wrapper
+          const carouselItem = document.createElement('div');
+          carouselItem.className = 'cmp-carousel__item cmp-perfect-match-product__item';
+          
+          // Use global product card renderer (same as homepage)
+          const cardHtml = window.renderProductCard(product, this.productType);
+          carouselItem.innerHTML = cardHtml;
 
-        // Add badge styling after rendering
-        this.addBadgeToCard(carouselItem, product.matchType);
+          // Add badge styling after rendering
+          this.addBadgeToCard(carouselItem, product.matchType);
 
-        this.container.appendChild(carouselItem);
+          this.container.appendChild(carouselItem);
+          
+        } catch (error) {
+          console.error('Error rendering product card:', error, product);
+        }
         
-      } catch (error) {
-        console.error('Error rendering product card:', error, product);
-      }
-    });
+      
+      });
 
     // Initialize carousel after products are loaded
     this.initializeCarousel();
