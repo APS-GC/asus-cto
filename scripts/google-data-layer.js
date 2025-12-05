@@ -146,6 +146,27 @@ export function trackIndicatorClick({ componentPosition, indicatorAction, eventN
   });
 }
 
+/**
+ * Track product card click (for top-picks, latest-creation, etc.)
+ * @param {Object} params - Tracking parameters
+ * @param {string} params.cardType - Type of card (e.g., 'latest_creation', 'top_picks')
+ * @param {string} params.productName - Product name/title
+ */
+export function trackProductCardClick({ cardType, productName }) {
+  const pagePath = getPagePathSuffix();
+  const eventName = `${cardType}_home_cto_rog`;
+  
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: 'data_layer_event',
+    event_name_ga4: eventName,
+    event_category_DL: `${cardType}${pagePath}`,
+    event_action_DL: 'clicked',
+    event_label_DL: `${productName}/${cardType}${pagePath}`,
+    event_value_DL: ''
+  });
+}
+
 // Legacy aliases for backward compatibility
 export const trackCTABannerClick = ({ bannerPosition, buttonText, eventName }) => 
   trackCTAClick({ componentPosition: bannerPosition, buttonText, eventName });
