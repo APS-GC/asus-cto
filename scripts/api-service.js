@@ -101,7 +101,7 @@ function isNotEmptyObject(obj) {
  * @param {number} [maxProducts] - The maximum number of products to return.
  */
 export async function fetchGameList(
-  endpoint = 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/gameList.json?websiteCode=en',
+  endpoint,
   mode = 'GET',
   params = {},
   timeoutMs = 5000
@@ -123,11 +123,11 @@ export async function fetchGameList(
       method: mode,
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
+        'Content-Type': 'application/json'
       },
       mode: 'cors',
       signal,
+      credentials: endpoint.includes('author') ? 'include' : 'omit',
       body: isNotEmptyObject(params) ? JSON.stringify(params) : null,
     });
 

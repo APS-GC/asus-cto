@@ -222,6 +222,14 @@ class SimilarProductsManager {
     this.filters = [];
     this.desktopBreakpoint = 1024;
     this.productType = 'similar-products';
+    this.selecedSort = document.getElementById('similar-products-sort-by');
+    this.sort = {
+      'best-performance': 'best performance',
+      'price-low-high': 'price desc',
+      'price-high-low': 'price asc',
+      'ratings': 'ratings',
+      'best-selling': 'best selling'
+    }
   }
 
   init() {
@@ -317,345 +325,30 @@ async transform(input) {
   }));
 }
 
+sanitizeTextSection2(value){
+    // Remove any characters that could be dangerous in HTML context
+    return value.replace(/[<>"]/g, '')
+  };
 
   async fetchProducts() { // Per
     try {
 
        
-      console.log("HELLO ",document.querySelector('#budget-min-value').value, document.querySelector('#budget-max-value').value)
-
       const contentContainer = this.productGrid.querySelector('.cmp-carousel__content');
       if (contentContainer) contentContainer.innerHTML = '';
       this.actionsContainer.classList.add('is-loading');
-      const response = await fetchGameList("https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/exploreMore.json?websiteCode=us&partNos=90PF0561-M00EZ0,90PF03T2-M01C80,90PF04S2-M00150&gameIds=G001,G002&lowPrice=100&highPrice=10000&sort=best performance&pageSize=4&offset=0", 'GET', {}); // Section 2: Explore more gaming desktops
+
+
+      const params = new URLSearchParams(window.location.search);
+      const selectedGames = params.getAll('games').map(this.sanitizeTextSection2).join(',');
+      const minBudget = params.get('min-budget'); // '2100'
+      const maxBudget = params.get('max-budget'); // '4300'
+      this.lang = 'us';//window.location.href.includes('/us/') ? "us" : "en";
+
+      // Section 2 (Explore more gaming desktops)
+      const response = await fetchGameList(`https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/exploreMore.json?websiteCode=${this.lang}&gameIds=${selectedGames}&lowPrice=${minBudget}&highPrice=${maxBudget}&sort=${this.sort[this.selecedSort.value]}&&pageSize=10&offset=0`, 'GET', {}); // Section 2: Explore more gaming desktops
       
-      const result = await this.transform({
-  "status": 200,
-  "message": "Success",
-  "results": {
-    "items": [
-      {
-        "sku": "90PF05T1-M00NN0",
-        "partNo": "90PF05T1-M00NN0",
-        "name": "ROG G700 (2025) GM700",
-        "modelName": "GM700TZ-MS777",
-        "model1id": "",
-        "externalId": "ROG_S_90PF05T1-M00NN0_P",
-        "averageOverallRating": "",
-        "productType": "simple",
-        "productTags": [
-          "Hot",
-          "New"
-        ],
-        "gameTitle": "Fortnite Chapter 4",
-        "fps": "495",
-        "timeSpyOverallScore": "25895.0",
-        "timeSpyScoreCPU": "14546.0",
-        "timeSpyScoreGPU": "30031.0",
-        "urlKey": "https://shop.asus.com/us/rog/rog-g700-2025-gm700.html",
-        "mainImage": "https://dlcdnwebimgs.asus.com/gain/E1D9A286-FF7B-4D78-87B8-7B17CC3DDCB4/w717/h525",
-        "hoverImage": "https://dlcdnwebimgs.asus.com/gain/E1D9A286-FF7B-4D78-87B8-7B17CC3DDCB4/w717/h525",
-        "additionalImages": [
-          "https://dlcdnwebimgs.asus.com/gain/0AADFD08-BBEF-4300-A1BB-12982E854FDE/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/13346FD3-263C-4796-ADE6-3DC1EE9356A7/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/20CA1C75-8ACE-4D13-BD1C-545B37D3C989/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/23F58F7B-D77E-482A-BD48-72A1EF74F5AB/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/36EEF4DA-C087-4A03-9F0A-55F0D216B43F/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/490B7B92-D6E8-472D-B6E9-004F07AC1FE6/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/4F1746FA-FB05-43E4-8152-2CF7BEA583EF/w1000/h1000/"
-        ],
-        "additionalImagesLabel": [
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700"
-        ],
-        "price": "2199.99",
-        "displayRegularPrice": "$2,199.99",
-        "specialPrice": "1899.99",
-        "displayPrice": "$1,899.99",
-        "savedPrice": "300.0",
-        "displaySavedPrice": "$300.00",
-        "buyButtonStatus": "Notify Me",
-        "brand": [
-          "ROG",
-          "TUF Gaming"
-        ],
-        "keySpec": [
-          {
-            "fieldNo": 16082,
-            "fieldNos": [
-              16082
-            ],
-            "name": "AMD® Radeon™ RX 9070 XT PRIME Desktop GPU"
-          },
-          {
-            "fieldNo": 16163,
-            "fieldNos": [
-              16163,
-              16494
-            ],
-            "name": "Windows 11 Home"
-          },
-          {
-            "fieldNo": 16035,
-            "fieldNos": [
-              16035,
-              16641
-            ],
-            "name": "AMD Ryzen™ 7 9800X 3D Processor"
-          },
-          {
-            "fieldNo": 16036,
-            "fieldNos": [
-              16036
-            ],
-            "name": "2TB M.2 NVMe™ PCIe® 4.0 SSD storage"
-          }
-        ],
-        "gamePriority": [
-          {
-            "gameId": "G001",
-            "gameTitle": "Fortnite Chapter 4",
-            "priority": "1",
-            "fullHdFps": "495",
-            "quadHdFps": "135",
-            "imageUrl": "https://publish-p165753-e1767020.adobeaemcloud.com/content/dam/asuscto/us/game/images/5.jpg",
-            "isMostPopular": "true"
-          },
-          {
-            "gameId": "G002",
-            "gameTitle": "Counter-Strike 2",
-            "priority": "2",
-            "fullHdFps": "480",
-            "quadHdFps": "275",
-            "imageUrl": "https://publish-p165753-e1767020.adobeaemcloud.com/content/dam/asuscto/us/game/images/3.jpg",
-            "isMostPopular": "false"
-          }
-        ],
-        "productAdvantage": "\u003cul\u003e\u003cli\u003eUp to NVIDIA® GeForce RTX™4060Ti DUAL Desktop GPU\u003c/li\u003e\u003cli\u003eUp to Windows 11 Pro\u003c/li\u003e\u003cli\u003eUp to Intel® Core™ Ultra 7 Processor 265F\u003c/li\u003e\u003cli\u003eUp to 1TB M.2 2280 NVMe™ PCIe® 4.0 SSD\u003c/li\u003e\u003c/ul\u003e",
-        "specSummary": "\u003cul\u003e\u003cli\u003eUp to NVIDIA® GeForce RTX™4060Ti DUAL Desktop GPU\u003c/li\u003e\u003cli\u003eUp to Windows 11 Pro\u003c/li\u003e\u003cli\u003eUp to Intel® Core™ Ultra 7 Processor 265F\u003c/li\u003e\u003cli\u003eUp to 1TB M.2 2280 NVMe™ PCIe® 4.0 SSD\u003c/li\u003e\u003c/ul\u003e",
-        "fpsSum": 975
-      },
-      {
-        "sku": "90PF05Q1-M000L0",
-        "partNo": "90PF05Q1-M000L0",
-        "name": "ROG G700 (2025) G700",
-        "modelName": "G700TF-MS776",
-        "model1id": "",
-        "externalId": "ROG_S_90PF05Q1-M000L0_P",
-        "averageOverallRating": "",
-        "productType": "simple",
-        "productTags": [
-          "Hot",
-          "New"
-        ],
-        "gameTitle": "Fortnite Chapter 4",
-        "fps": "405",
-        "timeSpyOverallScore": "25723.0",
-        "timeSpyScoreCPU": "18448.0",
-        "timeSpyScoreGPU": "27647.0",
-        "urlKey": "https://shop.asus.com/us/rog/g700-customize.html",
-        "mainImage": "https://dlcdnwebimgs.asus.com/gain/DE5270F2-899F-4762-92C0-69AE5F363824/w717/h525",
-        "hoverImage": "https://dlcdnwebimgs.asus.com/gain/DE5270F2-899F-4762-92C0-69AE5F363824/w717/h525",
-        "additionalImages": [
-          "https://dlcdnwebimgs.asus.com/gain/0AADFD08-BBEF-4300-A1BB-12982E854FDE/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/13346FD3-263C-4796-ADE6-3DC1EE9356A7/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/20CA1C75-8ACE-4D13-BD1C-545B37D3C989/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/23F58F7B-D77E-482A-BD48-72A1EF74F5AB/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/36EEF4DA-C087-4A03-9F0A-55F0D216B43F/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/490B7B92-D6E8-472D-B6E9-004F07AC1FE6/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/4F1746FA-FB05-43E4-8152-2CF7BEA583EF/w1000/h1000/"
-        ],
-        "additionalImagesLabel": [
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700"
-        ],
-        "price": "1999.99",
-        "displayRegularPrice": "$1,999.99",
-        "specialPrice": "1999.99",
-        "displayPrice": "$1,999.99",
-        "savedPrice": "0.0",
-        "displaySavedPrice": "",
-        "buyButtonStatus": "Buy Now",
-        "brand": [
-          "ROG",
-          "TUF Gaming"
-        ],
-        "keySpec": [
-          {
-            "fieldNo": 16082,
-            "fieldNos": [
-              16082
-            ],
-            "name": "NVIDIA® GeForce RTX™ 5070 PRIME Desktop GPU"
-          },
-          {
-            "fieldNo": 16163,
-            "fieldNos": [
-              16163,
-              16494
-            ],
-            "name": "Windows 11 Home"
-          },
-          {
-            "fieldNo": 16035,
-            "fieldNos": [
-              16035,
-              16641
-            ],
-            "name": "Intel® Core™ Ultra 7 Processor 265KF"
-          },
-          {
-            "fieldNo": 16036,
-            "fieldNos": [
-              16036
-            ],
-            "name": "1TB M.2 NVMe™ PCIe® 4.0 SSD storage"
-          }
-        ],
-        "gamePriority": [
-          {
-            "gameId": "G001",
-            "gameTitle": "Fortnite Chapter 4",
-            "priority": "1",
-            "fullHdFps": "405",
-            "quadHdFps": "125",
-            "imageUrl": "https://publish-p165753-e1767020.adobeaemcloud.com/content/dam/asuscto/us/game/images/5.jpg",
-            "isMostPopular": "true"
-          },
-          {
-            "gameId": "G002",
-            "gameTitle": "Counter-Strike 2",
-            "priority": "2",
-            "fullHdFps": "400",
-            "quadHdFps": "285",
-            "imageUrl": "https://publish-p165753-e1767020.adobeaemcloud.com/content/dam/asuscto/us/game/images/3.jpg",
-            "isMostPopular": "false"
-          }
-        ],
-        "productAdvantage": "\u003cul\u003e\u003cli\u003eUp to NVIDIA® GeForce RTX™4060Ti DUAL Desktop GPU\u003c/li\u003e\u003cli\u003eUp to Windows 11 Pro\u003c/li\u003e\u003cli\u003eUp to Intel® Core™ Ultra 7 Processor 265F\u003c/li\u003e\u003cli\u003eUp to 1TB M.2 2280 NVMe™ PCIe® 4.0 SSD\u003c/li\u003e\u003c/ul\u003e",
-        "specSummary": "\u003cul\u003e\u003cli\u003eUp to NVIDIA® GeForce RTX™4060Ti DUAL Desktop GPU\u003c/li\u003e\u003cli\u003eUp to Windows 11 Pro\u003c/li\u003e\u003cli\u003eUp to Intel® Core™ Ultra 7 Processor 265F\u003c/li\u003e\u003cli\u003eUp to 1TB M.2 2280 NVMe™ PCIe® 4.0 SSD\u003c/li\u003e\u003c/ul\u003e",
-        "fpsSum": 805
-      },
-      {
-        "sku": "90PF05Q1-M000L0",
-        "partNo": "90PF05Q1-M000L0",
-        "name": "ROG G700 (2025) G700",
-        "modelName": "G700TF-MS776",
-        "model1id": "",
-        "externalId": "ROG_S_90PF05Q1-M000L0_P",
-        "averageOverallRating": "",
-        "productType": "simple",
-        "productTags": [
-          "Hot",
-          "New"
-        ],
-        "gameTitle": "Fortnite Chapter 4",
-        "fps": "405",
-        "timeSpyOverallScore": "25723.0",
-        "timeSpyScoreCPU": "18448.0",
-        "timeSpyScoreGPU": "27647.0",
-        "urlKey": "https://shop.asus.com/us/rog/g700-customize.html",
-        "mainImage": "https://dlcdnwebimgs.asus.com/gain/DE5270F2-899F-4762-92C0-69AE5F363824/w717/h525",
-        "hoverImage": "https://dlcdnwebimgs.asus.com/gain/DE5270F2-899F-4762-92C0-69AE5F363824/w717/h525",
-        "additionalImages": [
-          "https://dlcdnwebimgs.asus.com/gain/0AADFD08-BBEF-4300-A1BB-12982E854FDE/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/13346FD3-263C-4796-ADE6-3DC1EE9356A7/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/20CA1C75-8ACE-4D13-BD1C-545B37D3C989/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/23F58F7B-D77E-482A-BD48-72A1EF74F5AB/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/36EEF4DA-C087-4A03-9F0A-55F0D216B43F/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/490B7B92-D6E8-472D-B6E9-004F07AC1FE6/w1000/h1000/",
-          "https://dlcdnwebimgs.asus.com/gain/4F1746FA-FB05-43E4-8152-2CF7BEA583EF/w1000/h1000/"
-        ],
-        "additionalImagesLabel": [
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700",
-          "ROG G700 (2025) G700"
-        ],
-        "price": "1999.99",
-        "displayRegularPrice": "$1,999.99",
-        "specialPrice": "1999.99",
-        "displayPrice": "$1,999.99",
-        "savedPrice": "0.0",
-        "displaySavedPrice": "",
-        "buyButtonStatus": "Buy Now",
-        "brand": [
-          "ROG",
-          "TUF Gaming"
-        ],
-        "keySpec": [
-          {
-            "fieldNo": 16082,
-            "fieldNos": [
-              16082
-            ],
-            "name": "NVIDIA® GeForce RTX™ 5070 PRIME Desktop GPU"
-          },
-          {
-            "fieldNo": 16163,
-            "fieldNos": [
-              16163,
-              16494
-            ],
-            "name": "Windows 11 Home"
-          },
-          {
-            "fieldNo": 16035,
-            "fieldNos": [
-              16035,
-              16641
-            ],
-            "name": "Intel® Core™ Ultra 7 Processor 265KF"
-          },
-          {
-            "fieldNo": 16036,
-            "fieldNos": [
-              16036
-            ],
-            "name": "1TB M.2 NVMe™ PCIe® 4.0 SSD storage"
-          }
-        ],
-        "gamePriority": [
-          {
-            "gameId": "G001",
-            "gameTitle": "Fortnite Chapter 4",
-            "priority": "1",
-            "fullHdFps": "405",
-            "quadHdFps": "125",
-            "imageUrl": "https://publish-p165753-e1767020.adobeaemcloud.com/content/dam/asuscto/us/game/images/5.jpg",
-            "isMostPopular": "true"
-          },
-          {
-            "gameId": "G002",
-            "gameTitle": "Counter-Strike 2",
-            "priority": "2",
-            "fullHdFps": "400",
-            "quadHdFps": "285",
-            "imageUrl": "https://publish-p165753-e1767020.adobeaemcloud.com/content/dam/asuscto/us/game/images/3.jpg",
-            "isMostPopular": "false"
-          }
-        ],
-        "productAdvantage": "\u003cul\u003e\u003cli\u003eUp to NVIDIA® GeForce RTX™4060Ti DUAL Desktop GPU\u003c/li\u003e\u003cli\u003eUp to Windows 11 Pro\u003c/li\u003e\u003cli\u003eUp to Intel® Core™ Ultra 7 Processor 265F\u003c/li\u003e\u003cli\u003eUp to 1TB M.2 2280 NVMe™ PCIe® 4.0 SSD\u003c/li\u003e\u003c/ul\u003e",
-        "specSummary": "\u003cul\u003e\u003cli\u003eUp to NVIDIA® GeForce RTX™4060Ti DUAL Desktop GPU\u003c/li\u003e\u003cli\u003eUp to Windows 11 Pro\u003c/li\u003e\u003cli\u003eUp to Intel® Core™ Ultra 7 Processor 265F\u003c/li\u003e\u003cli\u003eUp to 1TB M.2 2280 NVMe™ PCIe® 4.0 SSD\u003c/li\u003e\u003c/ul\u003e",
-        "fpsSum": 805
-      }
-    ],
-    "total": 12
-  }
-}); // Section 2 (Explore more gaming desktops)
+      const result = await this.transform(response); 
       
       const products = result || []; // Change response.products
       this.allProducts = [...this.allProducts, ...products];
@@ -1076,8 +769,9 @@ class PerfectMatchProduct {
     this.swiperInstance = null;
     this.mobileBreakpoint = 700; // Mobile breakpoint in pixels
     this.productType = 'perfect-match';
-    this.res = [];
-    this.path = "/content/dam/asuscto/us";
+    this.response = [];
+    this.path = "";
+    this.lang = "";
   }
 
   async init(container) {
@@ -1090,7 +784,26 @@ class PerfectMatchProduct {
       '.section-actions-container',
     );
 
-    await this.loadPerfectMatchProducts();
+    const params = new URLSearchParams(window.location.search);
+    const selectedGames = params.getAll('games').map(this.sanitizeText);
+    const minBudget = params.get('min-budget'); // '2100'
+    const maxBudget = params.get('max-budget'); // '4300'
+    this.path = '/content/dam/asuscto/us';//window.location.href.includes('/us/') ? "/content/dam/asuscto/us" : "/content/dam/asuscto/en";
+
+    this.dom = {
+                "query": "",
+                "variables": {
+                    "path": this.path,
+                    "gameIdsFilter": {
+                        "_logOp": "AND",
+                        "_expressions": selectedGames || [],
+                    },
+                    "lowerPrice": minBudget || 500,
+                    "highPrice": maxBudget || 5000,
+                    "sort": "price DESC"
+                }
+            }
+    await this.loadPerfectMatchProducts(this.dom);
 
     // Add resize listener to handle viewport changes
     window.addEventListener('resize', () => this.handleResize());
@@ -1181,30 +894,26 @@ transformItem(item, matchType) {
     return result;
   }
 
+  sanitizeText(value){
+    // Remove any characters that could be dangerous in HTML context
+    return {
+              "value": value.replace(/[<>"]/g, ''),
+              "_apply": "AT_LEAST_ONCE"
+          }
+  };
+  
+
   async loadPerfectMatchProducts(filters = {}) {
     this.container.innerHTML = '';
     this.actionsContainer.classList.add('is-loading');
 
     try {
-      const params = new URLSearchParams();
-      if (filters.games) filters.games.forEach((g) => params.append('games', g));
-      if (filters.minBudget) params.set('minBudget', filters.minBudget);
-      if (filters.maxBudget) params.set('maxBudget', filters.maxBudget);
 
-
-      // https://publish-p165753-e1767020.adobeaemcloud.com/graphql/execute.json/asuscto/fetchHelpMeChooseResults
-      this.res = await fetchGameList("https://publish-p165753-e1767020.adobeaemcloud.com/graphql/execute.json/asuscto/fetchHelpMeChooseResults",'POST',
-        {
-          "query": "",
-          "variables": {
-              "path": this.path || "/content/dam/asuscto/us",
-              "lowerPrice": filters.minBudget || 500,
-              "highPrice": filters.maxBudget || 1500
-          }
-      }
-      ); // Section 1 : We have found your perfect matches!
-      // this.perfectMatchProducts = await this.transformAll(this.res);
-      this.perfectMatchProducts = await this.transformAll({"data":{"bestFit":{"items":[{"itemsId":["362831","105261","105262","105263","105264","105265","105266","123078","110568","42700","43450","43452","43453","43454","43455"],"productId":"32642","storeViewCode":"en_US","sku":"90PF05T1-M00NN0","partNo":"90PF05T1-M00NN0","name":"ROG G700 (2025) GM700","modelName":"GM700TZ-MS777","productType":"simple","gamePriority":[{"gameId":"G001","gameTitle":"Fortnite Chapter 4","fullHdFps":"495","quadHdFps":"135","isMostPopular":true},{"gameId":"G002","gameTitle":"Counter-Strike 2","fullHdFps":"480","quadHdFps":"275","isMostPopular":false},{"gameId":"G003","gameTitle":"Baldur's Gate 3","fullHdFps":"275","quadHdFps":"205","isMostPopular":false},{"gameId":"G004","gameTitle":"Call of Duty: Modern Warfare III","fullHdFps":"325","quadHdFps":"260","isMostPopular":false},{"gameId":"G005","gameTitle":"Red Dead Redemption 2","fullHdFps":"315","quadHdFps":"120","isMostPopular":false},{"gameId":"G006","gameTitle":"Alan Wake 2","fullHdFps":"170","quadHdFps":"105","isMostPopular":false}],"gameIds":["G001","G002","G003","G004","G005","G006"],"allGameFps":"2060.0","price":2199.99,"specialPrice":1899.99,"savedPrice":300,"buyButtonStatus":"Notify Me","customerChoice":9,"productCardContent":{"productTags":["Hot","New"],"mainImage":"https://dlcdnwebimgs.asus.com/gain/E1D9A286-FF7B-4D78-87B8-7B17CC3DDCB4/w717/h525","hoverImage":"https://dlcdnwebimgs.asus.com/gain/E1D9A286-FF7B-4D78-87B8-7B17CC3DDCB4/w717/h525","firstPriorityGameTitle":"Fortnite Chapter 4","fps":"495","timeSpyScoreGpu":null,"timeSpyScoreCpu":null,"timeSpyOverallScore":"25895.0","currency":null,"currencySymbol":null,"displayPrice":"$1,899.99","displaySavedPrice":"$300.00","displayRegularPrice":"$2,199.99","urlKey":"https://shop.asus.com/us/rog/rog-g700-2025-gm700.html"},"keySpec":[{"fieldNo":"16082","fieldNos":["16082"],"name":"AMD® Radeon™ RX 9070 XT PRIME Desktop GPU"},{"fieldNo":"16163","fieldNos":["16163","16494"],"name":"Windows 11 Home"},{"fieldNo":"16035","fieldNos":["16035","16641"],"name":"AMD Ryzen™ 7 9800X 3D Processor"},{"fieldNo":"16036","fieldNos":["16036"],"name":"2TB M.2 NVMe™ PCIe® 4.0 SSD storage"}],"productPreviewPopupCF":{"additionalImages":["https://dlcdnwebimgs.asus.com/gain/0AADFD08-BBEF-4300-A1BB-12982E854FDE/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/13346FD3-263C-4796-ADE6-3DC1EE9356A7/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/20CA1C75-8ACE-4D13-BD1C-545B37D3C989/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/23F58F7B-D77E-482A-BD48-72A1EF74F5AB/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/36EEF4DA-C087-4A03-9F0A-55F0D216B43F/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/490B7B92-D6E8-472D-B6E9-004F07AC1FE6/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/4F1746FA-FB05-43E4-8152-2CF7BEA583EF/w1000/h1000/"],"additionalImagesLabel":["ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700"],"installment":null,"purchaseLimit":"A maximum cnt of 5 pieces per customer.","preOrderInfo":null,"productAdvantage":{"html":"Up to NVIDIA® GeForce RTX™4060Ti DUAL Desktop GPUUp to Windows 11 ProUp to Intel® Core™ Ultra 7 Processor 265FUp to 1TB M.2 2280 NVMe™ PCIe® 4.0 SSD"},"specSummary":{"html":"Up to NVIDIA® GeForce RTX™4060Ti DUAL Desktop GPUUp to Windows 11 ProUp to Intel® Core™ Ultra 7 Processor 265FUp to 1TB M.2 2280 NVMe™ PCIe® 4.0 SSD"}}}]},"customerChoice":{"items":[{"itemsId":["36285","94108","89792","110658","41994","43450"],"productId":"22275","storeViewCode":"en_US","sku":"90PF03T1-M013Z0","partNo":"90PF03T1-M013Z0","name":"ROG G22CH","modelName":"G22CH-DS774S","productType":"simple","gamePriority":[{"gameId":"G001","gameTitle":"Fortnite Chapter 4","fullHdFps":"365","quadHdFps":"100","isMostPopular":true},{"gameId":"G002","gameTitle":"Counter-Strike 2","fullHdFps":"415","quadHdFps":"225","isMostPopular":false},{"gameId":"G003","gameTitle":"Baldur's Gate 3","fullHdFps":"180","quadHdFps":"160","isMostPopular":false},{"gameId":"G004","gameTitle":"Call of Duty: Modern Warfare III","fullHdFps":"255","quadHdFps":"180","isMostPopular":false},{"gameId":"G005","gameTitle":"Red Dead Redemption 2","fullHdFps":"225","quadHdFps":"85","isMostPopular":false},{"gameId":"G006","gameTitle":"Alan Wake 2","fullHdFps":"105","quadHdFps":"75","isMostPopular":false}],"gameIds":["G001","G002","G003","G004","G005","G006"],"allGameFps":"1545.0","price":1799.99,"specialPrice":1599.99,"savedPrice":200,"buyButtonStatus":"Buy Now","customerChoice":21,"productCardContent":{"productTags":["Hot","New"],"mainImage":"https://dlcdnwebimgs.asus.com/gain/2B87FC44-233C-4FA5-8DB4-C09F3D229B8C/w717/h525","hoverImage":"https://dlcdnwebimgs.asus.com/gain/2B87FC44-233C-4FA5-8DB4-C09F3D229B8C/w717/h525","firstPriorityGameTitle":"Fortnite Chapter 4","fps":"365","timeSpyScoreGpu":null,"timeSpyScoreCpu":null,"timeSpyOverallScore":"20840.0","currency":null,"currencySymbol":null,"displayPrice":"$1,599.99","displaySavedPrice":"$200.00","displayRegularPrice":"$1,799.99","urlKey":"https://shop.asus.com/us/rog/90pf03t1-m013z0-rog-g22ch.html"},"keySpec":[{"fieldNo":"16082","fieldNos":["16082"],"name":"NVIDIA® GeForce RTX4070 SUPER DUAL Desktop GPU"},{"fieldNo":"16163","fieldNos":["16163","16494"],"name":"Windows 11 Home"},{"fieldNo":"16035","fieldNos":["16035","16641"],"name":"Intel® Core™ i7-14700F Processor"},{"fieldNo":"16036","fieldNos":["16036"],"name":"1TB M.2 NVMe™ PCIe® 4.0 SSD storage"}],"productPreviewPopupCF":{"additionalImages":["https://dlcdnwebimgs.asus.com/gain/0AADFD08-BBEF-4300-A1BB-12982E854FDE/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/13346FD3-263C-4796-ADE6-3DC1EE9356A7/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/20CA1C75-8ACE-4D13-BD1C-545B37D3C989/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/23F58F7B-D77E-482A-BD48-72A1EF74F5AB/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/36EEF4DA-C087-4A03-9F0A-55F0D216B43F/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/490B7B92-D6E8-472D-B6E9-004F07AC1FE6/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/4F1746FA-FB05-43E4-8152-2CF7BEA583EF/w1000/h1000/"],"additionalImagesLabel":["ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700"],"installment":null,"purchaseLimit":"A maximum cnt of 5 pieces per customer.","preOrderInfo":null,"productAdvantage":{"html":"Up to NVIDIA® GeForce RTX™4060Ti DUAL Desktop GPUUp to Windows 11 ProUp to Intel® Core™ Ultra 7 Processor 265FUp to 1TB M.2 2280 NVMe™ PCIe® 4.0 SSD"},"specSummary":{"html":"Up to NVIDIA® GeForce RTX™4060Ti DUAL Desktop GPUUp to Windows 11 ProUp to Intel® Core™ Ultra 7 Processor 265FUp to 1TB M.2 2280 NVMe™ PCIe® 4.0 SSD"}}}]},"goodDeal":{"items":[{"itemsId":["36283","105261","105262","105263","105264","105265","105266","123078","110568","42700","43450","43452","43453","43454","43455"],"productId":"32642","storeViewCode":"en_US","sku":"90PF05T1-M00NN0","partNo":"90PF05T1-M00NN0","name":"ROG G700 (2025) GM700","modelName":"GM700TZ-MS777","model1id":null,"externalId":"ROG_S_90PF05T1-M00NN0_P","productType":"simple","gamePriority":[{"gameId":"G001","gameTitle":"Fortnite Chapter 4","fullHdFps":"495","quadHdFps":"135","isMostPopular":true},{"gameId":"G002","gameTitle":"Counter-Strike 2","fullHdFps":"480","quadHdFps":"275","isMostPopular":false},{"gameId":"G003","gameTitle":"Baldur's Gate 3","fullHdFps":"275","quadHdFps":"205","isMostPopular":false},{"gameId":"G004","gameTitle":"Call of Duty: Modern Warfare III","fullHdFps":"325","quadHdFps":"260","isMostPopular":false},{"gameId":"G005","gameTitle":"Red Dead Redemption 2","fullHdFps":"315","quadHdFps":"120","isMostPopular":false},{"gameId":"G006","gameTitle":"Alan Wake 2","fullHdFps":"170","quadHdFps":"105","isMostPopular":false}],"gameIds":["G001","G002","G003","G004","G005","G006"],"allGameFps":"2060.0","price":2199.99,"specialPrice":1899.99,"savedPrice":300,"buyButtonStatus":"Notify Me","customerChoice":9,"productCardContent":{"productTags":["Hot","New"],"mainImage":"https://dlcdnwebimgs.asus.com/gain/E1D9A286-FF7B-4D78-87B8-7B17CC3DDCB4/w717/h525","hoverImage":"https://dlcdnwebimgs.asus.com/gain/E1D9A286-FF7B-4D78-87B8-7B17CC3DDCB4/w717/h525","firstPriorityGameTitle":"Fortnite Chapter 4","fps":"495","timeSpyScoreGpu":null,"timeSpyScoreCpu":null,"timeSpyOverallScore":"25895.0","currency":null,"currencySymbol":null,"displayPrice":"$1,899.99","displaySavedPrice":"$300.00","displayRegularPrice":"$2,199.99","urlKey":"https://shop.asus.com/us/rog/rog-g700-2025-gm700.html"},"keySpec":[{"fieldNo":"16082","fieldNos":["16082"],"name":"AMD® Radeon™ RX 9070 XT PRIME Desktop GPU"},{"fieldNo":"16163","fieldNos":["16163","16494"],"name":"Windows 11 Home"},{"fieldNo":"16035","fieldNos":["16035","16641"],"name":"AMD Ryzen™ 7 9800X 3D Processor"},{"fieldNo":"16036","fieldNos":["16036"],"name":"2TB M.2 NVMe™ PCIe® 4.0 SSD storage"}],"productPreviewPopupCF":{"additionalImages":["https://dlcdnwebimgs.asus.com/gain/0AADFD08-BBEF-4300-A1BB-12982E854FDE/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/13346FD3-263C-4796-ADE6-3DC1EE9356A7/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/20CA1C75-8ACE-4D13-BD1C-545B37D3C989/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/23F58F7B-D77E-482A-BD48-72A1EF74F5AB/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/36EEF4DA-C087-4A03-9F0A-55F0D216B43F/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/490B7B92-D6E8-472D-B6E9-004F07AC1FE6/w1000/h1000/","https://dlcdnwebimgs.asus.com/gain/4F1746FA-FB05-43E4-8152-2CF7BEA583EF/w1000/h1000/"],"additionalImagesLabel":["ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700","ROG G700 (2025) G700"],"installment":null,"purchaseLimit":"A maximum cnt of 5 pieces per customer.","preOrderInfo":null,"productAdvantage":{"html":"Up to NVIDIA® GeForce RTX™4060Ti DUAL Desktop GPUUp to Windows 11 ProUp to Intel® Core™ Ultra 7 Processor 265FUp to 1TB M.2 2280 NVMe™ PCIe® 4.0 SSD"},"specSummary":{"html":"Up to NVIDIA® GeForce RTX™4060Ti DUAL Desktop GPUUp to Windows 11 ProUp to Intel® Core™ Ultra 7 Processor 265FUp to 1TB M.2 2280 NVMe™ PCIe® 4.0 SSD"}}}]}}});
+      // Section 1 (We have found your perfect matches!)
+      this.response = await fetchGameList("https://publish-p165753-e1767020.adobeaemcloud.com/graphql/execute.json/asuscto/fetchHelpMeChooseResults",'POST',
+        filters
+      );
+      this.perfectMatchProducts = await this.transformAll(this.response || []);
 
     } catch (error) {
       console.error('Failed to load perfect match products:', error);
