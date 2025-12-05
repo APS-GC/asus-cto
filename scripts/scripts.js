@@ -581,6 +581,15 @@ async function loadFooter(footer) {
  * @param {string} [prefix] Location of placeholders
  * @returns {object} Window placeholders object
  */
+/**
+ * Gets placeholders for the current locale.
+ * @returns {object} Placeholders object for the current locale
+ */
+export async function fetchPlaceholdersForLocale() {
+  const locale = await getLocale();
+  return fetchPlaceholders(`/${locale}`);
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export async function fetchPlaceholders(prefix = 'default') {
   window.placeholders = window.placeholders || {};

@@ -4,7 +4,7 @@
  */
 
 import { decorateBlock, loadBlock, loadScript, loadCSS } from '../../scripts/aem.js';
-import { loadBazaarvoiceScript, fetchPlaceholders } from '../../scripts/scripts.js';
+import { loadBazaarvoiceScript, fetchPlaceholdersForLocale } from '../../scripts/scripts.js';
 import { fetchFilteredProducts } from '../../scripts/api-service.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
 import { openModal } from '../modal/modal.js';
@@ -684,7 +684,7 @@ async function initFilterDialog(container) {
 export default async function decorate(block) {
   const [config, placeholders] = await Promise.all([
     getBlockConfigs(block, DEFAULT_CONFIG, 'product-listing'),
-    fetchPlaceholders(),
+    fetchPlaceholdersForLocale(),
   ]);
 
   const structure = createMainStructure(config, placeholders);

@@ -5,7 +5,7 @@
 
 import { loadScript, decorateBlock, loadBlock } from '../../scripts/aem.js';
 import { fetchFilters } from '../../scripts/api-service.js';
-import { fetchPlaceholders, getCurrencySymbol, getLang } from '../../scripts/scripts.js';
+import { fetchPlaceholdersForLocale, getCurrencySymbol, getLang } from '../../scripts/scripts.js';
 
 // Fallback filter configuration (used if API fails)
 const FALLBACK_FILTER_CONFIG = [];
@@ -880,7 +880,7 @@ export default async function decorate(block) {
     fetchFiltersFromApi(),
     getCurrencySymbol(),
     getLang(),
-    fetchPlaceholders(),
+    fetchPlaceholdersForLocale(),
   ]);
 
   config.filters = filters;
