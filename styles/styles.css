@@ -7343,6 +7343,10 @@ input[type=checkbox]:checked::after {
   }
 }
 
+.choices .choices__inner::after {
+  z-index: auto;
+}
+
 /* Swiper CSS Override */
 .swiper-pagination {
   position: static !important;

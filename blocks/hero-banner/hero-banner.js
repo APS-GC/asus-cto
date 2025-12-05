@@ -548,53 +548,61 @@ export default async function decorate(block) {
   swiper.appendChild(swiperNotification);
   heroBannerContent.appendChild(swiper);
 
+  // Only show navigation/indicators if there are multiple slides
+  const hasMultipleSlides = config.slides.length > 1;
+
   // Create hero banner footer
   const heroBannerFooter = document.createElement('div');
   heroBannerFooter.className = 'cmp-hero-banner__footer';
 
-  // Create indicators group
-  const indicatorsGroup = document.createElement('div');
-  indicatorsGroup.className = 'cmp-hero-banner__indicators-group';
+  if (hasMultipleSlides) {
+    // Create indicators group
+    const indicatorsGroup = document.createElement('div');
+    indicatorsGroup.className = 'cmp-hero-banner__indicators-group';
 
-  // Create indicators list
-  const indicatorsList = document.createElement('ol');
-  indicatorsList.className = 'cmp-hero-banner__indicators';
-  indicatorsList.setAttribute('role', 'tablist');
-  indicatorsList.setAttribute('aria-label', 'Choose a slide to display');
+    // Create indicators list
+    const indicatorsList = document.createElement('ol');
+    indicatorsList.className = 'cmp-hero-banner__indicators';
+    indicatorsList.setAttribute('role', 'tablist');
+    indicatorsList.setAttribute('aria-label', 'Choose a slide to display');
 
-  // Generate indicator elements
-  config.slides.forEach((slide, index) => {
-    const indicator = document.createElement('li');
-    indicator.className = `cmp-hero-banner__indicator ${index === 0 ? 'cmp-hero-banner__indicator--active' : ''}`;
-    indicator.setAttribute('aria-label', `Go to slide ${index + 1}`);
-    indicator.setAttribute('role', 'tab');
-    indicator.setAttribute('tabindex', '0');
-    if (index === 0) {
-      indicator.setAttribute('aria-current', 'true');
-    }
-    indicatorsList.appendChild(indicator);
-  });
+    // Generate indicator elements
+    config.slides.forEach((slide, index) => {
+      const indicator = document.createElement('li');
+      indicator.className = `cmp-hero-banner__indicator ${index === 0 ? 'cmp-hero-banner__indicator--active' : ''}`;
+      indicator.setAttribute('aria-label', `Go to slide ${index + 1}`);
+      indicator.setAttribute('role', 'tab');
+      indicator.setAttribute('tabindex', '0');
+      if (index === 0) {
+        indicator.setAttribute('aria-current', 'true');
+      }
+      indicatorsList.appendChild(indicator);
+    });
 
-  // Create autoplay toggle button
-  const autoplayToggle = document.createElement('button');
-  autoplayToggle.className = 'hero-banner-autoplay-toggle';
-  autoplayToggle.setAttribute('aria-label', 'Pause');
+    // Create autoplay toggle button
+    const autoplayToggle = document.createElement('button');
+    autoplayToggle.className = 'hero-banner-autoplay-toggle';
+    autoplayToggle.setAttribute('aria-label', 'Pause');
 
-  indicatorsGroup.appendChild(indicatorsList);
-  indicatorsGroup.appendChild(autoplayToggle);
+    indicatorsGroup.appendChild(indicatorsList);
+    indicatorsGroup.appendChild(autoplayToggle);
 
-  // Create media controls
-  const mediaControls = document.createElement('div');
-  mediaControls.className = 'cmp-hero-banner__media-controls';
+    heroBannerFooter.appendChild(indicatorsGroup);
+  }
 
-  const playPauseBtn = document.createElement('button');
-  playPauseBtn.className = 'cmp-hero-banner__media-control cmp-hero-banner__media-control--play-pause';
-  playPauseBtn.setAttribute('aria-label', `Play ${config.slides[0]?.subtitle || 'media'}`);
+  // Create media controls (only for video slides)
+  const hasVideoSlide = config.slides.some((slide) => slide.isVideo);
+  if (hasVideoSlide) {
+    const mediaControls = document.createElement('div');
+    mediaControls.className = 'cmp-hero-banner__media-controls';
 
-  mediaControls.appendChild(playPauseBtn);
+    const playPauseBtn = document.createElement('button');
+    playPauseBtn.className = 'cmp-hero-banner__media-control cmp-hero-banner__media-control--play-pause';
+    playPauseBtn.setAttribute('aria-label', `Play ${config.slides[0]?.subtitle || 'media'}`);
 
-  heroBannerFooter.appendChild(indicatorsGroup);
-  heroBannerFooter.appendChild(mediaControls);
+    mediaControls.appendChild(playPauseBtn);
+    heroBannerFooter.appendChild(mediaControls);
+  }
 
   heroBannerContent.appendChild(heroBannerFooter);
   heroBanner.appendChild(heroBannerContent);
@@ -604,6 +612,24 @@ export default async function decorate(block) {
   block.textContent = '';
   block.appendChild(heroBannerWrapper);
 
-  // Initialize Swiper hero banner
-  initializeSwiper(heroBannerWrapper, config);
+  // Initialize Swiper hero banner only if there are multiple slides
+  if (hasMultipleSlides) {
+    initializeSwiper(heroBannerWrapper, config);
+  } else {
+    // For single slide, add classes to make it visible without Swiper
+    const swiperContainer = heroBannerWrapper.querySelector('.swiper');
+    if (swiperContainer) {
+      swiperContainer.classList.add('single-slide');
+    }
+    
+    const singleSlide = heroBannerWrapper.querySelector('.swiper-slide');
+    if (singleSlide) {
+      singleSlide.classList.add('swiper-slide-active');
+    }
+    
+    const video = heroBannerWrapper.querySelector('video');
+    if (video) {
+      manageVideoPlayback(video, 'play');
+    }
+  }
 }
