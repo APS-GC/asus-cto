@@ -247,7 +247,7 @@ const manageVideoPlayback = (video, action) => {
 /**
  * Toggle video play/pause and manage paused class on media controls
  */
-const toggleSliderVideo = (videoPlayPauseBtn) => {
+const toggleSliderVideo = (videoPlayPauseBtn, blockPosition) => {
   const activeSlide = document.querySelector('.swiper-slide-active');
   const activeSlideProdName = document.querySelector('.swiper-slide-active .product-name')?.textContent;
 
@@ -256,11 +256,27 @@ const toggleSliderVideo = (videoPlayPauseBtn) => {
   
   if (activeSlide && activeVideo) {
     if (activeVideo.paused) {
+      // Track play action
+      if (blockPosition) {
+        trackIndicatorBannerClick({
+          bannerPosition: `hero_banner_${blockPosition}`,
+          indicatorAction: 'play'
+        });
+      }
+      
       manageVideoPlayback(activeVideo, 'play');
       videoPlayPauseBtn?.setAttribute('aria-label', `Pause ${activeSlideProdName}`);
       videoPlayPauseBtn?.setAttribute('title', `Pause ${activeSlideProdName}`);
       mediaControls?.classList.remove('paused');
     } else {
+      // Track pause action
+      if (blockPosition) {
+        trackIndicatorBannerClick({
+          bannerPosition: `hero_banner_${blockPosition}`,
+          indicatorAction: 'pause'
+        });
+      }
+      
       manageVideoPlayback(activeVideo, 'pause');
       videoPlayPauseBtn?.setAttribute('aria-label', `Play ${activeSlideProdName}`);
       videoPlayPauseBtn?.setAttribute('title', `Play ${activeSlideProdName}`);
@@ -272,7 +288,7 @@ const toggleSliderVideo = (videoPlayPauseBtn) => {
 /**
  * Initialize Swiper hero banner
  */
-async function initializeSwiper(heroBannerElement, config) {
+async function initializeSwiper(heroBannerElement, config, blockPosition) {
   const isUE = isUniversalEditor();
 
   // Force apply UE authoring class and attributes for CSS targeting
@@ -376,7 +392,7 @@ async function initializeSwiper(heroBannerElement, config) {
       
       if (playPauseBtn) {
         playPauseBtn.addEventListener('click', () => {
-          toggleSliderVideo(playPauseBtn);
+          toggleSliderVideo(playPauseBtn, blockPosition);
         });
       }
 
@@ -605,19 +621,20 @@ export default async function decorate(block) {
   block.textContent = '';
   block.appendChild(heroBannerWrapper);
 
-  // Initialize Swiper hero banner
-  initializeSwiper(heroBannerWrapper, config);
-
   // Determine block position (how many hero-banner blocks appear before this one)
   const allHeroBanners = document.querySelectorAll('.hero-banner.block');
   const blockPosition = Array.from(allHeroBanners).indexOf(block) + 1;
+
+  // Initialize Swiper hero banner with blockPosition
+  initializeSwiper(heroBannerWrapper, config, blockPosition);
 
   // Track promotionView for all visible slides
   setTimeout(() => {
     const promotions = config.slides.map((slide, index) => ({
       id: slide.media || `hero_banner_slide_${index + 1}`,
       name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
-      position: `hero_banner_${blockPosition}_${index + 1}`
+      position: `hero_banner_${blockPosition}`,
+      order: `${index + 1}`
     }));
     trackPromotionView(promotions);
   }, 500);
@@ -628,16 +645,9 @@ export default async function decorate(block) {
     
     indicators.forEach((indicator, index) => {
       indicator.addEventListener('click', () => {
-        const bannerPosition = `hero_banner_${blockPosition}_${index + 1}`;
-        
-        // Check current autoplay state (play or pause)
-        const swiperElement = block.querySelector('.swiper');
-        const isPaused = swiperElement?.classList.contains('is-autoplay-paused');
-        const currentState = isPaused ? 'pause' : 'play';
-  
         trackIndicatorBannerClick({
-          bannerPosition: bannerPosition,
-          indicatorAction: currentState
+          bannerPosition: `hero_banner_${blockPosition}`,
+          indicatorAction: `${index + 1}`
         });
       });
     });
@@ -647,28 +657,29 @@ export default async function decorate(block) {
   block.querySelectorAll('.cta-button').forEach((ctaButton, index) => {
     ctaButton.addEventListener('click', (e) => {
       const slide = config.slides[index];
-      const bannerPosition = `hero_banner_${blockPosition}_${index + 1}`;
+      const bannerPosition = `hero_banner_${blockPosition}`;
+      const bannerOrder = `${index + 1}`;
       
-      // Only prevent default if it's a link (to allow time for tracking)
+      // Track Enhanced Ecommerce promotionClick
+      trackPromotionClick({
+        id: slide.media || `hero_banner_slide_${index + 1}`,
+        name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
+        position: bannerPosition,
+        order: bannerOrder
+      });
+      
+      // Track custom data layer CTA click
+      trackCTABannerClick({
+        bannerPosition: bannerPosition,
+        buttonText: slide.ctaText || 'CTA'
+      });
+      
+      // Handle navigation with tracking delay
       if (ctaButton.href) {
         e.preventDefault();
         const targetUrl = ctaButton.href;
         const openInNewTab = ctaButton.target === '_blank';
         
-        // Track Enhanced Ecommerce promotionClick
-        trackPromotionClick({
-          id: slide.media || `hero_banner_slide_${index + 1}`,
-          name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
-          position: bannerPosition
-        });
-        
-        // Track custom data layer CTA click
-        trackCTABannerClick({
-          bannerPosition: bannerPosition,
-          buttonText: slide.ctaText || 'CTA'
-        });
-        
-        // Navigate after a short delay to ensure tracking fires
         setTimeout(() => {
           if (openInNewTab) {
             window.open(targetUrl, '_blank', 'noopener,noreferrer');
@@ -676,19 +687,6 @@ export default async function decorate(block) {
             window.location.href = targetUrl;
           }
         }, 300);
-      } else {
-        // No href, just track
-        trackPromotionClick({
-          id: slide.media || `hero_banner_slide_${index + 1}`,
-          name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
-          position: bannerPosition
-        });
-        
-        // Track custom data layer CTA click
-        trackCTABannerClick({
-          bannerPosition: bannerPosition,
-          buttonText: slide.ctaText || 'CTA'
-        });
       }
     });
   });
