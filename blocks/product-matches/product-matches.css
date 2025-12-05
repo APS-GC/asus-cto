@@ -87,11 +87,6 @@ body.no-scroll {
     width: 48px
 }
 
-
-
-
-
-
 .text-center {
     text-align: center
 }
@@ -102,6 +97,11 @@ body.no-scroll {
     grid-template-columns: repeat(12,1fr)
 }
 
+.layout-grid--less--3cols {
+    display: flex;
+    justify-content: center;
+}
+
 .layout-grid__col {
     grid-column: span 12
 }
@@ -110,6 +110,9 @@ body.no-scroll {
     grid-column: span 3
 }
 
+.layout-grid__col--span-4 {
+    grid-column: span 4
+}
 
 .choices {
     font-size: 16px;
