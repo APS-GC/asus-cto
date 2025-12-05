@@ -2062,3 +2062,9 @@ body.no-scroll {
 .product-matches-wrapper .section-actions-container {
     margin-top: 0
 }
+
+
+.swiper-wrapper {
+    display: flex;
+    justify-content: center;
+}
