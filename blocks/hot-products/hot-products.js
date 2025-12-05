@@ -16,7 +16,7 @@ const DEFAULT_CONFIG = {
   viewAllText: 'View all',
   viewAllLink: '#',
   openLinkInNewTab: false,
-  productPreviewModalPath: '/content/asus-cto/language-master/en/modals/product-preview',
+  productPreviewModalPath: '/en/modals/product-preview',
 };
 
 /**
@@ -50,7 +50,7 @@ async function handleQuickView(product, config) {
   window.__productPreviewData = product;
 
   // Get modal path from config
-  const modalPath = config.productPreviewModalPath || '/modals/product-preview';
+  const modalPath = config.productPreviewModalPath || '/en/modals/product-preview';
 
   // Open modal with the authored page, dialog ID, and classes
   await openModal(

@@ -164,15 +164,15 @@ function buildProductCardHTML(product, config) {
         </div>
       </div>
 
-      <div class="cmp-product-card__price-block" aria-label="Current price $${product.specialPrice || product.price}${product.specialPrice && product.price ? `, Original price $${product.price}, save $${product.savedPrice || ''}` : ''}">
-        <span class="cmp-product-card__price">$${product.specialPrice || product.price}</span>
-        ${product.specialPrice && product.price ? `<span class="cmp-product-card__original-price">$${product.price}</span>` : ''}
-        ${product.savedPrice ? `<span class="cmp-product-card__discount">SAVE $${product.savedPrice}</span>` : ''}
+      <div class="cmp-product-card__price-block" aria-label="Current price ${product.displayPrice || product.specialPrice || product.price}${product.displayRegularPrice ? `, Original price ${product.displayRegularPrice}, save ${product.displaySavedPrice || ''}` : ''}">
+        <span class="cmp-product-card__price">${product.displayPrice || product.specialPrice || product.price}</span>
+        ${product.displayRegularPrice && product.specialPrice ? `<span class="cmp-product-card__original-price">${product.displayRegularPrice}</span>` : ''}
+        ${product.displaySavedPrice ? `<span class="cmp-product-card__discount">SAVE ${product.displaySavedPrice}</span>` : ''}
       </div>
     </div>
 
     <div class="cmp-product-card__footer">
-      <button class="cmp-button cmp-product-card__buy-button btn">${mergedConfig.buyNowText}</button>
+      <button class="cmp-button cmp-product-card__buy-button btn">${product.buyButtonStatus || mergedConfig.buyNowText}</button>
     </div>
   `;
 }

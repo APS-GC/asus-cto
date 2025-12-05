@@ -26,6 +26,33 @@ export async function getLocale() {
 }
 
 /**
+ * Get the website code from configuration
+ * @returns {Promise<string>} The website code value, defaults to 'us' if not configured
+ */
+export async function getWebsiteCode() {
+  const websiteCode = await getConfigValue('website-code');
+  return websiteCode || 'us';
+}
+
+/**
+ * Get the currency symbol from configuration
+ * @returns {Promise<string>} The currency symbol, defaults to '$' if not configured
+ */
+export async function getCurrencySymbol() {
+  const currencySymbol = await getConfigValue('currency-symbol');
+  return currencySymbol || '$';
+}
+
+/**
+ * Get the language/locale from configuration
+ * @returns {Promise<string>} The language code (e.g., 'en-us'), defaults to 'en-US' if not configured
+ */
+export async function getLang() {
+  const lang = await getConfigValue('lang');
+  return lang || 'en-US';
+}
+
+/**
  * Moves all the attributes from a given elmenet to another given element.
  * @param {Element} from the element to copy attributes from
  * @param {Element} to the element to copy attributes to

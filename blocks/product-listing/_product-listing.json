@@ -37,14 +37,6 @@
           "value": "View all gaming desktops or filter for what you want."
         },
         {
-          "component": "reference",
-          "valueType": "string",
-          "name": "bannerImage",
-          "label": "Banner Image",
-          "description": "Hero banner image for the top of the page",
-          "multi": false
-        },
-        {
           "component": "text",
           "valueType": "string",
           "name": "compareLabel",
@@ -91,6 +83,14 @@
           "label": "Show More Button Text",
           "description": "Text for the 'Show more' pagination button",
           "value": "Show more"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "productsFoundText",
+          "label": "Products Found Text",
+          "description": "Text for product count display. Use {{COUNT}} as placeholder for the number (e.g., '{{COUNT}} Products Found')",
+          "value": "{{COUNT}} Products Found"
         },
         {
           "component": "text",
