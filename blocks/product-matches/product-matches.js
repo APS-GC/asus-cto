@@ -225,11 +225,12 @@ class SimilarProductsManager {
     this.selecedSort = document.getElementById('similar-products-sort-by');
     this.sort = {
       'best-performance': 'best performance',
-      'price-low-high': 'price desc',
-      'price-high-low': 'price asc',
+      'price-low-high': 'price low to high',
+      'price-high-low': 'price high to low',
       'ratings': 'ratings',
       'best-selling': 'best selling'
     }
+
   }
 
   init() {
@@ -343,7 +344,7 @@ sanitizeTextSection2(value){
       const selectedGames = params.getAll('games').map(this.sanitizeTextSection2).join(',');
       const minBudget = params.get('min-budget'); // '2100'
       const maxBudget = params.get('max-budget'); // '4300'
-      this.lang = 'us';//window.location.href.includes('/us/') ? "us" : "en";
+      this.lang = window.location.href.includes('/us/') ? "us" : "en";
 
       // Section 2 (Explore more gaming desktops)
       const response = await fetchGameList(`https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/exploreMore.json?websiteCode=${this.lang}&gameIds=${selectedGames}&lowPrice=${minBudget}&highPrice=${maxBudget}&sort=${this.sort[this.selecedSort.value]}&&pageSize=10&offset=0`, 'GET', {}); // Section 2: Explore more gaming desktops
@@ -788,7 +789,7 @@ class PerfectMatchProduct {
     const selectedGames = params.getAll('games').map(this.sanitizeText);
     const minBudget = params.get('min-budget'); // '2100'
     const maxBudget = params.get('max-budget'); // '4300'
-    this.path = '/content/dam/asuscto/us';//window.location.href.includes('/us/') ? "/content/dam/asuscto/us" : "/content/dam/asuscto/en";
+    this.path = window.location.href.includes('/us/') ? "/content/dam/asuscto/us" : "/content/dam/asuscto/en";
 
     this.dom = {
                 "query": "",
