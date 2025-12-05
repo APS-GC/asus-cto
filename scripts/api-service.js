@@ -107,7 +107,6 @@ export async function fetchGameList(
   timeoutMs = 5000
 ) {
 
-  console.log("Perfect Match >>> ", JSON.stringify(params))
   const controller = new AbortController();
   const signal = controller.signal;
 

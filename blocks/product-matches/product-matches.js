@@ -323,14 +323,9 @@ async transform(input) {
       const contentContainer = this.productGrid.querySelector('.cmp-carousel__content');
       if (contentContainer) contentContainer.innerHTML = '';
       this.actionsContainer.classList.add('is-loading');
-      const response = await fetchGameList("https://dummyjson.com/c/8c1e-2df4-42dd-b5f0", 'GET', {}); // Section 2: Explore more gaming desktops
+      const response = await fetchGameList("https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/exploreMore.json?websiteCode=us&partNos=90PF0561-M00EZ0,90PF03T2-M01C80,90PF04S2-M00150&gameIds=G001,G002&lowPrice=100&highPrice=10000&sort=best performance&pageSize=4&offset=0", 'GET', {}); // Section 2: Explore more gaming desktops
       
-
-
-      // Example usage:
-      const source = { /* your JSON object above */ };
-      const result = await this.transform(response);
-
+      const result = await this.transform(response); // Section 2 (Explore more gaming desktops)
       
       const products = result || []; // Change response.products
       this.allProducts = [...this.allProducts, ...products];
