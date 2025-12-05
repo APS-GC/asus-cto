@@ -167,6 +167,25 @@ export function trackProductCardClick({ cardType, productName }) {
   });
 }
 
+/**
+ * Generic tracking function - send any event to data layer
+ * @param {Object} params - Tracking parameters
+ * @param {string} params.eventName - GA4 event name (e.g., 'nvgt_l_hot_products_home_cto_rog')
+ * @param {string} params.category - Event category (e.g., 'hot_products/home/cto/rog')
+ * @param {string} params.label - Event label (e.g., 'last_button/hot_products/home/cto/rog')
+ */
+export function trackEvent({ eventName, category, label }) {
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: 'data_layer_event',
+    event_name_ga4: eventName,
+    event_category_DL: category,
+    event_action_DL: 'clicked',
+    event_label_DL: label,
+    event_value_DL: ''
+  });
+}
+
 // Legacy aliases for backward compatibility
 export const trackCTABannerClick = ({ bannerPosition, buttonText, eventName }) => 
   trackCTAClick({ componentPosition: bannerPosition, buttonText, eventName });

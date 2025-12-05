@@ -6,7 +6,7 @@
 import { moveInstrumentation, createOptimizedPicture, loadSwiper } from '../../scripts/scripts.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
 import { isUniversalEditor } from '../../scripts/utils.js';
-import { trackPromotionView, trackPromotionClick, trackCTABannerClick, trackIndicatorBannerClick } from '../../scripts/google-data-layer.js';
+import { trackPromotionView, trackPromotionClick, trackEvent } from '../../scripts/google-data-layer.js';
 
 // Configuration defaults
 const DEFAULT_CONFIG = {
@@ -255,12 +255,16 @@ const toggleSliderVideo = (videoPlayPauseBtn, blockPosition) => {
   const mediaControls = document.querySelector('.cmp-hero-banner__media-controls');
   
   if (activeSlide && activeVideo) {
+    const basePath = '/home/cto/rog';
+    const bannerPos = `hero_banner_${blockPosition}`;
+    
     if (activeVideo.paused) {
       // Track play action
       if (blockPosition) {
-        trackIndicatorBannerClick({
-          bannerPosition: `hero_banner_${blockPosition}`,
-          indicatorAction: 'play'
+        trackEvent({
+          eventName: 'indicator_banner_home_cto_rog',
+          category: `indicator/${bannerPos}${basePath}`,
+          label: `play/indicator/${bannerPos}${basePath}`
         });
       }
       
@@ -271,9 +275,10 @@ const toggleSliderVideo = (videoPlayPauseBtn, blockPosition) => {
     } else {
       // Track pause action
       if (blockPosition) {
-        trackIndicatorBannerClick({
-          bannerPosition: `hero_banner_${blockPosition}`,
-          indicatorAction: 'pause'
+        trackEvent({
+          eventName: 'indicator_banner_home_cto_rog',
+          category: `indicator/${bannerPos}${basePath}`,
+          label: `pause/indicator/${bannerPos}${basePath}`
         });
       }
       
@@ -627,13 +632,15 @@ export default async function decorate(block) {
 
   // Initialize Swiper hero banner with blockPosition
   initializeSwiper(heroBannerWrapper, config, blockPosition);
-
+  const basePath = '/home/cto/rog';
+  const bannerPosition = `hero_banner_${blockPosition}`;
+  
   // Track promotionView for all visible slides
   setTimeout(() => {
     const promotions = config.slides.map((slide, index) => ({
       id: slide.media || `hero_banner_slide_${index + 1}`,
       name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
-      position: `hero_banner_${blockPosition}`,
+      position: bannerPosition,
       order: `${index + 1}`
     }));
     trackPromotionView(promotions);
@@ -645,9 +652,10 @@ export default async function decorate(block) {
     
     indicators.forEach((indicator, index) => {
       indicator.addEventListener('click', () => {
-        trackIndicatorBannerClick({
-          bannerPosition: `hero_banner_${blockPosition}`,
-          indicatorAction: `${index + 1}`
+        trackEvent({
+          eventName: 'indicator_banner_home_cto_rog',
+          category: `indicator/${bannerPosition}${basePath}`,
+          label: `${index + 1}/indicator/${bannerPosition}${basePath}`
         });
       });
     });
@@ -657,7 +665,6 @@ export default async function decorate(block) {
   block.querySelectorAll('.cta-button').forEach((ctaButton, index) => {
     ctaButton.addEventListener('click', (e) => {
       const slide = config.slides[index];
-      const bannerPosition = `hero_banner_${blockPosition}`;
       const bannerOrder = `${index + 1}`;
       
       // Track Enhanced Ecommerce promotionClick
@@ -669,9 +676,10 @@ export default async function decorate(block) {
       });
       
       // Track custom data layer CTA click
-      trackCTABannerClick({
-        bannerPosition: bannerPosition,
-        buttonText: slide.ctaText || 'CTA'
+      trackEvent({
+        eventName: 'cta_banner_home_cto_rog',
+        category: `cta/${bannerPosition}${basePath}`,
+        label: `${slide.ctaText || 'CTA'}/cta/${bannerPosition}${basePath}`
       });
       
       // Handle navigation with tracking delay

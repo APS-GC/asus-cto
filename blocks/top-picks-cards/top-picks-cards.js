@@ -1,7 +1,7 @@
 import { createOptimizedPicture } from '../../scripts/scripts.js';
 import { getBlockConfigs, getBlockFieldOrder } from '../../scripts/configs.js';
 import { equalheight } from '../../scripts/utils.js';
-import { trackProductCardClick } from '../../scripts/google-data-layer.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Default values from authoring configuration
 const DEFAULT_CONFIG = {
@@ -183,6 +183,8 @@ export default async function decorate(block) {
     window.addEventListener('resize', handleResize);
     window.equalHeightResizeAttached = true;
   }
+  const basePath = '/home/cto/rog';
+  
   // Track card clicks (1st card = latest_creation, 2nd card = top_picks)
   block.querySelectorAll('.featured-product-card').forEach((card, index) => {
     card.addEventListener('click', (e) => {
@@ -190,9 +192,10 @@ export default async function decorate(block) {
       const cardType = isFirstCard ? 'latest_creation' : 'top_picks';
       const productName = cards[index]?.title || 'Product';
       
-      trackProductCardClick({
-        cardType: cardType,
-        productName: productName
+      trackEvent({
+        eventName: `${cardType}_home_cto_rog`,
+        category: `${cardType}${basePath}`,
+        label: `${productName}/${cardType}${basePath}`
       });
     });
   });
