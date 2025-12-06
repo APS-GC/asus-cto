@@ -273,8 +273,8 @@ class SimilarProductsManager {
       },
       status: [
         // infer from productTags or buyButtonStatus
-        ...(item.productTags || []),
-        item.buyButtonStatus === "In Stock" ? "In Stock" : null
+        item.buyButtonStatus === "Buy Now" ? "In Stock" : null,
+        ...(item.productTags || [])
       ].filter(Boolean),
       isAvailable: (item.buyButtonStatus !== "Notify Me"),  // example condition
       isCustomizable: true,  // as per target example
@@ -344,7 +344,7 @@ class SimilarProductsManager {
       const selectedGames = params.getAll('games').map(this.sanitizeTextSection2).join(',');
       const minBudget = params.get('min-budget'); // '2100'
       const maxBudget = params.get('max-budget'); // '4300'
-      this.lang = window.location.href.includes('/us/') ? "us" : "en";
+      this.lang =  window.location.href.includes('/us/') ? "us" : "en";
 
       // Section 2 (Explore more gaming desktops)
       const response = await fetchGameList(`https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/exploreMore.json?websiteCode=${this.lang}&gameIds=${selectedGames}&lowPrice=${minBudget}&highPrice=${maxBudget}&sort=${this.sort[this.selecedSort.value]}&&pageSize=10&offset=0`, 'GET', {}); // Section 2: Explore more gaming desktops
@@ -827,9 +827,8 @@ class PerfectMatchProduct {
             matchType === "goodDeal" ? "Good Deal" : matchType
       },
       status: [
-        // infer from productTags or buyButtonStatus
-        ...(item?.productCardContent?.productTags || item?.productTags || []),
-        item.buyButtonStatus === "In Stock" ? "In Stock" : null
+        item.buyButtonStatus === "Buy Now" ? "In Stock" : null,
+        ...(item?.productCardContent?.productTags || item?.productTags || [])
       ].filter(Boolean),
       isAvailable: item.buyButtonStatus !== "Notify Me",
       isCustomizable: true,            // set as per your logic
