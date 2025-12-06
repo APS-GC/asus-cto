@@ -229,7 +229,24 @@
                 "template": {
                   "name": "Product Matches",
                   "model": "product-matches",
-                  "title": "Product Matches"
+                  "title": "We have found your perfect matches!",
+                  "exploreMoreTitle": "Explore more gaming desktops",
+                  "noMatchTitle": "No Matches",
+                  "noMatchDescription": "Try changing or removing some of your filters or adjusting your search area.",
+                  "filterText": "Filter",
+                  "resultText": "Matching Products",
+                  "sortByText": "Sort by",
+                  "relevanceText": "Relevance",
+                  "hotFocusedText": "Hot Focused",
+                  "recommendedText": "Recommended",
+                  "priceLowtoHighText": "Price: Low to high",
+                  "priceHightoLowText": "Price: High to Low",
+                  "viewAllDesktopsText": "View All Desktops",
+                  "viewAllCTALinkTo": "View All CTA LinkTo",
+                  "buyNowText": "Buy now",
+                  "customizeCTAText": "Customize",
+                  "compareCTAText": "Compare",
+                  "openLinkInNewTabText": ""
                 }
               }
             }
