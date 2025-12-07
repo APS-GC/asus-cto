@@ -20,47 +20,33 @@ function parseFragmentContent(block) {
     // First, try to find the root footer div
     const footerDiv = block.querySelector('.footer') || block;
     
-    
     // Get all direct children of the footer
     const footerChildren = Array.from(footerDiv.children);
     
     // Extract content divs from each child, handling different wrapper structures
-    footerChildren.forEach(child => {
-      // Check for wrapped structure: div > p > div
+    footerChildren.forEach((child, childIndex) => {
+      // Strategy 1: Check for div > div structure (most common)
+      const directDiv = child.querySelector(':scope > div');
+      if (directDiv) {
+        contentDivs.push(directDiv);
+        return;
+      }
+      
+      // Strategy 2: Check for wrapped structure: div > p > div
       const pElement = child.querySelector('p');
       if (pElement) {
         const innerDiv = pElement.querySelector('div');
         if (innerDiv) {
           contentDivs.push(innerDiv);
-        }
-      } else {
-        // Check for direct structure: div > div
-        const directDiv = child.querySelector('div');
-        if (directDiv) {
-          contentDivs.push(directDiv);
-        } else {
-          // Fallback: use the child itself
-          contentDivs.push(child);
+          // For social media icons, also store the parent for sibling lookup
+          innerDiv._parentWrapper = child;
+          return;
         }
       }
       
-      // Additionally, for social media sections, check if this child has both picture and URL content
-      // This handles cases where EDS processes the fragment and merges content
-      const hasImage = child.querySelector('picture img');
-      if (hasImage) {
-        // Look for URL content in the same child or adjacent siblings
-        const textContent = child.textContent?.trim();
-        if (textContent && !textContent.includes('<')) {
-          // Extract URL text that's not part of the image
-          const imageText = child.querySelector('picture').textContent || '';
-          const urlText = textContent.replace(imageText, '').trim();
-          if (urlText && (urlText.startsWith('http') || urlText.includes('facebook.com') || urlText.includes('youtube.com'))) {
-            // Create a virtual URL div for this content
-            const virtualUrlDiv = document.createElement('div');
-            virtualUrlDiv.textContent = urlText;
-            contentDivs.push(virtualUrlDiv);
-          }
-        }
+      // Strategy 3: Fallback - use the child itself if it has meaningful content
+      if (child.textContent?.trim()) {
+        contentDivs.push(child);
       }
     });
 
@@ -109,13 +95,28 @@ function parseFragmentContent(block) {
           case 3: { // Main content - Footer Columns
             const linksLists = div.querySelectorAll('ul');
             const listHeads = div.querySelectorAll('p');
+            
+            // Handle both cases: links with <a> tags or just text in <li>
             linksLists.forEach((ul, i) => {
-              const column = { columnTitle: listHeads[i]?.textContent || '', links: [] };
-              const links = ul.querySelectorAll('li a');
-              column.links = Array.from(links).map(link => ({
-                linkText: link.textContent?.trim() || '',
-                linkUrl: link.getAttribute('href') || '#'
-              }));
+              const column = { columnTitle: listHeads[i]?.textContent?.trim() || '', links: [] };
+              const listItems = ul.querySelectorAll('li');
+              
+              column.links = Array.from(listItems).map(li => {
+                const link = li.querySelector('a');
+                if (link) {
+                  return {
+                    linkText: link.textContent?.trim() || '',
+                    linkUrl: link.getAttribute('href') || '#'
+                  };
+                } else {
+                  // If no anchor tag, use the li text content
+                  return {
+                    linkText: li.textContent?.trim() || '',
+                    linkUrl: '#'
+                  };
+                }
+              });
+              
               parsedData.footerColumns.push(column);
             });
             break;
@@ -138,33 +139,100 @@ function parseFragmentContent(block) {
             parsedData.showGlobal = textContent.toLowerCase() === 'true' || textContent.toLowerCase() === 'yes';
             break;
           default:
-            // Social icons start from index 7 and come in pairs
-            if (index >= 7 && (index - 7) % 2 === 0) {
-              const socialPlatforms = ['facebook', 'x', 'instagram', 'tiktok', 'youtube', 'discord', 'twitch', 'thread'];
-              const platformIndex = Math.floor((index - 7) / 2);
-              const platform = socialPlatforms[platformIndex] || `social${platformIndex + 1}`;
-
-            const pictureDiv = div;
-            const urlDiv = contentDivs[index + 1];
-            const picture = pictureDiv.querySelector('picture img');
-
-            let url = '#';
-            if (urlDiv) {
-              const urlLink = urlDiv.querySelector('a');
-              const urlText = urlDiv.textContent?.trim();
-              url = urlLink?.href || urlText || '#';
-            }
-
-            if (picture && url && url !== '#') {
-              parsedData.socialLinks.push({
-                platform: platform,
-                url: url,
-                icon: picture.getAttribute('src') || '',
-                altText: picture.getAttribute('alt') || platform.charAt(0).toUpperCase() + platform.slice(1),
-                originalElement: picture, // Store reference to original image element for moveInstrumentation
-                actualDiv: pictureDiv
-              });
-            }
+            // Social icons start from index 7
+            if (index >= 7) {
+              const socialPlatforms = ['facebook', 'instagram', 'tiktok', 'x', 'youtube', 'discord', 'twitch', 'thread'];
+              
+              // Check if this div has a picture (social icon)
+              const picture = div.querySelector('picture img');
+              
+              if (picture) {
+                let url = '#';
+                
+                // Check all possible locations for the URL
+                // 1. Link wrapping the picture
+                const pictureParentLink = picture.closest('a[href]');
+                
+                if (pictureParentLink) {
+                  url = pictureParentLink.getAttribute('href') || '#';
+                } else {
+                  // 2. Link in the same div as the image
+                  const linkInSameDiv = div.querySelector('a[href]');
+                  if (linkInSameDiv) {
+                    url = linkInSameDiv.getAttribute('href') || linkInSameDiv.textContent?.trim() || '#';
+                  } else {
+                    // 3. Check for sibling div with button-container class (new structure)
+                    // Structure: <p><div>picture</div><div class="button-container"><a>url</a></div></p>
+                    const parentP = div.parentElement;
+                    if (parentP && parentP.tagName === 'P') {
+                      const siblingDivs = Array.from(parentP.querySelectorAll(':scope > div'));
+                      const currentDivIndex = siblingDivs.indexOf(div);
+                      if (currentDivIndex !== -1 && currentDivIndex + 1 < siblingDivs.length) {
+                        const nextDiv = siblingDivs[currentDivIndex + 1];
+                        const urlLink = nextDiv.querySelector('a[href]');
+                        if (urlLink) {
+                          url = urlLink.getAttribute('href') || '#';
+                        }
+                      }
+                    }
+                    
+                    // 4. URL might be in the parent wrapper's next sibling (old structure)
+                    if (url === '#' && div._parentWrapper) {
+                      const nextSiblingWrapper = div._parentWrapper.nextElementSibling;
+                      if (nextSiblingWrapper) {
+                        const urlLink = nextSiblingWrapper.querySelector('a[href]');
+                        if (urlLink) {
+                          url = urlLink.getAttribute('href') || urlLink.textContent?.trim() || '#';
+                        }
+                      }
+                    }
+                    
+                    // 5. URL might be in the parent's next sibling div (original structure)
+                    if (url === '#') {
+                      const parentElement = div.parentElement;
+                      if (parentElement) {
+                        const nextSiblingDiv = parentElement.nextElementSibling;
+                        if (nextSiblingDiv) {
+                          const urlLink = nextSiblingDiv.querySelector('a[href]');
+                          if (urlLink) {
+                            url = urlLink.getAttribute('href') || urlLink.textContent?.trim() || '#';
+                          }
+                        }
+                      }
+                    }
+                    
+                    // 6. Fallback: URL might be in the next contentDiv
+                    if (url === '#') {
+                      const urlDiv = contentDivs[index + 1];
+                      if (urlDiv) {
+                        const urlLink = urlDiv.querySelector('a[href]');
+                        if (urlLink) {
+                          url = urlLink.getAttribute('href') || urlLink.textContent?.trim() || '#';
+                        } else {
+                          const urlText = urlDiv.textContent?.trim();
+                          if (urlText && urlText.startsWith('http')) {
+                            url = urlText;
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+                
+                if (url && url !== '#') {
+                  const platformIndex = parsedData.socialLinks.length;
+                  const platform = socialPlatforms[platformIndex] || `social${platformIndex + 1}`;
+                  
+                  parsedData.socialLinks.push({
+                    platform: platform,
+                    url: url,
+                    icon: picture.getAttribute('src') || '',
+                    altText: picture.getAttribute('alt') || platform.charAt(0).toUpperCase() + platform.slice(1),
+                    originalElement: picture,
+                    actualDiv: div
+                  });
+                }
+              }
             }
             break;
         }
@@ -183,6 +251,22 @@ function parseFragmentContent(block) {
     console.error('Error parsing fragment content:', error);
     return null;
   }
+}
+
+/**
+ * Helper function to parse rich text links from UE model
+ */
+function parseRichTextLinks(richTextContent) {
+  if (!richTextContent) return [];
+  
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = richTextContent;
+  const links = tempDiv.querySelectorAll('a');
+  
+  return Array.from(links).map(link => ({
+    linkText: link.textContent?.trim() || '',
+    linkUrl: link.getAttribute('href') || '#'
+  }));
 }
 
 function parseFooterData(block) {
@@ -443,10 +527,9 @@ function buildSocialIcons(socialLinks, socialLabel) {
   socialLinks.forEach((link, index) => {
     const li = document.createElement('li');
     const a = document.createElement('a');
-    const img = document.createElement('img');
     
     if (link.actualDiv) {
-      moveInstrumentation(link.actualDiv,li);
+      moveInstrumentation(link.actualDiv, li);
     }
     
     const altText = link.altText || link.platform.charAt(0).toUpperCase() + link.platform.slice(1);
@@ -455,6 +538,10 @@ function buildSocialIcons(socialLinks, socialLabel) {
     a.href = link.url;
     a.target = '_blank';
     a.setAttribute('aria-label', `Follow us on ${altText} (open a new window)`);
+    
+    // Create picture element with img
+    const picture = document.createElement('picture');
+    const img = document.createElement('img');
     
     // Set image attributes
     img.src = link.icon || '';
@@ -469,10 +556,10 @@ function buildSocialIcons(socialLinks, socialLabel) {
     }
     
     // Build structure
-    a.appendChild(img);
+    picture.appendChild(img);
+    a.appendChild(picture);
     li.appendChild(a);
     ul.appendChild(li);
-    
   });
   
   nav.appendChild(ul);
@@ -596,7 +683,7 @@ function optimizeFooterImages(container) {
 }
 
 export default function decorate(block) {
-  if(block.querySelector('div.footer')?.className !== 'footer') return;
+  //if(block.querySelector('div.footer')?.className !== 'footer') return;
 
   const data = parseFooterData(block);
 
