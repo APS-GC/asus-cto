@@ -251,8 +251,6 @@ class SimilarProductsManager {
       'ratings': 'ratings',
       'best-selling': 'best selling'
     };
-    this.apiEndpoint = 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/exploreMore.json';
-
   }
 
   init() {
@@ -375,7 +373,9 @@ class SimilarProductsManager {
       if (contentContainer) contentContainer.innerHTML = '';
       this.actionsContainer.classList.add('is-loading');
 
-      const url = new URL(this.apiEndpoint);
+      const endpoint = await getApiEndpoint(API_URIS.HELP_ME_CHOOSE_RESULT_EXPLORE);
+      
+      const url = new URL(endpoint);
       const pageParams = new URLSearchParams(window.location.search);
 
       url.searchParams.set('websiteCode', window.location.href.includes('/us/') ? 'us' : 'en');
@@ -764,8 +764,29 @@ class PerfectMatchProduct {
     this.mobileBreakpoint = 700; // Mobile breakpoint in pixels
     this.productType = 'perfect-match'; // Used for global product tracking
     this.resizeTimeout = null;
-    this.apiEndpoint = "https://publish-p165753-e1767020.adobeaemcloud.com/graphql/execute.json/asuscto/fetchHelpMeChooseResults";
     this.apiCategories = ["bestFit", "customerChoice", "goodDeal"];
+  }
+
+  _buildApiPayload() {
+    const params = new URLSearchParams(window.location.search);
+    const selectedGames = params.getAll('games').map(this.formatGameFilter);
+    const minBudget = params.get('min-budget') || 500;
+    const maxBudget = params.get('max-budget') || 5000;
+    const path = window.location.href.includes('/us/') ? "/content/dam/asuscto/us" : "/content/dam/asuscto/en";
+
+    return {
+      "query": "",
+      "variables": {
+        "path": path,
+        "gameIdsFilter": {
+          "_logOp": "AND",
+          "_expressions": selectedGames || [],
+        },
+        "lowerPrice": minBudget,
+        "highPrice": maxBudget,
+        "sort": "price DESC"
+      }
+    };
   }
 
   async init(container) {
@@ -778,25 +799,7 @@ class PerfectMatchProduct {
       '.section-actions-container',
     );
 
-    const params = new URLSearchParams(window.location.search);
-    const selectedGames = params.getAll('games').map(this.formatGameFilter);
-    const minBudget = params.get('min-budget') || 500;
-    const maxBudget = params.get('max-budget') || 5000;
-    const path = window.location.href.includes('/us/') ? "/content/dam/asuscto/us" : "/content/dam/asuscto/en";
-
-    const apiPayload = {
-      "query": "",
-      "variables": {
-        "path": path,
-        "gameIdsFilter": {
-          "_logOp": "AND",
-          "_expressions": selectedGames || [],
-        },
-        "lowerPrice": minBudget,
-        "highPrice": maxBudget,
-        "sort": "price DESC"
-      }
-    }
+    const apiPayload = this._buildApiPayload();
     await this.loadPerfectMatchProducts(apiPayload);
 
     // Add resize listener to handle viewport changes
@@ -906,7 +909,8 @@ class PerfectMatchProduct {
     this.actionsContainer.classList.add('is-loading');
 
     try {
-      const response = await fetchGameList(this.apiEndpoint, 'POST', filters);
+      const endpoint = await getApiEndpoint(API_URIS.HELP_ME_CHOOSE_RESULT);
+      const response = await fetchGameList(endpoint, 'POST', filters);
       this.perfectMatchProducts = await this.transformAll(response || {});
 
     } catch (error) {
