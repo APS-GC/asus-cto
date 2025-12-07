@@ -3,6 +3,7 @@ import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
 
+let AuthoredData = [];
 /**
  * Decorates the help-me-choose block, initializing the carousel and form.
  * @param {Element} block - The block element to decorate.
@@ -56,15 +57,15 @@ async function renderHelpMeChoose(block) {
   helpMeChooseContainer.className = 'product-matches container';
 
   const authoredRows = [...block.children];
-  const AuthoredData = authoredRows.map(row => row.textContent.trim());
-  console.log('Authored Data:', AuthoredData);
+  AuthoredData = authoredRows.map(row => row.textContent.trim());
+  // console.log('Authored Data:', AuthoredData);
 
   const html = `
   <div class="container top-spacing bottom-spacing">
 
     <div class="section-heading content-center">
       <div class="section-heading__text-group">
-        <h2 class="section-heading__title">We have found your perfect matches!</h2>
+        <h2 class="section-heading__title">${AuthoredData[0]}</h2>
         <p class="section-heading__description"></p>
       </div>
     </div>
@@ -111,16 +112,16 @@ async function renderHelpMeChoose(block) {
     
     <div class="section-heading">
       <div class="section-heading__text-group">
-        <h2 class="section-heading__title">Explore more gaming desktops</h2>
+        <h2 class="section-heading__title">${AuthoredData[1]}</h2>
         <p class="section-heading__description"></p>
       </div>
     </div>
 
     <div class="product-toolbar">
-        <small class="matched-product"><span id="similar-products-count"></span> Matching Products</small>
+        <small class="matched-product"><span id="similar-products-count"></span> ${AuthoredData[5]}</small>
         <div class="cmp-product-toolbar__sort-wrapper">
             <div class="cmp-product-sort-label">
-                <label for="similar-products-sort-by">Sort by:</label>
+                <label for="similar-products-sort-by">${AuthoredData[6]}:</label>
             </div>
           <div class="cmp-product-sort">
             <select 
@@ -129,8 +130,8 @@ async function renderHelpMeChoose(block) {
                 class="cmp-product-sort__select"
                 aria-label="Sort products by">
                 <option value="best-performance">Best Performance</option>
-                <option value="price-low-high">Price: Low to High</option>
-                <option value="price-high-low">Price: High to Low</option>
+                <option value="price-low-high">${AuthoredData[10]}</option>
+                <option value="price-high-low">${AuthoredData[11]}</option>
                 <option value="ratings">Ratings</option>
                 <option value="best-selling">Best Selling</option>
             </select>
@@ -168,7 +169,7 @@ async function renderHelpMeChoose(block) {
         </div>
       </div>
     </div>
-    <button class="btn btn-outline view-all-desktops-btn" id="view-all-desktops-btn" aria-label="View all gaming desktops">View All Desktops</button>
+    <button class="btn btn-outline view-all-desktops-btn" id="view-all-desktops-btn" aria-label="View all gaming desktops">${AuthoredData[12]}</button>
 </div>
  
  
@@ -354,7 +355,10 @@ class SimilarProductsManager {
     });
     if (this.viewAllButton) {
       this.viewAllButton.addEventListener('click', () => {
-        window.location.href = '/product-listing.html';
+        const url = AuthoredData[13];
+        if (url) {
+          window.open(url, '_blank');
+        }
       });
     }
   }
@@ -619,7 +623,7 @@ function renderProductCard(product, productType) {
                   data-pdp="/product-detail/${id}"
                   data-add-to-compare
                 />
-                <label for="compare-${id}" class="cmp-product-card__compare-label">Compare</label>
+                <label for="compare-${id}" class="cmp-product-card__compare-label">${AuthoredData[16]}</label>
               </div>
             </div>
             <div class="cmp-product-card__fps">
@@ -698,11 +702,11 @@ function prepareProductAction(product) {
   const actions = [
     {
       condition: isAvailable && isCustomizable,
-      create: () => createButton('a', 'Customize', `${customizeLink}#product-customization`, `Customize ${name}`),
+      create: () => createButton('a', `${AuthoredData[15]}`, `${customizeLink}#product-customization`, `${AuthoredData[15]} ${name}`),
     },
     {
       condition: isAvailable,
-      create: () => createButton('a', 'Buy now', buyLink, `Buy now ${name}`),
+      create: () => createButton('a', `${AuthoredData[14]}`, buyLink, `${AuthoredData[14]} ${name}`),
     },
     {
       condition: true, // Default fallback
@@ -934,8 +938,8 @@ class PerfectMatchProduct {
     noMatchProductsContainer.className = 'no-match-products';
     noMatchProductsContainer.innerHTML = `
       <div class="no-match-products__content">
-        <h3 class="no-match-products__title">No matches</h3>
-        <p class="no-match-products__description">Try changing or removing some of your filters or expanding your search area</p>
+        <h3 class="no-match-products__title">${AuthoredData[2]}</h3>
+        <p class="no-match-products__description">${AuthoredData[3]}</p>
       </div>
     `;
     this.container.innerHTML = '';
