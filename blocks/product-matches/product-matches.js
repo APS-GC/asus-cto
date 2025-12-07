@@ -421,6 +421,7 @@ class SimilarProductsManager {
     if (!this.productCountElement) return;
     this.productCountElement.textContent = `${this.totalProducts}`;
   }
+  
   destroyCarousel() {
     if (this?.swiperInstance?.destroy) {
       this.swiperInstance.destroy(true, true);
@@ -455,7 +456,11 @@ class SimilarProductsManager {
         try {
           const cardHtml = window.renderProductCard(product, this.productType);
           const productCard = document.createElement('div');
-          productCard.className = (products.length === 3) ? 'layout-grid__col layout-grid__col--span-4' : (products.length < 3) ? 'layout-grid__col layout-grid__col--span-4' : 'layout-grid__col layout-grid__col--span-3';
+          if (products.length <= 3) {
+            productCard.className = 'layout-grid__col layout-grid__col--span-4';
+          } else {
+            productCard.className = 'layout-grid__col layout-grid__col--span-3';
+          }
           productCard.innerHTML = cardHtml;
           contentContainer.appendChild(productCard);
         } catch (err) {
@@ -558,8 +563,7 @@ function renderProductCard(product, productType) {
   // Generate HTML for status badges. Handles multiple statuses and converts them to CSS-friendly class names.
   const statusHtml = status
     .map(
-      (s) =>
-        `<span class="cmp-product-card__status-item cmp-product-card__status--${s
+      (s) => `<span class="cmp-product-card__status-item cmp-product-card__status--${s
           .toLowerCase()
           .replace(' ', '-')}">${s}</span>`,
     )
@@ -838,7 +842,7 @@ class PerfectMatchProduct {
     this.mobileBreakpoint = 700; // Mobile breakpoint in pixels
     this.productType = 'perfect-match'; // Used for global product tracking
     this.resizeTimeout = null;
-    this.apiCategories = ["bestFit", "customerChoice", "goodDeal"];
+    this.apiCategories = ['bestFit', 'customerChoice', 'goodDeal'];
   }
 
   _buildApiPayload() {
@@ -846,19 +850,19 @@ class PerfectMatchProduct {
     const selectedGames = params.getAll('games').map(this.formatGameFilter);
     const minBudget = params.get('min-budget') || 500;
     const maxBudget = params.get('max-budget') || 5000;
-    const path = window.location.href.includes('/us/') ? "/content/dam/asuscto/us" : "/content/dam/asuscto/en";
+    const path = window.location.href.includes('/us/') ? '/content/dam/asuscto/us' : '/content/dam/asuscto/en';
 
     return {
-      "query": "",
-      "variables": {
-        "path": path,
-        "gameIdsFilter": {
-          "_logOp": "AND",
-          "_expressions": selectedGames || [],
+      'query': '',
+      'variables': {
+        'path': path,
+        'gameIdsFilter': {
+          '_logOp': 'AND',
+          '_expressions': selectedGames || [],
         },
-        "lowerPrice": minBudget,
-        "highPrice": maxBudget,
-        "sort": "price DESC"
+        'lowerPrice': minBudget,
+        'highPrice': maxBudget,
+        'sort': 'price DESC'
       }
     };
   }
@@ -900,9 +904,9 @@ class PerfectMatchProduct {
 
   formatGameFilter(value) {
     return {
-      "value": String(value).replace(/[<>"]/g, ''), // Basic sanitization
-      "_apply": "AT_LEAST_ONCE"
-    }
+      'value': String(value).replace(/[<>"]/g, ''), // Basic sanitization
+      '_apply': 'AT_LEAST_ONCE'
+    };
   };
 
   async loadPerfectMatchProducts(filters = {}) {
@@ -942,9 +946,9 @@ class PerfectMatchProduct {
     const noMatchProductsContainer = document.createElement('div');
     noMatchProductsContainer.className = 'no-match-products';
     noMatchProductsContainer.innerHTML = `
-      <div class="no-match-products__content">
-        <h3 class="no-match-products__title">${AuthoredData[2]}</h3>
-        <p class="no-match-products__description">${AuthoredData[3]}</p>
+      <div class='no-match-products__content'>
+        <h3 class='no-match-products__title'>${AuthoredData[2]}</h3>
+        <p class='no-match-products__description'>${AuthoredData[3]}</p>
       </div>
     `;
     this.container.innerHTML = '';
@@ -1050,7 +1054,7 @@ class PerfectMatchProduct {
     const badge = document.createElement('div');
     const badgeClass = this.getBadgeClass(matchTypeId, matchTypeLabel);
     badge.className = `perfect-match-badge ${badgeClass}`;
-    badge.innerHTML = `<span class="perfect-match-badge__text">${matchTypeLabel}</span>`;
+    badge.innerHTML = `<span class='perfect-match-badge__text'>${matchTypeLabel}</span>`;
 
     cardWrapper.insertBefore(badge, productCard);
   }
