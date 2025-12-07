@@ -250,7 +250,8 @@ class SimilarProductsManager {
       'price-high-low': 'price high to low',
       'ratings': 'ratings',
       'best-selling': 'best selling'
-    }
+    };
+    this.apiEndpoint = 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/exploreMore.json';
 
   }
 
@@ -374,15 +375,19 @@ class SimilarProductsManager {
       if (contentContainer) contentContainer.innerHTML = '';
       this.actionsContainer.classList.add('is-loading');
 
+      const url = new URL(this.apiEndpoint);
+      const pageParams = new URLSearchParams(window.location.search);
 
-      const params = new URLSearchParams(window.location.search);
-      const selectedGames = params.getAll('games').map(this.sanitizeQueryValue).join(',');
-      const minBudget = params.get('min-budget'); // '2100'
-      const maxBudget = params.get('max-budget'); // '4300'
-      this.lang =  window.location.href.includes('/us/') ? "us" : "en";
+      url.searchParams.set('websiteCode', window.location.href.includes('/us/') ? 'us' : 'en');
+      url.searchParams.set('gameIds', pageParams.getAll('games').map(this.sanitizeQueryValue).join(','));
+      url.searchParams.set('lowPrice', pageParams.get('min-budget') || '');
+      url.searchParams.set('highPrice', pageParams.get('max-budget') || '');
+      url.searchParams.set('sort', this.sort[this.currentSort] || '');
+      url.searchParams.set('pageSize', '10');
+      url.searchParams.set('offset', '0');
 
       // Section 2 (Explore more gaming desktops)
-      const response = await fetchGameList(`https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/exploreMore.json?websiteCode=${this.lang}&gameIds=${selectedGames}&lowPrice=${minBudget}&highPrice=${maxBudget}&sort=${this.sort[this.selecedSort.value]}&&pageSize=10&offset=0`, 'GET', {}); // Section 2: Explore more gaming desktops
+      const response = await fetchGameList(url.toString(), 'GET', {});
 
       const result = await this.transform(response);
 
