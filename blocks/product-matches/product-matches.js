@@ -280,89 +280,103 @@ class SimilarProductsManager {
     }
   }
 
-  async transform(input) {
-    if (!input?.results?.items) return [];
+  _transformItem(item) {
+    const {
+      sku,
+      externalId,
+      name,
+      modelName,
+      buyButtonStatus,
+      productTags,
+      mainImage,
+      hoverImage,
+      productCardContent,
+      productPreviewPopupCF,
+      gamePriority,
+      timeSpyOverallScore,
+      keySpec,
+      specialPrice,
+      price,
+      savedPrice,
+    } = item;
 
-    return input.results.items.map(item => ({
-      id: item.sku.toLowerCase().replace(/\s+/g, '-'),            // e.g. "90PF05T1-M00NN0" → "90pf05t1-m00nn0"
-      bazaarvoiceProductId: item.externalId || null,
-      name: item.name,
-      model: item.modelName || null,
-      matchType: {
-        id: "best-fit",
-        label: "Best Fit"
-      },
-      status: [
-        // infer from productTags or buyButtonStatus
-        item.buyButtonStatus === "Buy Now" ? "In Stock" : null,
-        ...(item.productTags || [])
-      ].filter(Boolean),
-      isAvailable: (item.buyButtonStatus !== "Notify Me"),  // example condition
-      isCustomizable: true,  // as per target example
-      buyLink: "./pdp.html",        // placeholder (no equivalent in source)
-      customizeLink: "./pdp.html",  // placeholder
-      image: item?.mainImage || item.productCardContent?.mainImage || null,
-      imageHover: item?.hoverImage || item?.productCardContent?.hoverImage || null,
-      images: (item.productPreviewPopupCF && item.productPreviewPopupCF.additionalImages)
-        ? item.productPreviewPopupCF.additionalImages.map(url => ({
+    const firstGame = gamePriority?.[0];
+
+    return {
+      id: sku?.toLowerCase().replace(/\s+/g, '-') || '',
+      bazaarvoiceProductId: externalId || null,
+      name: name || '',
+      model: modelName || null,
+      matchType: { id: 'best-fit', label: 'Best Fit' },
+      status: [buyButtonStatus === 'Buy Now' ? 'In Stock' : null, ...(productTags || [])].filter(
+        Boolean,
+      ),
+      isAvailable: buyButtonStatus !== 'Notify Me',
+      isCustomizable: true, // as per target example
+      buyLink: './pdp.html', // placeholder
+      customizeLink: './pdp.html', // placeholder
+      image: mainImage || productCardContent?.mainImage || null,
+      imageHover: hoverImage || productCardContent?.hoverImage || null,
+      images:
+        productPreviewPopupCF?.additionalImages?.map((url) => ({
           image: url,
           thumbnail: url,
-          title: item.name + " image"
-        }))
-        : [],
-      fps: (() => {
-        const gp = item.gamePriority && item.gamePriority[0];
-        return gp ? parseInt(gp.fullHdFps, 10) : null;
-      })(),
-
-
-
-      benchmarkGame: (item.gamePriority && item.gamePriority[0]?.gameTitle) || null,
-      fpsData: item.gamePriority
-        ? item.gamePriority.map(g => ({
+          title: `${name} image`,
+        })) || [],
+      fps: firstGame ? parseInt(firstGame.fullHdFps, 10) : null,
+      benchmarkGame: firstGame?.gameTitle || null,
+      fpsData:
+        gamePriority?.map((g) => ({
           game: g.gameTitle,
           fps1080: parseInt(g.fullHdFps, 10),
           fps1440: parseInt(g.quadHdFps, 10),
-          image: item?.productCardContent?.mainImage || null
-        }))
-        : [],
+          image: productCardContent?.mainImage || null,
+        })) || [],
       timeSpyScore: {
-        score: item.timeSpyOverallScore || item.productCardContent.timeSpyOverallScore || null,
+        score: timeSpyOverallScore || productCardContent?.timeSpyOverallScore || null,
         level: 4,
         source: {
-          image: item?.productCardContent?.mainImage || null,
-          name: "3DMark",
-          tooltip: "FPS data is theoretical and may vary."
-        }
+          image: productCardContent?.mainImage || null,
+          name: '3DMark',
+          tooltip: 'FPS data is theoretical and may vary.',
+        },
       },
-      specs: item.keySpec ? item.keySpec.map(spec => spec.name) : [],
-      features: [],  // no equivalent in source; left empty
-      price: item.specialPrice || item.price,
-      originalPrice: item.price,
-      discount: item.savedPrice || null,
-      estorePriceTooltipText: "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.",
+      specs: keySpec?.map((spec) => spec.name) || [],
+      features: [], // no equivalent in source; left empty
+      price: specialPrice || price,
+      originalPrice: price,
+      discount: savedPrice || null,
+      estorePriceTooltipText:
+        'ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.',
       purchaseLimit: null,
       shippingInfo: null,
-      installment: null
-    }));
+      installment: null,
+    };
   }
 
-  sanitizeTextSection2(value) {
-    // Remove any characters that could be dangerous in HTML context
-    return value.replace(/[<>"]/g, '')
-  };
+  async transform(input) {
+    if (!input?.results?.items) return [];
+    return input.results.items.map((item) => this._transformItem(item));
+  }
+
+  /**
+   * Sanitizes a value for use in a URL query parameter.
+   * @param {*} value - The value to sanitize.
+   * @returns {string} The sanitized string.
+   */
+  sanitizeQueryValue(value) {
+    return String(value).replace(/[<>"]/g, '');
+  }
 
   async fetchProducts() { // Per
     try {
-
-
       const contentContainer = this.productGrid.querySelector('.cmp-carousel__content');
       if (contentContainer) contentContainer.innerHTML = '';
       this.actionsContainer.classList.add('is-loading');
 
 
       const params = new URLSearchParams(window.location.search);
-      const selectedGames = params.getAll('games').map(this.sanitizeTextSection2).join(',');
+      const selectedGames = params.getAll('games').map(this.sanitizeQueryValue).join(',');
       const minBudget = params.get('min-budget'); // '2100'
       const maxBudget = params.get('max-budget'); // '4300'
       this.lang =  window.location.href.includes('/us/') ? "us" : "en";
