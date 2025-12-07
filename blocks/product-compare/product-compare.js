@@ -491,7 +491,7 @@ class ProductCompare {
       el.hidden = true;
     });
 
-    if (productCount >= this.COMPARE_LIMIT && !this.state.isCollapsed) {
+    if (productCount > this.COMPARE_LIMIT && !this.state.isCollapsed) {
       this.showError('limit');
     }
 
