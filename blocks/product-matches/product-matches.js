@@ -231,6 +231,86 @@ function loadSwiperCSS() {
   return swiperCSSLoaded;
 }
 
+/**
+ * Transforms a raw product item from the API into a standardized product object.
+ * @param {object} item - The raw product item.
+ * @param {string} [matchType] - The category of match (e.g., 'bestFit', 'customerChoice').
+ * @returns {object} The transformed product object.
+ */
+function transformProductData(item, matchType) {
+  const {
+    sku,
+    externalId,
+    name,
+    modelName,
+    buyButtonStatus,
+    productTags,
+    mainImage,
+    hoverImage,
+    productCardContent,
+    productPreviewPopupCF,
+    gamePriority,
+    timeSpyOverallScore,
+    keySpec,
+    specialPrice,
+    price,
+    savedPrice,
+  } = item;
+
+  const firstGame = gamePriority?.[0];
+
+  const matchTypeMap = {
+    bestFit: { id: 'best-fit', label: 'Best Fit' },
+    customerChoice: { id: 'customer-choice', label: 'Customer Choice' },
+    goodDeal: { id: 'good-deal', label: 'Good Deal' },
+  };
+
+  return {
+    id: sku?.toLowerCase().replace(/[^a-z0-9-]/g, '-') || '',
+    bazaarvoiceProductId: externalId || null,
+    name: name || '',
+    model: modelName || null,
+    matchType: matchTypeMap[matchType] || (matchType ? { id: matchType, label: matchType } : null),
+    status: [
+      buyButtonStatus === 'Buy Now' ? 'In Stock' : null,
+      ...(productCardContent?.productTags || productTags || []),
+    ].filter(Boolean),
+    isAvailable: buyButtonStatus !== 'Notify Me',
+    isCustomizable: true, // as per target example
+    buyLink: './pdp.html', // placeholder
+    customizeLink: './pdp.html', // placeholder
+    image: mainImage || productCardContent?.mainImage || null,
+    imageHover: hoverImage || productCardContent?.hoverImage || null,
+    images: productPreviewPopupCF?.additionalImages?.map((url) => ({
+      image: url,
+      thumbnail: url,
+      title: `${name} image`,
+    })) || [],
+    fps: firstGame ? parseInt(firstGame.fullHdFps, 10) : null,
+    benchmarkGame: firstGame?.gameTitle || null,
+    fpsData: gamePriority?.map((g) => ({
+      game: g.gameTitle,
+      fps1080: parseInt(g.fullHdFps, 10),
+      fps1440: parseInt(g.quadHdFps, 10),
+      image: productCardContent?.mainImage || null,
+    })) || [],
+    timeSpyScore: {
+      score: timeSpyOverallScore || productCardContent?.timeSpyOverallScore || null,
+      level: 4,
+      source: { image: productCardContent?.mainImage || null, name: '3DMark', tooltip: 'FPS data is theoretical and may vary.' },
+    },
+    specs: keySpec?.map((spec) => spec.name) || [],
+    features: [], // no equivalent in source; left empty
+    price: specialPrice || price,
+    originalPrice: price,
+    discount: savedPrice || null,
+    estorePriceTooltipText: 'ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.',
+    purchaseLimit: null,
+    shippingInfo: null,
+    installment: null,
+  };
+}
+
 class SimilarProductsManager {
   constructor() {
     this.productGrid = document.getElementById('similar-products-grid');
@@ -279,83 +359,9 @@ class SimilarProductsManager {
     }
   }
 
-  _transformItem(item) {
-    const {
-      sku,
-      externalId,
-      name,
-      modelName,
-      buyButtonStatus,
-      productTags,
-      mainImage,
-      hoverImage,
-      productCardContent,
-      productPreviewPopupCF,
-      gamePriority,
-      timeSpyOverallScore,
-      keySpec,
-      specialPrice,
-      price,
-      savedPrice,
-    } = item;
-
-    const firstGame = gamePriority?.[0];
-
-    return {
-      id: sku?.toLowerCase().replace(/\s+/g, '-') || '',
-      bazaarvoiceProductId: externalId || null,
-      name: name || '',
-      model: modelName || null,
-      matchType: { id: 'best-fit', label: 'Best Fit' },
-      status: [buyButtonStatus === 'Buy Now' ? 'In Stock' : null, ...(productTags || [])].filter(
-        Boolean,
-      ),
-      isAvailable: buyButtonStatus !== 'Notify Me',
-      isCustomizable: true, // as per target example
-      buyLink: './pdp.html', // placeholder
-      customizeLink: './pdp.html', // placeholder
-      image: mainImage || productCardContent?.mainImage || null,
-      imageHover: hoverImage || productCardContent?.hoverImage || null,
-      images:
-        productPreviewPopupCF?.additionalImages?.map((url) => ({
-          image: url,
-          thumbnail: url,
-          title: `${name} image`,
-        })) || [],
-      fps: firstGame ? parseInt(firstGame.fullHdFps, 10) : null,
-      benchmarkGame: firstGame?.gameTitle || null,
-      fpsData:
-        gamePriority?.map((g) => ({
-          game: g.gameTitle,
-          fps1080: parseInt(g.fullHdFps, 10),
-          fps1440: parseInt(g.quadHdFps, 10),
-          image: productCardContent?.mainImage || null,
-        })) || [],
-      timeSpyScore: {
-        score: timeSpyOverallScore || productCardContent?.timeSpyOverallScore || null,
-        level: 4,
-        source: {
-          image: productCardContent?.mainImage || null,
-          name: '3DMark',
-          tooltip: 'FPS data is theoretical and may vary.',
-        },
-      },
-      specs: keySpec?.map((spec) => spec.name) || [],
-      features: [], // no equivalent in source; left empty
-      price: specialPrice || price,
-      originalPrice: price,
-      discount: savedPrice || null,
-      estorePriceTooltipText:
-        'ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.',
-      purchaseLimit: null,
-      shippingInfo: null,
-      installment: null,
-    };
-  }
-
   async transform(input) {
     if (!input?.results?.items) return [];
-    return input.results.items.map((item) => this._transformItem(item));
+    return input.results.items.map((item) => transformProductData(item));
   }
 
   /**
@@ -663,7 +669,7 @@ function renderProductCard(product, productType) {
             </div>
           </div>
           <div class="cmp-product-card__footer">
-            ${prepareProductAction(product)}
+            <!-- product actions will be appended here -->
           </div>
         </div>
       `;
@@ -671,22 +677,110 @@ function renderProductCard(product, productType) {
 
 /**
  * Generates the appropriate action button HTML based on product availability and customization options.
+ * This version creates DOM elements programmatically to prevent XSS vulnerabilities.
  * @param {object} product - The product data object.
- * @returns {string} The HTML string for the action button.
+ * @returns {HTMLAnchorElement|HTMLButtonElement} The action button element.
  */
 function prepareProductAction(product) {
   const { name, isAvailable, isCustomizable, buyLink, customizeLink } = product;
 
-  if (isAvailable && isCustomizable) {
-    return `<a class="btn" href="${customizeLink}#product-customization" aria-label="Customize ${name}">Customize</a>`;
+  const createButton = (tag, text, href, ariaLabel) => {
+    const btn = document.createElement(tag);
+    btn.className = 'btn';
+    btn.textContent = text;
+    btn.setAttribute('aria-label', ariaLabel);
+    if (tag === 'a' && href) {
+      btn.href = href;
+    }
+    return btn;
+  };
+
+  const actions = [
+    {
+      condition: isAvailable && isCustomizable,
+      create: () => createButton('a', 'Customize', `${customizeLink}#product-customization`, `Customize ${name}`),
+    },
+    {
+      condition: isAvailable,
+      create: () => createButton('a', 'Buy now', buyLink, `Buy now ${name}`),
+    },
+    {
+      condition: true, // Default fallback
+      create: () => createButton('button', 'Notify me', null, `Notify me about ${name}`),
+    },
+  ];
+
+  // Find the first action whose condition is met and create the button.
+  return actions.find(action => action.condition).create();
+}
+
+/**
+ * Updates the renderProductCard function to append the button element.
+ * @param {string} cardHtml - The HTML string of the card.
+ * @param {object} product - The product data object.
+ * @returns {HTMLElement} The complete card element.
+ */
+function appendProductAction(cardHtml, product) {
+  const cardElement = document.createElement('div');
+  cardElement.innerHTML = cardHtml;
+  const footer = cardElement.querySelector('.cmp-product-card__footer');
+  if (footer) {
+    footer.appendChild(prepareProductAction(product));
+  }
+  return cardElement.firstElementChild;
+}
+
+/**
+ * Fetches product data from the appropriate endpoint.
+ * @param {string} productType - The type of products to fetch (e.g., 'hot', 'related').
+ * @returns {Promise<Array>} A promise that resolves to an array of products.
+ */
+async function fetchProductData(productType) {
+  const endpointMap = {
+    hot: API_URIS.HOT_PRODUCTS,
+    related: API_URIS.RELATED_PRODUCTS,
+    new: API_URIS.NEW_PRODUCTS,
+  };
+
+  const endpointKey = endpointMap[productType];
+  if (!endpointKey) {
+    console.warn(`Unknown product type: ${productType}`);
+    return [];
   }
 
-  if (isAvailable) { // Not customizable
-    return `<a class="btn" href="${buyLink}" aria-label="Buy now ${name}">Buy now</a>`;
-  }
-  // Not available
-  return `<button class="btn" aria-label="Notify me about ${name}">Notify me</button>`;
+  const endpoint = await getApiEndpoint(endpointKey);
+  return fetchGameList(endpoint, 'GET', {});
 }
+
+/**
+ * Creates a carousel item element for a given product.
+ * @param {object} product - The product data.
+ * @param {string} productType - The category of the product.
+ * @returns {HTMLElement} The carousel item element.
+ */
+function createCarouselItem(product, productType) {
+  const cardHtml = renderProductCard(product, productType);
+  const cardElement = appendProductAction(cardHtml, product);
+  const carouselItem = document.createElement('div');
+  carouselItem.className = 'cmp-carousel__item';
+  carouselItem.appendChild(cardElement);
+  return carouselItem;
+}
+
+/**
+ * Renders products into a carousel.
+ * @param {HTMLElement} contentContainer - The container to render products into.
+ * @param {Array} products - The array of product objects.
+ * @param {string} productType - The category of the products.
+ */
+function renderProductCarousel(contentContainer, products, productType) {
+  contentContainer.innerHTML = ''; // Clear existing content
+  products.forEach(product => {
+    const carouselItem = createCarouselItem(product, productType);
+    contentContainer.appendChild(carouselItem);
+  });
+}
+
 /**
  * Asynchronously fetches product data based on the component's configuration,
  * renders each product into a card, and appends them to the designated container.
@@ -694,45 +788,21 @@ function prepareProductAction(product) {
  */
 async function loadProducts(carouselElement) {
   const contentContainer = carouselElement.querySelector('.cmp-carousel__content');
-  const actionsContainer = carouselElement.parentElement.querySelector(
-    '.section-actions-container',
-  );
+  const actionsContainer = carouselElement.parentElement.querySelector('.section-actions-container');
 
-  if (!contentContainer) {
-    console.error(
-      'Carousel is not configured correctly. Missing content container.',
-    );
+  if (!contentContainer || !actionsContainer) {
+    console.error('Carousel is not configured correctly. Missing content or actions container.');
     return;
   }
 
   const { productType } = carouselElement.dataset;
-  const endpointMap = {
-    hot: 'hotProducts',
-    related: 'relatedProducts',
-    new: 'newProducts',
-  };
-
-  const endpointKey = endpointMap[productType];
-  if (!endpointKey) {
-    console.warn(`Unknown product type: ${productType}`);
-    return;
-  }
-
-  const endpoint = AppConfig.apiEndPoint[endpointKey];
 
   try {
     actionsContainer?.classList.add('is-loading');
-    const products = await fetchData(endpoint);
+    const products = await fetchProductData(productType);
 
-    if (products && products.length > 0) {
-      const cardsHtml = products
-        .map(
-          (product) =>
-            `<div class="cmp-carousel__item">${renderProductCard(product, productType)}</div>`,
-        )
-        .join('');
-      contentContainer.innerHTML = cardsHtml;
-
+    if (Array.isArray(products) && products.length > 0) {
+      renderProductCarousel(contentContainer, products, productType);
       if (window.initializeSwiperOnAEMCarousel) {
         window.initializeSwiperOnAEMCarousel(carouselElement.closest('.carousel'));
       }
@@ -806,78 +876,6 @@ class PerfectMatchProduct {
     window.addEventListener('resize', () => this.handleResize());
   }
 
-
-  transformItem(item, matchType) {
-    return {
-
-      id: item.sku?.toLowerCase().replace(/[^a-z0-9]/g, "-") || '',
-      bazaarvoiceProductId: item.externalId || null,
-      name: item.name,
-      model: item.modelName,
-      matchType: {
-        id: {
-          bestFit: "best-fit",
-          customerChoice: "customer-choice",
-          goodDeal: "good-deal"
-        }[matchType] || matchType,
-        label: {
-          bestFit: "Best Fit",
-          customerChoice: "Customer Choice",
-          goodDeal: "Good Deal"
-        }[matchType] || matchType,
-      },
-      status: [
-        item.buyButtonStatus === "Buy Now" ? "In Stock" : null,
-        ...(item?.productCardContent?.productTags || item?.productTags || [])
-      ].filter(Boolean),
-      isAvailable: item.buyButtonStatus !== "Notify Me",
-      isCustomizable: true,            // set as per your logic
-      buyLink: "./pdp.html",           // you may build from item.productCardContent.urlKey
-      customizeLink: "./pdp.html",
-      image: item?.mainImage || item.productCardContent?.mainImage || null,
-      imageHover: item?.hoverImage || item?.productCardContent?.hoverImage || null,
-      images: (item?.productPreviewPopupCF && item?.productPreviewPopupCF?.additionalImages)
-        ? item?.productPreviewPopupCF?.additionalImages?.map(url => ({
-          image: url,
-          thumbnail: url,
-          title: item.name + " image"
-        }))
-        : [],
-      fps: (() => {
-        const gp = item.gamePriority && item.gamePriority[0];
-        return gp ? parseInt(gp.fullHdFps, 10) : null;
-      })(),
-      benchmarkGame: (item.gamePriority && item.gamePriority[0]?.gameTitle) || null,
-      fpsData: item.gamePriority
-        ? item.gamePriority.map(g => ({
-          game: g.gameTitle,
-          fps1080: parseInt(g.fullHdFps, 10),
-          fps1440: parseInt(g.quadHdFps, 10),
-          image: item?.productCardContent?.mainImage || null
-        }))
-        : [],
-      timeSpyScore: {
-        score: item.timeSpyOverallScore || item.productCardContent.timeSpyOverallScore || null,
-        level: 4,
-        source: {
-          image: item?.productCardContent?.mainImage || null,
-          name: "3DMark",
-          tooltip: "FPS data is theoretical and may vary."
-        }
-      },
-      specs: item.keySpec ? item.keySpec.map(spec => spec.name) : [],
-      // Optional/custom fields — adapt as needed
-      features: [],  // you may compute based on spec or other logic
-      price: item.specialPrice || item.price,
-      originalPrice: item.price,
-      discount: item.savedPrice || null,
-      estorePriceTooltipText: "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.",
-      purchaseLimit: null,
-      shippingInfo: null,
-      installment: null
-    };
-  }
-
   async transformAll(input) {
     const result = [];
      try {
@@ -885,7 +883,7 @@ class PerfectMatchProduct {
         const group = input?.data?.[category];
         if (group && Array.isArray(group.items)) {
           group.items.forEach(item => {
-            result.push(this.transformItem(item, category));
+            result.push(transformProductData(item, category));
           });
         }
       }
@@ -902,7 +900,6 @@ class PerfectMatchProduct {
       "_apply": "AT_LEAST_ONCE"
     }
   };
-
 
   async loadPerfectMatchProducts(filters = {}) {
     this.container.innerHTML = '';
