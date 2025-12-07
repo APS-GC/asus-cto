@@ -7321,6 +7321,27 @@ input[type=checkbox]:checked::after {
   }
 }
 
+header {
+  min-height: var(--header-height);
+}
+
+header .header.block[data-block-status="loading"] {
+  max-height: var(--header-height);
+  overflow: hidden;
+}
+
+/* Ensure all images are responsive and maintain aspect ratio */
+img {
+  height: auto;
+  max-width: 100%;
+  display: block;
+}
+
+/* Prevent CLS for images with width/height attributes */
+img[width][height] {
+  height: auto;
+}
+
 .section.section-spacing-top-small {
   padding-top: 1.25rem;
 }
