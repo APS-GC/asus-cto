@@ -9,18 +9,41 @@ import { API_URIS } from '../../constants/api-constants.js';
  * @returns {Promise<void>}
  */
 export default async function decorate(block) {
-  // Load noUiSlider only once
-  await loadNoUiSlider();
-  await loadSwiperCSS();
-  await loadSwiper();
-  await import('../../scripts/carousel.js');
-  await loadChoisesJs();
+  // Load all dependencies in parallel for faster initialization
+  await Promise.all([
+    loadNoUiSlider(),
+    loadSwiperCSS(),
+    loadSwiper(),
+    import('../../scripts/carousel.js'),
+    loadChoisesJs(),
+  ]);
 
   // Once loaded, render the component
   await renderHelpMeChoose(block);
 
-  initPerfectMatchComponents(document.body)
-  initsimilarProductsForms(document.body)
+  initPerfectMatchComponents();
+  initsimilarProductsForms();
+}
+
+/**
+ * Updates a global product map for tracking purposes.
+ * This function is separated from rendering logic to maintain purity.
+ * @param {object} product - The product data object.
+ * @param {string} productType - The category/type of the product.
+ */
+function updateGlobalProductMap(product, productType) {
+  if (!window.allProducts) {
+    window.allProducts = new Map();
+  }
+
+  const validProductTypes = ['hot', 'related', 'new', 'plp', 'perfect-match', 'similar-products'];
+
+  if (validProductTypes.includes(productType)) {
+    if (!window.allProducts.has(productType)) {
+      window.allProducts.set(productType, new Map());
+    }
+    window.allProducts.get(productType).set(product.id, product);
+  }
 }
 
 /**
@@ -156,8 +179,6 @@ async function renderHelpMeChoose(block) {
   helpMeChooseContainer.innerHTML = html;
   // Replace in DOM
   block.replaceChildren(...helpMeChooseContainer.children);
-
-
 }
 
 // Helper to load noUiSlider only once
@@ -439,35 +460,12 @@ class SimilarProductsManager {
     }, 250);
   }
 
-  renderCarousel() {
-    // Clear container and render products as carousel items
-    this.container.innerHTML = '';
-
-    this.perfectMatchProducts.forEach((product) => {
-      try {
-        // Create carousel item wrapper
-        const carouselItem = document.createElement('div');
-        carouselItem.className = 'cmp-carousel__item';
-        carouselItem.style.width = '280px';
-
-        // Use global product card renderer (same as homepage)
-        const cardHtml = window.renderProductCard(product, this.productType);
-        carouselItem.innerHTML = cardHtml;
-
-        // Add badge styling after rendering
-        this.addBadgeToCard(carouselItem, product.matchType);
-
-        this.container.appendChild(carouselItem);
-      } catch (error) {
-        console.error('Error rendering product card:', error, product);
-      }
-    });
-
-    // Initialize carousel after products are loaded
-    this.initializeCarousel();
-  }
-
   initializeCarousel() {
+    // Prevent re-initialization if an instance already exists
+    if (this.swiperInstance) {
+      return;
+    }
+
     // Find the carousel container
     const carouselContainer = this.productGrid.closest('.carousel');
 
@@ -502,13 +500,13 @@ const initsimilarProductsForms = (context) => {
  * @returns {string} The complete HTML string for the product card.
  */
 function renderProductCard(product, productType) {
+  // Destructure product data with default values for safety
   const {
     id = '',
     bazaarvoiceProductId = '',
     name = '',
     model = '',
     isAvailable = false,
-    isCustomizable = false,
     customizeLink = '#',
     buyLink = '#',
     image = './clientlib-site/images/product-placeholder.webp',
@@ -524,6 +522,9 @@ function renderProductCard(product, productType) {
     discount = '',
     estorePriceTooltipText = '',
   } = product;
+
+  // Update the global product map as a separate step from rendering.
+  updateGlobalProductMap(product, productType);
 
   // Generate HTML for status badges. Handles multiple statuses and converts them to CSS-friendly class names.
   const statusHtml = status
@@ -552,33 +553,6 @@ function renderProductCard(product, productType) {
     `,
     )
     .join('');
-
-  /**
-   * Generate HTML for the product actions.
-   * The logic is as follows: (This is the mock logic. It needs to be changed based on the actual data)
-   * - If the product is available and can be customized, show a "Customize" button.
-   * - If the product is available and can not be customized, show a "Buy now" button.
-   * - If the product is not available, show a "Notify me" button.
-   */
-
-  // Update global products array
-  if (!window.allProducts) {
-    window.allProducts = new Map();
-  }
-
-  if ([
-    'hot',
-    'related',
-    'new',
-    'plp',
-    'perfect-match',
-    'similar-products',
-  ].includes(productType)) {
-    if (!window.allProducts.has(productType)) {
-      window.allProducts.set(productType, new Map());
-    }
-    window.allProducts.get(productType).set(product.id, product);
-  }
 
   // Return the complete HTML structure for the product card using a template literal.
   return `
@@ -670,28 +644,29 @@ function renderProductCard(product, productType) {
             </div>
           </div>
           <div class="cmp-product-card__footer">
-            ${prepareProductAction(name, isAvailable, isCustomizable, buyLink, customizeLink)}
+            ${prepareProductAction(product)}
           </div>
         </div>
       `;
 }
 
-function prepareProductAction(productName, isAvailable, isCustomizable, buyLink, customizeLink) {
-  var productActionsHtml = '';
-
-  if (isAvailable && !isCustomizable) {
-    productActionsHtml = `<a class="btn" href="${buyLink}" aria-label="Buy now ${productName}">Buy now</a>`;
-  }
+/**
+ * Generates the appropriate action button HTML based on product availability and customization options.
+ * @param {object} product - The product data object.
+ * @returns {string} The HTML string for the action button.
+ */
+function prepareProductAction(product) {
+  const { name, isAvailable, isCustomizable, buyLink, customizeLink } = product;
 
   if (isAvailable && isCustomizable) {
-    productActionsHtml = `<a class="btn" href="${customizeLink}#product-customization"  aria-label="Customize ${productName}">Customize</a>`;
+    return `<a class="btn" href="${customizeLink}#product-customization" aria-label="Customize ${name}">Customize</a>`;
   }
 
-  if (!isAvailable) {
-    productActionsHtml = `<button class="btn"  aria-label="Notify me about ${productName}">Notify me</button>`;
+  if (isAvailable) { // Not customizable
+    return `<a class="btn" href="${buyLink}" aria-label="Buy now ${name}">Buy now</a>`;
   }
-
-  return productActionsHtml;
+  // Not available
+  return `<button class="btn" aria-label="Notify me about ${name}">Notify me</button>`;
 }
 /**
  * Asynchronously fetches product data based on the component's configuration,
@@ -699,49 +674,49 @@ function prepareProductAction(productName, isAvailable, isCustomizable, buyLink,
  * @param {HTMLElement} carouselElement - The carousel container element.
  */
 async function loadProducts(carouselElement) {
-  const productType = carouselElement.dataset.productType;
   const contentContainer = carouselElement.querySelector('.cmp-carousel__content');
   const actionsContainer = carouselElement.parentElement.querySelector(
     '.section-actions-container',
   );
 
-  if (!productType || !contentContainer) {
+  if (!contentContainer) {
     console.error(
-      'Carousel is not configured correctly. Missing data-product-type or content container.',
+      'Carousel is not configured correctly. Missing content container.',
     );
     return;
   }
 
-  let endpoint = '';
-  switch (productType) {
-    case 'hot':
-      endpoint = AppConfig.apiEndPoint.hotProducts;
-      break;
-    case 'related':
-      endpoint = AppConfig.apiEndPoint.relatedProducts;
-      break;
-    case 'new':
-      endpoint = AppConfig.apiEndPoint.newProducts;
-      break;
-    default:
-      console.warn(`Unknown product type: ${productType}`);
-      return;
+  const { productType } = carouselElement.dataset;
+  const endpointMap = {
+    hot: 'hotProducts',
+    related: 'relatedProducts',
+    new: 'newProducts',
+  };
+
+  const endpointKey = endpointMap[productType];
+  if (!endpointKey) {
+    console.warn(`Unknown product type: ${productType}`);
+    return;
   }
+
+  const endpoint = AppConfig.apiEndPoint[endpointKey];
 
   try {
     actionsContainer?.classList.add('is-loading');
     const products = await fetchData(endpoint);
 
-    products.forEach((product) => {
-      const cardHtml = renderProductCard(product, productType);
-      const carouselItem = document.createElement('div');
-      carouselItem.className = 'cmp-carousel__item';
-      carouselItem.innerHTML = cardHtml;
-      contentContainer.appendChild(carouselItem);
-    });
+    if (products && products.length > 0) {
+      const cardsHtml = products
+        .map(
+          (product) =>
+            `<div class="cmp-carousel__item">${renderProductCard(product, productType)}</div>`,
+        )
+        .join('');
+      contentContainer.innerHTML = cardsHtml;
 
-    if (window.initializeSwiperOnAEMCarousel) {
-      window.initializeSwiperOnAEMCarousel(carouselElement.closest('.carousel'));
+      if (window.initializeSwiperOnAEMCarousel) {
+        window.initializeSwiperOnAEMCarousel(carouselElement.closest('.carousel'));
+      }
     }
   } catch (error) {
     console.error(`Failed to load ${productType} products:`, error);
@@ -768,10 +743,10 @@ class PerfectMatchProduct {
     this.container = null;
     this.swiperInstance = null;
     this.mobileBreakpoint = 700; // Mobile breakpoint in pixels
-    this.productType = 'perfect-match';
-    this.response = [];
-    this.path = "";
-    this.lang = "";
+    this.productType = 'perfect-match'; // Used for global product tracking
+    this.resizeTimeout = null;
+    this.apiEndpoint = "https://publish-p165753-e1767020.adobeaemcloud.com/graphql/execute.json/asuscto/fetchHelpMeChooseResults";
+    this.apiCategories = ["bestFit", "customerChoice", "goodDeal"];
   }
 
   async init(container) {
@@ -785,25 +760,25 @@ class PerfectMatchProduct {
     );
 
     const params = new URLSearchParams(window.location.search);
-    const selectedGames = params.getAll('games').map(this.sanitizeText);
-    const minBudget = params.get('min-budget'); // '2100'
-    const maxBudget = params.get('max-budget'); // '4300'
-    this.path = window.location.href.includes('/us/') ? "/content/dam/asuscto/us" : "/content/dam/asuscto/en";
+    const selectedGames = params.getAll('games').map(this.formatGameFilter);
+    const minBudget = params.get('min-budget') || 500;
+    const maxBudget = params.get('max-budget') || 5000;
+    const path = window.location.href.includes('/us/') ? "/content/dam/asuscto/us" : "/content/dam/asuscto/en";
 
-    this.dom = {
+    const apiPayload = {
       "query": "",
       "variables": {
-        "path": this.path,
+        "path": path,
         "gameIdsFilter": {
           "_logOp": "AND",
           "_expressions": selectedGames || [],
         },
-        "lowerPrice": minBudget || 500,
-        "highPrice": maxBudget || 5000,
+        "lowerPrice": minBudget,
+        "highPrice": maxBudget,
         "sort": "price DESC"
       }
     }
-    await this.loadPerfectMatchProducts(this.dom);
+    await this.loadPerfectMatchProducts(apiPayload);
 
     // Add resize listener to handle viewport changes
     window.addEventListener('resize', () => this.handleResize());
@@ -813,18 +788,21 @@ class PerfectMatchProduct {
   transformItem(item, matchType) {
     return {
 
-      id: item.sku.toLowerCase().replace(/[^a-z0-9]/g, "-"),  // example slugify
-      bazaarvoiceProductId: item.externalId || null,            // example mapping
+      id: item.sku?.toLowerCase().replace(/[^a-z0-9]/g, "-") || '',
+      bazaarvoiceProductId: item.externalId || null,
       name: item.name,
       model: item.modelName,
       matchType: {
-        id: matchType === "bestFit" ? "best-fit" :
-          matchType === "customerChoice" ? "customer-choice" :
-            matchType === "goodDeal" ? "good-deal" : matchType,
-
-        label: matchType === "bestFit" ? "Best Fit" :
-          matchType === "customerChoice" ? "Customer Choice" :
-            matchType === "goodDeal" ? "Good Deal" : matchType
+        id: {
+          bestFit: "best-fit",
+          customerChoice: "customer-choice",
+          goodDeal: "good-deal"
+        }[matchType] || matchType,
+        label: {
+          bestFit: "Best Fit",
+          customerChoice: "Customer Choice",
+          goodDeal: "Good Deal"
+        }[matchType] || matchType,
       },
       status: [
         item.buyButtonStatus === "Buy Now" ? "In Stock" : null,
@@ -879,24 +857,26 @@ class PerfectMatchProduct {
   }
 
   async transformAll(input) {
-
     const result = [];
-    const categories = ["bestFit", "customerChoice", "goodDeal"];
-    for (const cat of categories) {
-      const group = input.data[cat];
-      if (group && Array.isArray(group.items)) {
-        group.items.forEach(item => {
-          result.push(this.transformItem(item, cat));
-        });
+     try {
+      for (const category of this.apiCategories) {
+        const group = input?.data?.[category];
+        if (group && Array.isArray(group.items)) {
+          group.items.forEach(item => {
+            result.push(this.transformItem(item, category));
+          });
+        }
       }
+    } catch (error) {
+      console.error('Error transforming API response:', error);
+      // Depending on requirements, you might want to re-throw or handle differently
     }
     return result;
   }
 
-  sanitizeText(value) {
-    // Remove any characters that could be dangerous in HTML context
+  formatGameFilter(value) {
     return {
-      "value": value.replace(/[<>"]/g, ''),
+      "value": String(value).replace(/[<>"]/g, ''), // Basic sanitization
       "_apply": "AT_LEAST_ONCE"
     }
   };
@@ -907,12 +887,8 @@ class PerfectMatchProduct {
     this.actionsContainer.classList.add('is-loading');
 
     try {
-
-      // Section 1 (We have found your perfect matches!)
-      this.response = await fetchGameList("https://publish-p165753-e1767020.adobeaemcloud.com/graphql/execute.json/asuscto/fetchHelpMeChooseResults", 'POST',
-        filters
-      );
-      this.perfectMatchProducts = await this.transformAll(this.response || []);
+      const response = await fetchGameList(this.apiEndpoint, 'POST', filters);
+      this.perfectMatchProducts = await this.transformAll(response || {});
 
     } catch (error) {
       console.error('Failed to load perfect match products:', error);
@@ -920,7 +896,7 @@ class PerfectMatchProduct {
     } finally {
       this.actionsContainer.classList.remove('is-loading');
     }
-
+    
     if (!this.perfectMatchProducts.length) {
       this.renderNoMatchProducts();
       return;
@@ -947,18 +923,14 @@ class PerfectMatchProduct {
   }
 
   renderProducts() {
-    if (!this.perfectMatchProducts.length) {
-      return;
-    }
-
     // Show the section heading when products are found
     if (this.sectionHeading) {
       this.sectionHeading.style.display = '';
     }
 
-    // Check if mobile view
     const isMobile = window.innerWidth < this.mobileBreakpoint;
 
+    // Decide which view to render based on screen size
     if (isMobile) {
       this.renderMobileGrid();
     } else {
@@ -966,11 +938,8 @@ class PerfectMatchProduct {
     }
   }
 
-  renderMobileGrid() {
-    // Clear container and render products as grid on mobile
+  _renderProductItems(containerClass, itemClass) {
     this.container.innerHTML = '';
-
-    // Create grid container
     const gridContainer = document.createElement('div');
     gridContainer.className = 'perfect-match-mobile-grid';
 
@@ -978,7 +947,7 @@ class PerfectMatchProduct {
       try {
         // Create grid item wrapper
         const gridItem = document.createElement('div');
-        gridItem.className = 'perfect-match-mobile-grid__item cmp-perfect-match-product__item';
+        gridItem.className = itemClass;
 
         // Use global product card renderer
         const cardHtml = window.renderProductCard(product, this.productType);
@@ -994,40 +963,19 @@ class PerfectMatchProduct {
     });
 
     this.container.appendChild(gridContainer);
+    return gridContainer;
+  }
+
+  renderMobileGrid() {
+    this._renderProductItems('perfect-match-mobile-grid', 'perfect-match-mobile-grid__item cmp-perfect-match-product__item');
   }
 
   renderCarousel() {
-    // Clear container and render products as carousel items
-    this.container.innerHTML = '';
-
-    this.perfectMatchProducts.forEach((product) => {
-      try {
-        // Create carousel item wrapper
-        const carouselItem = document.createElement('div');
-        carouselItem.className = 'cmp-carousel__item cmp-perfect-match-product__item';
-
-        // Use global product card renderer (same as homepage)
-        const cardHtml = window.renderProductCard(product, this.productType);
-        carouselItem.innerHTML = cardHtml;
-
-        // Add badge styling after rendering
-        this.addBadgeToCard(carouselItem, product.matchType);
-
-        this.container.appendChild(carouselItem);
-
-      } catch (error) {
-        console.error('Error rendering product card:', error, product);
-      }
-
-
-    });
-
-    // Initialize carousel after products are loaded
+    this._renderProductItems('swiper-wrapper', 'cmp-carousel__item cmp-perfect-match-product__item');
     this.initializeCarousel();
   }
 
   initializeCarousel() {
-
     // Find the carousel container
     const carouselContainer = this.container.closest('.carousel');
 
@@ -1047,13 +995,11 @@ class PerfectMatchProduct {
   }
 
   handleResize() {
-
     // Debounce resize events
     clearTimeout(this.resizeTimeout);
     this.resizeTimeout = setTimeout(() => {
       const isMobile = window.innerWidth < this.mobileBreakpoint;
       const hasSwiper = this.swiperInstance !== null;
-
 
       if (isMobile && hasSwiper) {
         // Destroy carousel and switch to grid on mobile
@@ -1070,11 +1016,8 @@ class PerfectMatchProduct {
     const productCard = cardWrapper.querySelector('.cmp-product-card');
     if (!productCard) return;
 
-    // Handle both string and object matchType formats
-    const matchTypeId = typeof matchType === 'object' ? matchType.id : matchType;
-    const matchTypeLabel = typeof matchType === 'object' ? matchType.label : matchType;
-
-    // Create and insert badge with CSS classes
+    const matchTypeId = matchType?.id;
+    const matchTypeLabel = matchType?.label;
     const badge = document.createElement('div');
     const badgeClass = this.getBadgeClass(matchTypeId, matchTypeLabel);
     badge.className = `perfect-match-badge ${badgeClass}`;
@@ -1084,25 +1027,21 @@ class PerfectMatchProduct {
   }
 
   getBadgeClass(matchTypeId, matchTypeLabel) {
-    // Use ID for class mapping if available, otherwise fall back to label
     const identifier = matchTypeId || matchTypeLabel;
-
     const classMap = {
-      // ID-based mapping (new format)
       'best-fit': 'perfect-match-badge--best-fit',
       'customer-choice': 'perfect-match-badge--customer-choice',
       'good-deal': 'perfect-match-badge--good-deal',
     };
 
-    // This is a safe way to access the classMap object.
-    // eslint-disable-next-line security/detect-object-injection
     return classMap[identifier] || '';
   }
 }
 
-// Initialize when DOM is ready
-
-const initPerfectMatchComponents = (context) => {
+/**
+ * Initializes the PerfectMatchProduct component.
+ */
+const initPerfectMatchComponents = () => {
   const perfectMatchProduct = new PerfectMatchProduct();
   perfectMatchProduct.init(document.querySelector('.perfect-match-products-container'));
   window.perfectMatchProductInstance = perfectMatchProduct;
@@ -1121,14 +1060,12 @@ export class SortDropdownManager {
     if (!this.selectElement) return;
 
     this.choicesInstance = new Choices(this.selectElement, {
-      searchEnabled: false,
-      itemSelectText: '',
-      shouldSort: false,
-      allowHTML: false,
-      removeItemButton: false,
-      duplicateItemsAllowed: false,
-      addItemFilter: null,
-      customProperties: {},
+        searchEnabled: false,
+        itemSelectText: '',
+        shouldSort: false,
+        allowHTML: false,
+        removeItemButton: false,
+        duplicateItemsAllowed: false,
     });
 
     this.selectElement._choicesInstance = this.choicesInstance;
@@ -1136,8 +1073,8 @@ export class SortDropdownManager {
     // Wait for Choices.js to finish its initial DOM manipulation
     setTimeout(() => {
       this.setupAccessibility();
-      this.setupEventListeners();
     }, 100);
+    this.setupEventListeners();
   }
 
   setupAccessibility() {
@@ -1184,66 +1121,6 @@ export class SortDropdownManager {
     }
   }
 
-  handleDropdownOpen() {
-    const container = this.selectElement.closest('.choices');
-    if (!container) return;
-
-    const inner = container.querySelector('.choices__inner');
-    if (!inner) return;
-
-    // Hide the redundant single-item display
-    const singleItem = container.querySelector('.choices__list--single');
-    if (singleItem) {
-      singleItem.setAttribute('aria-hidden', 'true');
-    }
-
-    // Update aria-expanded on `.choices__inner`
-    inner.setAttribute('aria-expanded', 'true');
-
-    // Set aria-activedescendant to selected item
-    const selectedOption = container.querySelector('.choices__item--choice.is-selected');
-    if (selectedOption) {
-      inner.setAttribute('aria-activedescendant', selectedOption.id);
-    }
-  }
-
-  handleDropdownClose() {
-    const container = this.selectElement.closest('.choices');
-    if (!container) return;
-
-    const inner = container.querySelector('.choices__inner');
-    if (!inner) return;
-
-    // Re-enable single-item display
-    const singleItem = container.querySelector('.choices__list--single');
-    if (singleItem) {
-      singleItem.removeAttribute('aria-hidden');
-    }
-
-    // Update aria-expanded on `.choices__inner`
-    inner.setAttribute('aria-expanded', 'false');
-
-    // Clear aria-activedescendant
-    inner.removeAttribute('aria-activedescendant');
-  }
-
-  updateAriaSelected(newValue) {
-    const container = this.selectElement.closest('.choices');
-    if (!container) return;
-
-    const allOptions = container.querySelectorAll('.choices__item--choice');
-    allOptions.forEach((option) => {
-      option.setAttribute('aria-selected', 'false');
-    });
-
-    const newSelectedOption = container.querySelector(
-      `.choices__item--choice[data-value="${newValue}"]`,
-    );
-    if (newSelectedOption) {
-      newSelectedOption.setAttribute('aria-selected', 'true');
-    }
-  }
-
   setupEventListeners() {
     this.selectElement.addEventListener('change', (event) => {
       const value = event.detail?.value;
@@ -1275,87 +1152,93 @@ export class SortDropdownManager {
   }
 }
 
-/* -------------------------------
- * Initialize modules on DOMContentLoaded
- * ------------------------------*/
-document.addEventListener('DOMContentLoaded', () => {
+function initSortDropdowns() {
   const sortElement = document.querySelector('#sort-by');
   const floatingSortElement = document.querySelector('#sort-by-floating');
-  const mainFloatingContainer = document.querySelector('.floating-filter__plp');
-  let sortManager, floatingSortManager;
 
-  if (sortElement && floatingSortElement) {
-    floatingSortManager = new SortDropdownManager(floatingSortElement);
-    floatingSortManager.init();
-    sortManager = new SortDropdownManager(sortElement);
-    sortManager.init();
-    const syncDropdowns = (source, target) => {
-      source.addEventListener('change', (e) => {
-        const newValue = e.detail?.value || source.value;
-        const targetChoices = target.choicesInstance || target._choicesInstance;
-        const customSource = source.closest('.choices');
-        source.setAttribute('aria-label', newValue);
-        customSource.setAttribute('aria-label', newValue);
-        if (target.value === newValue) return;
+  if (!sortElement || !floatingSortElement) return;
 
-        if (targetChoices && typeof targetChoices.setChoiceByValue === 'function') {
-          targetChoices.setChoiceByValue(newValue);
-        } else {
-          target.value = newValue;
-          target.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-      });
-    };
+  const floatingSortManager = new SortDropdownManager(floatingSortElement);
+  floatingSortManager.init();
+  const sortManager = new SortDropdownManager(sortElement);
+  sortManager.init();
 
-    syncDropdowns(sortElement, floatingSortElement);
-    syncDropdowns(floatingSortElement, sortElement);
-  }
+  const syncDropdowns = (source, target) => {
+    source.addEventListener('change', (e) => {
+      const newValue = e.detail?.value || source.value;
+      const targetChoices = target.choicesInstance || target._choicesInstance;
+      if (target.value === newValue) return;
 
-  const onScreenSort = document.querySelector('#sort-by-onscreen');
-  if (window.innerWidth < 1280 && onScreenSort) {
-    const sortElementOffsetTop = onScreenSort.offsetTop;
-    const sortElementHeight = onScreenSort.offsetHeight;
-
-    window.addEventListener('scroll', () => {
-      const scrollPosition = window.scrollY;
-
-      if (scrollPosition >= sortElementOffsetTop + sortElementHeight) {
-        mainFloatingContainer.classList.remove('hidden');
+      if (targetChoices && typeof targetChoices.setChoiceByValue === 'function') {
+        targetChoices.setChoiceByValue(newValue);
       } else {
-        mainFloatingContainer.classList.add('hidden');
+        target.value = newValue;
+        target.dispatchEvent(new Event('change', { bubbles: true }));
       }
     });
-  }
+  };
 
+  syncDropdowns(sortElement, floatingSortElement);
+  syncDropdowns(floatingSortElement, sortElement);
+}
+
+function initFloatingSortVisibility() {
+  const onScreenSort = document.querySelector('#sort-by-onscreen');
+  const mainFloatingContainer = document.querySelector('.floating-filter__plp');
+
+  if (!onScreenSort || !mainFloatingContainer || window.innerWidth >= 1280) return;
+
+  const sortElementOffsetTop = onScreenSort.offsetTop;
+  const sortElementHeight = onScreenSort.offsetHeight;
+
+  window.addEventListener('scroll', () => {
+    const scrollPosition = window.scrollY;
+    const shouldBeVisible = scrollPosition >= sortElementOffsetTop + sortElementHeight;
+    mainFloatingContainer.classList.toggle('hidden', !shouldBeVisible);
+  });
+}
+
+function initFilterDialog() {
   const filterTrigger = document.querySelectorAll(
     '[data-a11y-dialog-show="product-filter-dialog"]',
   );
-
   const filterDialog = document.getElementById('product-filter-dialog');
+
+  if (!filterDialog) return;
 
   if (filterDialog && matchMedia('(min-width: 1280px)').matches) {
     filterDialog.removeAttribute('role');
   }
 
-  if (filterTrigger.length && filterDialog) {
-    const dialog = new A11yDialog(filterDialog);
+  if (!filterTrigger.length) return;
 
-    filterTrigger.forEach((trigger) => {
-      trigger.addEventListener('click', () => {
-        filterDialog.classList.add('dialog-container');
-        dialog.show();
-      });
-    });
+  const dialog = new A11yDialog(filterDialog);
 
-    window.addEventListener('resize', () => {
-      if (!matchMedia('(max-width: 1280px)').matches) {
-        filterDialog.classList.remove('dialog-container');
-        filterDialog.removeAttribute('aria-hidden');
-        filterDialog.removeAttribute('aria-modal');
-        filterDialog.removeAttribute('role');
-      }
+  filterTrigger.forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      filterDialog.classList.add('dialog-container');
+      dialog.show();
     });
-  }
+  });
+
+  window.addEventListener('resize', () => {
+    if (matchMedia('(min-width: 1280px)').matches) {
+      filterDialog.classList.remove('dialog-container');
+      filterDialog.removeAttribute('aria-hidden');
+      filterDialog.removeAttribute('aria-modal');
+      filterDialog.removeAttribute('role');
+    }
+  });
+}
+
+/* -------------------------------
+ * Initialize modules on DOMContentLoaded
+ * ------------------------------*/
+document.addEventListener('DOMContentLoaded', () => {
+  initSortDropdowns();
+  initFloatingSortVisibility();
+  initFilterDialog();
+
   // Custom listeners for choices
   document.addEventListener('mouseover', (e) => {
     const item = e.target.closest('.choices__item--choice');
