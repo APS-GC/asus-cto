@@ -3,6 +3,7 @@ import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Default configuration
 const DEFAULT_CONFIG = {
@@ -540,6 +541,36 @@ class SelectGameForm {
     });
 
     this.form.addEventListener('reset', () => this._handleFormReset());
+    
+    this.form.addEventListener('submit', (e) => this._handleFormSubmit(e));
+  }
+  
+  /**
+   * Handles form submission and tracks the event.
+   * @param {Event} e - The submit event.
+   */
+  _handleFormSubmit(e) {
+    const selectedGames = this._getSelectedGames();
+    if (selectedGames.length === 0) {
+      e.preventDefault();
+      return;
+    }
+    
+    // Get game names
+    const gameNames = [...this.dom.games]
+      .filter((g) => g.checked)
+      .map((g) => g.dataset.name);
+    
+    // Get budget values
+    const minBudget = this.dom.minBudgetInput?.value || 0;
+    const maxBudget = this.dom.maxBudgetInput?.value || 0;
+    
+    // Track the event
+    trackEvent({
+      eventName: 'help_me_choose_home_cto_rog',
+      category: 'help_me_choose/home/cto/rog',
+      label: `game: ${gameNames.join(', ')}; min: ${minBudget}; max: ${maxBudget}/help_me_choose/home/cto/rog`
+    });
   }
 
   /* ---------------------------------------------
