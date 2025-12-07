@@ -2064,7 +2064,7 @@ body.no-scroll {
 }
 
 
-.swiper-wrapper {
+.swiper-wrapper-center {
     display: flex;
     justify-content: center;
 }
