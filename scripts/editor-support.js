@@ -7,8 +7,6 @@ import {
   loadBlock,
   loadScript,
   loadSections,
-  // eslint-disable-next-line import/named
-  updateSectionMetadata,
 } from './aem.js';
 
 import { decorateRichtext } from './editor-support-rte.js';
@@ -79,8 +77,6 @@ async function applyChanges(event) {
           decorateRichtext(newSection);
           decorateSections(parentElement);
           decorateBlocks(parentElement);
-          // Update section metadata for UE changes
-          updateSectionMetadata(newSection);
           await loadSections(parentElement);
           element.remove();
           newSection.style.display = null;

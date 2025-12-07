@@ -96,6 +96,132 @@ function isNotEmptyObject(obj) {
 }
 
 /**
+ * Sort options mapping
+ */
+const SORT_OPTIONS = {
+  'best-performance': 'best performance',
+  'price-low-high': 'price low to high',
+  'price-high-low': 'price high to low',
+  ratings: 'ratings',
+  'best-selling': 'best selling',
+};
+
+/**
+ * Fetches filtered products from the API
+ * @param {Object} options - Filter options
+ * @param {string} options.websiteCode - Website code (default: 'us')
+ * @param {Array<string>} options.itemsId - Filter item IDs
+ * @param {string} options.sort - Sort option key
+ * @param {number} options.pageSize - Items per page (default: 9)
+ * @param {number} options.pageOffset - Pagination offset (default: 0)
+ * @returns {Promise<Object>} - { total, pageOffset, pageSize, results }
+ */
+export async function fetchFilteredProducts(options = {}) {
+  const {
+    websiteCode = 'us',
+    itemsId = [],
+    sort = 'best-performance',
+    pageSize = 6,
+    pageOffset = 0,
+  } = options;
+
+  const endpoint = await getApiEndpoint(API_URIS.FILTER_PRODUCTS);
+
+  // Build query parameters
+  const params = new URLSearchParams();
+  params.set('websiteCode', websiteCode);
+  params.set('sort', SORT_OPTIONS[sort] || SORT_OPTIONS['best-performance']);
+  params.set('pageSize', String(pageSize));
+  params.set('pageOffset', String(pageOffset));
+
+  // Add filter item IDs if provided
+  if (itemsId.length > 0) {
+    params.set('itemsId', itemsId.join(','));
+  }
+
+  const fullUrl = `${endpoint}?${params.toString()}`;
+
+  try {
+    const response = await fetch(fullUrl, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error(`API returned non-JSON content: ${contentType}`);
+    }
+
+    const data = await response.json();
+
+    return {
+      total: data.total || 0,
+      pageOffset: data.pageOffset || 0,
+      pageSize: data.pageSize || pageSize,
+      results: data.results || [],
+    };
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching filtered products:', error);
+    return {
+      total: 0,
+      pageOffset: 0,
+      pageSize,
+      results: [],
+    };
+  }
+}
+
+/**
+ * Fetches filter options from the API
+ * @returns {Promise<Array>} - Array of filter group objects
+ */
+export async function fetchFilters() {
+  const endpoint = await getApiEndpoint(API_URIS.FETCH_FILTERS);
+
+  try {
+    const response = await fetch(endpoint, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error(`API returned non-JSON content: ${contentType}`);
+    }
+
+    const data = await response.json();
+
+    if (data.status !== 200 || data.message !== 'OK') {
+      throw new Error('Invalid API response');
+    }
+
+    // Return the filter groups from the API response
+    return data.results?.chooseItem?.groups || [];
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching filters:', error);
+    return [];
+  }
+}
+
+/**
  * Fetches a list of games from a specified API endpoint, with fallback options and a timeout.
  * @param {string} [endpoint] - The API endpoint to fetch the game list from.
  * @param {number} [maxProducts] - The maximum number of products to return.
