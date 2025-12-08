@@ -289,15 +289,16 @@ export async function fetchGameList(
  */
 export async function callSSOValidation(type='check', aticket) {
   const domain = await getConfigValue('sso-endpoint-dev');
-  const ssoEndpoint = domain+'/api/v1/web/app-builder-integration-api/sso';
-  const url = `${ssoEndpoint}?ticket=${aticket}&type=${type}`;
+  const ssoEndpoint = domain+'/api/v1/web/sso-api/sso';
+  const url = `${ssoEndpoint}`;
   try {
     const response = await fetch(url, {
-      method:"get",
+      method:"POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
+      body:JSON.stringify({type,ticket:aticket}),
       mode: 'cors',
       timeout: 30000,
     });
