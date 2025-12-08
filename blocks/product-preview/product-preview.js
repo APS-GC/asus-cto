@@ -335,7 +335,7 @@ async function createGamePerformance(product, config) {
             <span class="icon icon--plus text-info"></span>
           </button>
         </div>
-        <span class="score">${product.timeSpyOverallScore}</span>
+        <span class="score">${Number(product.timeSpyOverallScore).toLocaleString()}</span>
       </div>
       <div class="time-spy-score-right">
         <span class="data-from">Data from</span>
@@ -477,16 +477,32 @@ export default async function decorate(block) {
     return `<span class="tag ${badgeClass}">${badge}</span>${divider}`;
   }).join('');
 
-  const specsHTML = (product.keySpec || []).map((spec) => {
-    const specName = spec.name || spec;
-    return `<li>${specName}</li>`;
-  }).join('');
+  // Use specSummary HTML directly from API, fallback to keySpec
+  let specsHTML = '';
+  if (product.specSummary) {
+    // Add required classes to ul element from API HTML
+    specsHTML = product.specSummary.replace('<ul>', '<ul class="spec-summary__list list-style-square">');
+  } else if (product.keySpec && product.keySpec.length > 0) {
+    const specItems = product.keySpec.map((spec) => {
+      const specName = spec.name || spec;
+      return `<li>${specName}</li>`;
+    }).join('');
+    specsHTML = `<ul class="spec-summary__list list-style-square">${specItems}</ul>`;
+  }
 
-  const featuresHTML = (product.keyFeatures || []).map((feature) => {
-    const featureName = feature.name || feature.title || '';
-    const featureDesc = feature.description || feature.desc || '';
-    return `<li><strong>${featureName}</strong><br><span>${featureDesc}</span></li>`;
-  }).join('');
+  // Use productAdvantage HTML directly from API, fallback to keyFeatures
+  let featuresHTML = '';
+  if (product.productAdvantage) {
+    // Add required classes to ul element from API HTML
+    featuresHTML = product.productAdvantage.replace('<ul>', '<ul class="features">');
+  } else if (product.keyFeatures && product.keyFeatures.length > 0) {
+    const featureItems = product.keyFeatures.map((feature) => {
+      const featureName = feature.name || feature.title || '';
+      const featureDesc = feature.description || feature.desc || '';
+      return `<li><strong>${featureName}</strong><br><span>${featureDesc}</span></li>`;
+    }).join('');
+    featuresHTML = `<ul class="features">${featureItems}</ul>`;
+  }
 
   block.innerHTML = `
     <div class="cmp-product-preview__topbar">
@@ -552,16 +568,14 @@ export default async function decorate(block) {
 
           ${featuresHTML ? `
             <div class="divider"></div>
-            <ul class="features">
-              ${featuresHTML}
-            </ul>
+            ${featuresHTML}
           ` : ''}
 
           ${specsHTML ? `
             <div class="divider"></div>
             <div class="spec-summary">
               <h3 class="spec-summary__heading">Spec Summary</h3>
-              <ul class="spec-summary__list list-style-square">${specsHTML}</ul>
+              ${specsHTML}
             </div>
           ` : ''}
         </div>
