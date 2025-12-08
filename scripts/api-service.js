@@ -160,7 +160,7 @@ export async function callSSOValidation(type='check', aticket) {
         Accept: "application/json",
         "Content-Type": "application/json"
       },
-      body:JSON.stringify({type,aticket}),
+      body:JSON.stringify({type,ticket:aticket}),
       mode: 'cors',
       timeout: 30000,
     });
