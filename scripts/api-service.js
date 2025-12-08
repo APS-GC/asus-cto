@@ -280,3 +280,30 @@ export async function fetchGameList(
     return []; // fallback
   }
 }
+
+/**
+ * Call SSO validation API
+ * @param {string} type - Validation type, e.g. 'check' 'user' 'logout'
+ * @param {string} aticket
+ * @returns {Promise<Object>} API response data
+ */
+export async function callSSOValidation(type='check', aticket) {
+  const domain = await getConfigValue('sso-endpoint-dev');
+  const ssoEndpoint = domain+'/api/v1/web/app-builder-integration-api/sso';
+  const url = `${ssoEndpoint}?ticket=${aticket}&type=${type}`;
+  try {
+    const response = await fetch(url, {
+      method:"get",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      mode: 'cors',
+      timeout: 30000,
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("SSO API call error:", error.message);
+    throw new Error(`SSO validation failed: ${error.message}`);
+  }
+}
