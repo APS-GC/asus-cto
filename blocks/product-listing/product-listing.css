@@ -1,0 +1,89 @@
+/* stylelint-disable declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, rule-empty-line-before, no-duplicate-selectors, value-no-vendor-prefix, property-no-vendor-prefix, selector-pseudo-element-colon-notation, media-feature-range-notation, comment-empty-line-before, selector-attribute-quotes, declaration-empty-line-before, length-zero-no-unit, color-function-alias-notation */
+.no-matches {
+    background: transparent;
+    color: var(--color-primary-950);
+    text-align: center;
+    display: none;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    padding-left: 4rem;
+    padding-right: 4rem;
+    margin-bottom: 5rem;
+}
+
+.no-matches.show {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+@media only screen and (max-width: 47.9375rem) {
+    .no-matches {
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+}
+
+.no-matches__container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+.no-matches__title {
+    font-family: var(--font-display);
+    font-weight: var(--medium);
+    letter-spacing: 0;
+    font-size: 1.875rem;
+    line-height: 2.375rem;
+    margin-bottom: 0.75rem;
+}
+
+@media only screen and (max-width: 47.9375rem) {
+    .no-matches__title {
+        font-family: var(--font-display);
+        font-weight: var(--medium);
+        letter-spacing: 0;
+        font-size: 1.25rem;
+        line-height: 1.75rem;
+    }
+}
+
+.no-matches__description {
+    font-family: var(--font-text);
+    font-weight: var(--regular);
+    letter-spacing: 0;
+    font-size: 1rem;
+    line-height: 1.5rem;
+}
+
+@media only screen and (max-width: 47.9375rem) {
+    .no-matches__description {
+        font-family: var(--font-text);
+        font-weight: var(--regular);
+        letter-spacing: 0;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        letter-spacing: 0.16px;
+    }
+}
+/* stylelint-enable declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, rule-empty-line-before, no-duplicate-selectors, value-no-vendor-prefix, property-no-vendor-prefix, selector-pseudo-element-colon-notation, media-feature-range-notation, comment-empty-line-before, selector-attribute-quotes, declaration-empty-line-before, length-zero-no-unit, color-function-alias-notation */

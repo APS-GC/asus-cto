@@ -12,8 +12,45 @@ import {
   buildBlock,
   decorateBlock,
   loadBlock,
+  getMetadata,
 } from './aem.js';
 import { getConfigValue } from './configs.js';
+
+/**
+ * Get the current locale from configuration
+ * @returns {Promise<string>} The locale value, defaults to 'en' if not configured
+ */
+export async function getLocale() {
+  const locale = await getConfigValue('locale');
+  return locale || 'en';
+}
+
+/**
+ * Get the website code from configuration
+ * @returns {Promise<string>} The website code value, defaults to 'us' if not configured
+ */
+export async function getWebsiteCode() {
+  const websiteCode = await getConfigValue('website-code');
+  return websiteCode || 'us';
+}
+
+/**
+ * Get the currency symbol from configuration
+ * @returns {Promise<string>} The currency symbol, defaults to '$' if not configured
+ */
+export async function getCurrencySymbol() {
+  const currencySymbol = await getConfigValue('currency-symbol');
+  return currencySymbol || '$';
+}
+
+/**
+ * Get the language/locale from configuration
+ * @returns {Promise<string>} The language code (e.g., 'en-us'), defaults to 'en-US' if not configured
+ */
+export async function getLang() {
+  const lang = await getConfigValue('lang');
+  return lang || 'en-US';
+}
 
 /**
  * Moves all the attributes from a given elmenet to another given element.
@@ -156,32 +193,13 @@ export async function loadSwiper() {
 }
 
 /**
- * Detect if running in Universal Editor environment
- * @returns {boolean} True if running in Universal Editor
- */
-export function isUniversalEditor() {
-   // TODO: returning false by default just for the demo because on published URLs, we are getting API CORS error
-  return false;
-  
-  return (
-    window.location.pathname.includes('/editor.html') ||
-    window.location.search.includes('editor') ||
-    window.location.search.includes('aue_') ||
-    document.body.hasAttribute('data-aue-behavior') ||
-    document.body.classList.contains('editor') ||
-    document.body.classList.contains('aem-authoring-enabled') ||
-    document.querySelector('[data-aue-resource]') !== null ||
-    window.hlx?.aemRoot !== undefined
-  );
-}
-
-/**
  * Loads header fragment from the working fragment URL
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
 export async function loadHeaderFragment() {
   //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = `/${await getConfigValue('locale')}/fragments/head.plain.html`;
+  const locale = await getLocale();
+  const fragmentUrl = `/${locale}/fragments/head.plain.html`;
   try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
@@ -202,7 +220,8 @@ export async function loadHeaderFragment() {
  */
 export async function loadFooterFragment() {
   //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = `/${await getConfigValue('locale')}/fragments/footer.plain.html`;
+  const locale = await getLocale();
+  const fragmentUrl = `/${locale}/fragments/footer.plain.html`;
   try {
     const response = await fetch(fragmentUrl);
     if (response.ok) {
@@ -389,6 +408,11 @@ async function loadEager(doc) {
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
+    const overlapHeader = getMetadata('overlapheader');
+    if (overlapHeader === 'true' && main.firstElementChild) {
+      main.firstElementChild.classList.add('overlap-header');
+    }
+    
     decorateMain(main);
     const hasCarousel = main.querySelector('.hero-banner, .hot-products, .product-preview, .help-me-choose,.our-advantages');
     if (hasCarousel) {
@@ -427,6 +451,17 @@ async function loadLazy(doc) {
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
+
+  // Initialize global tooltip manager for all tooltip functionality
+  import('./tooltip.js')
+    .then((module) => {
+      if (typeof window.tooltipManager === 'undefined') {
+        window.tooltipManager = new module.default();
+      }
+    })
+    .catch((error) => {
+      console.error('Failed to load tooltip manager:', error);
+    });
 }
 
 /**
@@ -546,6 +581,15 @@ async function loadFooter(footer) {
  * @param {string} [prefix] Location of placeholders
  * @returns {object} Window placeholders object
  */
+/**
+ * Gets placeholders for the current locale.
+ * @returns {object} Placeholders object for the current locale
+ */
+export async function fetchPlaceholdersForLocale() {
+  const locale = await getLocale();
+  return fetchPlaceholders(`/${locale}`);
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export async function fetchPlaceholders(prefix = 'default') {
   window.placeholders = window.placeholders || {};

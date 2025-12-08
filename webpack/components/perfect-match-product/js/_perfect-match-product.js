@@ -25,6 +25,7 @@ class PerfectMatchProduct {
     window.addEventListener('resize', () => this.handleResize());
   }
 
+  // For testing no matches screen, block the API call of perfect-match-products.json from inspect
   async loadPerfectMatchProducts(filters = {}) {
     this.container.innerHTML = '';
     this.actionsContainer.classList.add('is-loading');
@@ -34,6 +35,14 @@ class PerfectMatchProduct {
       if (filters.games) filters.games.forEach((g) => params.append('games', g));
       if (filters.minBudget) params.set('minBudget', filters.minBudget);
       if (filters.maxBudget) params.set('maxBudget', filters.maxBudget);
+
+      // This is a temporary code for UAT team to verify the no results scenario
+      // Remove this code once the UAT team is done with their testing
+      const searchParams = new URLSearchParams(window.location.search);
+      const triggerNoResults = searchParams.get('trigger-no-results');
+      if (triggerNoResults === 'true') {
+        throw new Error('No results triggered');
+      }
 
       this.perfectMatchProducts = await fetchData(`perfect-match-products.json?${params}`);
     } catch (error) {
@@ -195,6 +204,8 @@ class PerfectMatchProduct {
     const badge = document.createElement('div');
     const badgeClass = this.getBadgeClass(matchTypeId, matchTypeLabel);
     badge.className = `perfect-match-badge ${badgeClass}`;
+    badge.ariaLabel = `${matchTypeLabel} product`;
+    badge.tabIndex = -1;
     badge.innerHTML = `<span class="perfect-match-badge__text">${matchTypeLabel}</span>`;
 
     cardWrapper.insertBefore(badge, productCard);

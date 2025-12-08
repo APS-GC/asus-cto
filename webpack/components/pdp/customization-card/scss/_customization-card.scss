@@ -5,11 +5,11 @@
 .cmp-customization-card {
   display: flex;
   flex-direction: column;
-  @include mix.spacer(gap, 4);
-  @include mix.p(4);
+  @include mix.spacer(gap, 8);
+  @include mix.p(6);
   border: 1px solid var(--color-primary-200);
   border-radius: 8px;
-  min-height: 130px;
+  min-height: 128px;
   position: relative;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -46,11 +46,21 @@
       display: none;
     }
   }
+  .cmp-product-card {
+    &__name {
+      display: flex;
+      @include mix.spacer("gap", 1);
 
-  .cmp-product-name {
-    @include typo.text-cta;
-    font-weight: var(--medium);
+      .cmp-product-name {
+        @include typo.text-cta;
+        font-weight: var(--medium);
+        .icon {
+          flex-shrink: 0;
+        }
+      }
+    }
   }
+
   .price {
     text-align: right;
     @include typo.text-base;
@@ -70,11 +80,15 @@
         display: flex;
         justify-content: space-between;
         @include mix.p(4, "b");
-
+        .icon {
+          flex-shrink: 0;
+        }
         &__item {
           flex-basis: 50%;
           max-width: 200px;
           word-break: break-word;
+          display: flex;
+          @include mix.spacer("gap", 2);
         }
       }
       .specification-table-content-section {
@@ -89,6 +103,10 @@
         word-break: break-word;
         display: flex;
         @include mix.spacer("gap", 2);
+        .icon {
+          width: 14px;
+          height: 14px;
+        }
       }
     }
     .specification-info-footer {
@@ -98,6 +116,10 @@
         @include mix.m(6, "b");
         border-top: 1px solid var(--color-primary-950);
         @include mix.p(4, "t");
+      }
+      .spec-checkmark {
+        width: 16px;
+        height: 16px;
       }
       .actions {
         text-align: center;
@@ -132,7 +154,9 @@
           display: flex;
           justify-content: space-between;
           @include mix.p(4, "b");
-
+          .icon {
+            flex-shrink: 0;
+          }
           &__item {
             flex-basis: 100%;
             max-width: auto;

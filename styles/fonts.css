@@ -1,90 +1,38 @@
-/* stylelint-disable max-line-length */
+/* stylelint-disable max-line-length, font-family-name-quotes */
 
-/* Roboto Font Family */
 @font-face {
-  font-family: roboto;
+  font-family: Roboto;
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: 
-    local("Roboto"),
-    url('../fonts/roboto.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: local("Roboto"),
+    url("../fonts/roboto.woff2") format("woff2");
 }
 
 @font-face {
-  font-family: roboto;
+  font-family: Roboto;
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: 
-    local("Roboto Medium"),
-    url('../fonts/roboto-500.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: local("Roboto"),
+    url("../fonts/roboto-500.woff2") format("woff2");
 }
 
 @font-face {
-  font-family: roboto;
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: 
-    local("Roboto Bold"),
-    url('../fonts/roboto-bold.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-/* Keep the existing roboto-medium for backward compatibility */
-@font-face {
-  font-family: roboto;
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: 
-    local("Roboto Medium"),
-    url('../fonts/roboto-medium.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-/* Roboto Condensed */
-@font-face {
-  font-family: roboto-condensed;
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: 
-    local("Roboto Condensed Bold"),
-    url('../fonts/roboto-condensed-bold.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-/* TT Norms Pro Regular */
-@font-face {
-  font-family: TTNormsProRegular;
+  font-family: "TTNormsProRegular";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src:
-    local("TTNormsProRegular"),
-    url('../fonts/tt-norms-pro.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: local("TTNormsProRegular"),
+    url("../fonts/tt-norms-pro.woff2") format("woff2");
 }
 
-/* TT Norms Pro Medium */
 @font-face {
   font-family: TTNormsProMedium;
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src:
-    local("TTNormsProMedium"),
-    url('../fonts/tt-norms-pro-500.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: local("TTNormsProMedium"),
+    url("../fonts/tt-norms-pro-500.woff2") format("woff2");
 }
-
-/* Font fallback stacks for better performance and accessibility */
-:root {
-  --font-text: "Roboto", -apple-system, blinkmacsystemfont, "Segoe UI", system-ui, sans-serif;
-  --font-display: "TTNormsProMedium", "Roboto", -apple-system, blinkmacsystemfont, "Segoe UI", system-ui, sans-serif;
-  --font-display-regular: "TTNormsProRegular", "Roboto", -apple-system, blinkmacsystemfont, "Segoe UI", system-ui, sans-serif;
-}
+/* stylelint-enable max-line-length, font-family-name-quotes */

@@ -12,7 +12,7 @@
   padding: 0 20px;
   margin: 0 auto;
 
-  @include mix.respond-to("md") {
+  @include mix.respond-to("tab") {
     padding: 0 40px;
   }
 

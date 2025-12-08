@@ -93,8 +93,16 @@
     "no-else-return": "off",
     "quote-props": "off",
     "no-continue": "off",
-    "object-curly-newline": "off"
-
+    "object-curly-newline": "off",
+    "no-lonely-if": "off",
+    "one-var-declaration-per-line": "off",
+    "no-multi-spaces": "off",
+    "import/no-duplicates": "off",
+    "security/detect-object-injection": "off",
+    "no-case-declarations": "off",
+    "one-var": "off",
+    "new-cap": "off",
+    "default-case": "off"
   },
   "ignorePatterns": [
     "node_modules/",

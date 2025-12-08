@@ -1,5 +1,42 @@
-<section>
-  <div class="container">
-    <%- include('../components/section-heading/_section-heading.ejs', { name: 'News & Articles' }) %>
+<section class="cmp-article-listing-page gradient-animation">
+  <div class="cmp-article-listing-page__wrapper container">
+    <%- include('../components/section-heading/_section-heading.ejs', { name: 'News & Articles' , subTitle: 'All you need to know about ASUS Custom-to-Order.'}) %>
+    <div class="cmp-articles-toolbar">
+      <!-- articles count -->
+      <div class="cmp-articles-count">
+        <span id="article-count">16 News & Articles</span>
+      </div>
+
+      <!-- Sort wrapper -->
+      <div class="cmp-articles-toolbar__sort-wrapper">
+        <div class="cmp-articles-sort-label">
+          <label for="sort-by">Sort by:</label>
+        </div>
+        <div class="cmp-articles-sort">
+          <select 
+            id="articles-sort-by" 
+            name="sort-by" 
+            class="cmp-articles-sort__select"
+            aria-label="Sort articles by"
+          >
+            <option value="newest" selected>Newest</option>
+            <option value="oldest">Oldest</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="cmp-articles-list layout-grid layout-grid--cols-12" id="cmp-articles-list"></div>
+    <div class="cmp-articles-list__actions">
+      <button
+       class="cmp-show-more-articles-button btn btn-link"
+       type="button"
+       aria-expanded="false"
+       aria-describedby="articles-list-heading"
+      >
+       <span class="button-text">See More</span>
+       <span class="icon icon--arrow-bottom" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
   </div>
 </section>

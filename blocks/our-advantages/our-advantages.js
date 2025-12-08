@@ -1,12 +1,26 @@
-import { isAuthorEnvironment, safeText, transferInstrumentation } from '../../scripts/utils.js';
+import { isAuthorEnvironment, safeText } from '../../scripts/utils.js';
+import { transferInstrumentation } from '../../scripts/utils.js';
+import { getBlockConfigs } from '../../scripts/configs.js';
+
 const pubUrl = 'https://publish-p165753-e1767020.adobeaemcloud.com';
-const itemsStartIndex = 4;
+
+// Default values from authoring configuration
+const DEFAULT_CONFIG = {
+  title: 'Our Advantages',
+  imageAutoplayDuration: 5,
+  videoAutoplayDuration: 1
+};
+
+const itemsStartIndex = 3;
+
 export default async function decorate(block) {
-  const divs = block.children;
-  const title = divs[0].textContent.trim() || 'Our Advantages';
-  const itemCount = Number(divs[1].textContent.trim()) || 3;
-  const imageAutoplayDuration = Number(divs[2].textContent.trim()) || 5;
-  const videoAutoplayDuration = Number(divs[3].textContent.trim()) || 1;
+  // Get configuration using getBlockConfigs
+  const config = await getBlockConfigs(block, DEFAULT_CONFIG, 'our-advantages');
+
+  const title = config.title || 'Our Advantages';
+  const imageAutoplayDuration = config.imageAutoplayDuration || 5;
+  const videoAutoplayDuration = config.videoAutoplayDuration || 1;
+  const carouselId = `carousel-${Math.random().toString(36).substr(2, 10)}`;
   const mockupContainer = document.createRange()
     .createContextualFragment(`<div class='container'>
     <div class="carousel panelcontainer">
@@ -16,28 +30,31 @@ export default async function decorate(block) {
         </div>
       </div>
       <div
+        id="${carouselId}"
         class="cmp-carousel"
         role="group"
-        aria-live="polite"
+        aria-live="off"
         aria-roledescription="carousel"
         data-cmp-is="our-advantages"
         data-cmp-delay="${imageAutoplayDuration * 1000}"
         data-carousel-effect="creative"
+        data-prev-slide-message="Previous advantage"
+        data-next-slide-message="Next advantage"
       >
         <div class="cmp-carousel__content">
         </div>
 
         <!-- Carousel actions - Previous/Next -->
         <div class="cmp-carousel__actions">
-          <button class="cmp-carousel__action cmp-carousel__action--previous" type="button" aria-label="Previous">
+          <button class="cmp-carousel__action cmp-carousel__action--previous" type="button" aria-label="Previous advantage" tabindex="0">
             <span class="visually-hidden"></span>
           </button>
-          <button class="cmp-carousel__action cmp-carousel__action--next" type="button" aria-label="Next">
+          <button class="cmp-carousel__action cmp-carousel__action--next" type="button" aria-label="Next advantage" tabindex="0">
             <span class="visually-hidden"></span>
           </button>
         </div>
 
-        <!-- Pagination indicatoors -->
+        <!-- Pagination indicators -->
         <ol class="cmp-carousel__indicators" role="tablist" aria-label="Choose a slide to display"></ol>
       </div>
     </div>
@@ -45,7 +62,7 @@ export default async function decorate(block) {
       
   const cardNodes = [];
   [...block.children].forEach((card, i) => {
-    if (i > itemsStartIndex + itemCount - 1 || i < itemsStartIndex) return;
+    if (i < itemsStartIndex) return;
     const divs = card.querySelectorAll('div');
     const headline = safeText(divs.item(0));
     const details = safeText(divs.item(1));
@@ -55,24 +72,24 @@ export default async function decorate(block) {
     const buttonTextLink = safeText(divs.item(6));
     const isTargetBlank = divs.item(7).textContent === 'true' ? 1 : 0;
     const imageUrl = card.querySelector('img').src;
+    const itemId = `${carouselId}-item-${Math.random().toString(36).substr(2, 9)}`;
     const imageHtml = imageUrl?`<img src="${imageUrl}"  alt="${imageAlt}" class="cmp-advantage-card__image" loading="lazy" />`:'<div class="cmp-advantage-card__image" style="background: #efefef;color: #000;padding-top: 120px;font-size: 32px;">Please upload an image.</div>';
     const videoHtml = video ? `<video class="cmp-advantage-card__video" data-src="${pubUrl+video}" playsinline controls></video><button class="cmp-advantage-card__close-video" aria-label="Close video"></button>`:'';
     const mockup = document.createRange().createContextualFragment(`
-          <div class="cmp-carousel__item"  data-url="${buttonTextLink}" data-video="${video}" data-blank="${isTargetBlank}" data-video-duration="${videoAutoplayDuration}">
+          <div id="${itemId}-tabpanel" class="cmp-carousel__item" data-url="${buttonTextLink}" data-video="${video}" data-blank="${isTargetBlank}" data-video-duration="${videoAutoplayDuration}" role="group">
             <div class="cmp-advantage-card">
-              <div class="cmp-advantage-card__image-wrapper">
-                ${imageHtml}
-                ${videoHtml}
-              </div>
               <div class="cmp-advantage-card__overlay">
                 <div class="cmp-advantage-card__content">
                   <h3 class="cmp-advantage-card__title">${headline}</h3>
                   <p class="cmp-advantage-card__desc">
                     ${details}
                   </p>
-                  <button class="cmp-advantage-card__btn btn">${buttonText}<img
-                  alt="play-icon" src="${window.hlx.codeBasePath}/icons/icon-play-filled.svg" /></button>
+                  <button class="cmp-advantage-card__btn btn" title="Watch Now ${headline}" aria-label="Watch Now ${headline}">${buttonText} <img alt="play-icon" src="${window.hlx.codeBasePath}/icons/icon-play-filled.svg" /></button>
                 </div>
+              </div>
+              <div class="cmp-advantage-card__image-wrapper">
+                ${imageHtml}
+                ${videoHtml}
               </div>
             </div>
           </div>`);

@@ -74,7 +74,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Check if user is logged in
   // For testing we are adding local storage check
-  // TODO: BE team needs to integrate the login status check API
+  // NOTE: BE team needs to integrate the login status check API
+  // For testing, add isLoggedIn as true in local storage and for empty cart block the API call of minicart.json from inspect
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
   const mobileMenu = new MobileMenu('mobile-menu-dialog');
@@ -84,13 +85,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   await miniCart.init(isLoggedIn);
 
   const profileDropdown = document.querySelector('.profile-dropdown');
+  const profileMenu = document.querySelector('.profile-menu');
   const toggleBtn = document.querySelector('.profile-toggle');
+  const miniCartCloseBtn = document.querySelector('.mini-cart__close');
 
   if (profileDropdown && toggleBtn) {
     toggleBtn.addEventListener('click', (e) => {
       e.preventDefault();
+      miniCartCloseBtn.click();
       profileDropdown.classList.toggle('open');
       toggleBtn.setAttribute('aria-expanded', profileDropdown.classList.contains('open'));
+      if (profileDropdown.classList.contains('open')) {
+        profileMenu.focus();
+      }
     });
 
     // Close dropdown only when clicking the close button
@@ -100,6 +107,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         profileDropdown.classList.remove('open');
         toggleBtn.setAttribute('aria-expanded', 'false');
+        document.querySelector('.profile-toggle').focus();
       });
     }
   }
@@ -129,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-// TODO: Refactor this code and move to separate file
+// NOTE: Refactor this code and move to separate file
 /**
  * Helper function to set the height of an element.
  * Handles number and string values.

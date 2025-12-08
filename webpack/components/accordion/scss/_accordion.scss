@@ -49,7 +49,6 @@
 
     .cmp-accordion__panel {
       max-height: 0;
-      overflow: hidden;
       opacity: 0;
       transition: all 0.3s ease;
       color: var(--color-primary-700);

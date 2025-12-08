@@ -11,6 +11,8 @@
 @use "utilities/spacing";
 @use "utilities/text";
 @use "utilities/grid";
+@use "utilities/list";
+@use "utilities/input";
 @use "utilities/select-box";
 
 /** 
@@ -69,3 +71,4 @@
 @use "../../components/pdp/bonus-selection-popup/scss/bonus-selection-popup";
 @use "../../components/pdp/floating-price/scss/floating-price";
 @use "../../components/pdp/pdp-notifications/scss/pdp-notifications";
+@use "../../components/pdp/pdp-game-fps/scss/pdp-game-fps";

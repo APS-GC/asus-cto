@@ -3,70 +3,41 @@
  * Supports authorable hero banner slides with video/image media, CTA buttons, and autoplay settings
  */
 
-import {
-  moveInstrumentation,
-  isUniversalEditor,
-  createOptimizedPicture,
-  loadSwiper,
-} from '../../scripts/scripts.js';
+import { moveInstrumentation, createOptimizedPicture, loadSwiper } from '../../scripts/scripts.js';
+import { getBlockConfigs } from '../../scripts/configs.js';
+import { isUniversalEditor } from '../../scripts/utils.js';
 
 // Configuration defaults
-const DEFAULT_IMAGE_AUTOPLAY = 3000;
-const DEFAULT_VIDEO_AUTOPLAY = 3000;
+const DEFAULT_CONFIG = {
+  imageAutoplayDuration: 5,
+  videoAutoplayDuration: 8
+};
+
 const pubUrl = 'https://publish-p165753-e1767020.adobeaemcloud.com';
+const CONFIG_ROWS_COUNT = 2; // Number of configuration rows before slides
 
 /**
- * Parse hero banner configuration from block data
+ * Parse hero banner slides from block data
  */
-function parseHeroBannerConfig(block) {
-  const config = {
-    imageAutoplayDuration: DEFAULT_IMAGE_AUTOPLAY,
-    videoAutoplayDuration: DEFAULT_VIDEO_AUTOPLAY,
-    slides: [],
-  };
-
-  // Parse rows from the block
+function parseHeroBannerSlides(block, slideStartIndex) {
+  const slides = [];
   const rows = [...block.children];
-
-  if (rows.length === 0) return config;
-
-  let slideStartIndex = 0;
-
-  // Check if first two rows contain autoplay duration settings
-  if (rows.length >= 2) {
-    const firstRowCells = [...rows[0].children];
-    const secondRowCells = [...rows[1].children];
-
-    // Check if these are autoplay duration rows (single values)
-    if (firstRowCells.length === 1 && secondRowCells.length === 1) {
-      const imageAutoplayValue = parseInt(firstRowCells[0].textContent.trim(), 10);
-      const videoAutoplayValue = parseInt(secondRowCells[0].textContent.trim(), 10);
-
-      if (!Number.isNaN(imageAutoplayValue)) {
-        config.imageAutoplayDuration = imageAutoplayValue * 1000;
-      }
-      if (!Number.isNaN(videoAutoplayValue)) {
-        config.videoAutoplayDuration = videoAutoplayValue * 1000;
-      }
-
-      slideStartIndex = 2; // Skip first two rows
-    }
-  }
-
-  // Parse slide data from remaining rows
+  
+  // Parse slide data from rows after configuration
   rows.slice(slideStartIndex).forEach((row, index) => {
     const cells = [...row.children];
 
     // Debug logging
-    // console.log(`Processing row ${index + slideStartIndex}:`, cells.length, 'cells');
-
+    console.log(`Processing slide row ${index + slideStartIndex}:`, cells.length, 'cells');
+    
+    // Support both 7-cell (legacy) and 8-cell (new with mediaAlt) formats
     if (cells.length >= 7) {
       // Extract media information
       let media = '';
       let mediaAlt = '';
       let isVideo = false;
 
-      // Check third cell for media content
+      // Check third cell for media content (index 2)
       const mediaCell = cells[2];
       if (mediaCell) {
         const picture = mediaCell.querySelector('picture');
@@ -91,16 +62,37 @@ function parseHeroBannerConfig(block) {
         }
       }
 
-      // Extract CTA link properly
-      let ctaLink = '';
-      const ctaLinkCell = cells[5];
-      if (ctaLinkCell) {
-        const linkElement = ctaLinkCell.querySelector('a');
-        if (linkElement) {
-          ctaLink = linkElement.href;
+      // Support both 7-cell and 8-cell formats
+      let ctaText, ctaLocation, ctaLink, openNewTab;
+      if (cells.length >= 8) {
+        // New 8-cell format: title, subtitle, media, mediaAlt, ctaText, ctaLocation, ctaLink, openNewTab
+        mediaAlt = cells[3]?.textContent?.trim() || mediaAlt;
+        ctaText = cells[4]?.textContent?.trim() || '';
+        ctaLocation = cells[5]?.textContent?.trim() || 'center-center';
+        
+        const ctaLinkCell = cells[6];
+        if (ctaLinkCell) {
+          const linkElement = ctaLinkCell.querySelector('a');
+          ctaLink = linkElement ? linkElement.href : (ctaLinkCell.textContent?.trim() || '');
         } else {
-          ctaLink = ctaLinkCell.textContent?.trim() || '';
+          ctaLink = '';
         }
+        
+        openNewTab = cells[7]?.textContent?.toLowerCase().includes('true') || false;
+      } else {
+        // Legacy 7-cell format: title, subtitle, media, ctaText, ctaLocation, ctaLink, openNewTab
+        ctaText = cells[3]?.textContent?.trim() || '';
+        ctaLocation = cells[4]?.textContent?.trim() || 'center-center';
+        
+        const ctaLinkCell = cells[5];
+        if (ctaLinkCell) {
+          const linkElement = ctaLinkCell.querySelector('a');
+          ctaLink = linkElement ? linkElement.href : (ctaLinkCell.textContent?.trim() || '');
+        } else {
+          ctaLink = '';
+        }
+        
+        openNewTab = cells[6]?.textContent?.toLowerCase().includes('true') || false;
       }
 
       const slide = {
@@ -109,25 +101,25 @@ function parseHeroBannerConfig(block) {
         subtitle: cells[1]?.textContent?.trim() || '',
         media: media,
         mediaAlt: mediaAlt || 'Hero Banner slide media',
-        ctaText: cells[3]?.textContent?.trim() || '',
-        ctaLocation: cells[4]?.textContent?.trim() || 'center-center',
+        ctaText: ctaText,
+        ctaLocation: ctaLocation,
         ctaLink: ctaLink,
-        openNewTab: cells[6]?.textContent?.toLowerCase().includes('true') || false,
-        isVideo,
-        originalRow: row, // Store reference to original row for instrumentation
+        openNewTab: openNewTab,
+        isVideo: isVideo,
+        originalRow: row // Store reference to original row for instrumentation
       };
 
       // Debug logging
-      // console.log(`Created slide ${index}:`, slide);
-
-      config.slides.push(slide);
+      console.log(`Created slide ${index}:`, slide);
+      
+      slides.push(slide);
     } else {
       // console.warn(`Row ${index + slideStartIndex} has insufficient cells (${cells.length}), skipping`);
     }
   });
 
-  // console.log('Final config:', config);
-  return config;
+  console.log('Parsed slides:', slides);
+  return slides;
 }
 
 /**
@@ -327,7 +319,13 @@ async function initializeSwiper(heroBannerElement, config) {
 
             // Remove paused class when switching slides
             const mediaControls = document.querySelector('.cmp-hero-banner__media-controls');
+            const playPauseBtn = document.querySelector('.hero-banner-autoplay-toggle');
             mediaControls?.classList.remove('paused');
+            this.el.classList.remove('is-autoplay-paused');
+            
+            if (playPauseBtn) {
+              playPauseBtn.setAttribute('aria-label', 'play');
+            }
             
             // Reset inactive bullets progress to 0
             this.pagination.bullets.forEach((bullet, idx) => {
@@ -432,10 +430,59 @@ async function initializeSwiper(heroBannerElement, config) {
 }
 
 /**
+ * Determine where slide rows start based on block structure
+ */
+function getSlideStartIndex(block) {
+  const rows = [...block.children];
+  
+  // Check if first rows are single-cell config rows (Universal Editor format)
+  if (rows.length >= CONFIG_ROWS_COUNT) {
+    const firstRowCells = [...rows[0].children];
+    const secondRowCells = [...rows[1].children];
+    
+    // If first 2 rows have exactly 1 cell each, they are config rows
+    if (firstRowCells.length === 1 && secondRowCells.length === 1) {
+      return CONFIG_ROWS_COUNT;
+    }
+    
+    // Check for key-value config rows (2 cells each)
+    if (firstRowCells.length === 2 && secondRowCells.length === 2) {
+      return CONFIG_ROWS_COUNT;
+    }
+  }
+  
+  // Default: no config rows, slides start at 0
+  return 0;
+}
+
+/**
  * Main decoration function
  */
-export default function decorate(block) {
-  const config = parseHeroBannerConfig(block);
+export default async function decorate(block) {
+  const rows = [...block.children];
+  
+  // Determine where slides start
+  const slideStartIndex = getSlideStartIndex(block);
+  
+  // Create a temporary block element with only config rows for getBlockConfigs
+  const configBlock = document.createElement('div');
+  for (let i = 0; i < slideStartIndex && i < rows.length; i++) {
+    configBlock.appendChild(rows[i].cloneNode(true));
+  }
+  
+  // Get configuration using getBlockConfigs
+  const config = await getBlockConfigs(configBlock, DEFAULT_CONFIG, 'hero-banner');
+  
+  // Convert seconds to milliseconds
+  config.imageAutoplayDuration = (config.imageAutoplayDuration || DEFAULT_CONFIG.imageAutoplayDuration) * 1000;
+  config.videoAutoplayDuration = (config.videoAutoplayDuration || DEFAULT_CONFIG.videoAutoplayDuration) * 1000;
+  
+  // Parse slides from remaining rows
+  config.slides = parseHeroBannerSlides(block, slideStartIndex);
+  
+  console.log('Final config:', config);
+  console.log('Slide start index:', slideStartIndex);
+  console.log('Total slides:', config.slides.length);
   
   if (config.slides.length === 0) {
     // Fallback content if no slides configured
@@ -501,53 +548,61 @@ export default function decorate(block) {
   swiper.appendChild(swiperNotification);
   heroBannerContent.appendChild(swiper);
 
+  // Only show navigation/indicators if there are multiple slides
+  const hasMultipleSlides = config.slides.length > 1;
+
   // Create hero banner footer
   const heroBannerFooter = document.createElement('div');
   heroBannerFooter.className = 'cmp-hero-banner__footer';
 
-  // Create indicators group
-  const indicatorsGroup = document.createElement('div');
-  indicatorsGroup.className = 'cmp-hero-banner__indicators-group';
+  if (hasMultipleSlides) {
+    // Create indicators group
+    const indicatorsGroup = document.createElement('div');
+    indicatorsGroup.className = 'cmp-hero-banner__indicators-group';
 
-  // Create indicators list
-  const indicatorsList = document.createElement('ol');
-  indicatorsList.className = 'cmp-hero-banner__indicators';
-  indicatorsList.setAttribute('role', 'tablist');
-  indicatorsList.setAttribute('aria-label', 'Choose a slide to display');
+    // Create indicators list
+    const indicatorsList = document.createElement('ol');
+    indicatorsList.className = 'cmp-hero-banner__indicators';
+    indicatorsList.setAttribute('role', 'tablist');
+    indicatorsList.setAttribute('aria-label', 'Choose a slide to display');
 
-  // Generate indicator elements
-  config.slides.forEach((slide, index) => {
-    const indicator = document.createElement('li');
-    indicator.className = `cmp-hero-banner__indicator ${index === 0 ? 'cmp-hero-banner__indicator--active' : ''}`;
-    indicator.setAttribute('aria-label', `Go to slide ${index + 1}`);
-    indicator.setAttribute('role', 'tab');
-    indicator.setAttribute('tabindex', '0');
-    if (index === 0) {
-      indicator.setAttribute('aria-current', 'true');
-    }
-    indicatorsList.appendChild(indicator);
-  });
+    // Generate indicator elements
+    config.slides.forEach((slide, index) => {
+      const indicator = document.createElement('li');
+      indicator.className = `cmp-hero-banner__indicator ${index === 0 ? 'cmp-hero-banner__indicator--active' : ''}`;
+      indicator.setAttribute('aria-label', `Go to slide ${index + 1}`);
+      indicator.setAttribute('role', 'tab');
+      indicator.setAttribute('tabindex', '0');
+      if (index === 0) {
+        indicator.setAttribute('aria-current', 'true');
+      }
+      indicatorsList.appendChild(indicator);
+    });
 
-  // Create autoplay toggle button
-  const autoplayToggle = document.createElement('button');
-  autoplayToggle.className = 'hero-banner-autoplay-toggle';
-  autoplayToggle.setAttribute('aria-label', 'Pause');
+    // Create autoplay toggle button
+    const autoplayToggle = document.createElement('button');
+    autoplayToggle.className = 'hero-banner-autoplay-toggle';
+    autoplayToggle.setAttribute('aria-label', 'Pause');
 
-  indicatorsGroup.appendChild(indicatorsList);
-  indicatorsGroup.appendChild(autoplayToggle);
+    indicatorsGroup.appendChild(indicatorsList);
+    indicatorsGroup.appendChild(autoplayToggle);
 
-  // Create media controls
-  const mediaControls = document.createElement('div');
-  mediaControls.className = 'cmp-hero-banner__media-controls';
+    heroBannerFooter.appendChild(indicatorsGroup);
+  }
 
-  const playPauseBtn = document.createElement('button');
-  playPauseBtn.className = 'cmp-hero-banner__media-control cmp-hero-banner__media-control--play-pause';
-  playPauseBtn.setAttribute('aria-label', `Play ${config.slides[0]?.subtitle || 'media'}`);
+  // Create media controls (only for video slides)
+  const hasVideoSlide = config.slides.some((slide) => slide.isVideo);
+  if (hasVideoSlide) {
+    const mediaControls = document.createElement('div');
+    mediaControls.className = 'cmp-hero-banner__media-controls';
 
-  mediaControls.appendChild(playPauseBtn);
+    const playPauseBtn = document.createElement('button');
+    playPauseBtn.className = 'cmp-hero-banner__media-control cmp-hero-banner__media-control--play-pause';
+    playPauseBtn.setAttribute('aria-label', `Play ${config.slides[0]?.subtitle || 'media'}`);
 
-  heroBannerFooter.appendChild(indicatorsGroup);
-  heroBannerFooter.appendChild(mediaControls);
+    mediaControls.appendChild(playPauseBtn);
+    heroBannerFooter.appendChild(mediaControls);
+  }
 
   heroBannerContent.appendChild(heroBannerFooter);
   heroBanner.appendChild(heroBannerContent);
@@ -557,6 +612,24 @@ export default function decorate(block) {
   block.textContent = '';
   block.appendChild(heroBannerWrapper);
 
-  // Initialize Swiper hero banner
-  initializeSwiper(heroBannerWrapper, config);
+  // Initialize Swiper hero banner only if there are multiple slides
+  if (hasMultipleSlides) {
+    initializeSwiper(heroBannerWrapper, config);
+  } else {
+    // For single slide, add classes to make it visible without Swiper
+    const swiperContainer = heroBannerWrapper.querySelector('.swiper');
+    if (swiperContainer) {
+      swiperContainer.classList.add('single-slide');
+    }
+    
+    const singleSlide = heroBannerWrapper.querySelector('.swiper-slide');
+    if (singleSlide) {
+      singleSlide.classList.add('swiper-slide-active');
+    }
+    
+    const video = heroBannerWrapper.querySelector('video');
+    if (video) {
+      manageVideoPlayback(video, 'play');
+    }
+  }
 }

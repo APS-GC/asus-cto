@@ -29,7 +29,9 @@ class BundlesBonusController {
       this.bindEvents();
       this.setInitialState();
       this.initialized = true;
-    } catch (error) {}
+    } catch (error) {
+      console.debug('Error initializing BundlesBonusController:', error);
+    }
   }
 
   /**
