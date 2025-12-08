@@ -1,4 +1,4 @@
-/* stylelint-disable declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, rule-empty-line-before, no-duplicate-selectors, value-no-vendor-prefix, property-no-vendor-prefix, selector-pseudo-element-colon-notation, media-feature-range-notation, comment-empty-line-before, selector-attribute-quotes, declaration-empty-line-before, length-zero-no-unit, color-function-alias-notation */
+/* stylelint-disable media-feature-range-notation, length-zero-no-unit, declaration-property-value-no-unknown, value-no-vendor-prefix, property-no-vendor-prefix, selector-attribute-quotes, selector-pseudo-element-colon-notation, no-duplicate-selectors, declaration-empty-line-before, declaration-block-no-duplicate-properties */
 
 @media only screen and (min-width: 80rem) {
     .product-matches-wrapper .container {
@@ -2069,4 +2069,4 @@ body.no-scroll {
     display: flex;
     justify-content: center;
 }
-/* stylelint-enable declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, rule-empty-line-before, no-duplicate-selectors, value-no-vendor-prefix, property-no-vendor-prefix, selector-pseudo-element-colon-notation, media-feature-range-notation, comment-empty-line-before, selector-attribute-quotes, declaration-empty-line-before, length-zero-no-unit, color-function-alias-notation */
+/* stylelint-enable media-feature-range-notation, length-zero-no-unit, declaration-property-value-no-unknown, value-no-vendor-prefix, property-no-vendor-prefix, selector-attribute-quotes, selector-pseudo-element-colon-notation, no-duplicate-selectors, declaration-empty-line-before, declaration-block-no-duplicate-properties */
