@@ -1,6 +1,11 @@
 import { createOptimizedPictureExternal, createOptimizedPicture, moveInstrumentation } from '../../scripts/scripts.js';
 import { getUserData, logout } from './sso.js';
-const LOGIN_URL = `https://dev-account.asus.com/hk/loginform.aspx?returnUrl=${location.href}?login_background=general_white`;
+import { getConfigValue } from '../../scripts/configs.js';
+async function getAsusEndpoint(){
+  const domain = await getConfigValue('sign-endpoint');
+  return `${domain}/hk/loginform.aspx?returnUrl=${encodeURIComponent(location.href)}&login_background=general_white`
+}
+
 // Header configuration - calculated once for the entire module
 const HeaderConfig = {
   get baseUrl() {
@@ -749,7 +754,7 @@ function initializeHeader(block) {
   profileMenuItemElements.forEach((item) => {
     const link = item.querySelector('a');
     if (link) {
-      link.addEventListener('click', (e) => {
+      link.addEventListener('click', async (e) => {
         if (link.textContent.toUpperCase() === 'SIGN OUT') {
           if (isLoggedIn) {
             // trigger ssoLogout
@@ -759,7 +764,8 @@ function initializeHeader(block) {
         } else{
             if(!isLoggedIn){
               e.preventDefault();
-              location.href = LOGIN_URL;
+              const loginUrl = await getAsusEndpoint();
+              location.href = loginUrl;
             }
         }
         // eslint-disable-next-line no-empty
@@ -773,7 +779,7 @@ function initializeHeader(block) {
   mobileProfileMenuItems.forEach((item, index) => {
     const link = item.querySelector('a');
     if (link) {
-      link.addEventListener('click', (e) => {
+      link.addEventListener('click', async (e) => {
         // eslint-disable-next-line no-console
         console.log('Mobile menu clicked:', {
           index, isLoggedIn, combinedMenuLength: combinedMenuItems.length, linkText: link.textContent,
@@ -788,7 +794,8 @@ function initializeHeader(block) {
           }else{
             if(!isLoggedIn){
               e.preventDefault();
-              location.href = LOGIN_URL;
+              const loginUrl = await getAsusEndpoint();
+              location.href = loginUrl;
             }
           }
         // For other items, you can add actual navigation logic here

@@ -6,7 +6,6 @@
 
 import { API_URIS } from '../constants/api-constants.js';
 import { getConfigValue } from './configs.js';
-import { getCookie } from './cookie.js'
 
 /**
  * Get full API endpoint URL
@@ -147,12 +146,13 @@ export async function fetchGameList(
 /**
  * Call SSO validation API
  * @param {string} type - Validation type, e.g. 'check' 'user' 'logout'
- * @param {string} aTicket
+ * @param {string} aticket
  * @returns {Promise<Object>} API response data
  */
-export async function callSSOValidation(type='check', aTicket) {
-  const ssoEndpoint = 'https://211051-ssointegrationapi-stage.adobeioruntime.net/api/v1/web/app-builder-integration-api/sso';
-  const url = `${ssoEndpoint}?ticket=${aTicket}&type=${type}`;
+export async function callSSOValidation(type='check', aticket) {
+  const domain = await getConfigValue('sso-endpoint-dev');
+  const ssoEndpoint = domain+'/api/v1/web/app-builder-integration-api/sso';
+  const url = `${ssoEndpoint}?ticket=${aticket}&type=${type}`;
   try {
     const response = await fetch(url, {
       method:"get",

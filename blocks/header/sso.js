@@ -1,9 +1,11 @@
 import { callSSOValidation } from "../../scripts/api-service.js";
-import { getCookie,deleteCookie } from "../../scripts/cookie.js";
+import { getCookie, deleteCookie } from "../../scripts/cookie.js";
+
 export async function checkLoginStatus() {
-  if (!checkCookie())return;
+  const aticket = checkCookie();
+  if (!aticket) return;
   try {
-    const result = await callSSOValidation("check",aTicket);
+    const result = await callSSOValidation("check", aticket);
     if (!result.ok) {
       const code = result.data.ResultCode;
       if (code === "11") {
@@ -19,9 +21,10 @@ export async function checkLoginStatus() {
 }
 
 export async function getUserData() {
-  if (!checkCookie())return;
+  const aticket = checkCookie();
+  if (!aticket) return;
   try {
-    const result = await callSSOValidation("user",aTicket);
+    const result = await callSSOValidation("user", aticket);
     if (!result.ok) {
       const code = result.data.ResultCode;
       if (code === "11") {
@@ -40,9 +43,9 @@ export async function getUserData() {
 }
 
 export async function logout() {
-  if (!checkCookie())return;
+  if (!checkCookie()) return;
   try {
-    const result = await callSSOValidation("logout",aTicket);
+    const result = await callSSOValidation("logout", aticket);
     if (result.ok) {
       clearLogin();
     }
@@ -52,13 +55,13 @@ export async function logout() {
 }
 
 function clearLogin() {
-  deleteCookie("aTicket");
+  deleteCookie("aticket");
   localStorage.removeItem("isLoggedIn");
   localStorage.removeItem("userName");
 }
 
-function checkCookie(){
-  const aTicket = getCookie("aTicket");
-  if (!aTicket) clearLogin();
-  return aTicket;
+function checkCookie() {
+  const aticket = getCookie("aticket");
+  if (!aticket) clearLogin();
+  return aticket;
 }
