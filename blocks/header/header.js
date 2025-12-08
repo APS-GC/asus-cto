@@ -1,4 +1,10 @@
 import { createOptimizedPictureExternal, createOptimizedPicture, moveInstrumentation } from '../../scripts/scripts.js';
+import { getUserData, logout } from './sso.js';
+import { getConfigValue } from '../../scripts/configs.js';
+async function getAsusEndpoint(){
+  const domain = await getConfigValue('sign-endpoint');
+  return `${domain}/hk/loginform.aspx?returnUrl=${encodeURIComponent(location.href)}&login_background=general_white`
+}
 
 // Header configuration - calculated once for the entire module
 const HeaderConfig = {
@@ -470,7 +476,18 @@ function buildNavigation(navigationItems, showProfile, showCart, profileMenuItem
     ? [...profileMenuItems, ...(profileMenuLoggedInItems || [])]
     : profileMenuItems;
 
-  const profileMenuHTML = currentProfileMenuItems.map((item, index) => `
+  //unique menu
+  let uniqueMenuItems = Array.from(new Map(
+    currentProfileMenuItems.map(item => [item.linkText, item])
+  ).values());
+
+  if(isLoggedIn){
+    uniqueMenuItems = uniqueMenuItems.filter(r=>r.linkText.toUpperCase() !== 'LOGIN')
+  }else{
+    uniqueMenuItems = JSON.parse(JSON.stringify(profileMenuLoggedInItems));
+  }
+
+  const profileMenuHTML = uniqueMenuItems.map((item, index) => `
     <li class="profile-menu__item" data-menu-index="${index}"><a href="${item.linkUrl}">${item.linkText}</a></li>
   `).join('');
 
@@ -532,7 +549,18 @@ function buildMobileMenu(navigationItems, profileMenuItems, profileMenuLoggedInI
     ? [...profileMenuItems, ...(profileMenuLoggedInItems || [])]
     : profileMenuItems;
 
-  const mobileProfileItems = currentMobileProfileMenuItems.map((item, index) => `
+  //unique menu
+  let uniqueMenuItems = Array.from(new Map(
+    currentMobileProfileMenuItems.map(item => [item.linkText, item])
+  ).values());
+
+  if(isLoggedIn){
+    uniqueMenuItems = uniqueMenuItems.filter(r=>r.linkText.toUpperCase() !== 'LOGIN')
+  }else{
+    uniqueMenuItems = JSON.parse(JSON.stringify(profileMenuLoggedInItems));
+  }
+
+  const mobileProfileItems = uniqueMenuItems.map((item, index) => `
     <li data-mobile-menu-index="${index}"><a href="${item.linkUrl}">${item.linkText}</a></li>
   `).join('');
 
@@ -567,18 +595,18 @@ function buildMobileMenu(navigationItems, profileMenuItems, profileMenuLoggedInI
 }
 
 // Mock login function
-function mockLogin() {
-  localStorage.setItem('isLoggedIn', 'true');
-  localStorage.setItem('userName', 'John Doe');
+async function ssoLogin(block) {
+  await getUserData();
   // Automatically add items to cart for logged-in user
   localStorage.setItem('hasCartItems', 'true');
+  refreshHeader(block);// eslint-disable-line no-use-before-define
 }
 
-// Mock logout function
-function mockLogout() {
-  localStorage.removeItem('isLoggedIn');
-  localStorage.removeItem('userName');
+async function ssoLogout(block){
+  await logout();
+  refreshHeader(block);// eslint-disable-line no-use-before-define
 }
+
 
 // Mock cart data for testing
 function getMockCartData() {
@@ -723,23 +751,24 @@ function initializeHeader(block) {
   // Mock Login/Logout functionality for desktop profile menu
   const profileMenuItemElements = block.querySelectorAll('.profile-menu__item[data-menu-index]');
 
-  profileMenuItemElements.forEach((item, index) => {
+  profileMenuItemElements.forEach((item) => {
     const link = item.querySelector('a');
     if (link) {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        if (index === 0) {
-          if (!isLoggedIn) {
-            // First item when not logged in - trigger login
-            mockLogin();
-            refreshHeader(block);// eslint-disable-line no-use-before-define
-          } else {
-            // First item when logged in - trigger logout
-            mockLogout();
-            refreshHeader(block);// eslint-disable-line no-use-before-define
+      link.addEventListener('click', async (e) => {
+        if (link.textContent.toUpperCase() === 'SIGN OUT') {
+          if (isLoggedIn) {
+            // trigger ssoLogout
+            ssoLogout(block);
+            e.preventDefault();
           }
-        } // eslint-disable-next-line no-empty
+        } else{
+            if(!isLoggedIn){
+              e.preventDefault();
+              const loginUrl = await getAsusEndpoint();
+              location.href = loginUrl;
+            }
+        }
+        // eslint-disable-next-line no-empty
         // For other items, you can add actual navigation logic here
       });
     }
@@ -750,32 +779,25 @@ function initializeHeader(block) {
   mobileProfileMenuItems.forEach((item, index) => {
     const link = item.querySelector('a');
     if (link) {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-
+      link.addEventListener('click', async (e) => {
         // eslint-disable-next-line no-console
         console.log('Mobile menu clicked:', {
           index, isLoggedIn, combinedMenuLength: combinedMenuItems.length, linkText: link.textContent,
         });
 
-        if (index === 0) {
-          if (!isLoggedIn) {
-            // First item when not logged in - trigger login
-            // eslint-disable-next-line no-console
-            console.log('Triggering mobile login');
-            mockLogin();
-            refreshHeader(block);// eslint-disable-line no-use-before-define
-          } else {
-            // First item when logged in - trigger logout
-            // eslint-disable-next-line no-console
-            console.log('Triggering mobile logout (first item when logged in)');
-            mockLogout();
-            refreshHeader(block);// eslint-disable-line no-use-before-define
+          if (link.textContent.toUpperCase() === 'SIGN OUT') {
+            if (isLoggedIn) {
+              // trigger ssoLogout
+              ssoLogout(block);
+              e.preventDefault();
+            } 
+          }else{
+            if(!isLoggedIn){
+              e.preventDefault();
+              const loginUrl = await getAsusEndpoint();
+              location.href = loginUrl;
+            }
           }
-        } else {
-          // eslint-disable-next-line no-console
-          console.log('No action for this mobile menu item');
-        }
         // For other items, you can add actual navigation logic here
       });
     }
@@ -820,8 +842,7 @@ function initializeHeader(block) {
       e.preventDefault();
       // eslint-disable-next-line no-console
       console.log('Cart sign-in clicked');
-      mockLogin();
-      refreshHeader(block);// eslint-disable-line no-use-before-define
+      ssoLogin(block);
     });
   }
 
@@ -864,7 +885,7 @@ function initializeHeader(block) {
 let refreshHeader;
 
 // Refresh header function to re-render with current login state
-refreshHeader = (block) => {
+refreshHeader = async (block) => {
   // Use stored original data instead of re-parsing from modified DOM
   let data;
   if (block._originalHeaderData) {
@@ -1062,8 +1083,7 @@ async function updateMiniCartDisplay(block) {
       e.preventDefault();
       // eslint-disable-next-line no-console
       console.log('Cart sign-in clicked');
-      mockLogin();
-      refreshHeader(block);// eslint-disable-line no-use-before-define
+      ssoLogin(block);
     });
   }
 }
@@ -1082,8 +1102,8 @@ function mockClearCart() {
 if (typeof window !== 'undefined') {
   window.mockAddToCart = mockAddToCart;
   window.mockClearCart = mockClearCart;
-  window.mockLogin = mockLogin;
-  window.mockLogout = mockLogout;
+  window.ssoLogin = ssoLogin;
+  window.ssoLogout = ssoLogout;
 
   // Add function to refresh mini cart for testing
   window.refreshMiniCart = () => {
@@ -1129,7 +1149,8 @@ function optimizeLogoImages(block) {
   });
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
+  
   const data = parseHeaderData(block);
 
   // Store original parsed data for use in refreshHeader function
@@ -1170,5 +1191,7 @@ export default function decorate(block) {
   optimizeLogoImages(block);
 
   // Add header functionality
-  initializeHeader(block); // eslint-disable-line no-use-before-define
+  //initializeHeader(block); // eslint-disable-line no-use-before-define
+
+  ssoLogin(block);
 }

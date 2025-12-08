@@ -110,7 +110,15 @@ export const getBlockConfigs = async (block, defaults = {}, blockName = '') => {
       const cells = [...row.children];
       if (cells.length >= 2) {
         const key = cells[0].textContent.trim();
-        const value = cells[1].textContent.trim();
+        let value = cells[1].textContent.trim();
+
+        // If text content is empty, check for image/picture elements
+        if (value === '') {
+          const img = cells[1].querySelector('img');
+          if (img && img.src) {
+            value = img.src;
+          }
+        }
 
         if (key && value !== '') {
           // Convert key to camelCase format
@@ -140,8 +148,16 @@ export const getBlockConfigs = async (block, defaults = {}, blockName = '') => {
         if (index < finalFieldOrder.length) {
           const cell = row.children[0];
           if (cell) {
-            const value = cell.textContent.trim();
             const fieldName = finalFieldOrder[index];
+            let value = cell.textContent.trim();
+
+            // If text content is empty, check for image/picture elements
+            if (value === '') {
+              const img = cell.querySelector('img');
+              if (img && img.src) {
+                value = img.src;
+              }
+            }
 
             if (value !== '') {
               // Try to parse as number if it looks like a number
