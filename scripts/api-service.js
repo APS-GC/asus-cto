@@ -158,10 +158,9 @@ export async function callSSOValidation(type='check', aticket) {
       method:"POST",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json",
-        "aticket":aticket
+        "Content-Type": "application/json"
       },
-      body:JSON.stringify({type}),
+      body:JSON.stringify({type,aticket}),
       mode: 'cors',
       timeout: 30000,
     });
