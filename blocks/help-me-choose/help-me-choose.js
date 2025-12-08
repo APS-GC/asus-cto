@@ -89,7 +89,6 @@ async function renderHelpMeChoose(block) {
                   <div class="cmp-carousel__content cmp-carousel__content--overflow" aria-atomic="false" aria-live="polite">
                   <div class="swiper">
                       <div class="swiper-wrapper">${generateGameItemsHTML(gameList?.results?.gameList, true)}</div>
-                      <div class="swiper-pagination"></div>
                       </div>
                   </div>
               </div>
