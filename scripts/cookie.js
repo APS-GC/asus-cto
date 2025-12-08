@@ -1,6 +1,5 @@
 /**
- * Cookie操作工具集
- * 功能：设置/获取/删除cookie，清除所有cookie
+ * Cookie tools
  * eg.  setCookie('theme', 'dark', { maxAge: 3600, sameSite: 'Lax' });
  */
 export function setCookie(name, value, options = {}) {
