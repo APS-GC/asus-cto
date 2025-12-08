@@ -150,7 +150,7 @@ export async function fetchGameList(
  * @returns {Promise<Object>} API response data
  */
 export async function callSSOValidation(type='check', aticket) {
-  const domain = 'https://211051-ssoapiproject-dev.adobeioruntime.net'||await getConfigValue('sso-endpoint-dev');
+  const domain = await getConfigValue('sso-endpoint-dev');
   const ssoEndpoint = domain+'/api/v1/web/sso-api/sso';
   const url = `${ssoEndpoint}`;
   try {
