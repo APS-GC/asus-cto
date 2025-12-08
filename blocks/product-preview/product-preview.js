@@ -335,7 +335,7 @@ async function createGamePerformance(product, config) {
             <span class="icon icon--plus text-info"></span>
           </button>
         </div>
-        <span class="score">${product.timeSpyOverallScore}</span>
+        <span class="score">${Number(product.timeSpyOverallScore).toLocaleString()}</span>
       </div>
       <div class="time-spy-score-right">
         <span class="data-from">Data from</span>
