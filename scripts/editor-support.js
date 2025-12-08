@@ -199,22 +199,20 @@ function attachEventListners(main) {
     'aue:content-copy': 'copy',
   };
 
-  Object.entries(eventTypeMap).forEach(([eventType, action]) =>
-    main?.addEventListener(eventType, async (event) => {
-      event.stopPropagation();
+  Object.entries(eventTypeMap).forEach(([eventType, action]) => main?.addEventListener(eventType, async (event) => {
+    event.stopPropagation();
 
-      const allowed = await enforceBlockRules(event, action);
-      if (!allowed) return;
+    const allowed = await enforceBlockRules(event, action);
+    if (!allowed) return;
 
-      const applied = await applyChanges(event);
+    const applied = await applyChanges(event);
 
-      if (applied) {
-        updateUEInstrumentation();
-      } else {
-        window.location.reload();
-      }
-    })
-  );
+    if (applied) {
+      updateUEInstrumentation();
+    } else {
+      window.location.reload();
+    }
+  }));
 }
 
 attachEventListners(document.querySelector('main'));
