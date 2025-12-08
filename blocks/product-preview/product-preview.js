@@ -104,8 +104,8 @@ function getDefaultConfig(locale) {
   return {
     fpsDetailsModalPath: `/${locale}/modals/fps-details`,
     timeSpyScoreModalPath: `/${locale}/modals/time-spy-score`,
-    threeMarkLogo: './clientlib-site/images/3dmark.webp',
     dataSourceTooltip: 'All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ.',
+    threeMarkLogo: '',
   };
 }
 

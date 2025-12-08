@@ -36,17 +36,17 @@
         },
         {
           "component": "text",
-          "name": "threeMarkLogo",
-          "label": "3DMark Logo",
-          "valueType": "string",
-          "description": "Path to the 3DMark logo image"
-        },
-        {
-          "component": "text",
           "name": "dataSourceTooltip",
           "label": "Data Source Tooltip",
           "valueType": "string",
           "description": "Tooltip text for the data source information icon"
+        },
+        {
+          "component": "reference",
+          "name": "threeMarkLogo",
+          "label": "3DMark Logo",
+          "valueType": "string",
+          "description": "Path to the 3DMark logo image"
         }
       ]
     }
