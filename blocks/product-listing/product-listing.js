@@ -231,6 +231,7 @@ async function renderProducts(state, products = []) {
       compareLabel: state.config.compareLabel,
       buyNowText: state.config.buyNowText,
       quickViewText: state.config.quickViewText,
+      showQuickView: false,
       estoreLabel: state.config.estoreLabel,
       estoreTooltip: state.config.estoreTooltip,
     });
