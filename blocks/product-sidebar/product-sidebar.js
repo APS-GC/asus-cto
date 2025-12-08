@@ -5,7 +5,7 @@
 
 import { loadScript, decorateBlock, loadBlock } from '../../scripts/aem.js';
 import { fetchFilters } from '../../scripts/api-service.js';
-import { fetchPlaceholdersForLocale, getCurrencySymbol, getLang } from '../../scripts/scripts.js';
+import { fetchPlaceholdersForLocale, getCurrencySymbol, getLang, getWebsiteCode } from '../../scripts/scripts.js';
 
 // Fallback filter configuration (used if API fails)
 const FALLBACK_FILTER_CONFIG = [];
@@ -83,10 +83,11 @@ function transformApiFiltersToConfig(groups) {
 
 /**
  * Fetch and transform filters from the API
+ * @param {string} websiteCode - Website code (default: 'us')
  */
-async function fetchFiltersFromApi() {
+async function fetchFiltersFromApi(websiteCode = 'us') {
   try {
-    const groups = await fetchFilters();
+    const groups = await fetchFilters({ websiteCode });
     return transformApiFiltersToConfig(groups);
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -875,9 +876,10 @@ export default async function decorate(block) {
   block.classList.add('cmp-sidebar');
   block.id = 'product-filter-dialog';
 
-  // Fetch filters, currency symbol, locale, and placeholders in parallel
+  // Fetch website code first, then fetch filters and other data in parallel
+  const websiteCode = await getWebsiteCode();
   const [filters, currencySymbol, locale, placeholders] = await Promise.all([
-    fetchFiltersFromApi(),
+    fetchFiltersFromApi(websiteCode),
     getCurrencySymbol(),
     getLang(),
     fetchPlaceholdersForLocale(),

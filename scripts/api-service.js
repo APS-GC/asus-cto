@@ -172,13 +172,25 @@ export async function fetchFilteredProducts(options = {}) {
 
 /**
  * Fetches filter options from the API
+ * @param {Object} options - Options for fetching filters
+ * @param {string} options.websiteCode - Website code (default: 'us')
  * @returns {Promise<Array>} - Array of filter group objects
  */
-export async function fetchFilters() {
+export async function fetchFilters(options = {}) {
+  const {
+    websiteCode = 'us',
+  } = options;
+
   const endpoint = await getApiEndpoint(API_URIS.FETCH_FILTERS);
 
+  // Build query parameters
+  const params = new URLSearchParams();
+  params.set('websiteCode', websiteCode);
+
+  const fullUrl = `${endpoint}?${params.toString()}`;
+
   try {
-    const response = await fetch(endpoint, {
+    const response = await fetch(fullUrl, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
