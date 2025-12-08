@@ -364,7 +364,7 @@ async function initializeSwiperCarousel(block) {
   const swiper = new window.Swiper(swiperContainer, {
     // Basic options
     slidesPerView: 2,
-    spaceBetween: 16,
+    spaceBetween: 8,
 
     navigation: {
       nextEl: block.querySelector('.cmp-carousel__action--next'),

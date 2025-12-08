@@ -958,7 +958,7 @@
 
 @media only screen and (max-width: 47.9375rem) {
   .cmp-carousel__item.swiper-slide:has(.game-item) {
-    width: 156px;
+    width: 156px !important;
   }
 }
 
