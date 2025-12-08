@@ -151,7 +151,7 @@ export async function fetchGameList(
  */
 export async function callSSOValidation(type='check', aticket) {
   const domain = await getConfigValue('sso-endpoint-dev');
-  const ssoEndpoint = domain+'/api/v1/web/app-builder-integration-api/sso';
+  const ssoEndpoint = domain+'/api/v1/web/sso-api/sso';
   const url = `${ssoEndpoint}`;
   try {
     const response = await fetch(url, {
