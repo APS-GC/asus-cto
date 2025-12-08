@@ -43,7 +43,8 @@ export async function getUserData() {
 }
 
 export async function logout() {
-  if (!checkCookie()) return;
+  const aticket = checkCookie();
+  if (!aticket) return;
   try {
     const result = await callSSOValidation("logout", aticket);
     if (result.ok) {
