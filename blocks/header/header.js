@@ -805,6 +805,13 @@ function initializeHeader(block) {
   const miniCartClose = block.querySelector('.mini-cart__close');
   if (miniCartClose) {
     miniCartClose.addEventListener('click', () => {
+      // Track close button click
+      trackEvent({
+        eventName: 'close_mini_cart_header-L1_cto_rog',
+        category: 'mini_cart/header-L1/cto/rog',
+        label: 'close/mini_cart/header-L1/cto/rog'
+      });
+      
       miniCartToggle.setAttribute('aria-expanded', 'false');
       miniCartContainer.setAttribute('aria-hidden', 'true');
       miniCartContainer.classList.remove('show');
@@ -1128,6 +1135,18 @@ async function updateMiniCartDisplay(block) {
       console.log('Cart sign-in clicked');
       mockLogin();
       refreshHeader(block);// eslint-disable-line no-use-before-define
+    });
+  }
+
+  // Add tracking for checkout button
+  const checkoutButton = miniCartContainer.querySelector('.checkout-btn button');
+  if (checkoutButton) {
+    checkoutButton.addEventListener('click', () => {
+      trackEvent({
+        eventName: 'checkout_mini_cart_header-L1_cto_rog',
+        category: 'mini_cart/header-L1/cto/rog',
+        label: 'checkout/mini_cart/header-L1/cto/rog'
+      });
     });
   }
 }
