@@ -1,6 +1,7 @@
 import { isAuthorEnvironment, safeText } from '../../scripts/utils.js';
 import { transferInstrumentation } from '../../scripts/utils.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 const pubUrl = 'https://publish-p165753-e1767020.adobeaemcloud.com';
 
@@ -120,6 +121,29 @@ export default async function decorate(block) {
   await import('../../scripts/carousel.js');
   await import('./uifrontend_advantage-card.js');
  
+  // Add tracking for navigation arrows
+  const prevButton = block.querySelector('.cmp-carousel__action--previous');
+  const nextButton = block.querySelector('.cmp-carousel__action--next');
+  
+  if (prevButton) {
+    prevButton.addEventListener('click', () => {
+      trackEvent({
+        eventName: 'nvgt_l_advantages_home_cto_rog',
+        category: 'nvgt/advantages/home/cto/rog',
+        label: 'last_button/nvgt/advantages/home/cto/rog'
+      });
+    });
+  }
+  
+  if (nextButton) {
+    nextButton.addEventListener('click', () => {
+      trackEvent({
+        eventName: 'nvgt_n_advantages_home_cto_rog',
+        category: 'nvgt/advantages/home/cto/rog',
+        label: 'next_button/nvgt/advantages/home/cto/rog'
+      });
+    });
+  }
 
   document.addEventListener(
     'eds-lazy-event',
@@ -127,6 +151,18 @@ export default async function decorate(block) {
       const container = block.querySelector('.container');
       if (window.initializeSwiperOnAEMCarousel && container) {
         window.initializeSwiperOnAEMCarousel(container);
+        
+        // Add tracking for indicators after Swiper is initialized
+        const indicators = container.querySelectorAll('.cmp-carousel__indicator');
+        indicators.forEach((indicator, index) => {
+          indicator.addEventListener('click', () => {
+            trackEvent({
+              eventName: 'indicator_advantages_home_cto_rog',
+              category: 'indicator/advantages/home/cto/rog',
+              label: `${index + 1}/indicator/advantages/home/cto/rog`
+            });
+          });
+        });
       }
     },
     { once: true }

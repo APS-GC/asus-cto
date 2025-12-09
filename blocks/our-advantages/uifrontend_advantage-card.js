@@ -1,3 +1,5 @@
+import { trackEvent } from '../../scripts/google-data-layer.js';
+
 const advantageCardsWrapper = document.querySelector('.our-advantages-wrapper');
 advantageCardsWrapper.addEventListener('click', (event) => {
   const watchNowBtn = event.target.closest('.cmp-advantage-card__btn');
@@ -13,6 +15,14 @@ advantageCardsWrapper.addEventListener('click', (event) => {
   if (!watchNowBtn || !card || !videoPlayer || !swiperInstance) {
     return;
   }
+
+  // Track Watch Now button click
+  const buttonText = watchNowBtn.textContent?.trim().replace(/\s+/g, ' ') || 'Watch Now';
+  trackEvent({
+    eventName: 'play_advantages_home_cto_rog',
+    category: 'play/advantages/home/cto/rog',
+    label: `${buttonText}/play/advantages/home/cto/rog`
+  });
 
   // First resume autoplay to ensure swiper progress is correct.
   swiperInstance.autoplay.resume();
