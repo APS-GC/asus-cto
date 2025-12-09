@@ -24,20 +24,19 @@ const DEFAULT_CONFIG = {
  * @returns {Promise<void>}
  */
 export default async function decorate(block) {
-  console.log("Product Comparison Page", block)
   // Load noUiSlider only once
-  // await loadNoUiSlider();
-  // await loadSwiperCSS();
+  await loadNoUiSlider();
+  await loadSwiperCSS();
 
-  // // Once loaded, render the component
-  // await renderHelpMeChoose(block);
+  // Once loaded, render the component
+  await renderHelpMeChoose(block);
 
-  // // Initialize existing game forms
-  // initSelectGameForms(document.body);
+  // Initialize existing game forms
+  initSelectGameForms(document.body);
 
-  // initFilterComponents(document.body);
-  // // Setup a single MutationObserver (if not already)
-  // setupSelectGameFormsObserver();
+  initFilterComponents(document.body);
+  // Setup a single MutationObserver (if not already)
+  setupSelectGameFormsObserver();
 }
 
 
