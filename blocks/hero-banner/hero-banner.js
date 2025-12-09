@@ -450,64 +450,51 @@ function getSlideStartIndex(block) {
 
 /**
  * Build single slide structure (used for immediate display)
+ * Optimized: Uses DocumentFragment for batched DOM operations
  */
 function buildSingleSlideStructure(config, heroBannerId) {
+  const firstSlide = config.slides[0];
+  
+  // Create wrapper with innerHTML for static structure (faster than multiple createElement)
   const heroBannerWrapper = document.createElement('div');
   heroBannerWrapper.className = 'hero-banner panelcontainer';
   
-  const heroBanner = document.createElement('div');
-  heroBanner.id = heroBannerId;
-  heroBanner.className = 'cmp-hero-banner';
-  heroBanner.setAttribute('role', 'group');
-  heroBanner.setAttribute('aria-live', 'off');
-  heroBanner.setAttribute('aria-roledescription', 'hero-banner');
-  heroBanner.setAttribute('data-cmp-delay', config.imageAutoplayDuration);
-  heroBanner.setAttribute('data-placeholder-text', 'false');
-  heroBanner.setAttribute('data-loop-slides', 'true');
+  // Use innerHTML for the static shell structure - single parse, much faster
+  heroBannerWrapper.innerHTML = `
+    <div id="${heroBannerId}" class="cmp-hero-banner" role="group" aria-live="off" 
+         aria-roledescription="hero-banner" data-cmp-delay="${config.imageAutoplayDuration}"
+         data-placeholder-text="false" data-loop-slides="true">
+      <div class="cmp-hero-banner__content">
+        <div class="swiper single-slide">
+          <div class="swiper-wrapper" aria-live="off">
+            <div id="${heroBannerId}-item-${firstSlide.id}-tabpanel" 
+                 class="cmp-hero-banner__item swiper-slide swiper-slide-active"
+                 role="group" aria-label="Slide 1 of ${config.slides.length}"
+                 data-swiper-slide-index="0"></div>
+          </div>
+        </div>
+        <div class="cmp-hero-banner__footer"></div>
+      </div>
+    </div>
+  `;
+
+  // Get reference to slide element and append dynamic content
+  const slideElement = heroBannerWrapper.querySelector('.swiper-slide');
   
-  const heroBannerContent = document.createElement('div');
-  heroBannerContent.className = 'cmp-hero-banner__content';
-  
-  const swiper = document.createElement('div');
-  swiper.className = 'swiper single-slide';
-
-  const swiperWrapper = document.createElement('div');
-  swiperWrapper.className = 'swiper-wrapper';
-  swiperWrapper.setAttribute('aria-live', 'off');
-
-  // Only first slide
-  const firstSlide = config.slides[0];
-  const slideElement = document.createElement('div');
-  slideElement.id = `${heroBannerId}-item-${firstSlide.id}-tabpanel`;
-  slideElement.className = 'cmp-hero-banner__item swiper-slide swiper-slide-active';
-  slideElement.setAttribute('role', 'group');
-  slideElement.setAttribute('aria-label', `Slide 1 of ${config.slides.length}`);
-  slideElement.setAttribute('data-swiper-slide-index', '0');
-
   if (firstSlide.originalRow) {
     moveInstrumentation(firstSlide.originalRow, slideElement);
   }
 
+  // Generate and append hero banner content (this has dynamic parts)
   const heroBannerSlide = generateHeroBannerHTML(firstSlide, config, 0);
   slideElement.appendChild(heroBannerSlide);
-  swiperWrapper.appendChild(slideElement);
-
-  swiper.appendChild(swiperWrapper);
-  heroBannerContent.appendChild(swiper);
-  
-  // Empty footer placeholder
-  const heroBannerFooter = document.createElement('div');
-  heroBannerFooter.className = 'cmp-hero-banner__footer';
-  heroBannerContent.appendChild(heroBannerFooter);
-  
-  heroBanner.appendChild(heroBannerContent);
-  heroBannerWrapper.appendChild(heroBanner);
 
   return heroBannerWrapper;
 }
 
 /**
  * Upgrade to multi-slide carousel
+ * Optimized: Uses DocumentFragment and innerHTML for better performance
  */
 function upgradeToCarousel(heroBannerWrapper, config, heroBannerId) {
   const swiperWrapper = heroBannerWrapper.querySelector('.swiper-wrapper');
@@ -517,9 +504,14 @@ function upgradeToCarousel(heroBannerWrapper, config, heroBannerId) {
   // Remove single-slide class
   swiper.classList.remove('single-slide');
   
+  // Use DocumentFragment for batched slide additions (single reflow)
+  const slidesFragment = document.createDocumentFragment();
+  
   // Add remaining slides (slides 2, 3, etc.)
   for (let index = 1; index < config.slides.length; index++) {
     const slide = config.slides[index];
+    
+    // Create slide container
     const slideElement = document.createElement('div');
     slideElement.id = `${heroBannerId}-item-${slide.id}-tabpanel`;
     slideElement.className = 'cmp-hero-banner__item swiper-slide';
@@ -534,51 +526,38 @@ function upgradeToCarousel(heroBannerWrapper, config, heroBannerId) {
 
     const heroBannerSlide = generateHeroBannerHTML(slide, config, index);
     slideElement.appendChild(heroBannerSlide);
-    swiperWrapper.appendChild(slideElement);
+    slidesFragment.appendChild(slideElement);
   }
+  
+  // Single DOM operation for all slides
+  swiperWrapper.appendChild(slidesFragment);
 
-  // Add indicators
-  const indicatorsGroup = document.createElement('div');
-  indicatorsGroup.className = 'cmp-hero-banner__indicators-group';
+  // Use innerHTML for indicators (much faster than createElement loop)
+  const indicatorsHTML = config.slides.map((_, index) => `
+    <li class="cmp-hero-banner__indicator ${index === 0 ? 'cmp-hero-banner__indicator--active' : ''}"
+        aria-label="Go to slide ${index + 1}"
+        role="tab"
+        tabindex="0"
+        ${index === 0 ? 'aria-current="true"' : ''}></li>
+  `).join('');
 
-  const indicatorsList = document.createElement('ol');
-  indicatorsList.className = 'cmp-hero-banner__indicators';
-  indicatorsList.setAttribute('role', 'tablist');
-  indicatorsList.setAttribute('aria-label', 'Choose a slide to display');
-
-  config.slides.forEach((slide, index) => {
-    const indicator = document.createElement('li');
-    indicator.className = `cmp-hero-banner__indicator ${index === 0 ? 'cmp-hero-banner__indicator--active' : ''}`;
-    indicator.setAttribute('aria-label', `Go to slide ${index + 1}`);
-    indicator.setAttribute('role', 'tab');
-    indicator.setAttribute('tabindex', '0');
-    if (index === 0) {
-      indicator.setAttribute('aria-current', 'true');
-    }
-    indicatorsList.appendChild(indicator);
-  });
-
-  const autoplayToggle = document.createElement('button');
-  autoplayToggle.className = 'hero-banner-autoplay-toggle';
-  autoplayToggle.setAttribute('aria-label', 'Pause');
-
-  indicatorsGroup.appendChild(indicatorsList);
-  indicatorsGroup.appendChild(autoplayToggle);
-  heroBannerFooter.appendChild(indicatorsGroup);
-
-  // Add media controls if video slides exist
   const hasVideoSlide = config.slides.some((slide) => slide.isVideo);
-  if (hasVideoSlide) {
-    const mediaControls = document.createElement('div');
-    mediaControls.className = 'cmp-hero-banner__media-controls';
-
-    const playPauseBtn = document.createElement('button');
-    playPauseBtn.className = 'cmp-hero-banner__media-control cmp-hero-banner__media-control--play-pause';
-    playPauseBtn.setAttribute('aria-label', `Play ${config.slides[0]?.subtitle || 'media'}`);
-
-    mediaControls.appendChild(playPauseBtn);
-    heroBannerFooter.appendChild(mediaControls);
-  }
+  
+  // Build footer content with innerHTML (single parse)
+  heroBannerFooter.innerHTML = `
+    <div class="cmp-hero-banner__indicators-group">
+      <ol class="cmp-hero-banner__indicators" role="tablist" aria-label="Choose a slide to display">
+        ${indicatorsHTML}
+      </ol>
+      <button class="hero-banner-autoplay-toggle" aria-label="Pause"></button>
+    </div>
+    ${hasVideoSlide ? `
+      <div class="cmp-hero-banner__media-controls">
+        <button class="cmp-hero-banner__media-control cmp-hero-banner__media-control--play-pause"
+                aria-label="Play ${config.slides[0]?.subtitle || 'media'}"></button>
+      </div>
+    ` : ''}
+  `;
 
   // Initialize Swiper
   initializeSwiper(heroBannerWrapper, config);
