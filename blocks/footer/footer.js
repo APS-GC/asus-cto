@@ -539,15 +539,7 @@ function buildSocialIcons(socialLinks, socialLabel) {
     a.href = link.url;
     a.target = '_blank';
     a.setAttribute('aria-label', `Follow us on ${altText} (open a new window)`);
-    
-    // Add click tracking for social media icons
-    a.addEventListener('click', () => {
-      trackEvent({
-        eventName: 'social_footer_cto_rog',
-        category: 'footer/cto/rog',
-        label: `${altText}/social/footer/cto/rog`
-      });
-    });
+    a.setAttribute('data-social-platform', altText); // Store platform name for tracking
     
     // Create picture element with img
     const picture = document.createElement('picture');
@@ -768,6 +760,19 @@ export default function decorate(block) {
   if (data.showGlobal && data.globalTextRow && globalText) {
     moveInstrumentation(data.globalTextRow, globalText);
   }
+
+  // Add tracking to social media icons
+  const socialLinks = block.querySelectorAll('.social__icons a');
+  socialLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const socialName = link.getAttribute('data-social-platform') || link.getAttribute('aria-label')?.split(' ')[3] || 'Unknown';
+      trackEvent({
+        eventName: 'social_footer_cto_rog',
+        category: 'footer/cto/rog',
+        label: `${socialName}/social/footer/cto/rog`
+      });
+    });
+  });
 
   // Add tracking to footer navigation links
   const footerNavLinks = block.querySelectorAll('.footer-links a');
