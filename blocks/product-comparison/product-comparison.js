@@ -30,9 +30,7 @@ export default async function decorate(block) {
   }
 
   if (mainContainer && floatingContainer && scrollable && floating) {
-    console.log("HHHHH Scroll header popup 1")
     const toggleFloating = () => {
-      console.log("HHHHH Scroll header popup")
       const mainBottom = mainContainer.offsetTop + mainContainer.offsetHeight;
       const footer = document.querySelector('footer');
       if (window.scrollY >= mainBottom && window.scrollY < footer.offsetTop - 250) {
@@ -531,7 +529,6 @@ async function loadProducts(initial = false) {
     products = await fetchProducts();
   }
 
-  console.log(products)
   container.innerHTML = '';
   floatingContainer.innerHTML = '';
   actionsContainer.innerHTML = '';
@@ -664,72 +661,6 @@ async function loadProducts(initial = false) {
 
   checkDifferences();
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  console.log("HHHHH Scroll header popup >>>>> ")
-  
-  // const mainContainer = document.querySelector('.product-comparison-card__container');
-  // const floatingContainer = document.querySelector(
-  //   '.product-comparison-floating-card__container-wrapper',
-  // );
-  // const scrollable = document.querySelector('.scrollable-component');
-  // const floating = document.querySelector('.product-comparison-floating-card__container');
-
-  // const backButton = document.querySelector('#comparison-page-back-button');
-  // if (backButton) {
-  //   backButton.addEventListener('click', () => {
-  //     window.location.href = 'product-listing.html';
-  //   });
-  // }
-
-  // if (mainContainer && floatingContainer && scrollable && floating) {
-  //   console.log("HHHHH Scroll header popup 1")
-  //   const toggleFloating = () => {
-  //     console.log("HHHHH Scroll header popup")
-  //     const mainBottom = mainContainer.offsetTop + mainContainer.offsetHeight;
-  //     const footer = document.querySelector('footer');
-  //     if (window.scrollY >= mainBottom && window.scrollY < footer.offsetTop - 250) {
-  //       floatingContainer.classList.add('sticky');
-  //       // Sync scroll position when floating cards become visible
-  //       floating.scrollLeft = scrollable.scrollLeft;
-  //     } else {
-  //       floatingContainer.classList.remove('sticky');
-  //     }
-  //   };
-
-  //   toggleFloating(); // run once on load
-  //   window.addEventListener('scroll', toggleFloating);
-  // }
-
-  // if (scrollable && floating) {
-  //   let isSyncingScrollable = false;
-  //   let isSyncingFloating = false;
-
-  //   scrollable.addEventListener('scroll', () => {
-  //     if (isSyncingScrollable) {
-  //       isSyncingScrollable = false;
-  //       return;
-  //     }
-  //     isSyncingFloating = true;
-  //     floating.scrollLeft = scrollable.scrollLeft;
-  //     window.requestAnimationFrame(() => {
-  //       isSyncingFloating = false;
-  //     });
-  //   });
-
-  //   floating.addEventListener('scroll', () => {
-  //     if (isSyncingFloating) {
-  //       isSyncingFloating = false;
-  //       return;
-  //     }
-  //     isSyncingScrollable = true;
-  //     scrollable.scrollLeft = floating.scrollLeft;
-  //     window.requestAnimationFrame(() => {
-  //       isSyncingScrollable = false;
-  //     });
-  //   });
-  // }
-});
 
 function highlightDifferences() {
   document.querySelectorAll('.product-comparison-row').forEach((row) => {
