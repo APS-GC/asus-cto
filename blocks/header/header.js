@@ -1,4 +1,5 @@
 import { createOptimizedPictureExternal, createOptimizedPicture, moveInstrumentation } from '../../scripts/scripts.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Header configuration - calculated once for the entire module
 const HeaderConfig = {
@@ -858,6 +859,69 @@ function initializeHeader(block) {
       }
     });
   }
+
+  // Add tracking for navigation links
+  const navLinks = block.querySelectorAll('.cmp-sitenavigation__item-link');
+  navLinks.forEach((link) => {
+    // Skip if it's a button (cart, profile, menu toggle)
+    if (link.tagName.toLowerCase() === 'button' || link.closest('.cmp-sitenavigation__item--cart, .cmp-sitenavigation__item--profile, .cmp-sitenavigation__item--menu-toggle')) {
+      return;
+    }
+    
+    link.addEventListener('click', () => {
+      const clickedText = link.textContent?.trim() || '';
+      // For now, using the same text for both Global-EN and local
+      // In a real implementation, you might fetch the EN version from a mapping
+      trackEvent({
+        eventName: 'header-L1_cto_rog',
+        category: 'header-L1/cto/rog',
+        label: `${clickedText}-${clickedText}/header-L1/cto/rog`
+      });
+    });
+  });
+
+  // Add tracking for profile menu links
+  const profileMenuLinks = block.querySelectorAll('.profile-menu__item');
+  profileMenuLinks.forEach((menuItem) => {
+    const link = menuItem.querySelector('a');
+    if (link) {
+      link.addEventListener('click', () => {
+        const clickedText = link.textContent?.trim() || '';
+        // For now, using the same text for both Global-EN and local
+        trackEvent({
+          eventName: 'submenu_header-L1_cto_rog',
+          category: 'submenu/header-L1/cto/rog',
+          label: `${clickedText}-${clickedText}/submenu/header-L1/cto/rog`
+        });
+      });
+    }
+  });
+
+  // Add tracking for mobile menu navigation links
+  const mobileNavLinks = block.querySelectorAll('.mobile-menu > li > a');
+  mobileNavLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const clickedText = link.textContent?.trim() || '';
+      trackEvent({
+        eventName: 'header-L1_cto_rog',
+        category: 'header-L1/cto/rog',
+        label: `${clickedText}-${clickedText}/header-L1/cto/rog`
+      });
+    });
+  });
+
+  // Add tracking for mobile profile menu links
+  const mobileProfileLinks = block.querySelectorAll('.submenu-items li a');
+  mobileProfileLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const clickedText = link.textContent?.trim() || '';
+      trackEvent({
+        eventName: 'submenu_header-L1_cto_rog',
+        category: 'submenu/header-L1/cto/rog',
+        label: `${clickedText}-${clickedText}/submenu/header-L1/cto/rog`
+      });
+    });
+  });
 }
 
 // Forward declaration for refreshHeader
