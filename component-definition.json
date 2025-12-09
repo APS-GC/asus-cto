@@ -229,7 +229,8 @@
                 "template": {
                   "name": "Product Comparison",
                   "model": "product-comparison",
-                  "title": "Product Comparison Page"
+                  "title": "Product Comparison Page",
+                  "compareButtonLabel": "VIEW COMPARISON"
                 }
               }
             }

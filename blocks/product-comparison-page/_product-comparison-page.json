@@ -10,7 +10,8 @@
             "template": {
               "name": "Product Comparison",
               "model": "product-comparison",
-              "title": "Product Comparison Page"
+              "title": "Product Comparison Page",
+              "compareButtonLabel": "VIEW COMPARISON"
             }
           }
         }
@@ -26,6 +27,13 @@
           "valueType": "string",
           "name": "title",
           "label": "Title",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "compareButtonLabel",
+          "label": "View Comparison Button Text",
           "value": ""
         }
       ]
