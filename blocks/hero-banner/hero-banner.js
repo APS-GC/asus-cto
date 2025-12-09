@@ -246,12 +246,12 @@ const manageVideoPlayback = (video, action) => {
 /**
  * Toggle video play/pause and manage paused class on media controls
  */
-const toggleSliderVideo = (videoPlayPauseBtn) => {
-  const activeSlide = document.querySelector('.swiper-slide-active');
-  const activeSlideProdName = document.querySelector('.swiper-slide-active .product-name')?.textContent;
+const toggleSliderVideo = (videoPlayPauseBtn, swiperInstance) => {
+  const activeSlide = swiperInstance.el.querySelector('.swiper-slide-active');
+  const activeSlideProdName = activeSlide?.querySelector('.product-name')?.textContent;
 
   const activeVideo = activeSlide?.querySelector('video');
-  const mediaControls = document.querySelector('.cmp-hero-banner__media-controls');
+  const mediaControls = swiperInstance.el.closest('.cmp-hero-banner').querySelector('.cmp-hero-banner__media-controls');
   
   if (activeSlide && activeVideo) {
     if (activeVideo.paused) {
@@ -375,15 +375,15 @@ async function initializeSwiper(heroBannerElement, config) {
       
       if (playPauseBtn) {
         playPauseBtn.addEventListener('click', () => {
-          toggleSliderVideo(playPauseBtn);
+          toggleSliderVideo(playPauseBtn, swiper);
         });
       }
 
       if (autoplayToggle) {
         autoplayToggle.addEventListener('click', () => {
-          const activeSlide = document.querySelector('.swiper-slide-active');
+          const activeSlide = swiper.el.querySelector('.swiper-slide-active');
           const activeVideo = activeSlide?.querySelector('video');
-          const mediaControls = document.querySelector('.cmp-hero-banner__media-controls');
+          const mediaControls = swiper.el.closest('.cmp-hero-banner').querySelector('.cmp-hero-banner__media-controls');
           const isVideoPaused = mediaControls?.classList.contains('paused');
           const isPaused = swiper.el.classList.contains('is-autoplay-paused');
           
