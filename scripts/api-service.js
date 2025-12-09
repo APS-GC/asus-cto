@@ -223,15 +223,29 @@ export async function fetchFilters(options = {}) {
   }
 }
 
+function isNotEmptyObject(obj) {
+  if (!obj || typeof obj !== 'object') return false;
+  for (let key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Fetches a list of games from a specified API endpoint, with fallback options and a timeout.
  * @param {string} [endpoint] - The API endpoint to fetch the game list from.
  * @param {number} [maxProducts] - The maximum number of products to return.
  */
 export async function fetchGameList(
-  endpoint = 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/gameList.json?websiteCode=en',
-  timeoutMs = 5000,
+  endpoint,
+  mode = 'GET',
+  params = {},
+  bodyType = 'JSON',
+  timeoutMs = 5000
 ) {
+
   const controller = new AbortController();
   const signal = controller.signal;
 
@@ -244,18 +258,33 @@ export async function fetchGameList(
     // eslint-disable-next-line no-console
     console.log(`Attempting to fetch from: ${endpoint}`);
 
-    const response = await fetch(endpoint, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
-      },
+    const fetchOptions = {
+      method: mode,
       mode: 'cors',
       signal,
-    });
+      credentials: endpoint.includes('author') ? 'include' : 'omit',
+    };
+
+    if (mode.toUpperCase() === 'POST' && isNotEmptyObject(params) && bodyType === 'formData') {
+      const formData = new FormData();
+      // eslint-disable-next-line no-restricted-syntax
+      for (const key in params) {
+        if (Object.prototype.hasOwnProperty.call(params, key)) {
+          formData.append(key, params[key]);
+        }
+      }
+      fetchOptions.body = formData;
+      fetchOptions.headers = { Accept: 'application/json' };
+    } else {
+      fetchOptions.headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      };
+      fetchOptions.body = isNotEmptyObject(params) ? JSON.stringify(params) : null;
+    }
 
     clearTimeout(timeoutId);
+    const response = await fetch(endpoint, fetchOptions);
 
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status}`);
@@ -280,7 +309,6 @@ export async function fetchGameList(
     return []; // fallback
   }
 }
-
 /**
  * Call SSO validation API
  * @param {string} type - Validation type, e.g. 'check' 'user' 'logout'
