@@ -1183,14 +1183,14 @@
     ]
   },
   {
-    "id": "product-comparison-page",
+    "id": "product-comparison",
     "fields": [
       {
         "component": "text",
         "valueType": "string",
         "name": "title",
         "label": "Title",
-        "value": "Product Comparison Page"
+        "value": "Product Comparison"
       },
       {
         "component": "text",
