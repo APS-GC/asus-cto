@@ -2,8 +2,6 @@ import { loadCSS, loadScript } from '../../scripts/aem.js';
 import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
-import { getBlockConfigs } from '../../scripts/configs.js';
-// import { fetchData } from '../../../site/scripts/_api';
 
 
 export default async function decorate(block) {
