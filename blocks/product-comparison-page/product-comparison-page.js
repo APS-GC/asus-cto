@@ -49,11 +49,13 @@ async function renderHelpMeChoose(block) {
   const helpMeChooseContainer = document.createElement('div');
   helpMeChooseContainer.className = 'help-me-choose-container container';
 
+  helpMeChooseContainer.innerHTML = html;
+
   // Move instrumentation
   // moveInstrumentation(block, helpMeChooseContainer);
 
   // Replace in DOM
-  block.appendChild(...helpMeChooseContainer.children);
+  block.replaceChildren(...helpMeChooseContainer.children);
 
   // Initialize carousel *after* DOM insertion
   initializeSwiperCarousel(block);
