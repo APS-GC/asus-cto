@@ -208,7 +208,7 @@
                 "template": {
                   "name": "Product Compare",
                   "model": "product-compare",
-                  "title": "Product Comparison",
+                  "title": "Product Comparison2",
                   "compareButtonLabel": "VIEW COMPARISON",
                   "clearAllButtonLabel": "Clear All",
                   "limitErrorMessage": "You have reached the limit of 4 products, please remove before adding a new one for comparison.",
