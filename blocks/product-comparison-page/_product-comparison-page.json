@@ -27,14 +27,14 @@
           "valueType": "string",
           "name": "title",
           "label": "Title",
-          "value": ""
+          "value": "Product Comparison Page"
         },
         {
           "component": "text",
           "valueType": "string",
           "name": "compareButtonLabel",
           "label": "View Comparison Button Text",
-          "value": ""
+          "value": "VIEW COMPARISON"
         }
       ]
     }
