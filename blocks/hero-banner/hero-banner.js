@@ -503,6 +503,7 @@ export default async function decorate(block) {
   heroBanner.setAttribute('role', 'group');
   heroBanner.setAttribute('aria-live', 'off');
   heroBanner.setAttribute('aria-roledescription', 'hero-banner');
+  heroBanner.setAttribute('data-cmp-is', 'hero-banner');
   heroBanner.setAttribute('data-cmp-delay', config.imageAutoplayDuration);
   heroBanner.setAttribute('data-placeholder-text', 'false');
   heroBanner.setAttribute('data-loop-slides', 'true');
