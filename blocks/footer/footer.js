@@ -762,7 +762,7 @@ export default function decorate(block) {
   }
 
   // Add tracking to social media icons
-  const socialLinks = block.querySelectorAll('.social__icons a');
+  const socialLinks = block.querySelectorAll('.social__icons li a, .social__icons a');
   socialLinks.forEach((link) => {
     link.addEventListener('click', () => {
       const socialName = link.getAttribute('data-social-platform') || link.getAttribute('aria-label')?.split(' ')[3] || 'Unknown';
