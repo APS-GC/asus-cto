@@ -1054,7 +1054,7 @@ refreshHeader = (block) => {
 async function renderMiniCartContent(isLoggedIn) {
   if (!isLoggedIn) {
     return `
-      <p class="mini-cart__message"><a href="/">Sign in</a> to see if you have any saved items</p>
+      <p class="mini-cart__message"><a href="/" id="cart-signin-link">Sign in</a> to see if you have any saved items</p>
     `;
   }
 
@@ -1131,6 +1131,14 @@ async function updateMiniCartDisplay(block) {
   if (newCartSigninLink) {
     newCartSigninLink.addEventListener('click', (e) => {
       e.preventDefault();
+      
+      // Track sign-in link click
+      trackEvent({
+        eventName: 'sign_in_mini_cart_header-L1_cto_rog',
+        category: 'mini_cart/header-L1/cto/rog',
+        label: 'sign_in/mini_cart/header-L1/cto/rog'
+      });
+      
       // eslint-disable-next-line no-console
       console.log('Cart sign-in clicked');
       mockLogin();
