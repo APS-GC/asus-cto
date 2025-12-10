@@ -10,6 +10,7 @@ const DEFAULT_CONFIG = {
   compareLabel: 'Compare',
   buyNowText: 'Buy now',
   quickViewText: 'Quick view',
+  showQuickView: true,
   estoreLabel: 'ASUS estore price',
   estoreTooltip: 'ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.',
 };
@@ -89,7 +90,7 @@ function buildProductCardHTML(product, config) {
 
     <div class="cmp-product-card__body">
       <div class="cmp-product-card__image cmp-image">
-        <button class="cmp-product-card__preview-btn" data-product-id="${productId}" data-a11y-dialog-show="product-preview-dialog" aria-label="${mergedConfig.quickViewText} ${product.name}">${mergedConfig.quickViewText}</button>
+        ${mergedConfig.showQuickView ? `<button class="cmp-product-card__preview-btn" data-product-id="${productId}" data-a11y-dialog-show="product-preview-dialog" aria-label="${mergedConfig.quickViewText} ${product.name}">${mergedConfig.quickViewText}</button>` : ''}
         <img class="cmp-image__image" src="${product.mainImage}" alt="${product.name}" loading="lazy" decoding="async">
         ${product.hoverImage ? `<img class="cmp-image__image--hover" src="${product.hoverImage}" alt="${product.name}" aria-hidden="true" loading="lazy" decoding="async">` : ''}
       </div>

@@ -4,6 +4,7 @@ import {
   decorateButtons,
   decorateIcons,
   decorateSections,
+  getMetadata,
   loadBlock,
   loadScript,
   loadSections,
@@ -11,6 +12,97 @@ import {
 
 import { decorateRichtext } from './editor-support-rte.js';
 import { decorateMain } from './scripts.js';
+
+let editorRules = null;
+
+async function loadEditorRules() {
+  if (!editorRules) {
+    try {
+      const response = await fetch(`${window.hlx.codeBasePath}/editor-rules.json`);
+      editorRules = await response.json();
+    } catch (error) {
+      console.error('Failed to load editor rules:', error);
+      editorRules = { blocks: {} };
+    }
+  }
+  return editorRules;
+}
+
+function showAuthorError(message, block) {
+  let toast = document.querySelector('.author-error-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'author-error-toast';
+    toast.style.cssText = `
+      background: #d9534f;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+    `;
+    block.append(toast);
+  }
+
+  toast.textContent = message;
+  setTimeout(() => toast.remove(), 4000);
+}
+
+function interpolateMessage(template, variables) {
+  return template.replace(/\{(\w+)\}/g, (match, key) => variables[key] || match);
+}
+
+async function enforceBlockRules(event, eventType) {
+  const rules = await loadEditorRules();
+  const container = event?.detail?.request?.target?.container;
+  if (!container) return true;
+
+  const blockEl = document.querySelector(`[data-aue-resource="${container.resource}"]`);
+  if (!blockEl) return true;
+
+  const blockModel = blockEl.dataset.aueModel || blockEl.dataset.blockName;
+  const blockRules = rules.blocks[blockModel];
+  if (!blockRules) return true;
+
+  for (const [childType, config] of Object.entries(blockRules)) {
+    const childModel = config.model;
+    const rule = config.rules?.[eventType];
+    if (!rule) continue;
+
+    const children = blockEl.querySelectorAll(`[data-aue-model="${childModel}"]`);
+    const currentCount = children.length;
+
+    let isValid = true;
+    if (rule.validate === 'maxCount' && currentCount >= config.maxCount) {
+      isValid = false;
+    } else if (rule.validate === 'minCount' && currentCount <= config.minCount) {
+      isValid = false;
+    }
+
+    if (!isValid) {
+      const message = interpolateMessage(rule.errorMessage, {
+        maxCount: config.maxCount,
+        minCount: config.minCount,
+        currentCount,
+        childType
+      });
+      showAuthorError(message, blockEl.parentElement);
+    }
+  }
+
+  return true;
+}
+
+function setUEFilter(element, filter) {
+  element.dataset.aueFilter = filter;
+}
+
+function updateUEInstrumentation() {
+  const main = document.querySelector('main');
+  if (!main) return;
+
+  const theme = getMetadata('og:title') || '';
+  setUEFilter(main, theme ? `main-${theme}` : 'main');
+}
 
 async function applyChanges(event) {
   // redecorate default content and blocks on patches (in the properties rail)
@@ -20,8 +112,10 @@ async function applyChanges(event) {
     || detail?.request?.target?.container?.resource // update, patch, add to sections
     || detail?.request?.to?.container?.resource; // move in sections
   if (!resource) return false;
+
   const updates = detail?.response?.updates;
   if (!updates.length) return false;
+
   const { content } = updates[0];
   if (!content) return false;
 
@@ -86,6 +180,7 @@ async function applyChanges(event) {
           decorateIcons(parentElement);
           decorateRichtext(parentElement);
         }
+
         return true;
       }
     }
@@ -95,21 +190,34 @@ async function applyChanges(event) {
 }
 
 function attachEventListners(main) {
-  [
-    'aue:content-patch',
-    'aue:content-update',
-    'aue:content-add',
-    'aue:content-move',
-    'aue:content-remove',
-    'aue:content-copy',
-  ].forEach((eventType) => main?.addEventListener(eventType, async (event) => {
+  const eventTypeMap = {
+    'aue:content-patch': 'patch',
+    'aue:content-update': 'update',
+    'aue:content-add': 'add',
+    'aue:content-move': 'move',
+    'aue:content-remove': 'remove',
+    'aue:content-copy': 'copy',
+  };
+
+  Object.entries(eventTypeMap).forEach(([eventType, action]) => main?.addEventListener(eventType, async (event) => {
     event.stopPropagation();
+
+    const allowed = await enforceBlockRules(event, action);
+    if (!allowed) return;
+
     const applied = await applyChanges(event);
-    if (!applied) window.location.reload();
+
+    if (applied) {
+      updateUEInstrumentation();
+    } else {
+      window.location.reload();
+    }
   }));
 }
 
 attachEventListners(document.querySelector('main'));
+
+updateUEInstrumentation();
 
 // decorate rich text
 // this has to happen after decorateMain(), and everythime decorateBlocks() is called

@@ -89,7 +89,6 @@ async function renderHelpMeChoose(block) {
                   <div class="cmp-carousel__content cmp-carousel__content--overflow" aria-atomic="false" aria-live="polite">
                   <div class="swiper">
                       <div class="swiper-wrapper">${generateGameItemsHTML(gameList?.results?.gameList, true)}</div>
-                      <div class="swiper-pagination"></div>
                       </div>
                   </div>
               </div>
@@ -364,7 +363,7 @@ async function initializeSwiperCarousel(block) {
   const swiper = new window.Swiper(swiperContainer, {
     // Basic options
     slidesPerView: 2,
-    spaceBetween: 16,
+    spaceBetween: 8,
 
     navigation: {
       nextEl: block.querySelector('.cmp-carousel__action--next'),

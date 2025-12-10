@@ -182,13 +182,25 @@ export async function fetchFilteredProducts(options = {}) {
 
 /**
  * Fetches filter options from the API
+ * @param {Object} options - Options for fetching filters
+ * @param {string} options.websiteCode - Website code (default: 'us')
  * @returns {Promise<Array>} - Array of filter group objects
  */
-export async function fetchFilters() {
+export async function fetchFilters(options = {}) {
+  const {
+    websiteCode = 'us',
+  } = options;
+
   const endpoint = await getApiEndpoint(API_URIS.FETCH_FILTERS);
 
+  // Build query parameters
+  const params = new URLSearchParams();
+  params.set('websiteCode', websiteCode);
+
+  const fullUrl = `${endpoint}?${params.toString()}`;
+
   try {
-    const response = await fetch(endpoint, {
+    const response = await fetch(fullUrl, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -280,5 +292,33 @@ export async function fetchGameList(
     }
 
     return []; // fallback
+  }
+}
+
+/**
+ * Call SSO validation API
+ * @param {string} type - Validation type, e.g. 'check' 'user' 'logout'
+ * @param {string} aticket
+ * @returns {Promise<Object>} API response data
+ */
+export async function callSSOValidation(type='check', aticket) {
+  const domain = await getConfigValue('sso-endpoint-dev');
+  const ssoEndpoint = domain+'/api/v1/web/sso-api/sso';
+  const url = `${ssoEndpoint}`;
+  try {
+    const response = await fetch(url, {
+      method:"POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body:JSON.stringify({type,ticket:aticket}),
+      mode: 'cors',
+      timeout: 30000,
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("SSO API call error:", error.message);
+    throw new Error(`SSO validation failed: ${error.message}`);
   }
 }
