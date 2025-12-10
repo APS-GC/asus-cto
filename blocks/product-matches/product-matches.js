@@ -1,5 +1,5 @@
 import { loadCSS, loadScript } from '../../scripts/aem.js';
-import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
+import { loadSwiper } from '../../scripts/scripts.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
 
@@ -385,11 +385,11 @@ class SimilarProductsManager {
       this.actionsContainer.classList.add('is-loading');
 
       const endpoint = await getApiEndpoint(API_URIS.HELP_ME_CHOOSE_RESULT_EXPLORE);
-      
+
       const url = new URL(endpoint);
       const pageParams = new URLSearchParams(window.location.search);
 
-      url.searchParams.set('websiteCode', window.location.href.includes('/en/') ? 'us' : 'en');
+      url.searchParams.set('websiteCode', window.location.href.includes('/us/') ? 'us' : 'en');
       url.searchParams.set('gameIds', pageParams.getAll('games').map(this.sanitizeQueryValue).join(','));
       url.searchParams.set('lowPrice', pageParams.get('min-budget') || '');
       url.searchParams.set('highPrice', pageParams.get('max-budget') || '');
@@ -422,7 +422,7 @@ class SimilarProductsManager {
     if (!this.productCountElement) return;
     this.productCountElement.textContent = `${this.totalProducts}`;
   }
-  
+
   destroyCarousel() {
     if (this?.swiperInstance?.destroy) {
       this.swiperInstance.destroy(true, true);
@@ -589,8 +589,8 @@ function renderProductCard(product, productType) {
   const statusHtml = status
     .map(
       (s) => `<span class="cmp-product-card__status-item cmp-product-card__status--${s
-          .toLowerCase()
-          .replace(' ', '-')}">${s}</span>`,
+        .toLowerCase()
+        .replace(' ', '-')}">${s}</span>`,
     )
     .join('');
 
@@ -736,7 +736,7 @@ function renderProductCard(product, productType) {
 }
 
 function prepareProductAction(productName, isAvailable, isCustomizable, buyLink, customizeLink) {
-  var productActionsHtml = '';
+  let productActionsHtml = '';
 
   if (isAvailable && !isCustomizable) {
     productActionsHtml = `<a class="btn" href="${buyLink}" aria-label="Buy now ${productName}">Buy now</a>`;
@@ -829,22 +829,23 @@ class PerfectMatchProduct {
     this.mobileBreakpoint = 700; // Mobile breakpoint in pixels
     this.productType = 'perfect-match';
     this.response = [];
-    this.path = "";
-    this.lang = "";
+    this.path = '';
+    this.lang = '';
   }
 
-   formatGameFilter(value) {
+  formatGameFilter(value) {
     return {
       'value': String(value).replace(/[<>"]/g, ''), // Basic sanitization
       '_apply': 'AT_LEAST_ONCE'
     };
   };
+
   _buildApiPayload() {
     const params = new URLSearchParams(window.location.search);
     const selectedGames = params.getAll('games').map(this.formatGameFilter);
     const minBudget = params.get('min-budget') || 500;
     const maxBudget = params.get('max-budget') || 5000;
-    const path = window.location.href.includes('/en/') ? '/content/dam/asuscto/us' : '/content/dam/asuscto/en';
+    const path = window.location.href.includes('/us/') ? '/content/dam/asuscto/us' : '/content/dam/asuscto/en';
 
     return {
       'query': '',
@@ -870,26 +871,6 @@ class PerfectMatchProduct {
     this.actionsContainer = this.container.parentElement.querySelector(
       '.section-actions-container',
     );
-
-    const params = new URLSearchParams(window.location.search);
-    const selectedGames = params.getAll('games').map(this.sanitizeText);
-    const minBudget = params.get('min-budget'); // '2100'
-    const maxBudget = params.get('max-budget'); // '4300'
-    this.path = window.location.href.includes('/en/') ? "/content/dam/asuscto/us" : "/content/dam/asuscto/en";
-
-    this.dom = {
-      "query": "",
-      "variables": {
-        "path": this.path,
-        "gameIdsFilter": {
-          "_logOp": "AND",
-          "_expressions": selectedGames || [],
-        },
-        "lowerPrice": minBudget || 500,
-        "highPrice": maxBudget || 5000,
-        "sort": "price DESC"
-      }
-    }
     const apiPayload = this._buildApiPayload();
     await this.loadPerfectMatchProducts(apiPayload);
 
@@ -901,19 +882,18 @@ class PerfectMatchProduct {
   transformItem(item, matchType) {
     return {
 
-      id: item.sku.toLowerCase().replace(/[^a-z0-9]/g, "-"),  // example slugify
+      id: item.sku.toLowerCase().replace(/[^a-z0-9]/g, '-'),  // example slugify
       bazaarvoiceProductId: item.externalId || null,            // example mapping
       name: item.name,
       model: item.modelName,
-      matchType: {
-        id: matchType === "bestFit" ? "best-fit" :
-          matchType === "customerChoice" ? "customer-choice" :
-            matchType === "goodDeal" ? "good-deal" : matchType,
-
-        label: matchType === "bestFit" ? "Best Fit" :
-          matchType === "customerChoice" ? "Customer Choice" :
-            matchType === "goodDeal" ? "Good Deal" : matchType
-      },
+      matchType: (() => {
+        const matchTypeMap = {
+          bestFit: { id: 'best-fit', label: 'Best Fit' },
+          customerChoice: { id: 'customer-choice', label: 'Customer Choice' },
+          goodDeal: { id: 'good-deal', label: 'Good Deal' },
+        };
+        return matchTypeMap[matchType] || (matchType ? { id: matchType, label: matchType } : null);
+      })(),
       status: [
         item?.buyButtonStatus === 'Buy Now' ? 'In Stock' : null,
         ...(item?.productCardContent?.productTags || item?.productTags || []),
@@ -928,7 +908,7 @@ class PerfectMatchProduct {
         ? item?.productPreviewPopupCF?.additionalImages?.map(url => ({
           image: url,
           thumbnail: url,
-          title: item.name + " image"
+          title: item.name + ' image'
         }))
         : [],
       fps: (() => {
@@ -949,8 +929,8 @@ class PerfectMatchProduct {
         level: 4,
         source: {
           image: item?.productCardContent?.mainImage || null,
-          name: "3DMark",
-          tooltip: "FPS data is theoretical and may vary."
+          name: '3DMark',
+          tooltip: 'FPS data is theoretical and may vary.'
         }
       },
       specs: item.keySpec ? item.keySpec.map(spec => spec.name) : [],
@@ -959,7 +939,7 @@ class PerfectMatchProduct {
       price: item.specialPrice || item.price,
       originalPrice: item.price,
       discount: item.savedPrice || null,
-      estorePriceTooltipText: "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.",
+      estorePriceTooltipText: 'ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.',
       purchaseLimit: null,
       shippingInfo: null,
       installment: null
@@ -969,7 +949,7 @@ class PerfectMatchProduct {
   async transformAll(input) {
 
     const result = [];
-    const categories = ["bestFit", "customerChoice", "goodDeal"];
+    const categories = ['bestFit', 'customerChoice', 'goodDeal'];
     for (const cat of categories) {
       const group = input.data[cat];
       if (group && Array.isArray(group.items)) {
@@ -984,8 +964,8 @@ class PerfectMatchProduct {
   sanitizeText(value) {
     // Remove any characters that could be dangerous in HTML context
     return {
-      "value": value.replace(/[<>"]/g, ''),
-      "_apply": "AT_LEAST_ONCE"
+      'value': value.replace(/[<>"]/g, ''),
+      '_apply': 'AT_LEAST_ONCE'
     }
   };
 
@@ -1243,7 +1223,7 @@ export class SortDropdownManager {
     inner.setAttribute('aria-haspopup', 'listbox');
     inner.setAttribute('aria-expanded', 'false');
 
-    // Dropdown list should have role="listbox"
+    // Dropdown list should have role='listbox'
     const dropdownList = container.querySelector('.choices__list--dropdown .choices__list');
     if (dropdownList) {
       dropdownList.setAttribute('role', 'listbox');
@@ -1303,28 +1283,28 @@ function initSortDropdowns() {
   if (!sortElement || !floatingSortElement) return;
 
   const floatingSortManager = new SortDropdownManager(floatingSortElement);
-    floatingSortManager.init();
+  floatingSortManager.init();
   const sortManager = new SortDropdownManager(sortElement);
-    sortManager.init();
+  sortManager.init();
 
-    const syncDropdowns = (source, target) => {
-      source.addEventListener('change', (e) => {
-        const newValue = e.detail?.value || source.value;
-        const targetChoices = target.choicesInstance || target._choicesInstance;
-        if (target.value === newValue) return;
+  const syncDropdowns = (source, target) => {
+    source.addEventListener('change', (e) => {
+      const newValue = e.detail?.value || source.value;
+      const targetChoices = target.choicesInstance || target._choicesInstance;
+      if (target.value === newValue) return;
 
-        if (targetChoices && typeof targetChoices.setChoiceByValue === 'function') {
-          targetChoices.setChoiceByValue(newValue);
-        } else {
-          target.value = newValue;
-          target.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-      });
-    };
+      if (targetChoices && typeof targetChoices.setChoiceByValue === 'function') {
+        targetChoices.setChoiceByValue(newValue);
+      } else {
+        target.value = newValue;
+        target.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+  };
 
-    syncDropdowns(sortElement, floatingSortElement);
-    syncDropdowns(floatingSortElement, sortElement);
-  }
+  syncDropdowns(sortElement, floatingSortElement);
+  syncDropdowns(floatingSortElement, sortElement);
+}
 
 function initFloatingSortVisibility() {
   const onScreenSort = document.querySelector('#sort-by-onscreen');
@@ -1332,15 +1312,15 @@ function initFloatingSortVisibility() {
 
   if (!onScreenSort || !mainFloatingContainer || window.innerWidth >= 1280) return;
 
-    const sortElementOffsetTop = onScreenSort.offsetTop;
-    const sortElementHeight = onScreenSort.offsetHeight;
+  const sortElementOffsetTop = onScreenSort.offsetTop;
+  const sortElementHeight = onScreenSort.offsetHeight;
 
-    window.addEventListener('scroll', () => {
-      const scrollPosition = window.scrollY;
+  window.addEventListener('scroll', () => {
+    const scrollPosition = window.scrollY;
     const shouldBeVisible = scrollPosition >= sortElementOffsetTop + sortElementHeight;
     mainFloatingContainer.classList.toggle('hidden', !shouldBeVisible);
-    });
-  }
+  });
+}
 
 function initFilterDialog() {
   const filterTrigger = document.querySelectorAll(
@@ -1356,24 +1336,24 @@ function initFilterDialog() {
 
   if (!filterTrigger.length) return;
 
-    const dialog = new A11yDialog(filterDialog);
+  const dialog = new A11yDialog(filterDialog);
 
-    filterTrigger.forEach((trigger) => {
-      trigger.addEventListener('click', () => {
-        filterDialog.classList.add('dialog-container');
-        dialog.show();
-      });
+  filterTrigger.forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      filterDialog.classList.add('dialog-container');
+      dialog.show();
     });
+  });
 
-    window.addEventListener('resize', () => {
+  window.addEventListener('resize', () => {
     if (matchMedia('(min-width: 1280px)').matches) {
-        filterDialog.classList.remove('dialog-container');
-        filterDialog.removeAttribute('aria-hidden');
-        filterDialog.removeAttribute('aria-modal');
-        filterDialog.removeAttribute('role');
-      }
-    });
-  }
+      filterDialog.classList.remove('dialog-container');
+      filterDialog.removeAttribute('aria-hidden');
+      filterDialog.removeAttribute('aria-modal');
+      filterDialog.removeAttribute('role');
+    }
+  });
+}
 
 /* -------------------------------
  * Initialize modules on DOMContentLoaded
