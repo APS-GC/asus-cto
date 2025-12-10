@@ -122,7 +122,7 @@ export default async function decorate(block) {
   await import('./uifrontend_advantage-card.js');
  
   // Add tracking for Watch Now button using event delegation
-  const advantageWrapper = block.querySelector('.our-advantages-wrapper');
+  const advantageWrapper = block.closest('.our-advantages-wrapper');
   if (advantageWrapper) {
     advantageWrapper.addEventListener('click', (event) => {
       const watchNowBtn = event.target.closest('.cmp-advantage-card__btn');
