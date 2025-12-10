@@ -966,7 +966,7 @@ class PerfectMatchProduct {
     return {
       'value': value.replace(/[<>"]/g, ''),
       '_apply': 'AT_LEAST_ONCE'
-    }
+    };
   };
 
 
