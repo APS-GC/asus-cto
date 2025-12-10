@@ -388,7 +388,7 @@ class SimilarProductsManager {
       const url = new URL(endpoint);
       const pageParams = new URLSearchParams(window.location.search);
 
-      url.searchParams.set('websiteCode', window.location.href.includes('/us/') ? 'us' : 'en');
+      url.searchParams.set('websiteCode', window.location.href.includes('/en/') ? 'us' : 'en');
       url.searchParams.set('gameIds', pageParams.getAll('games').map(this.sanitizeQueryValue).join(','));
       url.searchParams.set('lowPrice', pageParams.get('min-budget') || '');
       url.searchParams.set('highPrice', pageParams.get('max-budget') || '');
@@ -850,7 +850,7 @@ class PerfectMatchProduct {
     const selectedGames = params.getAll('games').map(this.formatGameFilter);
     const minBudget = params.get('min-budget') || 500;
     const maxBudget = params.get('max-budget') || 5000;
-    const path = window.location.href.includes('/us/') ? '/content/dam/asuscto/us' : '/content/dam/asuscto/en';
+    const path = window.location.href.includes('/en/') ? '/content/dam/asuscto/us' : '/content/dam/asuscto/en';
 
     return {
       'query': '',
