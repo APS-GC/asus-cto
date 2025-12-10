@@ -494,12 +494,35 @@ class SimilarProductsManager {
     }, 250);
   }
 
-  initializeCarousel() {
-    // Prevent re-initialization if an instance already exists
-    if (this.swiperInstance) {
-      return;
-    }
+  renderCarousel() {
+    // Clear container and render products as carousel items
+    this.container.innerHTML = '';
 
+    this.perfectMatchProducts.forEach((product) => {
+      try {
+        // Create carousel item wrapper
+        const carouselItem = document.createElement('div');
+        carouselItem.className = 'cmp-carousel__item';
+        carouselItem.style.width = '280px';
+
+        // Use global product card renderer (same as homepage)
+        const cardHtml = window.renderProductCard(product, this.productType);
+        carouselItem.innerHTML = cardHtml;
+
+        // Add badge styling after rendering
+        this.addBadgeToCard(carouselItem, product.matchType);
+
+        this.container.appendChild(carouselItem);
+      } catch (error) {
+        console.error('Error rendering product card:', error, product);
+      }
+    });
+
+    // Initialize carousel after products are loaded
+    this.initializeCarousel();
+  }
+
+  initializeCarousel() {
     // Find the carousel container
     const carouselContainer = this.productGrid.closest('.carousel');
 
@@ -541,6 +564,7 @@ function renderProductCard(product, productType) {
     name = '',
     model = '',
     isAvailable = false,
+    isCustomizable = false,
     customizeLink = '#',
     buyLink = '#',
     image = './clientlib-site/images/product-placeholder.webp',
@@ -586,6 +610,33 @@ function renderProductCard(product, productType) {
     `,
     )
     .join('');
+
+  /**
+   * Generate HTML for the product actions.
+   * The logic is as follows: (This is the mock logic. It needs to be changed based on the actual data)
+   * - If the product is available and can be customized, show a "Customize" button.
+   * - If the product is available and can not be customized, show a "Buy now" button.
+   * - If the product is not available, show a "Notify me" button.
+   */
+
+  // Update global products array
+  if (!window.allProducts) {
+    window.allProducts = new Map();
+  }
+
+  if ([
+    'hot',
+    'related',
+    'new',
+    'plp',
+    'perfect-match',
+    'similar-products',
+  ].includes(productType)) {
+    if (!window.allProducts.has(productType)) {
+      window.allProducts.set(productType, new Map());
+    }
+    window.allProducts.get(productType).set(product.id, product);
+  }
 
   // Return the complete HTML structure for the product card using a template literal.
   return `
@@ -677,143 +728,78 @@ function renderProductCard(product, productType) {
             </div>
           </div>
           <div class="cmp-product-card__footer">
-            <!-- product actions will be appended here -->
+            ${prepareProductAction(name, isAvailable, isCustomizable, buyLink, customizeLink)}
           </div>
         </div>
       `;
 }
 
-/**
- * Generates the appropriate action button HTML based on product availability and customization options.
- * This version creates DOM elements programmatically to prevent XSS vulnerabilities.
- * @param {object} product - The product data object.
- * @returns {HTMLAnchorElement|HTMLButtonElement} The action button element.
- */
-function prepareProductAction(product) {
-  const { name, isAvailable, isCustomizable, buyLink, customizeLink } = product;
+function prepareProductAction(productName, isAvailable, isCustomizable, buyLink, customizeLink) {
+  var productActionsHtml = '';
 
-  const createButton = (tag, text, href, ariaLabel) => {
-    const btn = document.createElement(tag);
-    btn.className = 'btn';
-    btn.textContent = text;
-    btn.setAttribute('aria-label', ariaLabel);
-    if (tag === 'a' && href) {
-      btn.href = href;
-    }
-    return btn;
-  };
-
-  const actions = [
-    {
-      condition: isAvailable && isCustomizable,
-      create: () => createButton('a', `${AuthoredData[15]}`, `${customizeLink}#product-customization`, `${AuthoredData[15]} ${name}`),
-    },
-    {
-      condition: isAvailable,
-      create: () => createButton('a', `${AuthoredData[14]}`, buyLink, `${AuthoredData[14]} ${name}`),
-    },
-    {
-      condition: true, // Default fallback
-      create: () => createButton('button', 'Notify me', null, `Notify me about ${name}`),
-    },
-  ];
-
-  // Find the first action whose condition is met and create the button.
-  return actions.find(action => action.condition).create();
-}
-
-/**
- * Updates the renderProductCard function to append the button element.
- * @param {string} cardHtml - The HTML string of the card.
- * @param {object} product - The product data object.
- * @returns {HTMLElement} The complete card element.
- */
-function appendProductAction(cardHtml, product) {
-  const cardElement = document.createElement('div');
-  cardElement.innerHTML = cardHtml;
-  const footer = cardElement.querySelector('.cmp-product-card__footer');
-  if (footer) {
-    footer.appendChild(prepareProductAction(product));
-  }
-  return cardElement.firstElementChild;
-}
-
-/**
- * Fetches product data from the appropriate endpoint.
- * @param {string} productType - The type of products to fetch (e.g., 'hot', 'related').
- * @returns {Promise<Array>} A promise that resolves to an array of products.
- */
-async function fetchProductData(productType) {
-  const endpointMap = {
-    hot: API_URIS.HOT_PRODUCTS,
-    related: API_URIS.RELATED_PRODUCTS,
-    new: API_URIS.NEW_PRODUCTS,
-  };
-
-  const endpointKey = endpointMap[productType];
-  if (!endpointKey) {
-    console.warn(`Unknown product type: ${productType}`);
-    return [];
+  if (isAvailable && !isCustomizable) {
+    productActionsHtml = `<a class="btn" href="${buyLink}" aria-label="Buy now ${productName}">Buy now</a>`;
   }
 
-  const endpoint = await getApiEndpoint(endpointKey);
-  return fetchGameList(endpoint, 'GET', {});
-}
+  if (isAvailable && isCustomizable) {
+    productActionsHtml = `<a class="btn" href="${customizeLink}#product-customization"  aria-label="Customize ${productName}">Customize</a>`;
+  }
 
-/**
- * Creates a carousel item element for a given product.
- * @param {object} product - The product data.
- * @param {string} productType - The category of the product.
- * @returns {HTMLElement} The carousel item element.
- */
-function createCarouselItem(product, productType) {
-  const cardHtml = renderProductCard(product, productType);
-  const cardElement = appendProductAction(cardHtml, product);
-  const carouselItem = document.createElement('div');
-  carouselItem.className = 'cmp-carousel__item';
-  carouselItem.appendChild(cardElement);
-  return carouselItem;
-}
+  if (!isAvailable) {
+    productActionsHtml = `<button class="btn"  aria-label="Notify me about ${productName}">Notify me</button>`;
+  }
 
-/**
- * Renders products into a carousel.
- * @param {HTMLElement} contentContainer - The container to render products into.
- * @param {Array} products - The array of product objects.
- * @param {string} productType - The category of the products.
- */
-function renderProductCarousel(contentContainer, products, productType) {
-  contentContainer.innerHTML = ''; // Clear existing content
-  products.forEach(product => {
-    const carouselItem = createCarouselItem(product, productType);
-    contentContainer.appendChild(carouselItem);
-  });
+  return productActionsHtml;
 }
-
 /**
  * Asynchronously fetches product data based on the component's configuration,
  * renders each product into a card, and appends them to the designated container.
  * @param {HTMLElement} carouselElement - The carousel container element.
  */
 async function loadProducts(carouselElement) {
+  const productType = carouselElement.dataset.productType;
   const contentContainer = carouselElement.querySelector('.cmp-carousel__content');
-  const actionsContainer = carouselElement.parentElement.querySelector('.section-actions-container');
+  const actionsContainer = carouselElement.parentElement.querySelector(
+    '.section-actions-container',
+  );
 
-  if (!contentContainer || !actionsContainer) {
-    console.error('Carousel is not configured correctly. Missing content or actions container.');
+  if (!productType || !contentContainer) {
+    console.error(
+      'Carousel is not configured correctly. Missing data-product-type or content container.',
+    );
     return;
   }
 
-  const { productType } = carouselElement.dataset;
+  let endpoint = '';
+  switch (productType) {
+    case 'hot':
+      endpoint = AppConfig.apiEndPoint.hotProducts;
+      break;
+    case 'related':
+      endpoint = AppConfig.apiEndPoint.relatedProducts;
+      break;
+    case 'new':
+      endpoint = AppConfig.apiEndPoint.newProducts;
+      break;
+    default:
+      console.warn(`Unknown product type: ${productType}`);
+      return;
+  }
 
   try {
     actionsContainer?.classList.add('is-loading');
-    const products = await fetchProductData(productType);
+    const products = await fetchData(endpoint);
 
-    if (Array.isArray(products) && products.length > 0) {
-      renderProductCarousel(contentContainer, products, productType);
-      if (window.initializeSwiperOnAEMCarousel) {
-        window.initializeSwiperOnAEMCarousel(carouselElement.closest('.carousel'));
-      }
+    products.forEach((product) => {
+      const cardHtml = renderProductCard(product, productType);
+      const carouselItem = document.createElement('div');
+      carouselItem.className = 'cmp-carousel__item';
+      carouselItem.innerHTML = cardHtml;
+      contentContainer.appendChild(carouselItem);
+    });
+
+    if (window.initializeSwiperOnAEMCarousel) {
+      window.initializeSwiperOnAEMCarousel(carouselElement.closest('.carousel'));
     }
   } catch (error) {
     console.error(`Failed to load ${productType} products:`, error);
@@ -840,11 +826,18 @@ class PerfectMatchProduct {
     this.container = null;
     this.swiperInstance = null;
     this.mobileBreakpoint = 700; // Mobile breakpoint in pixels
-    this.productType = 'perfect-match'; // Used for global product tracking
-    this.resizeTimeout = null;
-    this.apiCategories = ['bestFit', 'customerChoice', 'goodDeal'];
+    this.productType = 'perfect-match';
+    this.response = [];
+    this.path = "";
+    this.lang = "";
   }
 
+   formatGameFilter(value) {
+    return {
+      'value': String(value).replace(/[<>"]/g, ''), // Basic sanitization
+      '_apply': 'AT_LEAST_ONCE'
+    };
+  };
   _buildApiPayload() {
     const params = new URLSearchParams(window.location.search);
     const selectedGames = params.getAll('games').map(this.formatGameFilter);
@@ -877,6 +870,25 @@ class PerfectMatchProduct {
       '.section-actions-container',
     );
 
+    const params = new URLSearchParams(window.location.search);
+    const selectedGames = params.getAll('games').map(this.sanitizeText);
+    const minBudget = params.get('min-budget'); // '2100'
+    const maxBudget = params.get('max-budget'); // '4300'
+    this.path = window.location.href.includes('/us/') ? "/content/dam/asuscto/us" : "/content/dam/asuscto/en";
+
+    this.dom = {
+      "query": "",
+      "variables": {
+        "path": this.path,
+        "gameIdsFilter": {
+          "_logOp": "AND",
+          "_expressions": selectedGames || [],
+        },
+        "lowerPrice": minBudget || 500,
+        "highPrice": maxBudget || 5000,
+        "sort": "price DESC"
+      }
+    }
     const apiPayload = this._buildApiPayload();
     await this.loadPerfectMatchProducts(apiPayload);
 
@@ -884,36 +896,106 @@ class PerfectMatchProduct {
     window.addEventListener('resize', () => this.handleResize());
   }
 
-  async transformAll(input) {
-    const result = [];
-     try {
-      for (const category of this.apiCategories) {
-        const group = input?.data?.[category];
-        if (group && Array.isArray(group.items)) {
-          group.items.forEach(item => {
-            result.push(transformProductData(item, category));
-          });
+
+  transformItem(item, matchType) {
+    return {
+
+      id: item.sku.toLowerCase().replace(/[^a-z0-9]/g, "-"),  // example slugify
+      bazaarvoiceProductId: item.externalId || null,            // example mapping
+      name: item.name,
+      model: item.modelName,
+      matchType: {
+        id: matchType === "bestFit" ? "best-fit" :
+          matchType === "customerChoice" ? "customer-choice" :
+            matchType === "goodDeal" ? "good-deal" : matchType,
+
+        label: matchType === "bestFit" ? "Best Fit" :
+          matchType === "customerChoice" ? "Customer Choice" :
+            matchType === "goodDeal" ? "Good Deal" : matchType
+      },
+      status: [
+        // infer from productTags or buyButtonStatus
+        ...(item?.productCardContent?.productTags || item?.productTags || []),
+        item.buyButtonStatus === "In Stock" ? "In Stock" : null
+      ].filter(Boolean),
+      isAvailable: item.buyButtonStatus !== "Notify Me",
+      isCustomizable: true,            // set as per your logic
+      buyLink: "./pdp.html",           // you may build from item.productCardContent.urlKey
+      customizeLink: "./pdp.html",
+      image: item?.mainImage || item.productCardContent?.mainImage || null,
+      imageHover: item?.hoverImage || item?.productCardContent?.hoverImage || null,
+      images: (item?.productPreviewPopupCF && item?.productPreviewPopupCF?.additionalImages)
+        ? item?.productPreviewPopupCF?.additionalImages?.map(url => ({
+          image: url,
+          thumbnail: url,
+          title: item.name + " image"
+        }))
+        : [],
+      fps: (() => {
+        const gp = item.gamePriority && item.gamePriority[0];
+        return gp ? parseInt(gp.fullHdFps, 10) : null;
+      })(),
+      benchmarkGame: (item.gamePriority && item.gamePriority[0]?.gameTitle) || null,
+      fpsData: item.gamePriority
+        ? item.gamePriority.map(g => ({
+          game: g.gameTitle,
+          fps1080: parseInt(g.fullHdFps, 10),
+          fps1440: parseInt(g.quadHdFps, 10),
+          image: item?.productCardContent?.mainImage || null
+        }))
+        : [],
+      timeSpyScore: {
+        score: item.timeSpyOverallScore || item.productCardContent.timeSpyOverallScore || null,
+        level: 4,
+        source: {
+          image: item?.productCardContent?.mainImage || null,
+          name: "3DMark",
+          tooltip: "FPS data is theoretical and may vary."
         }
+      },
+      specs: item.keySpec ? item.keySpec.map(spec => spec.name) : [],
+      // Optional/custom fields — adapt as needed
+      features: [],  // you may compute based on spec or other logic
+      price: item.specialPrice || item.price,
+      originalPrice: item.price,
+      discount: item.savedPrice || null,
+      estorePriceTooltipText: "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only.",
+      purchaseLimit: null,
+      shippingInfo: null,
+      installment: null
+    };
+  }
+
+  async transformAll(input) {
+
+    const result = [];
+    const categories = ["bestFit", "customerChoice", "goodDeal"];
+    for (const cat of categories) {
+      const group = input.data[cat];
+      if (group && Array.isArray(group.items)) {
+        group.items.forEach(item => {
+          result.push(this.transformItem(item, cat));
+        });
       }
-    } catch (error) {
-      console.error('Error transforming API response:', error);
-      // Depending on requirements, you might want to re-throw or handle differently
     }
     return result;
   }
 
-  formatGameFilter(value) {
+  sanitizeText(value) {
+    // Remove any characters that could be dangerous in HTML context
     return {
-      'value': String(value).replace(/[<>"]/g, ''), // Basic sanitization
-      '_apply': 'AT_LEAST_ONCE'
-    };
+      "value": value.replace(/[<>"]/g, ''),
+      "_apply": "AT_LEAST_ONCE"
+    }
   };
+
 
   async loadPerfectMatchProducts(filters = {}) {
     this.container.innerHTML = '';
     this.actionsContainer.classList.add('is-loading');
 
     try {
+
       const endpoint = await getApiEndpoint(API_URIS.HELP_ME_CHOOSE_RESULT);
       const response = await fetchGameList(endpoint, 'POST', filters);
       this.perfectMatchProducts = await this.transformAll(response || {});
@@ -924,7 +1006,7 @@ class PerfectMatchProduct {
     } finally {
       this.actionsContainer.classList.remove('is-loading');
     }
-    
+
     if (!this.perfectMatchProducts.length) {
       this.renderNoMatchProducts();
       return;
@@ -956,14 +1038,18 @@ class PerfectMatchProduct {
   }
 
   renderProducts() {
+    if (!this.perfectMatchProducts.length) {
+      return;
+    }
+
     // Show the section heading when products are found
     if (this.sectionHeading) {
       this.sectionHeading.style.display = '';
     }
 
+    // Check if mobile view
     const isMobile = window.innerWidth < this.mobileBreakpoint;
 
-    // Decide which view to render based on screen size
     if (isMobile) {
       this.renderMobileGrid();
     } else {
@@ -971,8 +1057,11 @@ class PerfectMatchProduct {
     }
   }
 
-  _renderProductItems(containerClass, itemClass) {
+  renderMobileGrid() {
+    // Clear container and render products as grid on mobile
     this.container.innerHTML = '';
+
+    // Create grid container
     const gridContainer = document.createElement('div');
     gridContainer.className = 'perfect-match-mobile-grid';
 
@@ -980,7 +1069,7 @@ class PerfectMatchProduct {
       try {
         // Create grid item wrapper
         const gridItem = document.createElement('div');
-        gridItem.className = itemClass;
+        gridItem.className = 'perfect-match-mobile-grid__item cmp-perfect-match-product__item';
 
         // Use global product card renderer
         const cardHtml = window.renderProductCard(product, this.productType);
@@ -996,15 +1085,35 @@ class PerfectMatchProduct {
     });
 
     this.container.appendChild(gridContainer);
-    return gridContainer;
-  }
-
-  renderMobileGrid() {
-    this._renderProductItems('perfect-match-mobile-grid', 'perfect-match-mobile-grid__item cmp-perfect-match-product__item');
   }
 
   renderCarousel() {
-    this._renderProductItems('swiper-wrapper', 'cmp-carousel__item cmp-perfect-match-product__item');
+    // Clear container and render products as carousel items
+    this.container.innerHTML = '';
+
+    this.perfectMatchProducts.forEach((product) => {
+      try {
+        // Create carousel item wrapper
+        const carouselItem = document.createElement('div');
+        carouselItem.className = 'cmp-carousel__item cmp-perfect-match-product__item';
+
+        // Use global product card renderer (same as homepage)
+        const cardHtml = window.renderProductCard(product, this.productType);
+        carouselItem.innerHTML = cardHtml;
+
+        // Add badge styling after rendering
+        this.addBadgeToCard(carouselItem, product.matchType);
+
+        this.container.appendChild(carouselItem);
+
+      } catch (error) {
+        console.error('Error rendering product card:', error, product);
+      }
+
+
+    });
+
+    // Initialize carousel after products are loaded
     this.initializeCarousel();
   }
 
@@ -1093,12 +1202,14 @@ export class SortDropdownManager {
     if (!this.selectElement) return;
 
     this.choicesInstance = new Choices(this.selectElement, {
-        searchEnabled: false,
-        itemSelectText: '',
-        shouldSort: false,
-        allowHTML: false,
-        removeItemButton: false,
-        duplicateItemsAllowed: false,
+      searchEnabled: false,
+      itemSelectText: '',
+      shouldSort: false,
+      allowHTML: false,
+      removeItemButton: false,
+      duplicateItemsAllowed: false,
+      addItemFilter: null,
+      customProperties: {},
     });
 
     this.selectElement._choicesInstance = this.choicesInstance;
@@ -1106,8 +1217,8 @@ export class SortDropdownManager {
     // Wait for Choices.js to finish its initial DOM manipulation
     setTimeout(() => {
       this.setupAccessibility();
+      this.setupEventListeners();
     }, 100);
-    this.setupEventListeners();
   }
 
   setupAccessibility() {
@@ -1192,28 +1303,28 @@ function initSortDropdowns() {
   if (!sortElement || !floatingSortElement) return;
 
   const floatingSortManager = new SortDropdownManager(floatingSortElement);
-  floatingSortManager.init();
+    floatingSortManager.init();
   const sortManager = new SortDropdownManager(sortElement);
-  sortManager.init();
+    sortManager.init();
 
-  const syncDropdowns = (source, target) => {
-    source.addEventListener('change', (e) => {
-      const newValue = e.detail?.value || source.value;
-      const targetChoices = target.choicesInstance || target._choicesInstance;
-      if (target.value === newValue) return;
+    const syncDropdowns = (source, target) => {
+      source.addEventListener('change', (e) => {
+        const newValue = e.detail?.value || source.value;
+        const targetChoices = target.choicesInstance || target._choicesInstance;
+        if (target.value === newValue) return;
 
-      if (targetChoices && typeof targetChoices.setChoiceByValue === 'function') {
-        targetChoices.setChoiceByValue(newValue);
-      } else {
-        target.value = newValue;
-        target.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    });
-  };
+        if (targetChoices && typeof targetChoices.setChoiceByValue === 'function') {
+          targetChoices.setChoiceByValue(newValue);
+        } else {
+          target.value = newValue;
+          target.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+    };
 
-  syncDropdowns(sortElement, floatingSortElement);
-  syncDropdowns(floatingSortElement, sortElement);
-}
+    syncDropdowns(sortElement, floatingSortElement);
+    syncDropdowns(floatingSortElement, sortElement);
+  }
 
 function initFloatingSortVisibility() {
   const onScreenSort = document.querySelector('#sort-by-onscreen');
@@ -1221,15 +1332,15 @@ function initFloatingSortVisibility() {
 
   if (!onScreenSort || !mainFloatingContainer || window.innerWidth >= 1280) return;
 
-  const sortElementOffsetTop = onScreenSort.offsetTop;
-  const sortElementHeight = onScreenSort.offsetHeight;
+    const sortElementOffsetTop = onScreenSort.offsetTop;
+    const sortElementHeight = onScreenSort.offsetHeight;
 
-  window.addEventListener('scroll', () => {
-    const scrollPosition = window.scrollY;
+    window.addEventListener('scroll', () => {
+      const scrollPosition = window.scrollY;
     const shouldBeVisible = scrollPosition >= sortElementOffsetTop + sortElementHeight;
     mainFloatingContainer.classList.toggle('hidden', !shouldBeVisible);
-  });
-}
+    });
+  }
 
 function initFilterDialog() {
   const filterTrigger = document.querySelectorAll(
@@ -1245,24 +1356,24 @@ function initFilterDialog() {
 
   if (!filterTrigger.length) return;
 
-  const dialog = new A11yDialog(filterDialog);
+    const dialog = new A11yDialog(filterDialog);
 
-  filterTrigger.forEach((trigger) => {
-    trigger.addEventListener('click', () => {
-      filterDialog.classList.add('dialog-container');
-      dialog.show();
+    filterTrigger.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        filterDialog.classList.add('dialog-container');
+        dialog.show();
+      });
     });
-  });
 
-  window.addEventListener('resize', () => {
+    window.addEventListener('resize', () => {
     if (matchMedia('(min-width: 1280px)').matches) {
-      filterDialog.classList.remove('dialog-container');
-      filterDialog.removeAttribute('aria-hidden');
-      filterDialog.removeAttribute('aria-modal');
-      filterDialog.removeAttribute('role');
-    }
-  });
-}
+        filterDialog.classList.remove('dialog-container');
+        filterDialog.removeAttribute('aria-hidden');
+        filterDialog.removeAttribute('aria-modal');
+        filterDialog.removeAttribute('role');
+      }
+    });
+  }
 
 /* -------------------------------
  * Initialize modules on DOMContentLoaded
