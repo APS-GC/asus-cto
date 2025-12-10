@@ -278,8 +278,8 @@ function transformProductData(item, matchType) {
     ].filter(Boolean),
     isAvailable: buyButtonStatus !== 'Notify Me',
     isCustomizable: true, // as per target example
-    buyLink: './pdp.html', // placeholder
-    customizeLink: './pdp.html', // placeholder
+    buyLink: item.productCardContent?.urlKey || null,           // you may build from item.productCardContent.urlKey
+    customizeLink: item.productCardContent?.urlKey || null,
     image: mainImage || productCardContent?.mainImage || null,
     imageHover: hoverImage || productCardContent?.hoverImage || null,
     images: productPreviewPopupCF?.additionalImages?.map((url) => ({
@@ -914,14 +914,13 @@ class PerfectMatchProduct {
             matchType === "goodDeal" ? "Good Deal" : matchType
       },
       status: [
-        // infer from productTags or buyButtonStatus
+        item?.buyButtonStatus === 'Buy Now' ? 'In Stock' : null,
         ...(item?.productCardContent?.productTags || item?.productTags || []),
-        item.buyButtonStatus === "In Stock" ? "In Stock" : null
       ].filter(Boolean),
-      isAvailable: item.buyButtonStatus !== "Notify Me",
+      isAvailable: item?.buyButtonStatus !== 'Notify Me',
       isCustomizable: true,            // set as per your logic
-      buyLink: "./pdp.html",           // you may build from item.productCardContent.urlKey
-      customizeLink: "./pdp.html",
+      buyLink: item.productCardContent?.urlKey || null,           // you may build from item.productCardContent.urlKey
+      customizeLink: item.productCardContent?.urlKey || null,
       image: item?.mainImage || item.productCardContent?.mainImage || null,
       imageHover: item?.hoverImage || item?.productCardContent?.hoverImage || null,
       images: (item?.productPreviewPopupCF && item?.productPreviewPopupCF?.additionalImages)

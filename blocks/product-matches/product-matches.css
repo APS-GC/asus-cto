@@ -615,7 +615,7 @@
     -ms-flex-direction: column;
     flex-direction: column;
     gap: 2rem;
-    overflow: auto;
+    /* overflow: auto; */
     scrollbar-width: none;
 }
 
@@ -1075,5 +1075,8 @@
     justify-content: center;
 }
 
-
+.carousel.panelcontainer {
+    overflow-x: scroll;
+    scrollbar-width: none;
+}
 /* stylelint-enable media-feature-range-notation, length-zero-no-unit, declaration-property-value-no-unknown, value-no-vendor-prefix, property-no-vendor-prefix, selector-attribute-quotes, selector-pseudo-element-colon-notation, no-duplicate-selectors, declaration-empty-line-before, declaration-block-no-duplicate-properties */
