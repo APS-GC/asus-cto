@@ -289,16 +289,6 @@ const toggleSliderVideo = (videoPlayPauseBtn, swiperInstance) => {
 async function initializeSwiper(heroBannerElement, config, blockPosition) {
   const isUE = isUniversalEditor();
 
-  // Force apply UE authoring class and attributes for CSS targeting
-  if (isUE) {
-    const heroBanner = heroBannerElement.querySelector('.cmp-hero-banner');
-    if (heroBanner) {
-      heroBanner.classList.add('ue-authoring');
-      heroBanner.setAttribute('data-authoring', 'true');
-      document.body.setAttribute('data-aue-behavior', 'true');
-    }
-  }
-
   // Load Swiper dynamically
   const setupSwiper = async () => {
     try {
