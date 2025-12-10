@@ -3,6 +3,8 @@ import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
 
+const PRODUCT_LISTING_PAGE_URL = 'product-listing.html';
+
 
 export default async function decorate(block) {
   await Promise.all([
@@ -15,69 +17,63 @@ export default async function decorate(block) {
   await renderProductCompare(block);
   await loadProducts(true)
 
-  const mainContainer = document.querySelector('.product-comparison-card__container');
-  const floatingContainer = document.querySelector(
-    '.product-comparison-floating-card__container-wrapper',
-  );
-  const scrollable = document.querySelector('.scrollable-component');
-  const floating = document.querySelector('.product-comparison-floating-card__container');
-
-  const backButton = document.querySelector('#comparison-page-back-button');
-  if (backButton) {
-    backButton.addEventListener('click', () => {
-      window.location.href = 'product-listing.html';
-    });
-  }
-
-  if (mainContainer && floatingContainer && scrollable && floating) {
-    const toggleFloating = () => {
-      const mainBottom = mainContainer.offsetTop + mainContainer.offsetHeight;
-      const footer = document.querySelector('footer');
-      if (window.scrollY >= mainBottom && window.scrollY < footer.offsetTop - 250) {
-        floatingContainer.classList.add('sticky');
-        // Sync scroll position when floating cards become visible
-        floating.scrollLeft = scrollable.scrollLeft;
-      } else {
-        floatingContainer.classList.remove('sticky');
-      }
-    };
-
-    toggleFloating(); // run once on load
-    window.addEventListener('scroll', toggleFloating);
-  }
-
-  if (scrollable && floating) {
-    let isSyncingScrollable = false;
-    let isSyncingFloating = false;
-
-    scrollable.addEventListener('scroll', () => {
-      if (isSyncingScrollable) {
-        isSyncingScrollable = false;
-        return;
-      }
-      isSyncingFloating = true;
-      floating.scrollLeft = scrollable.scrollLeft;
-      window.requestAnimationFrame(() => {
-        isSyncingFloating = false;
-      });
-    });
-
-    floating.addEventListener('scroll', () => {
-      if (isSyncingFloating) {
-        isSyncingFloating = false;
-        return;
-      }
-      isSyncingScrollable = true;
-      scrollable.scrollLeft = floating.scrollLeft;
-      window.requestAnimationFrame(() => {
-        isSyncingScrollable = false;
-      });
-    });
-  }
+  setupBackButton();
+  setupStickyHeader();
+  syncScroll();
 
   initSwitch(block);
 }
 
+function setupBackButton() {
+  const backButton = document.querySelector('#comparison-page-back-button');
+  if (backButton) {
+    backButton.addEventListener('click', () => {
+      window.location.href = PRODUCT_LISTING_PAGE_URL;
+    });
+  }
+}
+
+function setupStickyHeader() {
+  const mainContainer = document.querySelector('.product-comparison-card__container');
+  const floatingContainer = document.querySelector('.product-comparison-floating-card__container-wrapper');
+  const scrollable = document.querySelector('.scrollable-component');
+  const floating = document.querySelector('.product-comparison-floating-card__container');
+  const footer = document.querySelector('footer');
+
+  if (!mainContainer || !floatingContainer || !scrollable || !floating || !footer) return;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      const isSticky = entry.boundingClientRect.bottom < 0 && footer.getBoundingClientRect().top > 250;
+      floatingContainer.classList.toggle('sticky', isSticky);
+      if (isSticky) {
+        floating.scrollLeft = scrollable.scrollLeft;
+      }
+    },
+    { threshold: [0, 1] }
+  );
+
+  observer.observe(mainContainer);
+}
+
+function syncScroll() {
+  const scrollable = document.querySelector('.scrollable-component');
+  const floating = document.querySelector('.product-comparison-floating-card__container');
+
+  if (!scrollable || !floating) return;
+
+  let isSyncing = false;
+
+  const sync = (source, target) => () => {
+    if (isSyncing) return;
+    isSyncing = true;
+    target.scrollLeft = source.scrollLeft;
+    requestAnimationFrame(() => { isSyncing = false; });
+  };
+
+  scrollable.addEventListener('scroll', sync(scrollable, floating));
+  floating.addEventListener('scroll', sync(floating, scrollable));
+}
 
 // Helper to load noUiSlider only once
 let noUiSliderPromise = null;
@@ -234,47 +230,62 @@ function getStoredProducts() {
     };
   }
 
+function _transformSpec(spec) {
+  const value = spec.descriptionText.includes('<br>')
+    ? spec.descriptionText.split('<br>').map((s) => s.trim())
+    : spec.descriptionText;
+
+  return {
+    key: spec.displayField.toLowerCase().replace(/\s+/g, '-'),
+    label: spec.displayField,
+    value,
+  };
+}
+
+function _transformProduct(product) {
+  const specs = product.spec_Content.map(_transformSpec);
+
+  return {
+    id: product.partNo,
+    bazaarvoiceProductId: `ASUS_M1_${product.m1Id}_P`,
+    name: product.mktName.trim(),
+    model: product.skuName,
+    isBuyable: true, // Assuming default, not in new API response
+    isCustomizable: true, // Assuming default, not in new API response
+    buyLink: product.skuUrl,
+    customizeLink: product.skuUrl,
+    image: product.skuImg,
+    specs,
+  };
+}
+
 async function fetchProducts() {
   try {
-
-    
     const endpoint = await getApiEndpoint(API_URIS.PRODUCT_COMPARISON_PAGE);
-
     const response = await fetchGameList(endpoint, 'POST', _buildApiPayload(), 'formData');
 
-    if (response && response.result && response.result[0] && response.result[0].skus) {      
-      return response.result[0].skus.map((product) => {
-        const specs = product.spec_Content.map((spec) => {
-          const value = spec.descriptionText.includes('<br>')
-            ? spec.descriptionText.split('<br>').map((s) => s.trim())
-            : spec.descriptionText;
-
-          return {
-            key: spec.displayField.toLowerCase().replace(/\s+/g, '-'),
-            label: spec.displayField,
-            value,
-          };
-        });
-
-        return {
-          id: product.partNo,
-          bazaarvoiceProductId: `ASUS_M1_${product.m1Id}_P`,
-          name: product.mktName.trim(),
-          model: product.skuName,
-          isBuyable: true, // Assuming default, not in new API response
-          isCustomizable: true, // Assuming default, not in new API response
-          buyLink: product.skuUrl,
-          customizeLink: product.skuUrl,
-          image: product.skuImg,
-          specs,
-        };
-      });
+    if (response?.result?.[0]?.skus) {
+      return response.result[0].skus.map(_transformProduct);
     }
     return [];
   } catch (err) {
     console.error('Error loading products:', err);
     return [];
   }
+}
+
+function renderProductCardButton(product) {
+  const {
+    isBuyable, isCustomizable, name, buyLink, customizeLink,
+  } = product;
+
+  if (isBuyable && isCustomizable) {
+    return `<a href='${customizeLink}#product-customization' class="btn btn-sm" aria-label="Customize ${name}">Customize</a>`;
+  }
+  if (isBuyable && !isCustomizable) {
+    return `<a href='${buyLink}' class="btn btn-sm" aria-label="Buy ${name} now">Buy Now</a>`;
+  }
+  return `<button class="btn btn-sm" aria-label="Notify me ${name}">Notify Me</button>`;
 }
 
 function renderComparisonProductCard(product) {
@@ -287,20 +298,7 @@ function renderComparisonProductCard(product) {
     price,
     originalPrice,
     discount,
-    isCustomizable,
-    isBuyable,
-    customizeLink,
-    buyLink,
   } = product;
-
-  let button = '';
-  if (isBuyable && isCustomizable) {
-    button = `<a href='${customizeLink}#product-customization' class="btn btn-sm" aria-label="Customize ${name}">Customize</a>`;
-  } else if (isBuyable && !isCustomizable) {
-    button = `<a href='${buyLink}' class="btn btn-sm" aria-label="Buy ${name} now">Buy Now</a>`;
-  } else {
-    button = `<button class="btn btn-sm" aria-label="Notify me ${name}">Notify Me</button>`;
-  }
 
   return `
     <div class="comparison-product-card comparison-product-card-item" data-id="${id}" role="group"">
@@ -330,30 +328,31 @@ function renderComparisonProductCard(product) {
           </div>
         </div>
       </div>
-      ${button}
+      ${renderProductCardButton(product)}
     </div>
   `;
 }
 
 function renderFloatingCard(product) {
-  const { id, name, bazaarvoiceProductId, image, price } = product;
+  const {
+    id, name, bazaarvoiceProductId, image, price, buyLink,
+  } = product;
+  const safeName = escapeHtml(name);
   return `
     <div class="product-comparison-floating-card comparison-product-card-item" data-id="${id}">
-    <button class="close-button-floating-card" aria-label="Remove ${name} from comparison" data-id="${id}">
+    <button class="close-button-floating-card" aria-label="Remove ${safeName} from comparison" data-id="${id}">
         <span class="icon icon--close"></span>
     </button>
         <div class="floating-card-body flex">
           <div class="img-wrapper">
-            <img src="${image}" alt="${name}" loading="lazy" fetchpriority="high" tabindex="0" aria-label="${name} product">
+            <img src="${image}" alt="${safeName}" loading="lazy" fetchpriority="high" tabindex="0" aria-label="${safeName} product">
           </div>
             <div class="floating-card-info flex">
                 <small class="floating-card__title ">
-                    <a href="pdp.html">${name}</a>
+                    <a href="${buyLink}">${safeName}</a>
                 </small>
                 <div
-                    data-bv-show="inline_rating"
-                    data-bv-product-id="${bazaarvoiceProductId}"
-                    data-bv-redirect-url="pdp.html#product-reviews"
+                    data-bv-show="inline_rating" data-bv-product-id="${bazaarvoiceProductId}" data-bv-redirect-url="${buyLink}#product-reviews"
                 ></div>
                 <small class="floating-card__price">$${price}</small>
             </div>
@@ -365,7 +364,7 @@ function renderFloatingCard(product) {
 function renderEmptyCard() {
   return `
     <div class="comparison-product-card comparison-product-card-item">
-        <a href="product-listing.html" aria-label="Add a product to compare" class="comparison-product-card__empty-container">
+        <a href="${PRODUCT_LISTING_PAGE_URL}" aria-label="Add a product to compare" class="comparison-product-card__empty-container">
             <div class="empty-container-contents">
                 <span class="icon-wrapper"><span class="icon icon--plus-white" aria-hidden="true"></span></span>
                 <p>Add to compare</p>
@@ -377,7 +376,7 @@ function renderEmptyCard() {
 
 function renderEmptyFloatingCard() {
   return `
-    <a href="product-listing.html" class="product-comparison-floating-card comparison-product-card-item">
+    <a href="${PRODUCT_LISTING_PAGE_URL}" class="product-comparison-floating-card comparison-product-card-item">
         <div class="empty-floating-card-contents flex">
           <span class="icon-wrapper"><span class="icon icon--plus-white"></span></span>
           <small>Add to compare</small>
@@ -389,63 +388,44 @@ function renderEmptyFloatingCard() {
 function renderCompetitiveAdvantage(key, products) {
   const allSpecs = products.map((p) => p.specs.find((s) => s.key === key));
 
-  const hasHighlight = allSpecs.some((spec) => spec?.highlight);
-  if (!hasHighlight) {
+  if (!allSpecs.some((spec) => spec?.highlight)) {
     return '';
   }
 
-  let advantageData = '';
-  allSpecs.forEach((spec) => {
-    if (spec?.highlight) {
-      advantageData += `
-        <div class="comparison-product-card-item">
-          <p class="highlight">${spec.highlight}</p>
-        </div>
-      `;
-    } else {
-      advantageData += `
-        <div class="comparison-product-card-item">
-          <p>-</p>
-        </div>
-      `;
-    }
-  });
+  return allSpecs
+    .map((spec) => {
+      const content = spec?.highlight
+        ? `<p class="highlight">${spec.highlight}</p>`
+        : '<p>-</p>';
+      return `<div class="comparison-product-card-item">${content}</div>`;
+    })
+    .join('');
+}
 
-  return advantageData;
+function renderSpecCell(spec) {
+  if (!spec) {
+    return '<div class="table-cell comparison-product-card-item"><span>-</span></div>';
+  }
+
+  let content;
+  let extraClasses = '';
+
+  if (spec.key === 'color') {
+    content = `<span class="color-block" style="background-color:${spec.value}"></span><span>${spec.value}</span>`;
+    extraClasses = ' flex';
+  } else if (Array.isArray(spec.value)) {
+    content = spec.value.map((v) => `<span>${escapeHtml(v)}</span>`).join('');
+  } else {
+    content = `<span>${escapeHtml(spec.value)}</span>`;
+  }
+
+  return `<div class="table-cell comparison-product-card-item${extraClasses}">${content}</div>`;
 }
 
 function renderComparisonRow(label, key, products) {
   const advantageData = renderCompetitiveAdvantage(key, products);
-  let specData = '';
   const allSpecs = products.map((p) => p.specs.find((s) => s.key === key));
-
-  allSpecs.forEach((spec) => {
-    if (!spec) {
-      specData += `
-        <div class="table-cell comparison-product-card-item">
-          <span>-</span>
-        </div>
-      `;
-    } else if (spec.key === 'color') {
-      specData += `
-        <div class="table-cell comparison-product-card-item flex">
-          <span class="color-block" style="background-color:${spec.value}"></span><span>${spec.value}</span>
-        </div>
-      `;
-    } else if (typeof spec.value !== 'string') {
-      specData += `
-        <div class="table-cell comparison-product-card-item">
-          ${spec.value.map((v) => `<span>${v}</span>`).join('')}
-        </div>
-      `;
-    } else {
-      specData += `
-        <div class="table-cell comparison-product-card-item">
-          <span>${spec.value}</span>
-        </div>
-      `;
-    }
-  });
+  const specData = allSpecs.map(renderSpecCell).join('');
 
   return `<h3 tabindex="0" class="product-comparison-row-title">${label}</h3>
     <div id="${key}" class="product-comparison-row flex">
@@ -463,64 +443,52 @@ function renderComparisonRow(label, key, products) {
 }
 
 function renderTrailingActionButtons(product) {
-  const { isBuyable, isCustomizable, name, buyLink, customizeLink } = product;
-
-  let button = '';
-
-  if (isBuyable && isCustomizable) {
-    button = `<a href='${customizeLink}#product-customization' class="btn btn-sm" aria-label="Customize ${name}">Customize</a>`;
-  } else if (isBuyable && !isCustomizable) {
-    button = `<a href='${buyLink}' class="btn btn-sm" aria-label="Buy ${name} now">Buy Now</a>`;
-  } else {
-    button = `<button class="btn btn-sm" aria-label="Notify me ${name}">Notify Me</button>`;
-  }
-
   return `
     <div class="trailing-action-buttons comparison-product-card-item">
-      ${button}
+      ${renderProductCardButton(product)}
     </div>
   `;
 }
 
 function renderNavigationBullets(rows) {
+  const pagePath = window.location.pathname;
+
+  const bulletsHtml = rows
+    .map(
+      (row) => `
+        <a href="${pagePath}#${row.key}" class="navigation-bullet" aria-label="Go to ${row.label} section">
+          <span class="navigation-bullet-dot"></span>
+          <span class="navigation-bullet-label">${row.label}</span>
+        </a>
+      `,
+    )
+    .join('');
+
+  const hoverItemsHtml = rows
+    .map(
+      (row) => `
+        <a href="${pagePath}#${row.key}" class="navigation-hover-item" data-key="${row.key}" aria-label="Go to ${row.label} section">
+          <span class="navigation-hover-label">${row.label}</span>
+        </a>
+      `,
+    )
+    .join('');
+
   return `
-    <nav class="page-navigation hidden flex">
-      ${rows
-      .map(
-        (row) => `
-          <a href="/en/products/desktops/product-comparison-page#${row.key}"  class="navigation-bullet" aria-label="Go to ${row.label} section">
-            <span class="navigation-bullet-dot"></span>
-            <span class="navigation-bullet-label">${row.label}</span>
-          </a>
-        `,
-      )
-      .join('')}
-    </nav>
-    <div class="page-navigation-hover-panel hidden">
-      ${rows
-      .map(
-        (row) => `
-          <a href="/en/products/desktops/product-comparison-page#${row.key}" class="navigation-hover-item" data-key="${row.key}" aria-label="Go to ${row.label} section">
-            <span class="navigation-hover-label">${row.label}</span>
-          </a>
-        `,
-      )
-      .join('')}
-    </div>
+    <nav class="page-navigation hidden flex">${bulletsHtml}</nav>
+    <div class="page-navigation-hover-panel hidden">${hoverItemsHtml}</div>
   `;
 }
 
 function getAllSpecs(products) {
+  const allSpecs = products.flatMap((product) => product.specs);
+
   const specMap = new Map();
-
-  products.forEach((product) => {
-    product.specs.forEach((spec) => {
-      if (!specMap.has(spec.key)) {
-        specMap.set(spec.key, spec.label);
-      }
-    });
+  allSpecs.forEach((spec) => {
+    if (!specMap.has(spec.key)) {
+      specMap.set(spec.key, spec.label);
+    }
   });
-
   return Array.from(specMap.entries()).map(([key, label]) => ({ key, label }));
 }
 
@@ -670,43 +638,29 @@ async function loadProducts(initial = false) {
 
 function highlightDifferences() {
   document.querySelectorAll('.product-comparison-row').forEach((row) => {
-    const cells = Array.from(row.querySelectorAll('.table-cell'));
-    const values = cells.map((c) => c.textContent.trim());
+    const values = Array.from(row.querySelectorAll('.table-cell'), (c) => c.textContent.trim());
 
     const allSame = values.every((v) => v === values[0]);
-    if (!allSame) {
-      row.classList.add('different-row');
-    } else {
-      row.classList.remove('different-row');
-    }
+    row.classList.toggle('different-row', !allSame);
   });
 }
 
 function checkDifferences() {
-  let noDifferences = true;
-  document.querySelectorAll('.product-comparison-row').forEach((row) => {
-    const cells = Array.from(row.querySelectorAll('.table-cell'));
-    const values = cells.map((c) => c.textContent.trim());
-
+  const rows = document.querySelectorAll('.product-comparison-row');
+  const hasDifferences = Array.from(rows).some((row) => {
+    const values = Array.from(row.querySelectorAll('.table-cell'), (c) => c.textContent.trim());
     const allSame = values.every((v) => v === values[0]);
-    if (!allSame) {
-      noDifferences = false;
-    }
+    return !allSame;
   });
+
   const switchContainer = document.querySelector('#switch-container');
   if (switchContainer) {
-    if (noDifferences) {
-      switchContainer.classList.add('no-differences');
-    } else {
-      switchContainer.classList.remove('no-differences');
-    }
+    switchContainer.classList.toggle('no-differences', !hasDifferences);
   }
 }
 
 function clearDifferences() {
-  document
-    .querySelectorAll('.product-comparison-row')
-    .forEach((row) => row.classList.remove('different-row'));
+  document.querySelectorAll('.product-comparison-row').forEach((row) => row.classList.remove('different-row'));
 }
 
 class Switch {
@@ -725,15 +679,9 @@ class Switch {
 
   // Switch state of a switch
   toggleStatus() {
-    const currentState = this.switchNode.getAttribute('aria-checked') === 'true';
-    const newState = String(!currentState);
-
-    this.switchNode.setAttribute('aria-checked', newState);
-    if (newState === 'true') {
-      highlightDifferences();
-    } else {
-      clearDifferences();
-    }
+    const isChecked = this.switchNode.getAttribute('aria-checked') !== 'true';
+    this.switchNode.setAttribute('aria-checked', isChecked);
+    (isChecked ? highlightDifferences : clearDifferences)();
   }
 }
 
