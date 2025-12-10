@@ -293,18 +293,18 @@ export async function callSSOValidation(type='check', aticket) {
   const url = `${ssoEndpoint}`;
   try {
     const response = await fetch(url, {
-      method:"POST",
+      method:'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
       },
-      body:JSON.stringify({type,ticket:aticket}),
+      body:JSON.stringify({ type,ticket:aticket }),
       mode: 'cors',
       timeout: 30000,
     });
     return await response.json();
   } catch (error) {
-    console.error("SSO API call error:", error.message);
+    console.error('SSO API call error:', error.message);
     throw new Error(`SSO validation failed: ${error.message}`);
   }
 }

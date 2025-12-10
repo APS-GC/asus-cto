@@ -4,7 +4,7 @@ import { getUserData, logout } from './sso.js';
 import { getConfigValue } from '../../scripts/configs.js';
 async function getAsusEndpoint(){
   const domain = await getConfigValue('sign-endpoint');
-  return `${domain}/hk/loginform.aspx?returnUrl=${encodeURIComponent(location.href)}&login_background=general_white`
+  return `${domain}/hk/loginform.aspx?returnUrl=${encodeURIComponent(location.href)}&login_background=general_white`;
 }
 
 // Header configuration - calculated once for the entire module
