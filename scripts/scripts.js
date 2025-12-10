@@ -458,6 +458,7 @@ async function loadLazy(doc) {
   await loadGTM();
   await sendPageLoadAttributes();
 
+  loadCSS(`${window.hlx.codeBasePath}/styles/clientlib-base.css`);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 
