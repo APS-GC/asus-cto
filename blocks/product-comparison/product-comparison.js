@@ -158,6 +158,11 @@ async function renderProductCompare(block) {
 
               </div>
 
+              <div class="section-heading content-center">
+                <div class="section-heading__text-group">
+                  <h2 class="section-heading__title">Product comparison</h2>
+                </div>
+              </div>
               
           <div class="clear-all-action-container">
               <span><span id="comparison-products-count" aria-live="polite"></span>/4</span>
