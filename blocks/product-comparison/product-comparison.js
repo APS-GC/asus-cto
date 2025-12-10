@@ -223,7 +223,7 @@ function getStoredProducts() {
  function _buildApiPayload() {
     const path = window.location.href.includes('/us/') ? 'us' : 'en';
     return {
-      'websiteCode': path,
+      'websiteCode': 'us',
       'partNo': getStoredProducts() || ''
     };
   }
@@ -478,7 +478,7 @@ function renderTrailingActionButtons(product) {
 
 function renderNavigationBullets(rows) {
   return `
-    <nav class="page-navigation flex hide">
+    <nav class="page-navigation hidden flex">
       ${rows
       .map(
         (row) => `
@@ -490,7 +490,7 @@ function renderNavigationBullets(rows) {
       )
       .join('')}
     </nav>
-    <div class="page-navigation-hover-panel hide">
+    <div class="page-navigation-hover-panel hidden">
       ${rows
       .map(
         (row) => `
