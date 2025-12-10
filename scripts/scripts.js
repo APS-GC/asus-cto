@@ -158,15 +158,12 @@ export async function loadSwiper() {
   
   // Return existing promise if load is in progress
   if (!swiperPromise) {
-    console.log('Swiper: Starting dynamic load (JS + CSS) [Call ID: ' + Date.now() + ']');
-    
     swiperPromise = (async () => {
       try {
         await Promise.all([
           // Load CSS once
           !swiperCSSLoaded ? loadCSS('https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css').then(() => {
             swiperCSSLoaded = true;
-            console.log('Swiper CSS loaded');
           }) : Promise.resolve(),
           // Load JS
           loadScript(
@@ -177,16 +174,14 @@ export async function loadSwiper() {
             }
           )
         ]);
-        console.log('Swiper loaded dynamically (CSS + JS)');
         return window.Swiper;
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Failed to load Swiper library:', error);
         swiperPromise = null; // Reset on error so retry is possible
         throw error;
       }
     })(); // IIFE (Immediately Invoked Function Expression) creates promise synchronously
-  } else {
-    console.log('Swiper: Reusing existing load promise');
   }
   
   return swiperPromise;
@@ -414,7 +409,9 @@ async function loadEager(doc) {
     }
     
     decorateMain(main);
-    const hasCarousel = main.querySelector('.hero-banner, .hot-products, .product-preview, .help-me-choose,.our-advantages');
+    
+    // Only preload Swiper if page has carousel components (reduces TBT on other pages)
+    const hasCarousel = main.querySelector('.hero-banner, .hot-products, .product-preview, .help-me-choose, .our-advantages');
     if (hasCarousel) {
       loadSwiper().catch(err => console.error('Failed to preload Swiper:', err));
     }
