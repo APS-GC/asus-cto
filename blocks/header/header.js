@@ -483,7 +483,7 @@ function buildNavigation(navigationItems, showProfile, showCart, profileMenuItem
   ).values());
 
   if(isLoggedIn){
-    uniqueMenuItems = uniqueMenuItems.filter(r=>r.linkText.toUpperCase() !== 'LOGIN')
+    uniqueMenuItems = uniqueMenuItems.filter(r => r.linkText.toUpperCase() !== 'LOGIN');
   }else{
     uniqueMenuItems = JSON.parse(JSON.stringify(profileMenuLoggedInItems));
   }
@@ -556,7 +556,7 @@ function buildMobileMenu(navigationItems, profileMenuItems, profileMenuLoggedInI
   ).values());
 
   if(isLoggedIn){
-    uniqueMenuItems = uniqueMenuItems.filter(r=>r.linkText.toUpperCase() !== 'LOGIN')
+    uniqueMenuItems = uniqueMenuItems.filter(r => r.linkText.toUpperCase() !== 'LOGIN');
   }else{
     uniqueMenuItems = JSON.parse(JSON.stringify(profileMenuLoggedInItems));
   }
