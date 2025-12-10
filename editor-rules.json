@@ -1,0 +1,62 @@
+{
+  "blocks": {
+    "hero-banner": {
+      "items": {
+        "model": "hero-banner-slide",
+        "maxCount": 6,
+        "minCount": 1,
+        "rules": {
+          "add": {
+            "validate": "maxCount",
+            "errorMessage": "Only a maximum of {maxCount} slides are allowed. Please delete extra slides before adding more."
+          },
+          "update": {
+            "validate": "maxCount",
+            "errorMessage": "Only a maximum of {maxCount} slides are allowed."
+          },
+          "move": {
+            "validate": "maxCount",
+            "errorMessage": "Cannot move slide. Maximum of {maxCount} slides allowed."
+          },
+          "copy": {
+            "validate": "maxCount",
+            "errorMessage": "Cannot copy slide. Maximum of {maxCount} slides allowed."
+          },
+          "remove": {
+            "validate": "minCount",
+            "errorMessage": "At least {minCount} slide must remain. Cannot delete the last slide."
+          }
+        }
+      }
+    },
+    "top-picks-cards": {
+      "items": {
+        "model": "top-picks-card",
+        "maxCount": 2,
+        "minCount": 1,
+        "rules": {
+          "add": {
+            "validate": "maxCount",
+            "errorMessage": "Only a maximum of {maxCount} cards are allowed. Please delete extra cards before adding more."
+          },
+          "update": {
+            "validate": "maxCount",
+            "errorMessage": "Only a maximum of {maxCount} cards are allowed."
+          },
+          "move": {
+            "validate": "maxCount",
+            "errorMessage": "Cannot move card. Maximum of {maxCount} cards allowed."
+          },
+          "copy": {
+            "validate": "maxCount",
+            "errorMessage": "Cannot copy card. Maximum of {maxCount} cards allowed."
+          },
+          "remove": {
+            "validate": "minCount",
+            "errorMessage": "At least {minCount} card must remain. Cannot delete the last card."
+          }
+        }
+      }
+    }
+  }
+}
