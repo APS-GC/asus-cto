@@ -256,6 +256,7 @@ function transformProductData(item, matchType) {
     specialPrice,
     price,
     savedPrice,
+    urlKey
   } = item;
 
   const firstGame = gamePriority?.[0];
@@ -274,12 +275,12 @@ function transformProductData(item, matchType) {
     matchType: matchTypeMap[matchType] || (matchType ? { id: matchType, label: matchType } : null),
     status: [
       buyButtonStatus === 'Buy Now' ? 'In Stock' : null,
-      ...(productCardContent?.productTags || productTags || []),
+      ...(productTags || []),
     ].filter(Boolean),
     isAvailable: buyButtonStatus !== 'Notify Me',
     isCustomizable: true, // as per target example
-    buyLink: item.productCardContent?.urlKey || null,           // you may build from item.productCardContent.urlKey
-    customizeLink: item.productCardContent?.urlKey || null,
+    buyLink: urlKey || null,           // you may build from item.productCardContent.urlKey
+    customizeLink: urlKey || null,
     image: mainImage || productCardContent?.mainImage || null,
     imageHover: hoverImage || productCardContent?.hoverImage || null,
     images: productPreviewPopupCF?.additionalImages?.map((url) => ({
@@ -919,8 +920,8 @@ class PerfectMatchProduct {
       ].filter(Boolean),
       isAvailable: item?.buyButtonStatus !== 'Notify Me',
       isCustomizable: true,            // set as per your logic
-      buyLink: item.productCardContent?.urlKey || null,           // you may build from item.productCardContent.urlKey
-      customizeLink: item.productCardContent?.urlKey || null,
+      buyLink: item?.productCardContent?.urlKey || null,           // you may build from item.productCardContent.urlKey
+      customizeLink: item?.productCardContent?.urlKey || null,
       image: item?.mainImage || item.productCardContent?.mainImage || null,
       imageHover: item?.hoverImage || item?.productCardContent?.hoverImage || null,
       images: (item?.productPreviewPopupCF && item?.productPreviewPopupCF?.additionalImages)
