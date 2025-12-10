@@ -121,6 +121,22 @@ export default async function decorate(block) {
   await import('../../scripts/carousel.js');
   await import('./uifrontend_advantage-card.js');
  
+  // Add tracking for Watch Now button using event delegation
+  const advantageWrapper = block.querySelector('.our-advantages-wrapper');
+  if (advantageWrapper) {
+    advantageWrapper.addEventListener('click', (event) => {
+      const watchNowBtn = event.target.closest('.cmp-advantage-card__btn');
+      if (watchNowBtn) {
+        const buttonText = watchNowBtn.textContent?.trim().replace(/\s+/g, ' ') || 'Watch Now';
+        trackEvent({
+          eventName: 'play_advantages_home_cto_rog',
+          category: 'play/advantages/home/cto/rog',
+          label: `${buttonText}/play/advantages/home/cto/rog`
+        });
+      }
+    });
+  }
+ 
   // Add tracking for navigation arrows
   const prevButton = block.querySelector('.cmp-carousel__action--previous');
   const nextButton = block.querySelector('.cmp-carousel__action--next');
