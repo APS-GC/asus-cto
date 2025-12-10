@@ -75,6 +75,7 @@ export default async function decorate(block) {
     });
   }
 
+  initSwitch(block);
 }
 
 
@@ -736,6 +737,7 @@ class Switch {
   }
 }
 
-window.addEventListener('load', function () {
-  Array.from(document.querySelectorAll('[role=switch]')).forEach((element) => new Switch(element));
-});
+const initSwitch = async (context) => {
+  // Select all elements marked with the data attribute
+  Array.from(context.querySelectorAll('[role=switch]')).forEach((element) => new Switch(element));
+};
