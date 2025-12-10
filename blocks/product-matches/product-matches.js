@@ -58,7 +58,7 @@ async function renderHelpMeChoose(block) {
 
   const authoredRows = [...block.children];
   AuthoredData = authoredRows.map(row => row.textContent.trim());
-  // console.log('Authored Data:', AuthoredData);
+  console.log('Authored Data:', AuthoredData);
 
   const html = `
   <div class="container top-spacing bottom-spacing">
@@ -874,7 +874,7 @@ class PerfectMatchProduct {
     const selectedGames = params.getAll('games').map(this.sanitizeText);
     const minBudget = params.get('min-budget'); // '2100'
     const maxBudget = params.get('max-budget'); // '4300'
-    this.path = window.location.href.includes('/us/') ? "/content/dam/asuscto/us" : "/content/dam/asuscto/en";
+    this.path = window.location.href.includes('/en/') ? "/content/dam/asuscto/us" : "/content/dam/asuscto/en";
 
     this.dom = {
       "query": "",
