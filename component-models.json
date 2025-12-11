@@ -1183,6 +1183,137 @@
     ]
   },
   {
+    "id": "product-matches",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": "We have found your perfect matches!"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "exploreMoreTitle",
+        "label": "Explore More Title",
+        "value": "Explore more gaming desktops"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "noMatchTitle",
+        "label": "No Matches Title",
+        "value": "No Matches"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "noMatchDescription",
+        "label": "No Matches Description",
+        "value": "Try changing or removing some of your filters or adjusting your search area."  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "filterText",
+        "label": "Filter Text",
+        "value": "Filter"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "resultText",
+        "label": "Result Text",
+        "value": "Matching Products"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "sortByText",
+        "label": "Sort by Text",
+        "value": "Sort by"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "relevanceText",
+        "label": "Relevance Text",
+        "value": "Relevance"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "hotFocusedText",
+        "label": "Hot Focused Text",
+        "value": "Hot Focused"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "recommendedText",
+        "label": "Recommended Text",
+        "value": "Recommended"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "priceLowtoHighText",
+        "label": "Price: Low to High Text",
+        "value": "Price: Low to high"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "priceHightoLowText",
+        "label": "Price: High to Low Text",
+        "value": "Price: High to Low"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "viewAllDesktopsText",
+        "label": "View All Desktops Text",
+        "value": "View All Desktops"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "viewAllCTALinkTo",
+        "label": "View All CTA LinkTo",
+        "value": "View All CTA LinkTo"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "buyNowText",
+        "label": "Buy Now CTA Text",
+        "value": "Buy now"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "customizeCTAText",
+        "label": "Customize CTA Text",
+        "value": "Customize"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "compareCTAText",
+        "label": "Compare CTA Text",
+        "value": "Compare"  
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "openLinkInNewTabText",
+        "label": "Open link in new tab Text",
+        "value": "Open link in new tab"  
+      }
+    ]
+  },
+  {
     "id": "featured-news-articles",
     "fields": [
       {

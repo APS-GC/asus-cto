@@ -892,6 +892,13 @@ class FilterComponent {
     this._updateBudgetDisplay(this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max);
   }
 
+  formatGameFilter(value) {
+    return {
+      'value': String(value).replace(/[<>"]/g, ''), // Basic sanitization
+      '_apply': 'AT_LEAST_ONCE'
+    };
+  };
+
   _handleSubmit() {
     const checkedGames = [...this.dom.games].filter((cb) => cb.checked).map((cb) => cb.value);
     if (checkedGames.length === 0) return;
@@ -908,10 +915,25 @@ class FilterComponent {
     //update confirmed state
     this._hydrateFromUrl();
     if (window.perfectMatchProductInstance) {
+
+      const params = new URLSearchParams(window.location.search);
+      const selectedGames = params.getAll('games').map(this.formatGameFilter);
+      const minBudget = params.get('min-budget') || 500;
+      const maxBudget = params.get('max-budget') || 5000;
+      const path = window.location.href.includes('/us/') ? '/content/dam/asuscto/us' : '/content/dam/asuscto/en';
+
       window.perfectMatchProductInstance.loadPerfectMatchProducts({
-        games: checkedGames,
-        minBudget,
-        maxBudget,
+        'query': '',
+        'variables': {
+          'path': path,
+          'gameIdsFilter': {
+            '_logOp': 'AND',
+            '_expressions': selectedGames || [],
+          },
+          'lowerPrice': minBudget,
+          'highPrice': maxBudget,
+          'sort': 'price DESC'
+        }
       });
     }
 

@@ -85,6 +85,16 @@ export async function fetchHotProducts(maxProducts = null, config = {}) { // esl
   return fetchProductData(endpoint, maxProducts);
 }
 
+function isNotEmptyObject(obj) {
+  if (!obj || typeof obj !== 'object') return false;
+  for (let key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Sort options mapping
  */
@@ -229,9 +239,12 @@ export async function fetchFilters(options = {}) {
  * @param {number} [maxProducts] - The maximum number of products to return.
  */
 export async function fetchGameList(
-  endpoint = 'https://publish-p165753-e1767020.adobeaemcloud.com/bin/asuscto/gameList.json?websiteCode=en',
-  timeoutMs = 5000,
+  endpoint,
+  mode = 'GET',
+  params = {},
+  timeoutMs = 5000
 ) {
+
   const controller = new AbortController();
   const signal = controller.signal;
 
@@ -245,14 +258,15 @@ export async function fetchGameList(
     console.log(`Attempting to fetch from: ${endpoint}`);
 
     const response = await fetch(endpoint, {
-      method: 'GET',
+      method: mode,
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
+        'Content-Type': 'application/json'
       },
       mode: 'cors',
       signal,
+      credentials: endpoint.includes('author') ? 'include' : 'omit',
+      body: isNotEmptyObject(params) ? JSON.stringify(params) : null,
     });
 
     clearTimeout(timeoutId);
