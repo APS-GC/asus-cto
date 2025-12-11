@@ -233,16 +233,6 @@ export async function fetchFilters(options = {}) {
   }
 }
 
-function isNotEmptyObject(obj) {
-  if (!obj || typeof obj !== 'object') return false;
-  for (let key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      return true;
-    }
-  }
-  return false;
-}
-
 /**
  * Fetches a list of games from a specified API endpoint, with fallback options and a timeout.
  * @param {string} [endpoint] - The API endpoint to fetch the game list from.
@@ -252,10 +242,7 @@ export async function fetchGameList(
   endpoint,
   mode = 'GET',
   params = {},
-<<<<<<< HEAD
   bodyType = 'JSON',
-=======
->>>>>>> dev
   timeoutMs = 5000
 ) {
 

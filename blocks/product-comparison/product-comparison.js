@@ -200,9 +200,9 @@ function getStoredProducts() {
  * Builds the API payload with product part numbers to fetch comparison data.
  */
 function _buildApiPayload() {
-  const path = window.location.href.includes('/us/') ? 'us' : 'en';
+  const path = window.location.href.includes('/en/') ? 'us' : 'en';
   return {
-    'websiteCode': 'us',
+    'websiteCode': path || 'en',
     'partNo': getStoredProducts() || ''
   };
 }
@@ -312,10 +312,10 @@ function renderComparisonProductCard(product) {
           </div>
         </div>
         <div class="comparison-product-card__price-container">
-          <p class="comparison-product-card__price text-bolder">$${price}</p>
+          <p class="comparison-product-card__price text-bolder">$${price || '0'}</p>
           <div class="discount-wrapper flex">
-            ${originalPrice ? `<span class="comparison-product-card__original-price">$${originalPrice}</span>` : ''}
-            ${discount ? `<span class="comparison-product-card__discount">SAVE $${discount}</span>` : ''}
+            ${originalPrice ? `<span class="comparison-product-card__original-price">$${originalPrice || '0'}</span>` : ''}
+            ${discount ? `<span class="comparison-product-card__discount">SAVE $${discount || '0'}</span>` : ''}
           </div>
         </div>
       </div>
@@ -348,7 +348,7 @@ function renderFloatingCard(product) {
                 <div
                     data-bv-show="inline_rating" data-bv-product-id="${bazaarvoiceProductId}" data-bv-redirect-url="${buyLink}#product-reviews"
                 ></div>
-                <small class="floating-card__price">$${price}</small>
+                <small class="floating-card__price">$${price || '0'}</small>
             </div>
         </div>
     </div>
