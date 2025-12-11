@@ -198,18 +198,32 @@ export async function loadSwiper() {
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
 export async function loadHeaderFragment() {
-  //TODO: change this to relative when we base url is changed.
   const locale = await getLocale();
-  const fragmentUrl = `/${locale}/fragments/head.plain.html`;
+  const fragmentUrlWithLocale = `/${locale}/fragments/head.plain.html`;
+  const fallbackFragmentUrl = '/fragments/head.plain.html';
+  
+  // Try with locale first
   try {
-    const response = await fetch(fragmentUrl);
+    const response = await fetch(fragmentUrlWithLocale);
     if (response.ok) {
       const html = await response.text();
       return processFragmentContent(html);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.log('Failed to load header fragment:', error);
+    console.log('Failed to load header fragment with locale:', error);
+  }
+
+  // Fallback: Try without locale
+  try {
+    const response = await fetch(fallbackFragmentUrl);
+    if (response.ok) {
+      const html = await response.text();
+      return processFragmentContent(html);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Failed to load header fragment fallback:', error);
   }
 
   return null;
@@ -220,18 +234,32 @@ export async function loadHeaderFragment() {
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
 export async function loadFooterFragment() {
-  //TODO: change this to relative when we base url is changed.
   const locale = await getLocale();
-  const fragmentUrl = `/${locale}/fragments/footer.plain.html`;
+  const fragmentUrlWithLocale = `/${locale}/fragments/footer.plain.html`;
+  const fallbackFragmentUrl = '/fragments/footer.plain.html';
+  
+  // Try with locale first
   try {
-    const response = await fetch(fragmentUrl);
+    const response = await fetch(fragmentUrlWithLocale);
     if (response.ok) {
       const html = await response.text();
       return processFooterFragmentContent(html);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.log('Failed to load footer fragment:', error);
+    console.log('Failed to load footer fragment with locale:', error);
+  }
+
+  // Fallback: Try without locale
+  try {
+    const response = await fetch(fallbackFragmentUrl);
+    if (response.ok) {
+      const html = await response.text();
+      return processFooterFragmentContent(html);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Failed to load footer fragment fallback:', error);
   }
 
   return null;
