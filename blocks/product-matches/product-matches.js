@@ -149,7 +149,7 @@ async function renderHelpMeChoose(block) {
         aria-roledescription="carousel"
         data-cmp-is="carousel"
         data-slides-per-view="1.3"
-        data-slides-per-view-tablet="3.2"
+        data-slides-per-view-tablet="2.7"
         data-slides-per-view-desktop="3.2"
         data-loop-slides="false"
         data-space-between="8"
@@ -692,7 +692,7 @@ function renderProductCard(product, productType) {
               >FPS: ${fps}</button>
               <div id="fps-details-${id}" class="tooltip__content" role="tooltip">
                 <table class="cmp-product-card__fps-table">
-                  <thead><tr><th>Game FPS</th><th>1080P</th><th>1440P</th></tr></thead>
+                  <thead><tr><th scope="col">Game FPS</th><th scope="col">1080P</th><th scope="col">1440P</th></tr></thead>
                   <tbody>${fpsDetailsHtml}</tbody>
                 </table>
               </div>
@@ -706,7 +706,7 @@ function renderProductCard(product, productType) {
                     class="cmp-product-card__estore-icon"
                     data-tooltip-trigger
                     aria-describedby="estore-price-info-${id}"
-                    data-tooltip-position="top"
+                    data-tooltip-position="y"
                     aria-label="Information about ASUS estore price"
                   >
                   </button>
@@ -719,13 +719,13 @@ function renderProductCard(product, productType) {
                 </div>
               </div>
             </div>
-            <div class="cmp-product-card__price-block">
-              <span class="cmp-product-card__price">$${price}</span>
+            <div class="cmp-product-card__price-block" role="group" aria-label="Current price $${price}${originalPrice ? `, Original price $${originalPrice}` : ''}${discount ? `, Save $${discount}` : ''}">
+              <span class="cmp-product-card__price" aria-hidden="true">$${price}</span>
               ${originalPrice
-      ? `<span class="cmp-product-card__original-price">$${originalPrice}</span>`
+      ? `<span class="cmp-product-card__original-price" aria-hidden="true">$${originalPrice}</span>`
       : ''
     }
-              ${discount ? `<span class="cmp-product-card__discount">SAVE $${discount}</span>` : ''}
+              ${discount ? `<span class="cmp-product-card__discount" aria-hidden="true">SAVE $${discount}</span>` : ''}
             </div>
           </div>
           <div class="cmp-product-card__footer">
