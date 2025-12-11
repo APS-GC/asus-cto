@@ -114,7 +114,6 @@
 
   // Wait for DOM to be ready
   document.addEventListener('DOMContentLoaded', () => {
-    debugger
     // Get page metadata
     const title = getMetadata('jcr:title') || document.title;
     const description = getMetadata('jcr:description');
@@ -175,6 +174,8 @@
       createMetaTag('twitter:image', ogImage);
       createMetaTag('twitter:image:alt', ogImageAlt || title);
     }
+
+    console.log('header create meta ---------------- DOMContentLoaded')
     
     // Article-specific meta tags
     if (ogType === 'article') {
@@ -310,7 +311,5 @@
       console.log('UE model update:', event.detail);
       setTimeout(updatePageBackground, 100);
     });
-
-    debugger
   }
 </script>
