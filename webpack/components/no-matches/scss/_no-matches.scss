@@ -17,7 +17,7 @@
     display: flex;
   }
 
-  @include mix.respond-to("md", "max") {
+  @include mix.respond-to("xl", "max") {
     @include mix.p(10, "y");
     @include mix.p(5, "x");
     @include mix.m(5, "b");
@@ -34,7 +34,7 @@
     @include typo.text-display3();
     @include mix.m(3, "b");
 
-    @include mix.respond-to("md", "max") {
+    @include mix.respond-to("xl", "max") {
       @include typo.text-display4();
     }
   }
@@ -42,8 +42,20 @@
   &__description {
     @include typo.text-base();
 
-    @include mix.respond-to("md", "max") {
+    @include mix.respond-to("xl", "max") {
       @include typo.text-small();
+    }
+  }
+}
+
+.no-matches-explore-products {
+  .heading {
+    text-align: center;
+    @include typo.text-display3();
+    @include mix.m(5, "b");
+
+    @include mix.respond-to("xl", "max") {
+      @include typo.text-display4();
     }
   }
 }

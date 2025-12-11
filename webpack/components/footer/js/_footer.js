@@ -103,23 +103,37 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(compareBar, { attributes: true, attributeFilter: ['class'] });
   }
 
-  const newsletterForm = document.getElementById('frm-footer-newsletter');
-  const responseElement = newsletterForm.querySelector('.newsletter__response');
-  if (newsletterForm) {
+  // Footer newsletter subscription
+  {
+    const newsletterForm = document.getElementById('frm-footer-newsletter');
+
+    if (!newsletterForm) return;
+
+    const responseElement = newsletterForm.querySelector('.newsletter__response');
+    const emailInput = newsletterForm.querySelector('[name="email"]');
+
+    // Strict + user-friendly regex
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/;
+
+    // Submit handler
     newsletterForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      newsletterForm.classList.remove('has--error', 'has--success');
-      responseElement.textContent = '';
+      let email = emailInput.value.trim();
 
-      if (!newsletterForm.checkValidity()) {
+      // Browser validation + regex validation
+      if (!emailInput.checkValidity() || !emailRegex.test(email)) {
         newsletterForm.classList.add('has--error');
         responseElement.textContent = 'Please enter a valid email address';
         return;
       }
 
-      const email = newsletterForm.querySelector('[name="email"]').value;
-      window.triggerSubscribeForm(email);
+      // reset UI
+      newsletterForm.classList.remove('has--error');
+      responseElement.textContent = '';
+
+      // Call external subscription handler
+      window.triggerSubscribeForm?.(email);
     });
   }
 });

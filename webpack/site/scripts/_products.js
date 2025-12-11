@@ -82,6 +82,9 @@ function renderProductCard(product, productType) {
     window.allProducts.get(productType).set(product.id, product);
   }
 
+  // Check if screen size below 1280px
+  const isMobile = window.innerWidth < 1280;
+
   // Return the complete HTML structure for the product card using a template literal.
   return `
         <div class="cmp-product-card">
@@ -97,12 +100,13 @@ function renderProductCard(product, productType) {
                 data-product-type="${productType}"
                 data-a11y-dialog-show="product-preview-dialog"
                 aria-label="Quick view ${name}"
+                ${isMobile ? 'aria-hidden="true"' : ''}
               >Quick view</button>
-              <img class="cmp-image__image" src="${image}" alt="${name}" />
+              <img class="cmp-image__image" src="${image}" alt="${name}" loading="lazy" decoding="async" />
               ${
                 // Conditionally render the hover image only if it exists.
                 imageHover
-                  ? `<img class="cmp-image__image--hover" src="${imageHover}" alt="${name}" aria-hidden="true" />`
+                  ? `<img class="cmp-image__image--hover" src="${imageHover}" alt="${name}" aria-hidden="true" loading="lazy" decoding="async" />`
                   : ''
               }
             </div>
@@ -177,15 +181,14 @@ function renderProductCard(product, productType) {
                 </div>
               </div>
             </div>
-            <div class="cmp-product-card__price-block" role="group"
-            aria-label="Current price $${price} ${originalPrice ? `, Original price $${originalPrice},` : ''} ${discount ? `Save $${discount}` : ''}">
-              <span class="cmp-product-card__price" aria-hidden="true">$${price}</span>
+            <div class="cmp-product-card__price-block" role="group">
+              <span class="cmp-product-card__price" role="text" aria-label="Current price $${price}">$${price}</span>
               ${
                 originalPrice
-                  ? `<span class="cmp-product-card__original-price" aria-hidden="true">$${originalPrice}</span>`
+                  ? `<span class="cmp-product-card__original-price" role="text" aria-label="Original price $${originalPrice}">$${originalPrice}</span>`
                   : ''
               }
-              ${discount ? `<span class="cmp-product-card__discount" aria-hidden="true">SAVE $${discount}</span>` : ''}
+              ${discount ? `<span class="cmp-product-card__discount" role="text" aria-label="Discount $${discount}">SAVE $${discount}</span>` : ''}
             </div>
           </div>
           <div class="cmp-product-card__footer">
@@ -278,5 +281,21 @@ function initializeProductCarousels() {
   productCarousels.forEach(loadProducts);
 }
 
-document.addEventListener('DOMContentLoaded', initializeProductCarousels);
+document.addEventListener('DOMContentLoaded', () => {
+  initializeProductCarousels();
+
+  // On resize check if screen size below 1280px
+  window.addEventListener('resize', () => {
+    const isMobile = window.innerWidth < 1280;
+    const productCards = document.querySelectorAll('.cmp-product-card');
+    productCards.forEach((card) => {
+      const previewBtn = card.querySelector('.cmp-product-card__preview-btn');
+      if (isMobile) {
+        previewBtn.setAttribute('aria-hidden', 'true');
+      } else {
+        previewBtn.removeAttribute('aria-hidden');
+      }
+    });
+  });
+});
 window.renderProductCard = renderProductCard;

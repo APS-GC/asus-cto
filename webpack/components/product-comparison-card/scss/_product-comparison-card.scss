@@ -5,10 +5,9 @@
 .comparison-product-card {
   display: flex;
   flex-direction: column;
-  @include mix.spacer("gap", 6);
-  height: 100%;
   justify-content: space-between;
   align-items: center;
+  @include mix.spacer("gap", 6);
 
   .comparison-product-card__image-container {
     display: flex;
@@ -70,6 +69,7 @@
         color: var(--color-primary-300);
         text-decoration: none;
         @include typo.text-small();
+
         &:hover {
           text-decoration: underline;
         }
@@ -110,19 +110,10 @@
     cursor: pointer;
     width: 100%;
     padding: 44px 0;
+    outline: solid 1px var(--color-primary);
     outline-offset: -2px;
-
-    &:hover {
-      .empty-container-contents {
-        .icon-wrapper {
-          background-color: var(--color-primary-400);
-        }
-
-        p {
-          color: var(--color-primary-400);
-          text-decoration: underline;
-        }
-      }
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
     }
 
     .empty-container-contents {
@@ -137,12 +128,10 @@
         background-color: var(--color-primary);
         display: flex;
         align-items: center;
+        justify-content: center;
         border-radius: 50%;
-
-        .icon--plus-white {
-          width: 2.5rem;
-          height: 2.5rem;
-        }
+        width: 2.5rem;
+        height: 2.5rem;
       }
 
       p {
@@ -155,7 +144,7 @@
     @include mix.spacer("gap", 4);
   }
 
-  @include mix.respond-to("tab", "max") {
+  @include mix.respond-to("md", "max") {
     .comparison-product-card__image-container {
       @include mix.p(5, "y");
 

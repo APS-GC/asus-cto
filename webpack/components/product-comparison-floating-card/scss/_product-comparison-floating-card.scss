@@ -55,7 +55,7 @@
       }
 
       small {
-        color: var(--color-primary-700);
+        color: var(--color-primary-950);
         text-decoration: underline;
       }
     }
@@ -70,11 +70,13 @@
       background-color: var(--color-primary-950);
       display: flex;
       align-items: center;
+      justify-content: center;
       border-radius: 50%;
+      padding: 0.5rem;
 
       .icon--plus-white {
-        width: 1.5rem;
-        height: 1.5rem;
+        width: 1rem;
+        height: 1rem;
         color: var(--color-primary);
       }
     }
@@ -121,7 +123,7 @@
       .floating-card__title {
         a {
           text-decoration: none;
-          @include typo.text-tiny();
+          @include typo.text-display7();
           color: var(--color-primary-950);
 
           &:hover,

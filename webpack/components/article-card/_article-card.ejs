@@ -1,11 +1,16 @@
-<a class="cmp-article-card" href="<%= link %>" aria-label="Read article: <%= title %>">
+<a class="cmp-article-card" href="<%= link %>" 
+  aria-label="Read article: Published on <%= date %>, Title: <%= title %>, Description: <%= description %>">
   <div class="cmp-article-card__image cmp-image">
-    <img class="cmp-image__image" src="<%= image %>" alt="<%= alt %>" loading="lazy" />
+    <img class="cmp-image__image" src="<%= image %>" alt="<%= alt %>" loading="lazy" fetchpriority="high" />
   </div>
 
   <div class="cmp-article-card__content">
     <p class="cmp-article-card__date">
-      <time datetime="2025-02-10"><%= date %></time>
+      <time datetime="2025-02-10">
+        <span aria-hidden="true">
+          <%= date %>
+        </span>
+      </time>
     </p>
     <h3 class="cmp-article-card__title"><%= title %></h3>
     <div class="cmp-article-card__desc"><%= description %></div>

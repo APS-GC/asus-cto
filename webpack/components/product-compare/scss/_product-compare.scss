@@ -31,6 +31,7 @@
 
   .container {
     width: 100%;
+    max-width: 1240px;
   }
 
   &.is-collapsed {
@@ -68,6 +69,7 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+
     &:has(.cmp-product-compare__error-container.has-error) {
       @include mix.spacer("gap", 4);
     }
@@ -264,6 +266,7 @@
         }
       }
     }
+
     .is-empty {
       cursor: pointer;
       text-decoration: none;
@@ -380,11 +383,13 @@
         @include typo.text-small();
       }
     }
+
     &.is-collapsed {
       .cmp-product-compare__title-row {
         @include mix.spacer("gap", 0);
       }
     }
+
     &__list {
       flex-direction: row;
       @include mix.spacer("gap", 3);
@@ -410,7 +415,6 @@
           .cmp-product-compare__text-block {
             align-items: flex-start;
 
-            .cmp-product-compare__name,
             .cmp-product-compare__sku {
               text-align: left;
               @include typo.text-tiny();

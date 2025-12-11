@@ -54,6 +54,22 @@ class ProductCompare {
     }
   }
 
+  announceChange(message) {
+    let region = document.getElementById('sr-compare-announcement');
+    if (!region) {
+      region = document.createElement('div');
+      region.id = 'sr-compare-announcement';
+      region.className = 'sr-only-fixed';
+      region.setAttribute('aria-live', 'polite');
+      region.setAttribute('aria-atomic', 'true');
+      document.body.appendChild(region);
+    }
+    region.textContent = '';
+    setTimeout(() => {
+      region.textContent = message;
+    }, 50);
+  }
+
   storeProducts(products) {
     this.state.products = products;
     try {
@@ -129,11 +145,18 @@ class ProductCompare {
 
   // --- Actions ---
   removeProduct(idToRemove) {
+    const removedProduct = this.state.products.find((p) => p.id === idToRemove);
     this.storeProducts(this.state.products.filter((p) => p.id !== idToRemove));
+    if (removedProduct) {
+      setTimeout(() => {
+        this.announceChange(`${removedProduct.name} removed from comparison.`);
+      }, 100);
+    }
   }
 
   clearAll() {
     this.storeProducts([]);
+    this.announceChange('All products removed from comparison.');
   }
 
   toggleCollapse(force = null) {

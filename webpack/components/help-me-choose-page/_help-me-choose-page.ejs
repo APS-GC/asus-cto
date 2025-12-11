@@ -20,7 +20,7 @@
         <form id="game-selection-form" action="./product-matches.html" class="game-form" aria-label="Game selection form" data-select-game-form>
             <div class="layout-grid layout-grid--cols-6" aria-atomic="false" aria-live="polite">
                 <% games.forEach(game=> { %>
-                    <div class="layout-grid__col layout-grid__col--span-1 layout-grid__col--tab-span-3">
+                    <div class="layout-grid__col layout-grid__col--span-1 layout-grid__col--md-span-3">
                         <div class="grid-item">
                             <%- include('../game-card/_game-card.ejs', { game }) %>
                         </div>

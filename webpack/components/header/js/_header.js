@@ -87,12 +87,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   const profileDropdown = document.querySelector('.profile-dropdown');
   const profileMenu = document.querySelector('.profile-menu');
   const toggleBtn = document.querySelector('.profile-toggle');
-  const miniCartCloseBtn = document.querySelector('.mini-cart__close');
 
+  const miniCartCloseBtn = document.querySelector('.mini-cart__close');
+  const miniCartContainer = document.querySelector('.mini-cart-container');
+  const miniCartToggleBtn = document.querySelector('.mini-cart-toggle');
+  miniCartCloseBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    miniCartToggleBtn.focus();
+  });
   if (profileDropdown && toggleBtn) {
     toggleBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      miniCartCloseBtn.click();
+
+      //For closing the mini cart dialog if it is in open state.
+      miniCartToggleBtn.setAttribute('aria-expanded', 'false');
+      miniCartContainer.setAttribute('aria-hidden', 'true');
+
       profileDropdown.classList.toggle('open');
       toggleBtn.setAttribute('aria-expanded', profileDropdown.classList.contains('open'));
       if (profileDropdown.classList.contains('open')) {

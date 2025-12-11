@@ -45,7 +45,7 @@
     }
   }
 
-  @include mix.respond-to("md", "max") {
+  @include mix.respond-to("xl", "max") {
     .cmp-carousel__action {
       width: 28px;
       height: 28px;
@@ -176,7 +176,6 @@
           background-color: var(--color-primary-950);
           border-radius: 8px;
           transform-origin: left;
-          // transform: scaleX(var(--slide-progress, 0));
           position: absolute;
           top: 8px;
           height: 8px;

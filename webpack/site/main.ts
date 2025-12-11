@@ -38,3 +38,4 @@ import '../components/product-sidebar/js/_product-sidebar.js';
 
 // News articles specific components
 import '../components/news-articles/js/_news-articles.js';
+import '../components/news-details/js/_news-details.js';

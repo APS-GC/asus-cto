@@ -235,7 +235,7 @@
     }
   }
 
-  @include mix.respond-to("xl", "max") {
+  @include mix.respond-to("lg", "max") {
     .panelcontainer {
       .game-form {
         .budget-bar {
@@ -247,5 +247,16 @@
         }
       }
     }
+  }
+}
+
+.perfect-match-products-container,
+.scrollable-component {
+  margin: auto;
+  @include mix.respond-to("xl", "min") {
+    max-width: 77.5rem;
+  }
+  @include mix.respond-to("md", "max") {
+    max-width: 43rem;
   }
 }

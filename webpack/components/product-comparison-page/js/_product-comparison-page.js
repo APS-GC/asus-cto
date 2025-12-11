@@ -1,4 +1,5 @@
 import { fetchData } from '../../../site/scripts/_api';
+import { debounce } from '../../../site/scripts/_helpers';
 
 let products = [];
 
@@ -183,14 +184,14 @@ function renderComparisonRow(label, key, products) {
   });
 
   return `
+    <h3 class="product-comparison-row-title">${label}</h3>
     <div id="${key}" class="product-comparison-row flex">
-      <h3 tabindex="0">${label}</h3>
       <div class="product-row-info product-comparison-grid">
         ${specData}
       </div>
       ${
         advantageData
-          ? `<div class="product-comparison-grid">
+          ? `<div class="product-row-advantage-data product-comparison-grid">
               ${advantageData}
             </div>`
           : ''
@@ -221,7 +222,7 @@ function renderTrailingActionButtons(product) {
 
 function renderNavigationBullets(rows) {
   return `
-    <nav class="page-navigation hidden flex">
+    <nav class="page-navigation hide flex">
       ${rows
         .map(
           (row) => `
@@ -233,7 +234,7 @@ function renderNavigationBullets(rows) {
         )
         .join('')}
     </nav>
-    <div class="page-navigation-hover-panel hidden">
+    <div class="page-navigation-hover-panel hide">
       ${rows
         .map(
           (row) => `
@@ -316,63 +317,327 @@ async function loadProducts(initial = false) {
   const bullets = document.querySelectorAll('.navigation-bullet');
   const rows = document.querySelectorAll('.product-comparison-row');
   const hoverPanel = document.querySelector('.page-navigation-hover-panel');
+  // Select hoverItems after they are dynamically created
   const hoverItems = document.querySelectorAll('.navigation-hover-item');
 
-  // Handle hover panel visibility - trigger on bullet hover
+  // Handle hover panel visibility - trigger on bullet area hover/click
   if (bulletsContainer && hoverPanel && bullets.length > 0) {
-    let hoverTimeout;
+    let isHoverPanelOpen = false;
 
-    const showHoverPanel = () => {
-      clearTimeout(hoverTimeout);
-      hoverPanel.classList.remove('hidden');
+    const openHoverPanel = (focusFirst = false, focusLast = false) => {
+      hoverPanel.classList.remove('hide');
       bulletsContainer.classList.add('hide-bullets');
+      isHoverPanelOpen = true;
+
+      // Focus the first or last item in the hover panel if requested
+      if (focusFirst) {
+        setTimeout(() => {
+          const firstHoverItem = hoverPanel.querySelector('.navigation-hover-item');
+          if (firstHoverItem) {
+            firstHoverItem.focus();
+          }
+        }, 50); // Small delay to ensure panel is visible
+      } else if (focusLast) {
+        setTimeout(() => {
+          const allHoverItems = hoverPanel.querySelectorAll('.navigation-hover-item');
+          const lastHoverItem = allHoverItems[allHoverItems.length - 1];
+          if (lastHoverItem) {
+            lastHoverItem.focus();
+          }
+        }, 50); // Small delay to ensure panel is visible
+      }
     };
 
-    const hideHoverPanel = () => {
-      hoverTimeout = setTimeout(() => {
-        hoverPanel.classList.add('hidden');
-        bulletsContainer.classList.remove('hide-bullets');
-      }, 200);
+    const closeHoverPanel = () => {
+      hoverPanel.classList.add('hide');
+      bulletsContainer.classList.remove('hide-bullets');
+      isHoverPanelOpen = false;
     };
 
-    // Trigger on individual bullet hover
-    bullets.forEach((bullet) => {
-      bullet.addEventListener('mouseenter', showHoverPanel);
-      bullet.addEventListener('mouseleave', hideHoverPanel);
-    });
-
-    // Keep panel visible when hovering over it
-    hoverPanel.addEventListener('mouseenter', showHoverPanel);
-    hoverPanel.addEventListener('mouseleave', hideHoverPanel);
-  }
-
-  window.addEventListener('scroll', () => {
-    if (!bulletsContainer) return;
-    let currentId = '';
-    rows.forEach((row) => {
-      const rect = row.getBoundingClientRect();
-      if (rect.top <= headerOffset && rect.bottom > headerOffset) {
-        currentId = row.id;
+    // Open panel when clicking near bullets
+    bulletsContainer.addEventListener('click', (e) => {
+      console.log('Container clicked:', e.target);
+      if (!e.target.closest('.navigation-bullet')) {
+        console.log('Clicked outside bullet');
+        if (isHoverPanelOpen) {
+          closeHoverPanel();
+        } else {
+          openHoverPanel();
+        }
+      } else {
+        // Bullet was clicked, allow navigation and show panel
+        console.log('Bullet clicked, opening panel');
+        openHoverPanel();
       }
     });
 
-    // removing 'selected' from all bullets first
-    bullets.forEach((bullet) => bullet.classList.remove('selected'));
-    if (hoverItems.length > 0) {
-      hoverItems.forEach((item) => item.classList.remove('selected'));
-    }
+    // Track navigation direction for backward navigation support
+    let lastFocusedElement = null;
+    let isBackwardNavigation = false;
 
-    if (currentId) {
-      const bullet = document.querySelector(`.navigation-bullet[href$="#${currentId}"]`);
-      const hoverItem = document.querySelector(`.navigation-hover-item[data-key="${currentId}"]`);
-      if (bullet) bullet.classList.add('selected');
-      if (hoverItem) hoverItem.classList.add('selected');
-      bulletsContainer.classList.remove('hidden');
-      // Don't automatically show hover panel - only show on hover
-    } else {
-      bulletsContainer.classList.add('hidden');
+    // Global focus tracking to detect navigation direction
+    document.addEventListener('focusin', (e) => {
+      // Don't track focus changes within the hover panel itself
+      if (!hoverPanel.contains(e.target)) {
+        lastFocusedElement = e.target;
+      }
+    });
+
+    // Handle focus on bullets - auto-expand sub-menu
+    bullets.forEach((bullet, index) => {
+      bullet.addEventListener('focus', () => {
+        // Detect if this is backward navigation (Shift+Tab)
+        // Check if the previously focused element was after this bullet in tab order
+        const allFocusableElements = Array.from(
+          document.querySelectorAll(
+            'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])',
+          ),
+        );
+        const currentIndex = allFocusableElements.indexOf(bullet);
+        const lastIndex = lastFocusedElement
+          ? allFocusableElements.indexOf(lastFocusedElement)
+          : -1;
+
+        isBackwardNavigation = lastIndex > currentIndex;
+
+        // Open panel and move focus to submenu
+        if (index === 0 && !isBackwardNavigation) {
+          openHoverPanel(true); // Auto-focus first item in submenu for forward navigation
+        } else if (isBackwardNavigation) {
+          openHoverPanel(false, true); // Auto-focus last item in submenu for backward navigation
+        } else {
+          openHoverPanel(); // Just open panel for other bullets
+        }
+      });
+
+      bullet.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          // Prevent default behavior to avoid navigation
+          e.preventDefault();
+          // Focus first item in the already-open panel
+          openHoverPanel(true);
+        }
+      });
+
+      // Track when bullet loses focus to detect navigation direction
+      bullet.addEventListener('blur', () => {
+        lastFocusedElement = bullet;
+      });
+    });
+
+    // Close panel when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!hoverPanel.contains(e.target) && !bulletsContainer.contains(e.target)) {
+        closeHoverPanel();
+      }
+    });
+
+    // Close panel when focus moves away from navigation area
+    document.addEventListener('focusin', (e) => {
+      if (!hoverPanel.contains(e.target) && !bulletsContainer.contains(e.target)) {
+        closeHoverPanel();
+      }
+    });
+
+    // Handle keyboard navigation on hover panel items using event delegation
+    hoverPanel.addEventListener('click', (e) => {
+      const item = e.target.closest('.navigation-hover-item');
+      if (item) {
+        e.preventDefault();
+        // Navigate to the section while maintaining focus
+        const targetSection = item.getAttribute('data-key');
+        const targetElement = document.getElementById(targetSection);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        // Keep focus on the clicked item and panel open
+        setTimeout(() => {
+          item.focus();
+        }, 100);
+      }
+    });
+
+    // Handle keyboard navigation on hover panel items using event delegation
+    {
+      hoverPanel.addEventListener('keydown', (e) => {
+        const item = getItem(e);
+        if (!item) return;
+
+        const allItems = getAllHoverItems();
+        const index = allItems.indexOf(item);
+
+        switch (e.key) {
+          case 'Enter':
+          case ' ':
+            handleActivation(e, item);
+            break;
+
+          case 'ArrowDown':
+            handleArrowNav(e, allItems, index, 1);
+            break;
+
+          case 'ArrowUp':
+            handleArrowNav(e, allItems, index, -1);
+            break;
+
+          case 'Tab':
+            handleTab(e, item, allItems, index);
+            break;
+
+          case 'Escape':
+            handleEscape(e, item);
+            break;
+        }
+      });
+
+      /* ------------------------------------------------------------------
+         Helper Functions
+      ------------------------------------------------------------------- */
+
+      function getItem(e) {
+        return e.target.closest('.navigation-hover-item');
+      }
+
+      function getAllHoverItems() {
+        return Array.from(hoverPanel.querySelectorAll('.navigation-hover-item'));
+      }
+
+      /** ----------------------------------------
+       *  ENTER or SPACE
+      ----------------------------------------- */
+      function handleActivation(e, item) {
+        if (e.key === ' ') e.preventDefault();
+
+        const targetId = item.getAttribute('data-key');
+        const target = document.getElementById(targetId);
+
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        setTimeout(() => item.focus(), 100);
+      }
+
+      /** ----------------------------------------
+       *  ArrowUp / ArrowDown
+      ----------------------------------------- */
+      function handleArrowNav(e, allItems, index, direction) {
+        e.preventDefault();
+
+        const nextIndex = (index + direction + allItems.length) % allItems.length;
+
+        allItems[nextIndex].focus();
+      }
+
+      /** ----------------------------------------
+       *  Tab / Shift+Tab
+      ----------------------------------------- */
+      function handleTab(e, item, allItems, index) {
+        if (e.shiftKey) {
+          handleShiftTab(e, item, allItems, index);
+        } else {
+          handleForwardTab(e, allItems, index);
+        }
+      }
+
+      function handleShiftTab(e, item, allItems, index) {
+        if (index > 0) {
+          e.preventDefault();
+          allItems[index - 1].focus();
+          return;
+        }
+
+        // At first item
+        e.preventDefault();
+        closeHoverPanel();
+        focusPreviousFocusable(item);
+      }
+
+      function handleForwardTab(e, allItems, index) {
+        if (index < allItems.length - 1) {
+          e.preventDefault();
+          allItems[index + 1].focus();
+          return;
+        }
+
+        // Last item → allow natural Tab and close panel
+        closeHoverPanel();
+      }
+
+      function focusPreviousFocusable(item) {
+        const focusable = getFocusable();
+        const bullet = findBullet(item);
+        if (!bullet) return;
+
+        const idx = focusable.indexOf(bullet);
+        const prev = focusable[idx - 1];
+
+        if (prev) {
+          setTimeout(() => prev.focus(), 50);
+        }
+      }
+
+      /** ----------------------------------------
+       *  Escape
+      ----------------------------------------- */
+      function handleEscape(e, item) {
+        e.preventDefault();
+        closeHoverPanel();
+
+        const bullet = findBullet(item);
+        if (bullet) bullet.focus();
+      }
+
+      /* ------------------------------------------------------------------
+         DOM helpers
+      ------------------------------------------------------------------- */
+
+      function getFocusable() {
+        return Array.from(
+          document.querySelectorAll(
+            `a[href], button, input, select, textarea,
+             [tabindex]:not([tabindex="-1"])`,
+          ),
+        );
+      }
+
+      function findBullet(item) {
+        const key = item.getAttribute('data-key');
+        return document.querySelector(`.navigation-bullet[href$="#${key}"]`);
+      }
     }
-  });
+  }
+
+  window.addEventListener(
+    'scroll',
+    debounce(() => {
+      if (!bulletsContainer) return;
+      let currentId = '';
+      rows.forEach((row) => {
+        const rect = row.getBoundingClientRect();
+        if (rect.top <= headerOffset && rect.bottom > headerOffset) {
+          currentId = row.id;
+        }
+      });
+
+      // removing 'selected' from all bullets first
+      bullets.forEach((bullet) => bullet.classList.remove('selected'));
+      if (hoverItems.length > 0) {
+        hoverItems.forEach((item) => item.classList.remove('selected'));
+      }
+
+      if (currentId) {
+        const bullet = document.querySelector(`.navigation-bullet[href$="#${currentId}"]`);
+        const hoverItem = document.querySelector(`.navigation-hover-item[data-key="${currentId}"]`);
+        if (bullet) bullet.classList.add('selected');
+        if (hoverItem) hoverItem.classList.add('selected');
+        bulletsContainer.classList.remove('hide');
+        // Don't automatically show hover panel - only show on hover
+      } else {
+        bulletsContainer.classList.add('hide');
+      }
+    }),
+  );
 
   count.innerHTML = products.length;
 
@@ -404,6 +669,40 @@ async function loadProducts(initial = false) {
   }
 
   checkDifferences();
+  initScrollSync();
+}
+
+function initScrollSync() {
+  const cardContainer = document.getElementById('product-comparison-card__container');
+  const tableRows = document.getElementById('product-comparison-table-rows');
+  const trailingActions = document.getElementById('trailing-action-buttons-wrapper');
+  const floating = document.querySelector('.product-comparison-floating-card__container');
+
+  const scrollTargets = [cardContainer, tableRows, trailingActions, floating].filter(Boolean);
+
+  if (scrollTargets.length === 0) return;
+
+  let isSyncing = false;
+
+  function syncScroll(source) {
+    if (isSyncing) return;
+    isSyncing = true;
+
+    const x = source.scrollLeft;
+
+    requestAnimationFrame(() => {
+      scrollTargets.forEach((el) => {
+        if (el !== source) {
+          el.scrollLeft = x;
+        }
+      });
+      isSyncing = false;
+    });
+  }
+
+  scrollTargets.forEach((el) => {
+    el.addEventListener('scroll', () => syncScroll(el));
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -439,35 +738,6 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleFloating(); // run once on load
     window.addEventListener('scroll', toggleFloating);
   }
-
-  if (scrollable && floating) {
-    let isSyncingScrollable = false;
-    let isSyncingFloating = false;
-
-    scrollable.addEventListener('scroll', () => {
-      if (isSyncingScrollable) {
-        isSyncingScrollable = false;
-        return;
-      }
-      isSyncingFloating = true;
-      floating.scrollLeft = scrollable.scrollLeft;
-      window.requestAnimationFrame(() => {
-        isSyncingFloating = false;
-      });
-    });
-
-    floating.addEventListener('scroll', () => {
-      if (isSyncingFloating) {
-        isSyncingFloating = false;
-        return;
-      }
-      isSyncingScrollable = true;
-      scrollable.scrollLeft = floating.scrollLeft;
-      window.requestAnimationFrame(() => {
-        isSyncingScrollable = false;
-      });
-    });
-  }
 });
 
 function highlightDifferences() {
@@ -476,6 +746,14 @@ function highlightDifferences() {
     const values = cells.map((c) => c.textContent.trim());
 
     const allSame = values.every((v) => v === values[0]);
+    const title = row.previousElementSibling;
+    if (title?.classList?.contains('product-comparison-row-title')) {
+      if (!allSame) {
+        title.classList.add('different-row');
+      } else {
+        title.classList.remove('different-row');
+      }
+    }
     if (!allSame) {
       row.classList.add('different-row');
     } else {
@@ -507,7 +785,7 @@ function checkDifferences() {
 
 function clearDifferences() {
   document
-    .querySelectorAll('.product-comparison-row')
+    .querySelectorAll('.product-comparison-row, .product-comparison-row-title')
     .forEach((row) => row.classList.remove('different-row'));
 }
 
