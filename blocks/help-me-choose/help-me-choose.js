@@ -66,7 +66,7 @@ async function renderHelpMeChoose(block) {
   // Build the HTML in a fragment / string, then insert once
   const html = 
   
-  config.style === 1 ? `
+  config.style === '1' ? `
   <div class="game-recommendation">
       <div class="carousel panelcontainer">
           <div class="section-heading">
