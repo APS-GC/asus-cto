@@ -1,4 +1,4 @@
-import { getConfigValue } from "./configs.js";
+import { getConfigValue } from './configs.js';
 
 /**
  * Loads ASUS official Google Tag Manager container.
