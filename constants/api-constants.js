@@ -6,5 +6,6 @@ export const API_URIS = {
   FETCH_FILTERS: '/bin/asuscto/getFilters.json',
   FILTER_PRODUCTS: '/bin/asuscto/filterProducts.json',
   HELP_ME_CHOOSE_RESULT: '/graphql/execute.json/asuscto/fetchHelpMeChooseResults',
-  HELP_ME_CHOOSE_RESULT_EXPLORE: '/bin/asuscto/exploreMore.json'
+  HELP_ME_CHOOSE_RESULT_EXPLORE: '/bin/asuscto/exploreMore.json',
+  PRODUCT_COMPARISON_PAGE: '/bin/asuscto/getSpec.json'
 };
