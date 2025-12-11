@@ -8,6 +8,7 @@ import { loadBazaarvoiceScript, fetchPlaceholdersForLocale } from '../../scripts
 import { fetchFilteredProducts } from '../../scripts/api-service.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
 import { openModal } from '../modal/modal.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Constants
 const PRODUCTS_PER_PAGE = 6;
@@ -509,7 +510,15 @@ function setupSortEventListeners(selectElement) {
 
     const selectedOption = selectElement.querySelector(`option[value="${value}"]`);
     if (selectedOption) {
-      announceSelection(selectedOption.textContent);
+      const sortOptionText = selectedOption.textContent.trim();
+      announceSelection(sortOptionText);
+      
+      // Track sort selection
+      trackEvent({
+        eventName: 'sort_listing_cto_rog',
+        category: 'sort/listing/cto/rog',
+        label: `${sortOptionText}/sort/listing/cto/rog`
+      });
     }
   });
 

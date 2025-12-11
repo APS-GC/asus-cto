@@ -1,6 +1,7 @@
 import './uifrontend/_footer.js';
 import { moveInstrumentation, createOptimizedPictureExternal } from '../../scripts/scripts.js';
 import { createOptimizedPicture } from '../../scripts/aem.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Footer configuration - calculated once for the entire module
 const FooterConfig = {
@@ -538,6 +539,7 @@ function buildSocialIcons(socialLinks, socialLabel) {
     a.href = link.url;
     a.target = '_blank';
     a.setAttribute('aria-label', `Follow us on ${altText} (open a new window)`);
+    a.setAttribute('data-social-platform', altText); // Store platform name for tracking
     
     // Create picture element with img
     const picture = document.createElement('picture');
@@ -759,6 +761,32 @@ export default function decorate(block) {
     moveInstrumentation(data.globalTextRow, globalText);
   }
 
+  // Add tracking to social media icons
+  const socialLinks = block.querySelectorAll('.social__icons li a, .social__icons a');
+  socialLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const socialName = link.getAttribute('data-social-platform') || link.getAttribute('aria-label')?.split(' ')[3] || 'Unknown';
+      trackEvent({
+        eventName: 'social_footer_cto_rog',
+        category: 'footer/cto/rog',
+        label: `${socialName}/social/footer/cto/rog`
+      });
+    });
+  });
+
+  // Add tracking to footer navigation links
+  const footerNavLinks = block.querySelectorAll('.footer-links a');
+  footerNavLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const clickedText = link.textContent?.trim() || '';
+      trackEvent({
+        eventName: 'internal-links_footer_cto_rog',
+        category: 'footer/cto/rog',
+        label: `${clickedText}/internal-links/footer/cto/rog`
+      });
+    });
+  });
+
   // Add newsletter form functionality with triggerSubscribeForm
   const form = block.querySelector('.newsletter');
   const responseElement = form?.querySelector('.newsletter__response');
@@ -806,6 +834,26 @@ export default function decorate(block) {
         }
       }
     });
+    
+    // Watch for newsletter signup success popup
+    const popupObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1 && node.classList?.contains('SF_subscribePopUp')) {
+            trackEvent({
+              eventName: 'sign_up_newsletter_footer_cto_rog',
+              category: 'footer/cto/rog',
+              label: 'sign_up/newsletter/footer/cto/rog'
+            });
+          }
+        });
+      });
+    });
+    
+    popupObserver.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
   }
 
   // Add back to top functionality
@@ -824,6 +872,13 @@ export default function decorate(block) {
     
     // Scroll to top when clicked
     backToTopButton.addEventListener('click', () => {
+      // Track back to top button click
+      trackEvent({
+        eventName: 'back_to_top_cto_rog',
+        category: 'back_to_top/cto/rog',
+        label: 'back_to_top/cto/rog'
+      });
+      
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
