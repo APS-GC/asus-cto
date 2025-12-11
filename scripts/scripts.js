@@ -229,6 +229,7 @@ export async function loadHeaderFragment() {
   return null;
 }
 
+
 /**
  * Loads footer fragment from the working fragment URL
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
