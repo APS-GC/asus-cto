@@ -1245,4 +1245,60 @@
     margin-left: auto;
   }
 }
+
+
+.cmp-carousel__actions1_hmc {
+  /* position: absolute;
+  top: 40%; */
+  /* width: 100%; */
+  display: flex;
+  justify-content: space-between;
+  /* transform: translateY(-50%); */
+  pointer-events: none;
+  z-index: 10;
+}
+
+@media (min-width: 1024px) {
+  .cmp-carousel__actions1_hmc {
+    display: none;
+  }
+}
+
+.carousel .cmp-carousel__actions1_hmc {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    gap: .75rem
+}
+.carousel .cmp-carousel__actions1_hmc .swiper-button-disabled {
+    background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' fill='none' viewBox='0 0 48 48'%3E%3Cpath fill='%23181818' d='M24 48c13.255 0 24-10.745 24-24S37.255 0 24 0 0 10.745 0 24s10.745 24 24 24' data-figma-bg-blur-radius='4'/%3E%3Cpath stroke='%234d4d4d' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M21.172 32.485 29.657 24l-8.485-8.485'/%3E%3C/svg%3E") 50%/contain no-repeat;
+    cursor: not-allowed
+}
+
+.cmp-carousel[data-carousel-effect=creative] .cmp-carousel__actions1_hmc {
+    display: none
+}
+
+@media only screen and (min-width: 64rem) {
+.cmp-carousel[data-carousel-effect=creative] .cmp-carousel__actions1_hmc {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        position: absolute;
+        top: 50%;
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
+        width: 100%;
+        z-index: 3;
+        -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+        justify-content: space-between
+    }
+  }
 /* stylelint-enable declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, rule-empty-line-before, no-duplicate-selectors, value-no-vendor-prefix, property-no-vendor-prefix, selector-pseudo-element-colon-notation, media-feature-range-notation, comment-empty-line-before, selector-attribute-quotes, declaration-empty-line-before, length-zero-no-unit, color-function-alias-notation */
