@@ -1,8 +1,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <script src="/scripts/aem.js" type="module"></script>
 <script src="/scripts/scripts.js" type="module"></script>
-<link rel="stylesheet" href="/styles/styles.css"/>
 <link rel="stylesheet" href="/styles/clientlib-base.css"/>
+<link rel="stylesheet" href="/styles/styles.css"/>
+<!--<link rel="stylesheet" href="/styles/site.css"/>-->
 
 <!-- Performance: DNS prefetch for Swiper CDN -->
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
@@ -11,7 +12,6 @@
 <script type="module">
   // Import getMetadata function from aem.js
   import { getMetadata } from '/scripts/aem.js';
-  import { initializePublish } from '/scripts/editor-support-publish.js'
   
   // Function to create and append meta tag
   function createMetaTag(name, content, type = 'name') {
@@ -115,7 +115,6 @@
 
   // Wait for DOM to be ready
   document.addEventListener('DOMContentLoaded', () => {
-    initializePublish();
     // Get page metadata
     const title = getMetadata('jcr:title') || document.title;
     const description = getMetadata('jcr:description');
@@ -176,8 +175,6 @@
       createMetaTag('twitter:image', ogImage);
       createMetaTag('twitter:image:alt', ogImageAlt || title);
     }
-
-    console.log('header create meta ---------------- DOMContentLoaded')
     
     // Article-specific meta tags
     if (ogType === 'article') {

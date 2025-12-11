@@ -216,7 +216,7 @@ function attachEventListners(main) {
   }));
 }
 
-// initializePublish();
+initializePublish();
 
 attachEventListners(document.querySelector('main'));
 
