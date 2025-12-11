@@ -7370,6 +7370,24 @@ img[width][height] {
   z-index: auto;
 }
 
+/* Gradient Animation Active - Same as .gradient-animation--active::after */
+.gradient-animation-active::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: conic-gradient(from 90deg, rgb(24, 36, 75) 0deg, rgb(25, 54, 122) 109.038deg, rgb(89, 21, 67) 188.654deg, rgb(23, 19, 31) 256.154deg, rgb(24, 36, 75) 360deg);
+  -webkit-filter: blur(150px);
+  filter: blur(150px);
+  /* Gaussian blur */
+  -webkit-animation: rotateGradient 20s linear infinite;
+  animation: rotateGradient 20s linear infinite;
+  /* animate rotation */
+}
+
 /* Swiper CSS Override */
 .swiper-pagination {
   position: static !important;
