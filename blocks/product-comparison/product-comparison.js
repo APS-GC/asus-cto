@@ -1,7 +1,8 @@
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
 
-const PRODUCT_LISTING_PAGE_URL = 'product-listing.html';
+const PRODUCT_LISTING_PAGE_URL = 'product-listing';
+let AuthoredData = [];
 
 /**
  * Main function to decorate and initialize the product comparison block.
@@ -99,8 +100,7 @@ async function renderProductCompare(block) {
   productCompareContainer.className = 'product-comparison-page';
 
   const authoredRows = [...block.children];
-  const AuthoredData = authoredRows.map((row) => row.textContent.trim());
-
+  AuthoredData = authoredRows.map(row => row.textContent.trim());
 
   const html = `
   <div class="product-comparison-page light-mode">
@@ -112,14 +112,14 @@ async function renderProductCompare(block) {
               <button class="btn btn-link btn-sm back-button" id="comparison-page-back-button"
                   aria-label="Go back to previous page">
                   <span class="icon icon--arrow-left" aria-hidden="true"></span>
-                  <span class="back-button-text">Back</span>
+                  <span class="back-button-text">${AuthoredData[1] || 'Back'}</span>
               </button>
               <div class="vertical-divider" aria-hidden="true"></div>
               
           
               <div class="section-heading content-center">
                 <div class="section-heading__text-group">
-                  <h2 class="section-heading__title">Product comparison</h2>
+                  <h2 class="section-heading__title">${AuthoredData[0] || 'Product comparison'}</h2>
                 </div>
               </div>
 
@@ -128,14 +128,14 @@ async function renderProductCompare(block) {
 
               <div class="section-heading content-center">
                 <div class="section-heading__text-group">
-                  <h2 class="section-heading__title">Product comparison</h2>
+                  <h2 class="section-heading__title">${AuthoredData[0] || 'Product comparison'}</h2>
                 </div>
               </div>
               
           <div class="clear-all-action-container">
               <span><span id="comparison-products-count" aria-live="polite"></span>/4</span>
               <button class="clear-all-button btn btn-link" aria-label="Clear all selected products">
-                  Clear All
+                  ${AuthoredData[2] || 'Clear All'}
               </button>
           </div>
       </div>
@@ -149,7 +149,7 @@ async function renderProductCompare(block) {
       </div>
       <div class="switch-container no-differences flex" id="switch-container">    
             <div role="switch" aria-checked="false" tabindex="0">
-                <span class="label">Show me the differences</span>
+                <span class="label">${AuthoredData[6] || 'Show me the differences'}</span>
                 <span class="switch"><span></span></span>
             </div>
               <div class="info-tooltip-wrapper">
@@ -268,10 +268,10 @@ function renderProductCardButton(product) {
   } = product;
 
   if (isBuyable && isCustomizable) {
-    return `<a href='${customizeLink}#product-customization' class="btn btn-sm" aria-label="Customize ${name}">Customize</a>`;
+    return `<a href='${customizeLink}#product-customization' class="btn btn-sm" aria-label="${AuthoredData[5] || 'Customize'} ${name}">${AuthoredData[5] || 'Customize'}</a>`;
   }
   if (isBuyable && !isCustomizable) {
-    return `<a href='${buyLink}' class="btn btn-sm" aria-label="Buy ${name} now">Buy Now</a>`;
+    return `<a href='${buyLink}' class="btn btn-sm" aria-label="Buy ${name} now">${AuthoredData[4] || 'Buy Now'}</a>`;
   }
   return `<button class="btn btn-sm" aria-label="Notify me ${name}">Notify Me</button>`;
 }
@@ -364,7 +364,7 @@ function renderEmptyCard() {
         <a href="${PRODUCT_LISTING_PAGE_URL}" aria-label="Add a product to compare" class="comparison-product-card__empty-container">
             <div class="empty-container-contents">
                 <span class="icon-wrapper"><span class="icon icon--plus-white" aria-hidden="true"></span></span>
-                <p>Add to compare</p>
+                <p>${AuthoredData[3] || 'Add to compare'}</p>
             </div>
         </a>
     </div>
@@ -379,7 +379,7 @@ function renderEmptyFloatingCard() {
     <a href="${PRODUCT_LISTING_PAGE_URL}" class="product-comparison-floating-card comparison-product-card-item">
         <div class="empty-floating-card-contents flex">
           <span class="icon-wrapper"><span class="icon icon--plus-white"></span></span>
-          <small>Add to compare</small>
+          <small>${AuthoredData[3] || 'Add to compare'}</small>
         </div>
     </a>
   `;
