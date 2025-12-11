@@ -51,7 +51,6 @@ async function renderHelpMeChoose(block) {
   helpMeChooseContainer.className = 'help-me-choose-container container';
 
   const config = await getBlockConfigs(block, DEFAULT_CONFIG, 'help-me-choose');
-
   // Fetch products
   const endpoint = await getApiEndpoint(API_URIS.FETCH_GAME_LIST_EN);
   const gameList = await fetchGameList(endpoint);
@@ -64,6 +63,8 @@ async function renderHelpMeChoose(block) {
   const urlParams = new URLSearchParams(document.location.search);
   const defaultMinBudget = parseInt(urlParams.get('min-budget'), 10) || lowestPrice;
   const defaultMaxBudget = parseInt(urlParams.get('max-budget'), 10) || highestPrice;
+
+  console.log("Authored Data", config, block)
   // Build the HTML in a fragment / string, then insert once
   const html = 
   
