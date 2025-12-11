@@ -1081,4 +1081,10 @@ body.mobile-menu-open .cmp-sitenavigation__item--menu-toggle .icon--hamburger {
     }
 }
 
+/* Custom Styling */
+.profile-menu.show {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
 /* stylelint-enable selector-type-no-unknown, declaration-property-value-no-unknown, declaration-block-no-duplicate-properties, selector-pseudo-class-no-unknown, selector-pseudo-element-no-unknown, no-duplicate-selectors, selector-attribute-quotes, selector-pseudo-element-colon-notation, media-feature-range-notation */
