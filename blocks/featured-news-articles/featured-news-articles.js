@@ -3,7 +3,7 @@ import {
   isAuthorEnvironment,
 } from '../../scripts/utils.js';
 import { loadSwiper } from '../../scripts/scripts.js';
-import { getBlockConfigs } from '../../scripts/configs.js';
+import { getBlockConfigs, getConfigValue } from '../../scripts/configs.js';
 import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Default values from authoring configuration
@@ -171,7 +171,7 @@ export default async function decorate(block) {
   if (window.initializeSwiperOnAEMCarousel) {
     window.initializeSwiperOnAEMCarousel(block.querySelector('.cmp-container'));
   }
-  const basePath = '/home/cto/rog';
+  const basePath = await getConfigValue('base-path') || '';
   const sectionType = 'news_card';
   
   // Track article card clicks

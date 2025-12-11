@@ -1,5 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/scripts.js';
-import { getBlockConfigs, getBlockFieldOrder } from '../../scripts/configs.js';
+import { getBlockConfigs, getBlockFieldOrder, getConfigValue } from '../../scripts/configs.js';
 import { equalheight } from '../../scripts/utils.js';
 import { trackEvent } from '../../scripts/google-data-layer.js';
 
@@ -183,7 +183,7 @@ export default async function decorate(block) {
     window.addEventListener('resize', handleResize);
     window.equalHeightResizeAttached = true;
   }
-  const basePath = '/home/cto/rog';
+  const basePath = await getConfigValue('base-path') || '';
   
   // Track card clicks (1st card = latest_creation, 2nd card = top_picks)
   block.querySelectorAll('.featured-product-card').forEach((card, index) => {

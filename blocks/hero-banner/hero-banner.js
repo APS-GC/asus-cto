@@ -4,7 +4,7 @@
  */
 
 import { moveInstrumentation, createOptimizedPicture, loadSwiper } from '../../scripts/scripts.js';
-import { getBlockConfigs } from '../../scripts/configs.js';
+import { getBlockConfigs, getConfigValue } from '../../scripts/configs.js';
 import { isUniversalEditor } from '../../scripts/utils.js';
 import { trackPromotionView, trackPromotionClick, trackEvent } from '../../scripts/google-data-layer.js';
 
@@ -240,7 +240,7 @@ const manageVideoPlayback = (video, action) => {
 /**
  * Toggle video play/pause and manage paused class on media controls
  */
-const toggleSliderVideo = (videoPlayPauseBtn, swiperInstance) => {
+const toggleSliderVideo = async (videoPlayPauseBtn, swiperInstance) => {
   const activeSlide = swiperInstance.el.querySelector('.swiper-slide-active');
   const activeSlideProdName = activeSlide?.querySelector('.product-name')?.textContent;
 
@@ -248,7 +248,7 @@ const toggleSliderVideo = (videoPlayPauseBtn, swiperInstance) => {
   const mediaControls = swiperInstance.el.closest('.cmp-hero-banner').querySelector('.cmp-hero-banner__media-controls');
   
   if (activeSlide && activeVideo) {
-    const basePath = '/home/cto/rog';
+    const basePath = await getConfigValue('base-path') || '';
     const bannerPos = `hero_banner_${blockPosition}`;
     
     if (activeVideo.paused) {
@@ -646,7 +646,7 @@ export default async function decorate(block) {
 
   // Initialize Swiper hero banner with blockPosition
   initializeSwiper(heroBannerWrapper, config, blockPosition);
-  const basePath = '/home/cto/rog';
+  const basePath = await getConfigValue('base-path') || '';
   const bannerPosition = `hero_banner_${blockPosition}`;
   
   // Track promotionView for all visible slides

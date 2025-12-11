@@ -2,7 +2,7 @@ import { decorateBlock, loadBlock } from '../../scripts/aem.js';
 import { fetchHotProducts } from '../../scripts/api-service.js';
 import { loadBazaarvoiceScript, loadSwiper } from '../../scripts/scripts.js';
 import { openModal } from '../modal/modal.js';
-import { getBlockConfigs } from '../../scripts/configs.js';
+import { getBlockConfigs, getConfigValue } from '../../scripts/configs.js';
 import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Default configuration
@@ -190,7 +190,7 @@ export default async function decorate(block) {
         if (window.initializeSwiperOnAEMCarousel && container) {
           window.initializeSwiperOnAEMCarousel(container);
         }
-        const basePath = '/home/cto/rog';
+        const basePath = await getConfigValue('base-path') || '';
         const sectionType = 'hot_products';
         
         // Track navigation arrow clicks

@@ -1,6 +1,7 @@
+import { getConfigValue } from "./configs.js";
+
 /**
  * Loads ASUS official Google Tag Manager container.
- * GTM Container ID: GTM-N8KDRJVJ
  */
 export async function loadGTM() {
   // Initialize dataLayer
@@ -9,7 +10,8 @@ export async function loadGTM() {
   
   // Load GTM script
   const script = document.createElement('script');
-  script.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-N8KDRJVJ';
+  const gtmID = await getConfigValue('GTM-ID') || '';
+  script.src = `https://www.googletagmanager.com/gtm.js?id=${gtmID}`;
   script.async = true;
   document.head.appendChild(script);
 }
