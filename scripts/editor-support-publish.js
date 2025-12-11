@@ -1,9 +1,9 @@
 export async function initializePublish() {
   try {
     const { canPublish } = await getAccountPublishAuth();
-    //if (!canPublish) {
+    if (!canPublish) {
       updateHeadMetaTag("urn:adobe:aue:config:disable", "publish,publish-live");
-    //}
+    }
   } catch (error) {
     console.log("Faild to get account auth")
   }
