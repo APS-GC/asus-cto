@@ -1,3 +1,6 @@
+/*
+ * Get account publish permissions and determine if publishing is disabled
+ */
 export async function initializePublish() {
   try {
     const { canPublish } = await getAccountPublishAuth();
