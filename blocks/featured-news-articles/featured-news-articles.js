@@ -3,7 +3,8 @@ import {
   isAuthorEnvironment,
 } from '../../scripts/utils.js';
 import { loadSwiper } from '../../scripts/scripts.js';
-import { getBlockConfigs } from '../../scripts/configs.js';
+import { getBlockConfigs, getConfigValue } from '../../scripts/configs.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Default values from authoring configuration
 const DEFAULT_CONFIG = {
@@ -109,7 +110,7 @@ export default async function decorate(block) {
 
     const mockup = document.createRange().createContextualFragment(`
       <div class="cmp-carousel__item">
-        <a class="cmp-article-card" href="${articleLink}" aria-label="Read article: ${title}" target='${
+        <a class="cmp-article-card" href="${articleLink}" aria-label="Read article: Published on ${postedDate ? transferDate(postedDate) : ''}, Title: ${title}, Description: ${summary}" target='${
       articleOpenInNewTab ? '_blank' : '_self'
     }'>
           <div class="cmp-article-card__image cmp-image">
@@ -169,6 +170,35 @@ export default async function decorate(block) {
 
   if (window.initializeSwiperOnAEMCarousel) {
     window.initializeSwiperOnAEMCarousel(block.querySelector('.cmp-container'));
+  }
+  const basePath = await getConfigValue('base-path') || '';
+  const sectionType = 'news_card';
+  
+  // Track article card clicks
+  block.querySelectorAll('.cmp-article-card').forEach((card) => {
+    card.addEventListener('click', (e) => {
+      const articleTitle = card.querySelector('.cmp-article-card__title')?.textContent?.trim() || 'Article';
+      
+      trackEvent({
+        eventName: 'news_card_home_cto_rog',
+        category: `${sectionType}${basePath}`,
+        label: `${articleTitle}/${sectionType}${basePath}`
+      });
+      
+      // Allow default link navigation after tracking
+    });
+  });
+  
+  // Track see all button click
+  const seeAllBtn = block.querySelector('.section-actions-btn');
+  if (seeAllBtn) {
+    seeAllBtn.addEventListener('click', () => {
+      trackEvent({
+        eventName: 'see_all_news_card_home_cto_rog',
+        category: `${sectionType}${basePath}`,
+        label: `see_all/${sectionType}${basePath}`
+      });
+    });
   }
 }
 

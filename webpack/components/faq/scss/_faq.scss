@@ -9,20 +9,3 @@
     @include mix.m(3, "b");
   }
 }
-
-.cmp-banner__image {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover; // crop edges
-  object-position: center; // show middle
-  aspect-ratio: 1440/777;
-
-  @include mix.respond-to("xl", "max") {
-    aspect-ratio: 768 / 429;
-  }
-
-  @include mix.respond-to("md", "max") {
-    aspect-ratio: 360 / 528;
-  }
-}

@@ -107,10 +107,11 @@
 
   @include mix.respond-to("lg", "max") {
     &__title {
-      @include typo.text-display3();
+      @include typo.text-display4();
     }
 
     &__description {
+      @include typo.text-small();
       @include mix.m(3, "t");
     }
   }

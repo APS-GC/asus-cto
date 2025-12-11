@@ -26,10 +26,8 @@ class ProductSidebarFilter {
     this.appliedFilter = this.appliedFiltersList?.querySelector('.applied-filter');
     this.clearAllBtn = document.querySelector('.applied-filters__clear');
     this.budgetSlider = document.getElementById('budget-range-slider');
-    this.minBudgetInput = document.getElementById('minBudget');
-    this.maxBudgetInput = document.getElementById('maxBudget');
-    this.minBudgetDisplay = document.getElementById('budget-min-value');
-    this.maxBudgetDisplay = document.getElementById('budget-max-value');
+    this.minBudgetInput = document.getElementById('budget-min-value');
+    this.maxBudgetInput = document.getElementById('budget-max-value');
     this.applyButton = document.querySelector('.btn-apply');
     this.budgetRangeFilterId = 'filter-budget-range';
     this.filterButton = document.querySelectorAll('.cmp-product-filter-trigger');
@@ -303,10 +301,17 @@ class ProductSidebarFilter {
       step,
       margin: step,
       range: { min, max },
+      // The 'format' is for internal use (reading/writing values)
       format: {
-        to: (v) => Math.round(v),
-        from: (v) => Number(v),
+        to: (value) => Math.round(value),
+        from: (value) => Number(value),
       },
+      // The 'ariaFormat' is for screen readers
+      ariaFormat: {
+        to: (value) => `$${Math.round(value).toLocaleString('en-US')}`,
+        from: (value) => Number(value.replace(/[$,]/g, '')),
+      },
+      // IMPROVEMENT: Use aria-controls to link the handles to the hidden inputs
       handleAttributes: [
         { 'aria-label': 'Budget range minimum value', 'aria-controls': 'min-budget' },
         { 'aria-label': 'Budget range maximum value', 'aria-controls': 'max-budget' },
@@ -327,13 +332,9 @@ class ProductSidebarFilter {
     if (this.lastSyncedValues.min === minVal && this.lastSyncedValues.max === maxVal && isFinal)
       return;
 
-    // update displays
-    if (this.minBudgetDisplay) this.minBudgetDisplay.value = this.formatCurrency(minVal);
-    if (this.maxBudgetDisplay) this.maxBudgetDisplay.value = this.formatCurrency(maxVal);
-
-    // update hidden inputs
-    if (this.minBudgetInput) this.minBudgetInput.value = minVal;
-    if (this.maxBudgetInput) this.maxBudgetInput.value = maxVal;
+    // update inputs
+    if (this.minBudgetInput) this.minBudgetInput.value = this.formatCurrency(minVal);
+    if (this.maxBudgetInput) this.maxBudgetInput.value = this.formatCurrency(maxVal);
 
     // update applied filters (but don't sync URL until final change on desktop)
     this.updateBudgetRangeFilter(minVal, maxVal);
@@ -345,7 +346,7 @@ class ProductSidebarFilter {
   }
 
   setupBudgetInputHandlers() {
-    const inputs = [this.minBudgetDisplay, this.maxBudgetDisplay].filter(Boolean);
+    const inputs = [this.minBudgetInput, this.maxBudgetInput].filter(Boolean);
     inputs.forEach((input, idx) => {
       const isMin = idx === 0;
 
@@ -387,16 +388,19 @@ class ProductSidebarFilter {
     }
 
     const currentValues = this.budgetSlider.noUiSlider.get();
-    const [currMin, currMax] = currentValues.map((v) => Math.round(Number(v)));
+    let [currMin, currMax] = currentValues.map((v) => Math.round(Number(v)));
+    const step = this.budgetSlider.noUiSlider.steps()[0][0];
 
     if (isMin) {
-      this.budgetSlider.noUiSlider.set([validated, currMax]);
+      currMin = validated === currMax ? currMax - step : validated;
+      this.budgetSlider.noUiSlider.setHandle(0, currMin, false, true);
     } else {
-      this.budgetSlider.noUiSlider.set([currMin, validated]);
+      currMax = validated === currMin ? currMin + step : validated;
+      this.budgetSlider.noUiSlider.setHandle(1, currMax, false, true);
     }
 
     // Update applied filters and sync with URL immediately on desktop
-    this.updateBudgetRangeFilter(this.minBudgetInput.value, this.maxBudgetInput.value);
+    this.updateBudgetRangeFilter(currMin, currMax);
 
     if (!this.isMobile) {
       this.syncStateWithUrl();
@@ -592,7 +596,8 @@ class ProductSidebarFilter {
 
       // init slider
       if (this.budgetSlider?.noUiSlider) {
-        this.budgetSlider.noUiSlider.set([minBudget, maxBudget]);
+        this.budgetSlider.noUiSlider.setHandle(0, minBudget, false, true);
+        this.budgetSlider.noUiSlider.setHandle(1, maxBudget, false, true);
         if (
           minBudget !== this.DEFAULT_BUDGET_RANGE.min ||
           maxBudget !== this.DEFAULT_BUDGET_RANGE.max
@@ -691,10 +696,11 @@ class ProductListingManager {
     this.productCountElement = document.getElementById('product-count');
     this.showMoreContainer = document.getElementById('show-more-products-container');
     this.showMoreBtn = document.getElementById('show-more-products-btn');
-
+    this.noMatchesExploreProducts = document.getElementById('no-matches-explore-products');
     this.productsPerPage = 6;
     this.currentPage = 1;
     this.allProducts = [];
+    this.exploreProducts = [];
     this.totalProducts = 0;
     this.hasMore = true;
     this.currentSort = 'newest';
@@ -735,22 +741,25 @@ class ProductListingManager {
         this.productGrid.innerHTML = '';
       }
 
+      this.showMoreContainer?.classList.remove('hidden');
+      this.showMoreContainer?.classList.add('is-loading');
+      this.showMoreContainer?.classList.remove('has-more');
+      this.noMatches?.classList.remove('show');
+      this.noMatchesExploreProducts?.classList.add('hidden');
+      this.exploreProducts = [];
+
+      const filtersParam = encodeURIComponent(JSON.stringify(this.filters || []));
+      let url = `products-paginated.json?page=${this.currentPage}&sort=${this.currentSort}&filters=${filtersParam}`;
+
       // This is a temporary code for UAT team to verify the no results scenario
       // Remove this code once the UAT team is done with their testing
       const searchParams = new URLSearchParams(window.location.search);
       const triggerNoResults = searchParams.get('trigger-no-results');
       if (triggerNoResults === 'true') {
-        throw new Error('No results triggered');
+        url = 'no-results-products.json';
       }
 
-      this.showMoreContainer?.classList.add('is-loading');
-      this.showMoreContainer?.classList.remove('has-more');
-      this.noMatches?.classList.remove('show');
-
-      const filtersParam = encodeURIComponent(JSON.stringify(this.filters || []));
-      const response = await fetchData(
-        `products-paginated.json?page=${this.currentPage}&sort=${this.currentSort}&filters=${filtersParam}`,
-      );
+      const response = await fetchData(url);
 
       const products = response.products || [];
       this.allProducts = [...this.allProducts, ...products];
@@ -761,6 +770,15 @@ class ProductListingManager {
       this.renderProducts(products);
 
       this.showMoreContainer?.classList.toggle('has-more', this.hasMore);
+
+      // if no products are found, show explore products
+      if (this.currentPage === 1 && this.allProducts.length === 0) {
+        this.exploreProducts = response.exploreProducts || [];
+        this.renderProducts(this.exploreProducts);
+        this.noMatches?.classList.add('show');
+        this.noMatchesExploreProducts?.classList.remove('hidden');
+        this.showMoreContainer?.classList.add('hidden');
+      }
 
       setTimeout(() => {
         if (parseInt(this.currentPage) > 1) {
@@ -804,7 +822,7 @@ class ProductListingManager {
         const cardHtml = window.renderProductCard(product, this.productType);
         const productCard = document.createElement('div');
         productCard.className =
-          'layout-grid__col layout-grid__col--span-6 layout-grid__col--tab-span-12';
+          'layout-grid__col layout-grid__col--span-6 layout-grid__col--md-span-12';
 
         productCard.innerHTML = cardHtml;
         this.productGrid.appendChild(productCard);
@@ -813,6 +831,7 @@ class ProductListingManager {
       }
     });
   }
+
   loadMoreProducts() {
     if (!this.hasMore) return;
     this.currentPage += 1;
@@ -855,7 +874,6 @@ export class SortDropdownManager {
 
     this.selectElement._choicesInstance = this.choicesInstance;
 
-    // Wait for Choices.js to finish its initial DOM manipulation
     setTimeout(() => {
       this.setupAccessibility();
       this.setupEventListeners();
@@ -866,10 +884,11 @@ export class SortDropdownManager {
     const container = this.selectElement.closest('.choices');
     if (!container) return;
 
+    container.removeAttribute('aria-expanded');
+    container.querySelector('.choices__list--dropdown').removeAttribute('aria-expanded');
     const inner = container.querySelector('.choices__inner');
     if (!inner) return;
 
-    // Move ARIA attributes from `.choices` to `.choices__inner`
     const ariaAttrs = ['role', 'aria-label', 'aria-expanded', 'aria-haspopup', 'tabindex'];
     ariaAttrs.forEach((attr) => {
       const val = container.getAttribute(attr);
@@ -879,91 +898,105 @@ export class SortDropdownManager {
       }
     });
 
-    // Ensure correct combobox semantics on `.choices__inner`
     inner.setAttribute('role', 'combobox');
     inner.setAttribute('aria-haspopup', 'listbox');
     inner.setAttribute('aria-expanded', 'false');
 
-    // Dropdown list should have role="listbox"
     const dropdownList = container.querySelector('.choices__list--dropdown .choices__list');
-    if (dropdownList) {
-      dropdownList.setAttribute('role', 'listbox');
-      dropdownList.setAttribute('tabindex', '-1');
-    }
+    if (!dropdownList) return;
 
-    // Remove role/aria-selected from the single item display
+    const listboxId = `${this.selectElement.id || this.selectElement.name}-listbox`;
+    dropdownList.setAttribute('role', 'listbox');
+    dropdownList.setAttribute('id', listboxId);
+    dropdownList.setAttribute('tabindex', '-1');
+
+    inner.setAttribute('aria-controls', listboxId);
+
+    const ariaLabel = this.selectElement.getAttribute('aria-label') || 'Select option';
+    inner.setAttribute('aria-label', ariaLabel);
+    dropdownList.setAttribute('aria-label', ariaLabel);
+
     const singleItem = container.querySelector('.choices__list--single .choices__item');
     if (singleItem) {
       singleItem.removeAttribute('role');
       singleItem.removeAttribute('aria-selected');
     }
-
-    // Get aria label from select box and add to cobmobox and listbox
-    const ariaLabel = this.selectElement.getAttribute('aria-label');
-    if (ariaLabel) {
-      inner.setAttribute('aria-label', ariaLabel);
-      dropdownList.setAttribute('aria-label', ariaLabel);
-    }
-  }
-
-  handleDropdownOpen() {
-    const container = this.selectElement.closest('.choices');
-    if (!container) return;
-
-    const inner = container.querySelector('.choices__inner');
-    if (!inner) return;
-
-    // Hide the redundant single-item display
-    const singleItem = container.querySelector('.choices__list--single');
-    if (singleItem) {
-      singleItem.setAttribute('aria-hidden', 'true');
+    let liveRegion = document.getElementById('choices-live-region');
+    if (!liveRegion) {
+      liveRegion = document.createElement('div');
+      liveRegion.id = 'choices-live-region';
+      liveRegion.setAttribute('aria-live', 'assertive');
+      liveRegion.setAttribute('aria-atomic', 'true');
+      liveRegion.setAttribute('role', 'status');
+      liveRegion.className = 'sr-only';
+      liveRegion.style.position = 'absolute';
+      liveRegion.style.left = '-9999px';
+      liveRegion.style.width = '1px';
+      liveRegion.style.height = '1px';
+      liveRegion.style.overflow = 'hidden';
+      document.body.appendChild(liveRegion);
     }
 
-    // Update aria-expanded on `.choices__inner`
-    inner.setAttribute('aria-expanded', 'true');
-
-    // Set aria-activedescendant to selected item
-    const selectedOption = container.querySelector('.choices__item--choice.is-selected');
-    if (selectedOption) {
-      inner.setAttribute('aria-activedescendant', selectedOption.id);
-    }
-  }
-
-  handleDropdownClose() {
-    const container = this.selectElement.closest('.choices');
-    if (!container) return;
-
-    const inner = container.querySelector('.choices__inner');
-    if (!inner) return;
-
-    // Re-enable single-item display
-    const singleItem = container.querySelector('.choices__list--single');
-    if (singleItem) {
-      singleItem.removeAttribute('aria-hidden');
-    }
-
-    // Update aria-expanded on `.choices__inner`
-    inner.setAttribute('aria-expanded', 'false');
-
-    // Clear aria-activedescendant
-    inner.removeAttribute('aria-activedescendant');
-  }
-
-  updateAriaSelected(newValue) {
-    const container = this.selectElement.closest('.choices');
-    if (!container) return;
-
-    const allOptions = container.querySelectorAll('.choices__item--choice');
-    allOptions.forEach((option) => {
-      option.setAttribute('aria-selected', 'false');
+    const optionItems = container.querySelectorAll(
+      '.choices__list--dropdown .choices__item--choice',
+    );
+    optionItems.forEach((item, index) => {
+      item.setAttribute('role', 'option');
+      item.id = `${this.selectElement.id || this.selectElement.name}-option-${index}`;
+      const text = item.textContent?.trim();
+      if (text) item.setAttribute('aria-label', text);
+      item.setAttribute('aria-selected', item.classList.contains('is-selected') ? 'true' : 'false');
+      item.setAttribute('tabindex', '-1');
     });
 
-    const newSelectedOption = container.querySelector(
-      `.choices__item--choice[data-value="${newValue}"]`,
-    );
-    if (newSelectedOption) {
-      newSelectedOption.setAttribute('aria-selected', 'true');
-    }
+    const announceFirstItem = () => {
+      const first = dropdownList.querySelector('.choices__item--choice');
+      if (first) {
+        inner.setAttribute('aria-activedescendant', first.id);
+        liveRegion.textContent = first.textContent.trim();
+      }
+    };
+
+    const updateActiveDescendant = () => {
+      const highlighted = container.querySelector('.is-highlighted');
+      if (highlighted) {
+        inner.setAttribute('aria-activedescendant', highlighted.id);
+        liveRegion.textContent = highlighted.textContent.trim();
+      }
+    };
+
+    // When dropdown opens
+    container.addEventListener('showDropdown', () => {
+      inner.setAttribute('aria-expanded', 'true');
+      setTimeout(() => {
+        announceFirstItem();
+        const count = optionItems.length;
+        liveRegion.textContent = `${ariaLabel} expanded, ${count} options available.`;
+      }, 100);
+    });
+
+    // When dropdown closes
+    container.addEventListener('hideDropdown', () => {
+      inner.setAttribute('aria-expanded', 'false');
+      inner.removeAttribute('aria-activedescendant');
+
+      // Clear live region first, then announce collapse with delay for TalkBack
+      liveRegion.textContent = '';
+      setTimeout(() => {
+        liveRegion.textContent = `${ariaLabel} collapsed.`;
+      }, 50);
+    });
+
+    // Update active option with keyboard navigation
+    container.addEventListener('keyup', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        updateActiveDescendant();
+      }
+    });
+
+    // Update on mouse hover or click
+    container.addEventListener('mouseover', updateActiveDescendant);
+    container.addEventListener('choice', updateActiveDescendant);
   }
 
   setupEventListeners() {
@@ -976,7 +1009,7 @@ export class SortDropdownManager {
         }),
       );
 
-      // Announce the selected value for screen readers
+      // Announce the selected value
       const selectedOption = this.selectElement.querySelector(`option[value="${value}"]`);
       if (selectedOption) {
         this.announceSelection(selectedOption.textContent);
@@ -985,15 +1018,10 @@ export class SortDropdownManager {
   }
 
   announceSelection(selectedText) {
-    const announcement = document.createElement('div');
-    announcement.setAttribute('aria-live', 'polite');
-    announcement.setAttribute('aria-atomic', 'true');
-    announcement.className = 'sr-only-fixed';
-    announcement.textContent = `${selectedText} selected`;
-    document.body.appendChild(announcement);
-    setTimeout(() => {
-      if (document.body.contains(announcement)) document.body.removeChild(announcement);
-    }, 1000);
+    const liveRegion = document.getElementById('choices-live-region');
+    if (liveRegion) {
+      liveRegion.textContent = `${selectedText} selected.`;
+    }
   }
 }
 
@@ -1084,33 +1112,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-  /*
-  //Converting <aside> (desktop) to <div> (mobile) 
-  const asideFilters = document.getElementById('product-filter-dialog');
-
-  function switchAsideToDiv(asideElement) {
-    const divElement = document.createElement('div');
-    divElement.innerHTML = asideElement.innerHTML;
-
-    // Copy attributes from the aside to the div
-    for (const attr of asideElement.attributes) {
-      divElement.setAttribute(attr.name, attr.value);
-    }
-    divElement.classList.add('dialog-container'); 
-    asideElement.replaceWith(divElement);
-    divElement.setAttribute('role', 'dialog');
-    return divElement;
-  }
-
-  if (matchMedia('(max-width: 1280px)').matches) {
-    if (asideFilters) {
-      switchAsideToDiv(asideFilters);
-    }
-  } else {
-    asideFilters.removeAttribute('role');
-  }
-*/
 
   // Custom listeners for choices
   document.addEventListener('mouseover', (e) => {

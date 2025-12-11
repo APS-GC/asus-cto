@@ -56,11 +56,11 @@ class TooltipManager {
 
     setupEventListeners() {
         // Keep your existing handlers
-        this._onKeyDown = (e) => {
+        this._onKeyDown = () => {
             this.lastInteraction = { type: 'keyboard', time: Date.now() };
         };
 
-        this._onPointerDown = (e) => {
+        this._onPointerDown = () => {
             this.lastInteraction = { type: 'pointer', time: Date.now() };
         };
 
@@ -75,27 +75,9 @@ class TooltipManager {
         window.addEventListener('scroll', this.updateVisibleTooltipPosition.bind(this));
 
         // Setup document click handler to hide tooltips if clicked outside
-        let startX, startY, moved;
-
-        document.addEventListener('touchstart', (e) => {
-            const t = e.touches[0];
-            startX = t.clientX;
-            startY = t.clientY;
-            moved = false;
-        });
-
-        document.addEventListener('touchmove', (e) => {
-            const t = e.touches[0];
-            const dx = Math.abs(t.clientX - startX);
-            const dy = Math.abs(t.clientY - startY);
-            if (dx > 10 || dy > 10) moved = true;
-        });
-
-        document.addEventListener('touchend', (e) => {
-            if (!moved) {
-                if (this.currentVisibleTooltip && this.currentVisibleTooltip?.trigger !== e.target) {
-                    this.hideTooltip(this.currentVisibleTooltip.trigger);
-                }
+        this._onTouchTap(document, (e) => {
+            if (this.currentVisibleTooltip && this.currentVisibleTooltip?.trigger !== e.target) {
+                this.hideTooltip(this.currentVisibleTooltip.trigger);
             }
         });
 
@@ -107,6 +89,35 @@ class TooltipManager {
         // Setup resize observer for tooltip content
         this.resizeObserver = new ResizeObserver(() => {
             this.updateVisibleTooltipPosition();
+        });
+    }
+
+    _onTouchTap(element, callback, movementThreshold = 10) {
+        if (!element) return;
+
+        let startX;
+        let startY;
+        let moved = false;
+
+        // Handle touch events
+        element.addEventListener('touchstart', (e) => {
+            const t = e.touches[0];
+            startX = t.clientX;
+            startY = t.clientY;
+            moved = false;
+        });
+
+        element.addEventListener('touchmove', (e) => {
+            const t = e.touches[0];
+            const dx = Math.abs(t.clientX - startX);
+            const dy = Math.abs(t.clientY - startY);
+            if (dx > movementThreshold || dy > movementThreshold) moved = true;
+        });
+
+        element.addEventListener('touchend', (e) => {
+            if (!moved) {
+                callback(e);
+            }
         });
     }
 
@@ -141,19 +152,15 @@ class TooltipManager {
         tooltip.style.top = '-9999px';
         tooltip.style.left = '-9999px';
 
-        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-
         // === Desktop handlers (hover + keyboard) ===
-        const onHoverIn = () => !isTouch && this.showTooltip(trigger);
+        const onHoverIn = () => this.showTooltip(trigger);
         const onHoverOut = (e) => {
-            if (isTouch) return;
             const related = e.relatedTarget;
             if (related && tooltip.contains(related)) return;
             this.hideTooltip(trigger);
         };
 
         const onTooltipHoverOut = (e) => {
-            if (isTouch) return;
             const related = e.relatedTarget;
             if (related && trigger.contains(related)) return;
             this.hideTooltip(trigger);
@@ -163,8 +170,8 @@ class TooltipManager {
         const onBlur = () => this.hideTooltip(trigger);
 
         // === Touch handlers (iPhone/iPad) ===
-        const onTap = (e) => {
-            // Don’t block native events → remove preventDefault
+        const onTap = () => {
+            // Don't block native events → remove preventDefault
             const isVisible = this.currentVisibleTooltip?.trigger === trigger;
             if (isVisible) {
                 this.hideTooltip(trigger);
@@ -180,15 +187,12 @@ class TooltipManager {
         };
 
         // Attach listeners
-        if (isTouch) {
-            trigger.addEventListener('click', onTap); // use click, more reliable on iOS
-        } else {
-            trigger.addEventListener('mouseenter', onHoverIn);
-            trigger.addEventListener('mouseleave', onHoverOut);
-            trigger.addEventListener('focus', onFocus);
-            trigger.addEventListener('blur', onBlur);
-            tooltip.addEventListener('mouseleave', onTooltipHoverOut);
-        }
+        trigger.addEventListener('mouseenter', onHoverIn);
+        trigger.addEventListener('mouseleave', onHoverOut);
+        trigger.addEventListener('focus', onFocus);
+        trigger.addEventListener('blur', onBlur);
+        tooltip.addEventListener('mouseleave', onTooltipHoverOut);
+        this._onTouchTap(trigger, onTap); // For touch devices
 
         this.tooltips.set(trigger, {
             element: tooltip,

@@ -1,9 +1,10 @@
-<div class="cmp-container overlap-header">
+<div class="cmp-page-banner overlap-header">
   <img 
     src="./clientlib-site/images/PLP-banner.webp" 
     alt="Banner image for gaming desktops" 
-    class="cmp-banner__image"
-    loading="lazy"/>
+    class="cmp-page-banner__image"
+    fetchpriority="high"
+  />
 </div>
 <div class="container floating-filter__plp hidden">
   <div class="cmp-product-sort">
@@ -76,6 +77,10 @@
 
           <%- include('../components/no-matches/_no-matches.ejs') %>
 
+          <div id="no-matches-explore-products" class="no-matches-explore-products hidden">
+            <h2 class="heading">Explore more gaming desktops</h2>
+          </div>
+
           <!-- Product Grid -->
           <div class="layout-grid" id="product-grid">
             <!-- Products will be dynamically loaded here -->
@@ -90,6 +95,7 @@
               <span class="icon icon--loader"></span>
             </div>
           </div>
+
         </div>
       </div>
     </div>

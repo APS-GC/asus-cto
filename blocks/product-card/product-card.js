@@ -51,7 +51,7 @@ function buildProductCardHTML(product, config) {
 
       return `
         <tr>
-          <td>${game}</td>
+          <th scope="row">${game}</th>
           <td>${fps1080 !== '--' ? fps1080 : '--'}</td>
           <td>${fps1440 !== '--' ? fps1440 : '--'}</td>
         </tr>
@@ -62,9 +62,9 @@ function buildProductCardHTML(product, config) {
       <table class="cmp-product-card__fps-table">
         <thead>
           <tr>
-            <th>Game FPS</th>
-            <th>1080P</th>
-            <th>1440P</th>
+            <th scope="col">Game FPS</th>
+            <th scope="col">1080P</th>
+            <th scope="col">1440P</th>
           </tr>
         </thead>
         <tbody>
@@ -73,6 +73,9 @@ function buildProductCardHTML(product, config) {
       </table>
     `;
   }
+
+  // Check if screen size below 1280px for mobile aria-hidden
+  const isMobile = window.innerWidth < 1280;
 
   // Determine product URL
   const productUrl = product.urlKey || './pdp.html';
@@ -90,7 +93,7 @@ function buildProductCardHTML(product, config) {
 
     <div class="cmp-product-card__body">
       <div class="cmp-product-card__image cmp-image">
-        ${mergedConfig.showQuickView ? `<button class="cmp-product-card__preview-btn" data-product-id="${productId}" data-a11y-dialog-show="product-preview-dialog" aria-label="${mergedConfig.quickViewText} ${product.name}">${mergedConfig.quickViewText}</button>` : ''}
+        ${mergedConfig.showQuickView ? `<button class="cmp-product-card__preview-btn" data-product-id="${productId}" data-a11y-dialog-show="product-preview-dialog" aria-label="${mergedConfig.quickViewText} ${product.name}" ${isMobile ? 'aria-hidden="true"' : ''}>${mergedConfig.quickViewText}</button>` : ''}
         <img class="cmp-image__image" src="${product.mainImage}" alt="${product.name}" loading="lazy" decoding="async">
         ${product.hoverImage ? `<img class="cmp-image__image--hover" src="${product.hoverImage}" alt="${product.name}" aria-hidden="true" loading="lazy" decoding="async">` : ''}
       </div>
@@ -155,7 +158,7 @@ function buildProductCardHTML(product, config) {
         <div class="cmp-product-card__estore-line">
           <span class="cmp-product-card__estore-label">${mergedConfig.estoreLabel}</span>
           <div class="cmp-product-card__estore-icon-wrapper">
-            <button class="cmp-product-card__estore-icon" data-tooltip-trigger aria-describedby="estore-price-info-${productId}" data-tooltip-position="top" aria-label="Information about ${mergedConfig.estoreLabel}">
+            <button class="cmp-product-card__estore-icon" data-tooltip-trigger aria-describedby="estore-price-info-${productId}" data-tooltip-position="y" aria-label="Information about ${mergedConfig.estoreLabel}">
               <span class="visually-hidden"></span>
             </button>
             <div class="cmp-product-card__tooltip tooltip__content" id="estore-price-info-${productId}" role="tooltip">
@@ -165,10 +168,10 @@ function buildProductCardHTML(product, config) {
         </div>
       </div>
 
-      <div class="cmp-product-card__price-block" aria-label="Current price ${product.displayPrice || product.specialPrice || product.price}${product.displayRegularPrice ? `, Original price ${product.displayRegularPrice}, save ${product.displaySavedPrice || ''}` : ''}">
-        <span class="cmp-product-card__price">${product.displayPrice || product.specialPrice || product.price}</span>
-        ${product.displayRegularPrice && product.specialPrice ? `<span class="cmp-product-card__original-price">${product.displayRegularPrice}</span>` : ''}
-        ${product.displaySavedPrice ? `<span class="cmp-product-card__discount">SAVE ${product.displaySavedPrice}</span>` : ''}
+      <div class="cmp-product-card__price-block" role="group">
+        <span class="cmp-product-card__price" role="text" aria-label="Current price ${product.displayPrice || product.specialPrice || product.price}">${product.displayPrice || product.specialPrice || product.price}</span>
+        ${product.displayRegularPrice && product.specialPrice ? `<span class="cmp-product-card__original-price" role="text" aria-label="Original price ${product.displayRegularPrice}">${product.displayRegularPrice}</span>` : ''}
+        ${product.displaySavedPrice ? `<span class="cmp-product-card__discount" role="text" aria-label="Discount ${product.displaySavedPrice}">SAVE ${product.displaySavedPrice}</span>` : ''}
       </div>
     </div>
 
@@ -195,6 +198,33 @@ function setupEventListeners(block, product) {
   }
 
   // Quick view button - event handled by parent block that sets up the modal
+}
+
+/**
+ * Update aria-hidden on preview buttons based on screen size
+ */
+function updatePreviewButtonsAriaHidden() {
+  const isMobile = window.innerWidth < 1280;
+  const productCards = document.querySelectorAll('.cmp-product-card');
+  productCards.forEach((card) => {
+    const previewBtn = card.querySelector('.cmp-product-card__preview-btn');
+    if (previewBtn) {
+      if (isMobile) {
+        previewBtn.setAttribute('aria-hidden', 'true');
+      } else {
+        previewBtn.removeAttribute('aria-hidden');
+      }
+    }
+  });
+}
+
+// Setup resize handler for aria-hidden on preview buttons
+let resizeHandlerInitialized = false;
+function initResizeHandler() {
+  if (resizeHandlerInitialized) return;
+  resizeHandlerInitialized = true;
+
+  window.addEventListener('resize', updatePreviewButtonsAriaHidden);
 }
 
 /**
@@ -225,6 +255,9 @@ export default async function decorate(block) {
 
     // Setup event listeners
     setupEventListeners(block, product);
+
+    // Initialize resize handler for aria-hidden updates
+    initResizeHandler();
 
     // Clean up data attributes after use
     delete block.dataset.product;

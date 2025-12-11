@@ -8,7 +8,6 @@
   width: 100%;
   overflow: hidden;
   height: 777px;
-  //aspect-ratio: 1440 / 777;
 
   .hero-image-wrapper,
   .hero-video-wrapper {
@@ -43,10 +42,9 @@
   }
 
   // Combined alignment variants
-
   &.hero-content--start-center .hero-content {
     top: 50%;
-    left: 10%;
+    left: calc((100% - 1240px) / 2);
     transform: translateY(-50%);
     text-align: left;
   }
@@ -60,20 +58,20 @@
 
   &.hero-content--end-center .hero-content {
     top: 50%;
-    right: 8%;
+    right: calc((100% - 1240px) / 2);
     transform: translateY(-50%);
     text-align: left;
   }
 
   &.hero-content--start-top .hero-content {
     top: 10%;
-    left: 10%;
+    left: calc((100% - 1240px) / 2);
     text-align: left;
   }
 
   &.hero-content--start-bottom .hero-content {
     bottom: 10%;
-    left: 10%;
+    left: calc((100% - 1240px) / 2);
     text-align: left;
   }
 
@@ -93,18 +91,17 @@
 
   &.hero-content--end-top .hero-content {
     top: 10%;
-    right: 8%;
+    right: calc((100% - 1240px) / 2);
     text-align: right;
   }
 
   &.hero-content--end-bottom .hero-content {
     bottom: 10%;
-    right: 8%;
+    right: calc((100% - 1240px) / 2);
     text-align: right;
   }
 
   @include mix.respond-to("xl", "max") {
-    //aspect-ratio: 768 / 429;
     height: 429px;
 
     .hero-content {
@@ -114,17 +111,25 @@
       }
     }
 
+    &:is(.hero-content--start-center, .hero-content--start-top, .hero-content--start-bottom)
+      .hero-content {
+      left: 40px;
+    }
+
     &.hero-content--start-center .hero-content {
-      left: 20px;
       top: unset;
       transform: unset;
       bottom: 76px;
     }
+
+    &:is(.hero-content--end-center, .hero-content--end-top, .hero-content--end-bottom)
+      .hero-content {
+      right: 40px;
+    }
   }
 
-  @include mix.respond-to("tab", "max") {
-    //aspect-ratio: 360 / 528;
-    height: 528px;
+  @include mix.respond-to("md", "max") {
+    height: 548px;
 
     &::after {
       content: "";
@@ -155,9 +160,31 @@
   }
 }
 
-@include mix.respond-to("tab", "max") {
+@include mix.respond-to("md", "max") {
   .cmp-carousel:has(.cmp-hero-banner) .cmp-carousel__footer {
     justify-content: space-between;
     bottom: 20px;
+  }
+}
+
+.cmp-page-banner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  height: 777px;
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  @include mix.respond-to("xl", "max") {
+    height: 429px;
+  }
+
+  @include mix.respond-to("md", "max") {
+    height: 548px;
   }
 }

@@ -114,16 +114,18 @@ class ProductPreview {
   _renderTopbar(data) {
     return `
       <div class="cmp-product-preview__topbar">
-        <div class="cmp-product-preview__topbar-left">
-          ${data.purchaseLimit ? `<p class="cmp-product-preview__purchase-limit">${data.purchaseLimit}</p>` : ''}
-          ${data.shippingInfo ? `<p class="cmp-product-preview__shipping-info">${data.shippingInfo}</p>` : ''}
-        </div>
+        <div class="container">
+          <div class="cmp-product-preview__topbar-left">
+            ${data.purchaseLimit ? `<p class="cmp-product-preview__purchase-limit">${data.purchaseLimit}</p>` : ''}
+            ${data.shippingInfo ? `<p class="cmp-product-preview__shipping-info">${data.shippingInfo}</p>` : ''}
+          </div>
 
-        <div class="cmp-product-preview__topbar-right">
-          ${this._renderPriceSection(data)}
-          <div class="cmp-product-preview__action-buttons">
-            ${data.isBuyable ? `<button class="btn">Add to Cart</button>` : ''}
-            <button class="btn btn-outline">View Details</button>
+          <div class="cmp-product-preview__topbar-right">
+            ${this._renderPriceSection(data)}
+            <div class="cmp-product-preview__action-buttons">
+              ${data.isBuyable ? `<button class="btn">Add to Cart</button>` : ''}
+              <button class="btn btn-outline">View Details</button>
+            </div>
           </div>
         </div>
       </div>

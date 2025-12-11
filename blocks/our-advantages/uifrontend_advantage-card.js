@@ -51,6 +51,11 @@ advantageCardsWrapper.addEventListener('click', (event) => {
     videoPlayer.removeAttribute('src');
     card.classList.remove('is-playing');
   });
+
+  swiperInstance.on('beforeTransitionStart', () => {
+    swiperInstance.autoplay.start();
+  });
+
   swiperInstance.on('slideChange', () => {
     activeSlideProgress.classList.remove('cmp-carousel__indicator--active-full');
   });

@@ -166,7 +166,8 @@
               @include typo.text-base();
               height: 32px;
               width: 100%;
-              &:active, &:focus{
+              &:active,
+              &:focus {
                 border: 2px solid var(--color-focus-ring);
                 outline: none;
               }
@@ -307,7 +308,7 @@
       }
     }
   }
-  @include mix.respond-to("tab", "max") {
+  @include mix.respond-to("md", "max") {
     &.open {
       .filters-container {
         @include mix.p(0, "y");

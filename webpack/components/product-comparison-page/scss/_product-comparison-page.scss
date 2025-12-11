@@ -12,10 +12,14 @@
     position: fixed;
     top: -100%;
     left: 0;
-    transition: top 0.3s ease;
+    visibility: hidden;
+    transition:
+      top 0.8s 0.2s ease,
+      visibility 1s 0.2s ease;
 
     &.sticky {
       top: 0;
+      visibility: visible;
     }
 
     .product-comparison-floating-card__container {
@@ -32,7 +36,7 @@
     .header-component-wrapper {
       .header-container {
         position: relative;
-        z-index: 10;
+        z-index: 9999999;
         @include typo.text-small();
 
         .internal-container {
@@ -69,7 +73,7 @@
           @include mix.spacer("gap", 4);
 
           .clear-all-button {
-            color: var(--color-select-box-highlight);
+            color: var(--color-info);
             @include typo.text-small();
 
             &:hover {
@@ -84,13 +88,37 @@
       width: 100%;
       display: flex;
       flex-direction: column;
+      overflow-x: visible;
       @include mix.spacer("gap", 16);
 
       .product-comparison-card__container {
+        overflow-x: auto;
         align-items: stretch;
+        &::-webkit-scrollbar {
+          display: none;
+        }
       }
 
+      .trailing-action-buttons-wrapper {
+        &::-webkit-scrollbar {
+          display: none;
+        }
+        overflow-x: scroll;
+      }
       .product-comparison-table {
+        .product-comparison-table-rows {
+          &::-webkit-scrollbar {
+            display: none;
+          }
+          @include mix.m(4, "t");
+          overflow-x: scroll;
+          @include mix.respond-to("xl", "max") {
+            @include mix.m(10, "x");
+          }
+          @include mix.respond-to("md", "max") {
+            @include mix.m(5, "x");
+          }
+        }
         .page-navigation {
           flex-direction: column;
           @include mix.spacer("gap", 2);
@@ -106,23 +134,52 @@
           opacity: 1;
           visibility: visible;
 
-          &.hide-bullets {
+          &.hide {
             opacity: 0;
-            visibility: hidden;
+          }
+
+          &:has(a:focus-visible) {
+            opacity: 1;
+          }
+
+          &.hide-bullets {
+            .navigation-bullet {
+              opacity: 0;
+              pointer-events: none;
+
+              &:focus,
+              &:focus-visible {
+                opacity: 1;
+                pointer-events: auto;
+              }
+            }
           }
 
           .navigation-bullet {
             display: flex;
             align-items: center;
-            border: 1px solid var(--color-primary);
-            width: 8px;
-            height: 8px;
-            border-radius: 100%;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
             padding: 0;
             text-decoration: none;
             transition: all 0.3s ease;
             white-space: nowrap;
             overflow: visible;
+            position: relative;
+
+            &::before {
+              content: "";
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              border: 1px solid var(--color-primary);
+              width: 8px;
+              height: 8px;
+              border-radius: 100%;
+              transition: all 0.3s ease;
+            }
 
             .navigation-bullet-dot {
               display: none;
@@ -132,8 +189,34 @@
               display: none;
             }
 
+            &:hover {
+              &::before {
+                background-color: var(--color-primary-100);
+                border-width: 2px;
+              }
+            }
+
+            &:focus,
+            &:focus-visible {
+              outline: none;
+
+              &::after {
+                content: "";
+                position: absolute;
+                top: -4px;
+                left: -4px;
+                right: -4px;
+                bottom: -4px;
+                border: 2px solid var(--color-focus-ring);
+                border-radius: 0;
+                pointer-events: none;
+              }
+            }
+
             &.selected {
-              background-color: var(--color-primary);
+              &::before {
+                background-color: var(--color-primary);
+              }
             }
           }
         }
@@ -143,7 +226,7 @@
           top: 50%;
           right: 20px;
           transform: translateY(-50%);
-          z-index: 99;
+          z-index: 9999999;
           background-color: var(--color-primary-950);
           border-radius: vars.$border-radius;
           box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
@@ -154,9 +237,14 @@
             visibility 0.2s ease;
           opacity: 1;
           visibility: visible;
+          max-height: 80vh;
+          overflow-y: auto;
+          scrollbar-width: thin;
+          scrollbar-color: var(--color-primary-400) transparent;
           @include mix.p(4, "y");
+          width: 200px;
 
-          &.hidden {
+          &.hide {
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
@@ -172,13 +260,26 @@
             @include mix.p(5, "x");
 
             .navigation-hover-label {
-              color: var(--color-primary-300);
+              color: var(--color-primary-200);
               white-space: nowrap;
               @include typo.text-small();
             }
 
             &:hover {
-              background-color: rgba(0, 0, 0, 0.05);
+              .navigation-hover-label {
+                color: var(--color-primary-base);
+                font-weight: 500;
+              }
+            }
+
+            &:focus,
+            &:focus-visible {
+              outline: none;
+              border: 2px solid var(--color-info);
+
+              .navigation-hover-label {
+                color: var(--color-primary-base);
+              }
             }
 
             &.selected {
@@ -203,6 +304,15 @@
         display: flex;
         align-items: center;
         @include mix.spacer("gap", 2);
+        margin-bottom: -64px;
+        position: sticky;
+        left: 0;
+        @include mix.respond-to("xl", "max") {
+          @include mix.p(10, "x");
+        }
+        @include mix.respond-to("md", "max") {
+          @include mix.p(5, "x");
+        }
 
         .info-tooltip-wrapper {
           display: flex;
@@ -221,6 +331,7 @@
     .product-comparison-floating-card__container-wrapper {
       &.sticky {
         top: 56px;
+        z-index: 10;
       }
 
       .product-comparison-floating-card__container {
@@ -234,11 +345,12 @@
       .header-component-wrapper {
         position: sticky;
         top: 0;
-        z-index: 9;
+        z-index: 9999999;
         background-color: var(--color-primary);
 
         .header-container {
           @include mix.p(4, "y");
+          background-color: var(--color-primary);
 
           .internal-container {
             @include mix.spacer("gap", 2);
@@ -281,14 +393,20 @@
             span {
               color: var(--color-primary-950);
             }
+
+            .clear-all-button {
+              color: var(--color-select-box-highlight);
+            }
           }
         }
       }
 
       .scrollable-component {
+        overflow-x: hidden;
         @include mix.spacer("gap", 10);
-        overflow: auto;
-
+        .switch-container {
+          margin-bottom: -40px;
+        }
         .product-comparison-table {
           .page-navigation {
             display: none;
@@ -312,14 +430,24 @@
     }
   }
 
-  @include mix.respond-to("tab", "max") {
+  @include mix.respond-to("md", "max") {
     .product-comparison-component-wrapper {
-      @include mix.spacer("gap", 8);
+      @include mix.spacer("gap", 4);
 
       .scrollable-component {
         @include mix.spacer("gap", 4);
+        .switch-container {
+          margin-bottom: -16px;
+        }
       }
     }
+  }
+}
+
+.comparison-product-card-item {
+  .icon--plus-white {
+    width: 15px;
+    height: 15px;
   }
 }
 
@@ -332,24 +460,15 @@
   @include mix.respond-to("xl", "max") {
     grid-template-columns: repeat(4, 304px);
     @include mix.spacer("gap", 2);
-    @include mix.p(5, "r");
+    @include mix.p(10, "x");
   }
 
-  @include mix.respond-to("tab", "max") {
+  @include mix.respond-to("md", "max") {
     grid-template-columns: repeat(4, minmax(159px, 1fr));
-    @include mix.p(0, "r");
+    @include mix.p(5, "x");
   }
 
   @include mix.respond-to("sm", "max") {
     grid-template-columns: repeat(4, 156px);
   }
-
-  //Edge case breakpoint
-  // @include mix.respond-to(375, "max"){
-  //   display: flex;
-  //   .comparison-product-card-item {
-  //     width: calc(50% - 4px);
-  //     flex-shrink: 0;
-  //   }
-  // }
 }

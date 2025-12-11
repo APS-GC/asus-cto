@@ -2,46 +2,90 @@
 @use "../../../site/scss/settings/variables" as vars;
 @use "../../../site/scss/settings/mixins" as mix;
 
-.cmp-article-listing-page{
-  @include mix.p(16, 't');
-  @include mix.p(32, 'b');
-  &__wrapper{
+.cmp-article-listing-page {
+  &__wrapper {
     display: flex;
     flex-direction: column;
     @include mix.spacer("gap", 8);
-    .section-heading{
+    .section-heading {
       justify-content: center;
+      align-self: center;
+      max-width: 680px;
       text-align: center;
+      @include mix.m(0);
+      &__description {
+        @include typo.text-base();
+      }
     }
-    .cmp-articles-list{
-      .cmp-article-card{
+    .articles-flex {
+      display: flex;
+      flex-direction: column;
+      @include mix.spacer("gap", 5);
+    }
+    .cmp-articles-list {
+      .cmp-article-card {
         height: 100%;
       }
     }
-    .cmp-articles-list__actions{
+    .cmp-articles-list[aria-hidden="true"] {
+      display: none;
+    }
+    .cmp-articles-list__actions {
       text-align: center;
     }
   }
-  @include mix.respond-to("xl", "max"){
-    @include mix.p(10, 't');
+  @include mix.respond-to("xl", "max") {
+    @include mix.p(10, "t");
     padding-bottom: 5.25rem;
-    .cmp-articles-list{
-      @include mix.spacer("gap", 2);
+    &__wrapper {
+      .section-heading {
+        max-width: 688px;
+        &__title {
+          @include typo.text-display2();
+        }
+      }
+      .articles-flex {
+        @include mix.spacer("gap", 2);
+      }
+      .cmp-articles-list {
+        @include mix.spacer("gap", 2);
+      }
     }
   }
-  @include mix.respond-to("tab", "max"){
-    @include mix.p(8, 't');
-    @include mix.p(20, 'b');
-    &__wrapper{
+  @include mix.respond-to("md", "max") {
+    @include mix.p(8, "t");
+    @include mix.p(20, "b");
+    &__wrapper {
       @include mix.spacer("gap", 5);
+      .section-heading {
+        align-self: flex-start;
+        justify-content: flex-start;
+        text-align: left;
+        &__title {
+          @include typo.text-display3();
+        }
+        &__description {
+          @include typo.text-small();
+        }
+      }
+      .cmp-articles-list__actions {
+        @include mix.m(3, "t");
+      }
     }
-    .section-heading{
-      justify-content: flex-start;
-      text-align: left;
+    .layout-grid__col--md-span-12 {
+      grid-column: span 12;
     }
-    .layout-grid__col--tab-span-12{
-      grid-column: span 12;  
-    }
+  }
+}
+
+.cmp-show-more-articles-button {
+  display: flex;
+  @include mix.spacer("gap", 1);
+  justify-self: center;
+  border-radius: 0;
+  .icon--arrow-bottom {
+    width: 12px;
+    height: 12px;
   }
 }
 
@@ -55,13 +99,13 @@
     color: var(--color-primary-950);
     @include typo.text-small();
   }
-    
+
   &__sort-wrapper {
     display: flex;
     align-items: center;
     text-align: left;
     @include mix.spacer("gap", 2);
-      
+
     .cmp-articles-sort-label {
       color: var(--color-primary-700);
       white-space: nowrap;
@@ -69,13 +113,17 @@
       @include typo.text-small();
       @include mix.m(0, "b");
     }
-      
+
     /* Select box + filter button */
     .cmp-articles-sort {
       display: flex;
       width: 100%;
+
       @include mix.spacer("gap", 2);
-        
+      .choices__inner{
+        @include mix.p(1, "y");
+      }
+
       .cmp-articles-filter-trigger {
         display: none;
         flex: 0 0 auto;
@@ -88,37 +136,32 @@
       }
     }
   }
-    
-  @include mix.respond-to("tab", "max") {
+
+  @include mix.respond-to("md", "max") {
     flex-direction: column-reverse;
     align-items: flex-start;
     @include mix.spacer("gap", 5);
-      
+
     &__sort-wrapper {
-      flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
       width: 100%;
-      @include mix.spacer("gap", 1);
+      @include mix.spacer("gap", 2);
       .cmp-articles-sort-label {
         @include mix.m(2, "r");
       }
       .cmp-articles-sort {
+        max-width: 200px;
+        &-label{
+          @include mix.m(0);
+        }
         .choices {
           flex: 1;
         }
-          
+
         .cmp-articles-filter-trigger {
           display: block;
         }
       }
     }
-  }
-}
-
-.cmp-news-articles__additional-articles {
-  transition: opacity 0.3s ease;
-
-  &[aria-hidden="true"] {
-    display: none;
   }
 }

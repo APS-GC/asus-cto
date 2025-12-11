@@ -4,8 +4,9 @@
  */
 
 import { moveInstrumentation, createOptimizedPicture, loadSwiper } from '../../scripts/scripts.js';
-import { getBlockConfigs } from '../../scripts/configs.js';
+import { getBlockConfigs, getConfigValue } from '../../scripts/configs.js';
 import { isUniversalEditor } from '../../scripts/utils.js';
+import { trackPromotionView, trackPromotionClick, trackEvent } from '../../scripts/google-data-layer.js';
 
 // Configuration defaults
 const DEFAULT_CONFIG = {
@@ -27,9 +28,6 @@ function parseHeroBannerSlides(block, slideStartIndex) {
   rows.slice(slideStartIndex).forEach((row, index) => {
     const cells = [...row.children];
 
-    // Debug logging
-    console.log(`Processing slide row ${index + slideStartIndex}:`, cells.length, 'cells');
-    
     // Support both 7-cell (legacy) and 8-cell (new with mediaAlt) formats
     if (cells.length >= 7) {
       // Extract media information
@@ -109,16 +107,12 @@ function parseHeroBannerSlides(block, slideStartIndex) {
         originalRow: row // Store reference to original row for instrumentation
       };
 
-      // Debug logging
-      console.log(`Created slide ${index}:`, slide);
-      
       slides.push(slide);
     } else {
       // console.warn(`Row ${index + slideStartIndex} has insufficient cells (${cells.length}), skipping`);
     }
   });
 
-  console.log('Parsed slides:', slides);
   return slides;
 }
 
@@ -163,8 +157,8 @@ function generateHeroBannerHTML(slide, config, index = 0) {
       slide.mediaAlt || 'Hero Banner',
       isFirstSlide, // eager=true for first slide (LCP optimization!)
       [
-        { media: '(min-width: 1200px)', width: '750' },
-        { media: '(min-width: 768px)', width: '1024' },
+        { media: '(min-width: 1280px)', width: '1440' },
+        { media: '(min-width: 731px)', width: '1024' },
         { width: '640' },
       ], // eslint-disable-line comma-dangle
       isFirstSlide ? 'high' : null, // fetchpriority='high' for first slide (LCP boost!)
@@ -246,7 +240,7 @@ const manageVideoPlayback = (video, action) => {
 /**
  * Toggle video play/pause and manage paused class on media controls
  */
-const toggleSliderVideo = (videoPlayPauseBtn, swiperInstance) => {
+const toggleSliderVideo = async (videoPlayPauseBtn, swiperInstance) => {
   const activeSlide = swiperInstance.el.querySelector('.swiper-slide-active');
   const activeSlideProdName = activeSlide?.querySelector('.product-name')?.textContent;
 
@@ -254,12 +248,33 @@ const toggleSliderVideo = (videoPlayPauseBtn, swiperInstance) => {
   const mediaControls = swiperInstance.el.closest('.cmp-hero-banner').querySelector('.cmp-hero-banner__media-controls');
   
   if (activeSlide && activeVideo) {
+    const basePath = await getConfigValue('base-path') || '';
+    const bannerPos = `hero_banner_${blockPosition}`;
+    
     if (activeVideo.paused) {
+      // Track play action
+      if (blockPosition) {
+        trackEvent({
+          eventName: 'indicator_banner_home_cto_rog',
+          category: `indicator/${bannerPos}${basePath}`,
+          label: `play/indicator/${bannerPos}${basePath}`
+        });
+      }
+      
       manageVideoPlayback(activeVideo, 'play');
       videoPlayPauseBtn?.setAttribute('aria-label', `Pause ${activeSlideProdName}`);
       videoPlayPauseBtn?.setAttribute('title', `Pause ${activeSlideProdName}`);
       mediaControls?.classList.remove('paused');
     } else {
+      // Track pause action
+      if (blockPosition) {
+        trackEvent({
+          eventName: 'indicator_banner_home_cto_rog',
+          category: `indicator/${bannerPos}${basePath}`,
+          label: `pause/indicator/${bannerPos}${basePath}`
+        });
+      }
+      
       manageVideoPlayback(activeVideo, 'pause');
       videoPlayPauseBtn?.setAttribute('aria-label', `Play ${activeSlideProdName}`);
       videoPlayPauseBtn?.setAttribute('title', `Play ${activeSlideProdName}`);
@@ -271,18 +286,8 @@ const toggleSliderVideo = (videoPlayPauseBtn, swiperInstance) => {
 /**
  * Initialize Swiper hero banner
  */
-async function initializeSwiper(heroBannerElement, config) {
+async function initializeSwiper(heroBannerElement, config, blockPosition) {
   const isUE = isUniversalEditor();
-
-  // Force apply UE authoring class and attributes for CSS targeting
-  if (isUE) {
-    const heroBanner = heroBannerElement.querySelector('.cmp-hero-banner');
-    if (heroBanner) {
-      heroBanner.classList.add('ue-authoring');
-      heroBanner.setAttribute('data-authoring', 'true');
-      document.body.setAttribute('data-aue-behavior', 'true');
-    }
-  }
 
   // Load Swiper dynamically
   const setupSwiper = async () => {
@@ -456,6 +461,142 @@ function getSlideStartIndex(block) {
 }
 
 /**
+ * Build single slide structure (used for immediate display)
+ */
+function buildSingleSlideStructure(config, heroBannerId) {
+  const heroBannerWrapper = document.createElement('div');
+  heroBannerWrapper.className = 'hero-banner panelcontainer';
+  
+  const heroBanner = document.createElement('div');
+  heroBanner.id = heroBannerId;
+  heroBanner.className = 'cmp-hero-banner';
+  heroBanner.setAttribute('role', 'group');
+  heroBanner.setAttribute('aria-live', 'off');
+  heroBanner.setAttribute('aria-roledescription', 'hero-banner');
+  heroBanner.setAttribute('data-cmp-delay', config.imageAutoplayDuration);
+  heroBanner.setAttribute('data-placeholder-text', 'false');
+  heroBanner.setAttribute('data-loop-slides', 'true');
+  
+  const heroBannerContent = document.createElement('div');
+  heroBannerContent.className = 'cmp-hero-banner__content';
+  
+  const swiper = document.createElement('div');
+  swiper.className = 'swiper single-slide';
+
+  const swiperWrapper = document.createElement('div');
+  swiperWrapper.className = 'swiper-wrapper';
+  swiperWrapper.setAttribute('aria-live', 'off');
+
+  // Only first slide
+  const firstSlide = config.slides[0];
+  const slideElement = document.createElement('div');
+  slideElement.id = `${heroBannerId}-item-${firstSlide.id}-tabpanel`;
+  slideElement.className = 'cmp-hero-banner__item swiper-slide swiper-slide-active';
+  slideElement.setAttribute('role', 'group');
+  slideElement.setAttribute('aria-label', `Slide 1 of ${config.slides.length}`);
+  slideElement.setAttribute('data-swiper-slide-index', '0');
+
+  if (firstSlide.originalRow) {
+    moveInstrumentation(firstSlide.originalRow, slideElement);
+  }
+
+  const heroBannerSlide = generateHeroBannerHTML(firstSlide, config, 0);
+  slideElement.appendChild(heroBannerSlide);
+  swiperWrapper.appendChild(slideElement);
+
+  swiper.appendChild(swiperWrapper);
+  heroBannerContent.appendChild(swiper);
+  
+  // Empty footer placeholder
+  const heroBannerFooter = document.createElement('div');
+  heroBannerFooter.className = 'cmp-hero-banner__footer';
+  heroBannerContent.appendChild(heroBannerFooter);
+  
+  heroBanner.appendChild(heroBannerContent);
+  heroBannerWrapper.appendChild(heroBanner);
+
+  return heroBannerWrapper;
+}
+
+/**
+ * Upgrade to multi-slide carousel
+ */
+function upgradeToCarousel(heroBannerWrapper, config, heroBannerId) {
+  const swiperWrapper = heroBannerWrapper.querySelector('.swiper-wrapper');
+  const swiper = heroBannerWrapper.querySelector('.swiper');
+  const heroBannerFooter = heroBannerWrapper.querySelector('.cmp-hero-banner__footer');
+  
+  // Remove single-slide class
+  swiper.classList.remove('single-slide');
+  
+  // Add remaining slides (slides 2, 3, etc.)
+  for (let index = 1; index < config.slides.length; index++) {
+    const slide = config.slides[index];
+    const slideElement = document.createElement('div');
+    slideElement.id = `${heroBannerId}-item-${slide.id}-tabpanel`;
+    slideElement.className = 'cmp-hero-banner__item swiper-slide';
+    slideElement.setAttribute('role', 'group');
+    slideElement.setAttribute('aria-label', `Slide ${index + 1} of ${config.slides.length}`);
+    slideElement.setAttribute('data-swiper-slide-index', index);
+    slideElement.setAttribute('data-swiper-autoplay', slide.isVideo ? config.videoAutoplayDuration : config.imageAutoplayDuration);
+
+    if (slide.originalRow) {
+      moveInstrumentation(slide.originalRow, slideElement);
+    }
+
+    const heroBannerSlide = generateHeroBannerHTML(slide, config, index);
+    slideElement.appendChild(heroBannerSlide);
+    swiperWrapper.appendChild(slideElement);
+  }
+
+  // Add indicators
+  const indicatorsGroup = document.createElement('div');
+  indicatorsGroup.className = 'cmp-hero-banner__indicators-group';
+
+  const indicatorsList = document.createElement('ol');
+  indicatorsList.className = 'cmp-hero-banner__indicators';
+  indicatorsList.setAttribute('role', 'tablist');
+  indicatorsList.setAttribute('aria-label', 'Choose a slide to display');
+
+  config.slides.forEach((slide, index) => {
+    const indicator = document.createElement('li');
+    indicator.className = `cmp-hero-banner__indicator ${index === 0 ? 'cmp-hero-banner__indicator--active' : ''}`;
+    indicator.setAttribute('aria-label', `Go to slide ${index + 1}`);
+    indicator.setAttribute('role', 'tab');
+    indicator.setAttribute('tabindex', '0');
+    if (index === 0) {
+      indicator.setAttribute('aria-current', 'true');
+    }
+    indicatorsList.appendChild(indicator);
+  });
+
+  const autoplayToggle = document.createElement('button');
+  autoplayToggle.className = 'hero-banner-autoplay-toggle';
+  autoplayToggle.setAttribute('aria-label', 'Pause');
+
+  indicatorsGroup.appendChild(indicatorsList);
+  indicatorsGroup.appendChild(autoplayToggle);
+  heroBannerFooter.appendChild(indicatorsGroup);
+
+  // Add media controls if video slides exist
+  const hasVideoSlide = config.slides.some((slide) => slide.isVideo);
+  if (hasVideoSlide) {
+    const mediaControls = document.createElement('div');
+    mediaControls.className = 'cmp-hero-banner__media-controls';
+
+    const playPauseBtn = document.createElement('button');
+    playPauseBtn.className = 'cmp-hero-banner__media-control cmp-hero-banner__media-control--play-pause';
+    playPauseBtn.setAttribute('aria-label', `Play ${config.slides[0]?.subtitle || 'media'}`);
+
+    mediaControls.appendChild(playPauseBtn);
+    heroBannerFooter.appendChild(mediaControls);
+  }
+
+  // Initialize Swiper
+  initializeSwiper(heroBannerWrapper, config);
+}
+
+/**
  * Main decoration function
  */
 export default async function decorate(block) {
@@ -480,156 +621,101 @@ export default async function decorate(block) {
   // Parse slides from remaining rows
   config.slides = parseHeroBannerSlides(block, slideStartIndex);
   
-  console.log('Final config:', config);
-  console.log('Slide start index:', slideStartIndex);
-  console.log('Total slides:', config.slides.length);
-  
   if (config.slides.length === 0) {
-    // Fallback content if no slides configured
     block.innerHTML = '<div class="hero-banner-placeholder"><p>No hero banner slides configured</p></div>';
     return;
   }
 
-  // Generate hero banner ID
   const heroBannerId = `hero-banner-${Math.random().toString(36).substr(2, 9)}`;
-  
-  // Create wrapper elements
-  const heroBannerWrapper = document.createElement('div');
-  heroBannerWrapper.className = 'hero-banner panelcontainer';
-  
-  const heroBanner = document.createElement('div');
-  heroBanner.id = heroBannerId;
-  heroBanner.className = 'cmp-hero-banner';
-  heroBanner.setAttribute('role', 'group');
-  heroBanner.setAttribute('aria-live', 'off');
-  heroBanner.setAttribute('aria-roledescription', 'hero-banner');
-  heroBanner.setAttribute('data-cmp-delay', config.imageAutoplayDuration);
-  heroBanner.setAttribute('data-placeholder-text', 'false');
-  heroBanner.setAttribute('data-loop-slides', 'true');
-  
-  const heroBannerContent = document.createElement('div');
-  heroBannerContent.className = 'cmp-hero-banner__content';
-  
-  const swiper = document.createElement('div');
-  swiper.className = 'swiper swiper-initialized swiper-horizontal swiper-watch-progress swiper-backface-hidden is-autoplay-enabled';
-
-  const swiperWrapper = document.createElement('div');
-  swiperWrapper.className = 'swiper-wrapper';
-  swiperWrapper.setAttribute('aria-live', 'off');
-
-  // Generate slides as DOM elements with moveInstrumentation
-  config.slides.forEach((slide, index) => {
-    const slideElement = document.createElement('div');
-    slideElement.id = `${heroBannerId}-item-${slide.id}-tabpanel`;
-    slideElement.className = `cmp-hero-banner__item swiper-slide ${index === 0 ? 'cmp-hero-banner__item--active' : ''}`;
-    slideElement.setAttribute('role', 'group');
-    slideElement.setAttribute('aria-label', `Slide ${index + 1} of ${config.slides.length}`);
-    slideElement.setAttribute('data-swiper-slide-index', index);
-    slideElement.setAttribute('data-swiper-autoplay', slide.isVideo ? config.videoAutoplayDuration : config.imageAutoplayDuration);
-
-    // Move instrumentation from original row to slide element
-    if (slide.originalRow) {
-      moveInstrumentation(slide.originalRow, slideElement);
-    }
-
-    // Generate and append hero banner
-    const heroBannerSlide = generateHeroBannerHTML(slide, config, index);
-    slideElement.appendChild(heroBannerSlide);
-    
-    swiperWrapper.appendChild(slideElement);
-  });
-
-  const swiperNotification = document.createElement('span');
-  swiperNotification.className = 'swiper-notification';
-  swiperNotification.setAttribute('aria-live', 'assertive');
-  swiperNotification.setAttribute('aria-atomic', 'true');
-
-  swiper.appendChild(swiperWrapper);
-  swiper.appendChild(swiperNotification);
-  heroBannerContent.appendChild(swiper);
-
-  // Only show navigation/indicators if there are multiple slides
   const hasMultipleSlides = config.slides.length > 1;
 
-  // Create hero banner footer
-  const heroBannerFooter = document.createElement('div');
-  heroBannerFooter.className = 'cmp-hero-banner__footer';
-
-  if (hasMultipleSlides) {
-    // Create indicators group
-    const indicatorsGroup = document.createElement('div');
-    indicatorsGroup.className = 'cmp-hero-banner__indicators-group';
-
-    // Create indicators list
-    const indicatorsList = document.createElement('ol');
-    indicatorsList.className = 'cmp-hero-banner__indicators';
-    indicatorsList.setAttribute('role', 'tablist');
-    indicatorsList.setAttribute('aria-label', 'Choose a slide to display');
-
-    // Generate indicator elements
-    config.slides.forEach((slide, index) => {
-      const indicator = document.createElement('li');
-      indicator.className = `cmp-hero-banner__indicator ${index === 0 ? 'cmp-hero-banner__indicator--active' : ''}`;
-      indicator.setAttribute('aria-label', `Go to slide ${index + 1}`);
-      indicator.setAttribute('role', 'tab');
-      indicator.setAttribute('tabindex', '0');
-      if (index === 0) {
-        indicator.setAttribute('aria-current', 'true');
-      }
-      indicatorsList.appendChild(indicator);
-    });
-
-    // Create autoplay toggle button
-    const autoplayToggle = document.createElement('button');
-    autoplayToggle.className = 'hero-banner-autoplay-toggle';
-    autoplayToggle.setAttribute('aria-label', 'Pause');
-
-    indicatorsGroup.appendChild(indicatorsList);
-    indicatorsGroup.appendChild(autoplayToggle);
-
-    heroBannerFooter.appendChild(indicatorsGroup);
-  }
-
-  // Create media controls (only for video slides)
-  const hasVideoSlide = config.slides.some((slide) => slide.isVideo);
-  if (hasVideoSlide) {
-    const mediaControls = document.createElement('div');
-    mediaControls.className = 'cmp-hero-banner__media-controls';
-
-    const playPauseBtn = document.createElement('button');
-    playPauseBtn.className = 'cmp-hero-banner__media-control cmp-hero-banner__media-control--play-pause';
-    playPauseBtn.setAttribute('aria-label', `Play ${config.slides[0]?.subtitle || 'media'}`);
-
-    mediaControls.appendChild(playPauseBtn);
-    heroBannerFooter.appendChild(mediaControls);
-  }
-
-  heroBannerContent.appendChild(heroBannerFooter);
-  heroBanner.appendChild(heroBannerContent);
-  heroBannerWrapper.appendChild(heroBanner);
-
-  // Replace block content
+  // ALWAYS start with single-slide structure (works for LCP)
+  const heroBannerWrapper = buildSingleSlideStructure(config, heroBannerId);
   block.textContent = '';
   block.appendChild(heroBannerWrapper);
+  
+  // Handle video autoplay for first slide
+  const video = heroBannerWrapper.querySelector('video');
+  if (video) {
+    manageVideoPlayback(video, 'play');
+  }
 
+  // Determine block position (how many hero-banner blocks appear before this one)
+  const allHeroBanners = document.querySelectorAll('.hero-banner.block');
+  const blockPosition = Array.from(allHeroBanners).indexOf(block) + 1;
+
+  // Initialize Swiper hero banner with blockPosition
+  initializeSwiper(heroBannerWrapper, config, blockPosition);
+  const basePath = await getConfigValue('base-path') || '';
+  const bannerPosition = `hero_banner_${blockPosition}`;
+  
+  // Track promotionView for all visible slides
+  setTimeout(() => {
+    const promotions = config.slides.map((slide, index) => ({
+      id: slide.media || `hero_banner_slide_${index + 1}`,
+      name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
+      position: bannerPosition,
+      order: `${index + 1}`
+    }));
+    trackPromotionView(promotions);
+  }, 500);
+
+  // Track indicator clicks (wait for Swiper to initialize)
+  setTimeout(() => {
+    const indicators = block.querySelectorAll('.cmp-hero-banner__indicator');
+    
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        trackEvent({
+          eventName: 'indicator_banner_home_cto_rog',
+          category: `indicator/${bannerPosition}${basePath}`,
+          label: `${index + 1}/indicator/${bannerPosition}${basePath}`
+        });
+      });
+    });
+  }, 600);
+
+  // Track promotionClick when CTA is clicked
+  block.querySelectorAll('.cta-button').forEach((ctaButton, index) => {
+    ctaButton.addEventListener('click', (e) => {
+      const slide = config.slides[index];
+      const bannerOrder = `${index + 1}`;
+      
+      // Track Enhanced Ecommerce promotionClick
+      trackPromotionClick({
+        id: slide.media || `hero_banner_slide_${index + 1}`,
+        name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
+        position: bannerPosition,
+        order: bannerOrder
+      });
+      
+      // Track custom data layer CTA click
+      trackEvent({
+        eventName: 'cta_banner_home_cto_rog',
+        category: `cta/${bannerPosition}${basePath}`,
+        label: `${slide.ctaText || 'CTA'}/cta/${bannerPosition}${basePath}`
+      });
+      
+      // Handle navigation with tracking delay
+      if (ctaButton.href) {
+        e.preventDefault();
+        const targetUrl = ctaButton.href;
+        const openInNewTab = ctaButton.target === '_blank';
+        
+        setTimeout(() => {
+          if (openInNewTab) {
+            window.open(targetUrl, '_blank', 'noopener,noreferrer');
+          } else {
+            window.location.href = targetUrl;
+          }
+        }, 300);
+      }
+    });
+  });
   // Initialize Swiper hero banner only if there are multiple slides
   if (hasMultipleSlides) {
-    initializeSwiper(heroBannerWrapper, config);
-  } else {
-    // For single slide, add classes to make it visible without Swiper
-    const swiperContainer = heroBannerWrapper.querySelector('.swiper');
-    if (swiperContainer) {
-      swiperContainer.classList.add('single-slide');
-    }
-    
-    const singleSlide = heroBannerWrapper.querySelector('.swiper-slide');
-    if (singleSlide) {
-      singleSlide.classList.add('swiper-slide-active');
-    }
-    
-    const video = heroBannerWrapper.querySelector('video');
-    if (video) {
-      manageVideoPlayback(video, 'play');
-    }
+    requestAnimationFrame(() => {
+      upgradeToCarousel(heroBannerWrapper, config, heroBannerId);
+    });
   }
 }

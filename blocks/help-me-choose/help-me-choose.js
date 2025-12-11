@@ -3,6 +3,7 @@ import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Default configuration
 const DEFAULT_CONFIG = {
@@ -237,7 +238,7 @@ function loadSwiperCSS() {
 function generateBudgetCenterHTML(lowestPrice, highestPrice) {
   return `
     <label for="budget-min-value" class="sr-only-fixed">Minimum Budget Value</label>
-    <input class="budget-value" id="budget-min-value" value="${_formatCurrency(lowestPrice)}" />
+    <input type="text" class="budget-value" id="budget-min-value" value="${_formatCurrency(lowestPrice)}" />
     <div class="budget-separator" aria-hidden="true">to</div>
     <div id="maximum-budget-wrapper-mobile"></div>
     <div class="budget-range-wrapper">
@@ -249,7 +250,7 @@ function generateBudgetCenterHTML(lowestPrice, highestPrice) {
     </div>
     <div id="maximum-budget-wrapper-desktop">
         <label for="budget-max-value" class="sr-only-fixed">Maximum Budget Value</label>
-        <input class="budget-value" id="budget-max-value" value="${_formatCurrency(highestPrice)}" />
+        <input type="text" class="budget-value" id="budget-max-value" value="${_formatCurrency(highestPrice)}" />
     </div>
   `;
 }
@@ -263,10 +264,10 @@ function generateBudgetCenterHTML(lowestPrice, highestPrice) {
 function generateFilterBudgetCenterHTML(lowestPrice, highestPrice) {
   return `
     <label for="budget-min-value" class="sr-only">Min Value</label>
-    <input class="budget-value" id="budget-min-value" />
+    <input type="text" class="budget-value" id="budget-min-value" />
     <div class="budget-separator" aria-hidden="true">to</div>
     <label for="budget-max-value" class="sr-only">Max Value</label>
-    <input class="budget-value" id="budget-max-value" />
+    <input type="text" class="budget-value" id="budget-max-value" />
     <div class="budget-range-wrapper">
         <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="500" data-max="5000" data-step="100"></div>
         <div class="range-labels" aria-hidden="true">
@@ -516,15 +517,36 @@ class SelectGameForm {
         from: (v) => Number(v.replace(/[$,]/g, '')),
       },
       handleAttributes: [
-        { 'aria-label': 'Budget minimum', 'aria-controls': 'min-budget' },
-        { 'aria-label': 'Budget maximum', 'aria-controls': 'max-budget' },
+        { 'aria-label': 'Budget range minimum value', 'aria-controls': 'min-budget' },
+        { 'aria-label': 'Budget range maximum value', 'aria-controls': 'max-budget' },
       ],
     });
 
+    // Get handle elements for aria-valuetext updates
+    const minHandle = slider.querySelector('.noUi-handle-lower');
+    const maxHandle = slider.querySelector('.noUi-handle-upper');
+
     slider.noUiSlider.on('update', (values) => {
-      const [minVal, maxVal] = values.map(Number);
+      const [minVal, maxVal] = values.map((v) => parseFloat(v));
       this._updateBudgetDisplay(minVal, maxVal);
-      this._updateSubmitButtonState();
+      this._updateSubmitButtonState(false);
+
+      // Update aria-valuetext with min/max reached messages
+      if (minHandle) {
+        let text = `$${minVal}`;
+        if (minVal === min) {
+          text += ', minimum value reached';
+        }
+        minHandle.setAttribute('aria-valuetext', text);
+      }
+
+      if (maxHandle) {
+        let text = `$${maxVal}`;
+        if (maxVal === max) {
+          text += ', maximum value reached';
+        }
+        maxHandle.setAttribute('aria-valuetext', text);
+      }
     });
   }
 
@@ -539,6 +561,36 @@ class SelectGameForm {
     });
 
     this.form.addEventListener('reset', () => this._handleFormReset());
+    
+    this.form.addEventListener('submit', (e) => this._handleFormSubmit(e));
+  }
+  
+  /**
+   * Handles form submission and tracks the event.
+   * @param {Event} e - The submit event.
+   */
+  _handleFormSubmit(e) {
+    const selectedGames = this._getSelectedGames();
+    if (selectedGames.length === 0) {
+      e.preventDefault();
+      return;
+    }
+    
+    // Get game names
+    const gameNames = [...this.dom.games]
+      .filter((g) => g.checked)
+      .map((g) => g.dataset.name);
+    
+    // Get budget values
+    const minBudget = this.dom.minBudgetInput?.value || 0;
+    const maxBudget = this.dom.maxBudgetInput?.value || 0;
+    
+    // Track the event
+    trackEvent({
+      eventName: 'help_me_choose_home_cto_rog',
+      category: 'help_me_choose/home/cto/rog',
+      label: `game: ${gameNames.join(', ')}; min: ${minBudget}; max: ${maxBudget}/help_me_choose/home/cto/rog`
+    });
   }
 
   /* ---------------------------------------------
@@ -639,16 +691,32 @@ class SelectGameForm {
    * @param {boolean} isMin - Whether the input is for the minimum budget value.
    */
   _handleBudgetInputChange(input, isMin) {
-    const slider = this.dom.slider?.noUiSlider;
-    if (!slider) return;
+    const sliderInstance = this.dom.slider?.noUiSlider;
+    if (!input || !sliderInstance) return;
 
     const validated = this._validateBudgetValue(toNumber(input.value), isMin);
 
+    // Set formatted display & inputs
     input.value = _formatCurrency(validated);
 
-    const [currMin, currMax] = slider.get().map(toNumber);
+    // Update hidden inputs
+    if (isMin && this.dom.minBudgetInput) {
+      this.dom.minBudgetInput.value = validated;
+    } else if (!isMin && this.dom.maxBudgetInput) {
+      this.dom.maxBudgetInput.value = validated;
+    }
 
-    slider.set(isMin ? [validated, currMax] : [currMin, validated]);
+    const currentValues = sliderInstance.get();
+    let [currMin, currMax] = currentValues.map((v) => Math.round(Number(v)));
+    const step = sliderInstance.steps()[0][0];
+
+    if (isMin) {
+      currMin = validated === currMax ? currMax - step : validated;
+      sliderInstance.setHandle(0, currMin, false, true);
+    } else {
+      currMax = validated === currMin ? currMin + step : validated;
+      sliderInstance.setHandle(1, currMax, false, true);
+    }
   }
 
   /**
@@ -825,10 +893,13 @@ class FilterComponent {
 
   _bindFilterEvents() {
     // Toggle filter open/close
-    this.dom.filterButton?.addEventListener('click', () => {
+    this.dom.filterButton?.addEventListener('click', (e) => {
+      const filterBtn = e.target.tagName === 'SPAN' ? e.target.parentElement : e.target;
       if (this.container.classList.contains('open')) {
+        filterBtn.setAttribute('aria-expanded', 'false');
         this._toggleFilter(false);
       } else {
+        filterBtn.setAttribute('aria-expanded', 'true');
         this._toggleFilter(true);
       }
     });
@@ -846,11 +917,14 @@ class FilterComponent {
   }
 
   _toggleFilter(open) {
+    const budgetElement = document.querySelector('#budget');
     if (open) {
       this.container.classList.add('open');
+      budgetElement?.classList.add('expanded');
       this.dom.icon?.classList.replace('icon--arrow-bottom', 'icon--arrow-top');
     } else {
       this.container.classList.remove('open');
+      budgetElement?.classList.remove('expanded');
       this.dom.icon?.classList.replace('icon--arrow-top', 'icon--arrow-bottom');
     }
   }
@@ -860,6 +934,13 @@ class FilterComponent {
     this.dom.games.forEach((cb) => (cb.checked = false));
     this._updateBudgetDisplay(this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max);
   }
+
+  formatGameFilter(value) {
+    return {
+      'value': String(value).replace(/[<>"]/g, ''), // Basic sanitization
+      '_apply': 'AT_LEAST_ONCE'
+    };
+  };
 
   _handleSubmit() {
     const checkedGames = [...this.dom.games].filter((cb) => cb.checked).map((cb) => cb.value);
@@ -877,10 +958,25 @@ class FilterComponent {
     //update confirmed state
     this._hydrateFromUrl();
     if (window.perfectMatchProductInstance) {
+
+      const params = new URLSearchParams(window.location.search);
+      const selectedGames = params.getAll('games').map(this.formatGameFilter);
+      const minBudget = params.get('min-budget') || 500;
+      const maxBudget = params.get('max-budget') || 5000;
+      const path = window.location.href.includes('/us/') ? '/content/dam/asuscto/us' : '/content/dam/asuscto/en';
+
       window.perfectMatchProductInstance.loadPerfectMatchProducts({
-        games: checkedGames,
-        minBudget,
-        maxBudget,
+        'query': '',
+        'variables': {
+          'path': path,
+          'gameIdsFilter': {
+            '_logOp': 'AND',
+            '_expressions': selectedGames || [],
+          },
+          'lowerPrice': minBudget,
+          'highPrice': maxBudget,
+          'sort': 'price DESC'
+        }
       });
     }
 
@@ -921,16 +1017,32 @@ class FilterComponent {
    * @param {boolean} isMin - Whether the input is for the minimum budget value.
    */
   _handleBudgetInputChange(input, isMin) {
-    const slider = this.dom.slider?.noUiSlider;
-    if (!slider) return;
+    const sliderInstance = this.dom.slider?.noUiSlider;
+    if (!input || !sliderInstance) return;
 
     const validated = this._validateBudgetValue(toNumber(input.value), isMin);
 
+    // Set formatted display
     input.value = _formatCurrency(validated);
 
-    const [currMin, currMax] = slider.get().map(toNumber);
+    // Update hidden inputs
+    if (isMin && this.dom.minBudgetInput) {
+      this.dom.minBudgetInput.value = validated;
+    } else if (!isMin && this.dom.maxBudgetInput) {
+      this.dom.maxBudgetInput.value = validated;
+    }
 
-    slider.set(isMin ? [validated, currMax] : [currMin, validated]);
+    const currentValues = sliderInstance.get();
+    let [currMin, currMax] = currentValues.map((v) => Math.round(Number(v)));
+    const step = sliderInstance.steps()[0][0];
+
+    if (isMin) {
+      currMin = validated === currMax ? currMax - step : validated;
+      sliderInstance.setHandle(0, currMin, false, true);
+    } else {
+      currMax = validated === currMin ? currMin + step : validated;
+      sliderInstance.setHandle(1, currMax, false, true);
+    }
   }
 
   /**

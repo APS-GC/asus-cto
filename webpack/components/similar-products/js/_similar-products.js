@@ -11,7 +11,7 @@ class SimilarProductsManager {
     this.totalProducts = 0;
     this.currentSort = 'newest';
     this.filters = [];
-    this.desktopBreakpoint = 1024;
+    this.desktopBreakpoint = 1279;
     this.productType = 'similar-products';
   }
 
@@ -174,11 +174,41 @@ class SimilarProductsManager {
 
 document.addEventListener('DOMContentLoaded', () => {
   const sortElement = document.querySelector('#similar-products-sort-by');
-  if (sortElement) {
-    const sortManager = new SortDropdownManager(sortElement);
-    sortManager.init();
+  const gridElement = document.getElementById('similar-products-grid');
+
+  if (!gridElement) {
+    return;
   }
 
-  const similarProductsManager = new SimilarProductsManager();
-  similarProductsManager.init();
+  const initSimilarProducts = () => {
+    // Avoid re-initializing on multiple observer callbacks
+    if (gridElement.dataset.initialized === 'true') {
+      return;
+    }
+    gridElement.dataset.initialized = 'true';
+
+    if (sortElement) {
+      const sortManager = new SortDropdownManager(sortElement);
+      sortManager.init();
+    }
+
+    const similarProductsManager = new SimilarProductsManager();
+    similarProductsManager.init();
+  };
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          initSimilarProducts();
+          obs.disconnect();
+        }
+      });
+    });
+
+    observer.observe(gridElement);
+  } else {
+    // Fallback for older browsers
+    initSimilarProducts();
+  }
 });

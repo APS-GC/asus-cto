@@ -18,3 +18,11 @@ export const validateRange = (value, fallback, min, max) => {
   if (isNaN(num)) return fallback;
   return Math.min(Math.max(num, min), max); // clamp between min & max
 };
+
+export const debounce = (func, delay) => {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), delay);
+  };
+};

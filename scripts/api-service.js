@@ -85,6 +85,16 @@ export async function fetchHotProducts(maxProducts = null, config = {}) { // esl
   return fetchProductData(endpoint, maxProducts);
 }
 
+function isNotEmptyObject(obj) {
+  if (!obj || typeof obj !== 'object') return false;
+  for (let key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Sort options mapping
  */
@@ -242,7 +252,10 @@ export async function fetchGameList(
   endpoint,
   mode = 'GET',
   params = {},
+<<<<<<< HEAD
   bodyType = 'JSON',
+=======
+>>>>>>> dev
   timeoutMs = 5000
 ) {
 
@@ -321,18 +334,18 @@ export async function callSSOValidation(type='check', aticket) {
   const url = `${ssoEndpoint}`;
   try {
     const response = await fetch(url, {
-      method:"POST",
+      method:'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
       },
-      body:JSON.stringify({type,ticket:aticket}),
+      body:JSON.stringify({ type,ticket:aticket }),
       mode: 'cors',
       timeout: 30000,
     });
     return await response.json();
   } catch (error) {
-    console.error("SSO API call error:", error.message);
+    console.error('SSO API call error:', error.message);
     throw new Error(`SSO validation failed: ${error.message}`);
   }
 }
