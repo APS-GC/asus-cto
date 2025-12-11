@@ -677,7 +677,33 @@ function renderCartItem(product) {
   `;
 }
 
+// Scroll locking functions for mobile menu
+let savedScrollY = 0;
+
+function disableScroll() {
+  savedScrollY = window.scrollY;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${savedScrollY}px`;
+  document.body.style.width = '100%';
+}
+
+function enableScroll() {
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.width = '';
+  window.scrollTo(0, savedScrollY);
+}
+
 function initializeHeader(block) {
+  // Set header height CSS variable for spacing
+  const headerWrapper = block.querySelector('.header-wrapper');
+  if (headerWrapper) {
+    document.documentElement.style.setProperty(
+      '--header-height',
+      `${headerWrapper.offsetHeight}px`,
+    );
+  }
+
   // Get current login state and profile menu data
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
@@ -701,6 +727,13 @@ function initializeHeader(block) {
       hamburgerToggle.setAttribute('aria-expanded', !isExpanded);
       mobileMenuOverlay.setAttribute('aria-hidden', isExpanded);
       block.classList.toggle('mm-open', !isExpanded);
+
+      // Handle scroll locking
+      if (!isExpanded) {
+        disableScroll();
+      } else {
+        enableScroll();
+      }
     });
   }
 
@@ -825,10 +858,13 @@ function initializeHeader(block) {
   // Mini cart close button
   const miniCartClose = block.querySelector('.mini-cart__close');
   if (miniCartClose) {
-    miniCartClose.addEventListener('click', () => {
+    miniCartClose.addEventListener('click', (e) => {
+      e.preventDefault();
       miniCartToggle.setAttribute('aria-expanded', 'false');
       miniCartContainer.setAttribute('aria-hidden', 'true');
       miniCartContainer.classList.remove('show');
+      // Focus back to toggle button for accessibility
+      miniCartToggle.focus();
     });
   }
 
@@ -876,6 +912,17 @@ function initializeHeader(block) {
         hamburgerToggle.setAttribute('aria-expanded', 'false');
         mobileMenuOverlay.setAttribute('aria-hidden', 'true');
         block.classList.remove('mm-open');
+        enableScroll();
+      }
+    });
+
+    // Close menu when clicking on menu links
+    mobileMenuOverlay.addEventListener('click', (e) => {
+      if (e.target.closest('a')) {
+        hamburgerToggle.setAttribute('aria-expanded', 'false');
+        mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+        block.classList.remove('mm-open');
+        enableScroll();
       }
     });
   }

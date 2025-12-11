@@ -28,6 +28,7 @@ const DEFAULT_CONFIG = {
   clearAllText: 'Clear all',
   noMatchesTitle: 'No matches',
   noMatchesDescription: 'Oops.. Seems like we did not find item that matches your search. Please use a different search term, relax your criteria, or check out our hottest products below.',
+  exploreMoreTitle: 'Explore more gaming desktops',
   productPreviewModalPath: '/en/modals/product-preview',
 };
 
@@ -137,6 +138,11 @@ function createMainStructure(config, placeholders = {}) {
           </div>
         </div>
 
+        <!-- Explore Products (shown when no matches) -->
+        <div id="no-matches-explore-products" class="no-matches-explore-products hidden">
+          <h2 class="heading">${escapeHtml(config.exploreMoreTitle || 'Explore more gaming desktops')}</h2>
+        </div>
+
         <!-- Product Grid -->
         <div class="layout-grid" id="product-grid">
           <!-- Products will be dynamically loaded here -->
@@ -169,6 +175,7 @@ function createListingState(container, config) {
     config,
     productGrid: container.querySelector('#product-grid'),
     noMatches: container.querySelector('#no-matches'),
+    noMatchesExploreProducts: container.querySelector('#no-matches-explore-products'),
     productCountElement: container.querySelector('#product-count'),
     showMoreContainer: container.querySelector('#show-more-products-container'),
     showMoreBtn: container.querySelector('#show-more-products-btn'),
@@ -272,6 +279,7 @@ async function fetchProducts(state) {
     state.showMoreContainer?.classList.add('is-loading');
     state.showMoreContainer?.classList.remove('has-more');
     state.noMatches?.classList.remove('show');
+    state.noMatchesExploreProducts?.classList.add('hidden');
 
     const response = await fetchFilteredProducts({
       websiteCode: state.websiteCode,
@@ -294,6 +302,8 @@ async function fetchProducts(state) {
 
     if (state.totalProducts === 0) {
       state.noMatches?.classList.add('show');
+      state.noMatchesExploreProducts?.classList.remove('hidden');
+      state.showMoreContainer?.classList.add('hidden');
     }
   } catch (err) {
     // eslint-disable-next-line no-console

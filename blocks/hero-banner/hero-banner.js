@@ -156,8 +156,8 @@ function generateHeroBannerHTML(slide, config, index = 0) {
       slide.mediaAlt || 'Hero Banner',
       isFirstSlide, // eager=true for first slide (LCP optimization!)
       [
-        { media: '(min-width: 1200px)', width: '1440' },
-        { media: '(min-width: 768px)', width: '1024' },
+        { media: '(min-width: 1280px)', width: '1440' },
+        { media: '(min-width: 731px)', width: '1024' },
         { width: '640' },
       ], // eslint-disable-line comma-dangle
       isFirstSlide ? 'high' : null, // fetchpriority='high' for first slide (LCP boost!)

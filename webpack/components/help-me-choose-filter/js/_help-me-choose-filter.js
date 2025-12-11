@@ -94,7 +94,6 @@ class FilterComponent {
         to: (value) => `$${Math.round(value).toLocaleString('en-US')}`,
         from: (value) => Number(value.replace(/[$,]/g, '')),
       },
-      // IMPROVEMENT: Use aria-controls to link the handles to the hidden inputs
       handleAttributes: [
         { 'aria-label': 'Budget range minimum value', 'aria-controls': 'min-budget' },
         { 'aria-label': 'Budget range maximum value', 'aria-controls': 'max-budget' },
@@ -155,6 +154,9 @@ class FilterComponent {
     this.dom.form?.addEventListener('reset', () => {
       setTimeout(() => this._handleReset(), 0);
     });
+  }
+  _parseCurrency(value) {
+    return toNumber(value);
   }
   _formatCurrency(value) {
     const n = Number(value) || 0;
@@ -223,26 +225,29 @@ class FilterComponent {
     const sliderInstance = this.dom.slider?.noUiSlider;
     if (!inputElement || !sliderInstance) return;
 
-    // 1. Get raw number from the input value (stripping currency/commas)
-    const raw = toNumber(inputElement.value);
-    // 2. Validate and clamp the value
+    const raw = this._parseCurrency(inputElement.value);
     const validated = this._validateBudgetValue(raw, isMin);
 
-    // 3. Update the visible input with the formatted, validated value
+    // Set formatted display & inputs
     inputElement.value = this._formatCurrency(validated);
 
-    // 4. Update the slider position
-    const [currentMin, currentMax] = sliderInstance.get().map(toNumber);
-
-    if (isMin) {
-      // Set the minimum handle position
-      sliderInstance.set([validated, currentMax]);
-    } else {
-      // Set the maximum handle position
-      sliderInstance.set([currentMin, validated]);
+    if (isMin && this.dom.minBudgetInput) {
+      this.dom.minBudgetInput.value = validated;
+    } else if (!isMin && this.dom.maxBudgetInput) {
+      this.dom.maxBudgetInput.value = validated;
     }
 
-    // Trigger update of hidden inputs via slider 'update' event
+    const currentValues = sliderInstance.get();
+    let [currMin, currMax] = currentValues.map((v) => Math.round(Number(v)));
+    const step = sliderInstance.steps()[0][0];
+
+    if (isMin) {
+      currMin = validated === currMax ? currMax - step : validated;
+      sliderInstance.setHandle(0, currMin, false, true);
+    } else {
+      currMax = validated === currMin ? currMin + step : validated;
+      sliderInstance.setHandle(1, currMax, false, true);
+    }
   }
   _toggleFilter(open) {
     if (open) {
@@ -332,7 +337,8 @@ class FilterComponent {
 
     // hydrate slider
     if (this.dom.slider?.noUiSlider) {
-      this.dom.slider.noUiSlider.set([minBudget, maxBudget]);
+      this.dom.slider.noUiSlider.setHandle(0, minBudget, false, true);
+      this.dom.slider.noUiSlider.setHandle(1, maxBudget, false, true);
     }
 
     // hydrate confirmed values

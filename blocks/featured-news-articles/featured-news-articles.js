@@ -109,7 +109,7 @@ export default async function decorate(block) {
 
     const mockup = document.createRange().createContextualFragment(`
       <div class="cmp-carousel__item">
-        <a class="cmp-article-card" href="${articleLink}" aria-label="Read article: ${title}" target='${
+        <a class="cmp-article-card" href="${articleLink}" aria-label="Read article: Published on ${postedDate ? transferDate(postedDate) : ''}, Title: ${title}, Description: ${summary}" target='${
       articleOpenInNewTab ? '_blank' : '_self'
     }'>
           <div class="cmp-article-card__image cmp-image">

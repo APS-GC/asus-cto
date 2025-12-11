@@ -45,6 +45,11 @@ document.addEventListener('click', function (event) {
     videoPlayer.removeAttribute('src');
     card.classList.remove('is-playing');
   });
+
+  swiperInstance.on('beforeTransitionStart', () => {
+    swiperInstance.autoplay.start();
+  });
+
   swiperInstance.on('slideChange', function () {
     activeSlideProgress.classList.remove('cmp-carousel__indicator--active-full');
   });
@@ -83,8 +88,6 @@ document.addEventListener('click', function (event) {
 
   // When the video ends, reset the card and restart the swiper
   videoPlayer.onended = () => {
-    //slide.dataset.swiperAutoplay = '';
-    //card.classList.remove('is-playing');
     activeSlideProgress.classList.add('cmp-carousel__indicator--active-full');
     swiperInstance.autoplay.stop();
     videoPlayer.currentTime = 0;

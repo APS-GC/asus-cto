@@ -308,6 +308,7 @@ footer {
       text-align: left;
       gap: 2rem;
       @include mix.p(8, "t");
+
       span {
         justify-content: flex-start;
       }
@@ -333,6 +334,10 @@ footer {
             right: -13px;
           }
         }
+      }
+
+      .global-link {
+        color: var(--color-primary-950);
       }
     }
   }
