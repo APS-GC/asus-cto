@@ -263,7 +263,12 @@
                   "name": "Product Comparison",
                   "model": "product-comparison",
                   "title": "Product Comparison",
-                  "compareButtonLabel": "VIEW COMPARISON"
+                  "backButtonText": "Back",
+                  "clearAllButtonText": "Clear All",
+                  "addToCompareText": "Add to compare",
+                  "buyNowButtonText": "Buy Now",
+                  "customizeButtonText": "Customize",
+                  "showSpecDifferenceText": "Show me the differences"
                 }
               }
             }

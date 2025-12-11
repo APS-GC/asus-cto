@@ -1326,9 +1326,44 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "compareButtonLabel",
-        "label": "View Comparison Button Text",
-        "value": "VIEW COMPARISON"
+        "name": "backButtonText",
+        "label": "Back Button Text",
+        "value": "Back"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "clearAllButtonText",
+        "label": "Clear All Button Text",
+        "value": "Clear All"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "addToCompareText",
+        "label": "Add to compare Text",
+        "value": "Add to compare"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "buyNowButtonText",
+        "label": "Buy Now Button Text",
+        "value": "Buy Now"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "customizeButtonText",
+        "label": "Customize Button Text",
+        "value": "Customize"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "showSpecDifferenceText",
+        "label": "Show Spec Difference Toggle Button Text",
+        "value": "Show me the differences"
       }
     ]
   },
