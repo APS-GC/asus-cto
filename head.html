@@ -11,6 +11,7 @@
 <script type="module">
   // Import getMetadata function from aem.js
   import { getMetadata } from '/scripts/aem.js';
+  import { initializePublish } from '/scripts/editor-support-publish.js'
   
   // Function to create and append meta tag
   function createMetaTag(name, content, type = 'name') {
@@ -114,6 +115,7 @@
 
   // Wait for DOM to be ready
   document.addEventListener('DOMContentLoaded', () => {
+    initializePublish();
     // Get page metadata
     const title = getMetadata('jcr:title') || document.title;
     const description = getMetadata('jcr:description');
