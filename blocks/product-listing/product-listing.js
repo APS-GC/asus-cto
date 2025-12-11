@@ -713,6 +713,8 @@ export default async function decorate(block) {
   // Load product-sidebar block via loadBlock
   const sidebarBlock = block.querySelector('.product-sidebar');
   if (sidebarBlock) {
+    // Load accordion.css before product-sidebar to ensure proper CSS cascade order
+    await loadCSS(`${window.hlx.codeBasePath}/blocks/accordion/accordion.css`);
     decorateBlock(sidebarBlock);
     await loadBlock(sidebarBlock);
   }
