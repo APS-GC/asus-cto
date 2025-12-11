@@ -3,6 +3,7 @@ import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Default configuration
 const DEFAULT_CONFIG = {
@@ -66,7 +67,7 @@ async function renderHelpMeChoose(block) {
   // Build the HTML in a fragment / string, then insert once
   const html = 
   
-  config.style === 1 ? `
+  config.style === '1' ? `
   <div class="game-recommendation">
       <div class="carousel panelcontainer">
           <div class="section-heading">
@@ -560,6 +561,36 @@ class SelectGameForm {
     });
 
     this.form.addEventListener('reset', () => this._handleFormReset());
+    
+    this.form.addEventListener('submit', (e) => this._handleFormSubmit(e));
+  }
+  
+  /**
+   * Handles form submission and tracks the event.
+   * @param {Event} e - The submit event.
+   */
+  _handleFormSubmit(e) {
+    const selectedGames = this._getSelectedGames();
+    if (selectedGames.length === 0) {
+      e.preventDefault();
+      return;
+    }
+    
+    // Get game names
+    const gameNames = [...this.dom.games]
+      .filter((g) => g.checked)
+      .map((g) => g.dataset.name);
+    
+    // Get budget values
+    const minBudget = this.dom.minBudgetInput?.value || 0;
+    const maxBudget = this.dom.maxBudgetInput?.value || 0;
+    
+    // Track the event
+    trackEvent({
+      eventName: 'help_me_choose_home_cto_rog',
+      category: 'help_me_choose/home/cto/rog',
+      label: `game: ${gameNames.join(', ')}; min: ${minBudget}; max: ${maxBudget}/help_me_choose/home/cto/rog`
+    });
   }
 
   /* ---------------------------------------------
@@ -904,6 +935,13 @@ class FilterComponent {
     this._updateBudgetDisplay(this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max);
   }
 
+  formatGameFilter(value) {
+    return {
+      'value': String(value).replace(/[<>"]/g, ''), // Basic sanitization
+      '_apply': 'AT_LEAST_ONCE'
+    };
+  };
+
   _handleSubmit() {
     const checkedGames = [...this.dom.games].filter((cb) => cb.checked).map((cb) => cb.value);
     if (checkedGames.length === 0) return;
@@ -920,10 +958,25 @@ class FilterComponent {
     //update confirmed state
     this._hydrateFromUrl();
     if (window.perfectMatchProductInstance) {
+
+      const params = new URLSearchParams(window.location.search);
+      const selectedGames = params.getAll('games').map(this.formatGameFilter);
+      const minBudget = params.get('min-budget') || 500;
+      const maxBudget = params.get('max-budget') || 5000;
+      const path = window.location.href.includes('/us/') ? '/content/dam/asuscto/us' : '/content/dam/asuscto/en';
+
       window.perfectMatchProductInstance.loadPerfectMatchProducts({
-        games: checkedGames,
-        minBudget,
-        maxBudget,
+        'query': '',
+        'variables': {
+          'path': path,
+          'gameIdsFilter': {
+            '_logOp': 'AND',
+            '_expressions': selectedGames || [],
+          },
+          'lowerPrice': minBudget,
+          'highPrice': maxBudget,
+          'sort': 'price DESC'
+        }
       });
     }
 

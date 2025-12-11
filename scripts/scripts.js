@@ -15,6 +15,7 @@ import {
   getMetadata,
 } from './aem.js';
 import { getConfigValue } from './configs.js';
+import { loadGTM, sendPageLoadAttributes } from './google-data-layer.js';
 
 /**
  * Get the current locale from configuration
@@ -406,6 +407,11 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  
+  const noscript = document.createElement('noscript');
+  noscript.innerHTML = '<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8KDRJVJ" height="0" width="0" style="display:none;visibility:hidden"></iframe>';
+  document.body.insertBefore(noscript, document.body.firstChild);
+  
   const main = doc.querySelector('main');
   if (main) {
     const overlapHeader = getMetadata('overlapheader');
@@ -449,6 +455,10 @@ async function loadLazy(doc) {
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 
+  await loadGTM();
+  await sendPageLoadAttributes();
+
+  loadCSS(`${window.hlx.codeBasePath}/styles/clientlib-base.css`);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 

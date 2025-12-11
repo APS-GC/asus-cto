@@ -3,30 +3,30 @@
  * eg.  setCookie('theme', 'dark', { maxAge: 3600, sameSite: 'Lax' });
  */
 export function setCookie(name, value, options = {}) {
-    options = {
+    const opts = {
         path: '/',
         ...options
     };
 
     let cookieStr = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
 
-    if (options.expires instanceof Date) {
-        cookieStr += `; expires=${options.expires.toUTCString()}`;
-    } else if (typeof options.maxAge === 'number') {
-        cookieStr += `; max-age=${options.maxAge}`;
+    if (opts.expires instanceof Date) {
+        cookieStr += `; expires=${opts.expires.toUTCString()}`;
+    } else if (typeof opts.maxAge === 'number') {
+        cookieStr += `; max-age=${opts.maxAge}`;
     }
 
-    if (options.domain) {
-        cookieStr += `; domain=${options.domain}`;
+    if (opts.domain) {
+        cookieStr += `; domain=${opts.domain}`;
     }
-    if (options.path) {
-        cookieStr += `; path=${options.path}`;
+    if (opts.path) {
+        cookieStr += `; path=${opts.path}`;
     }
-    if (options.secure) {
+    if (opts.secure) {
         cookieStr += '; secure';
     }
-    if (options.sameSite) {
-        cookieStr += `; samesite=${options.sameSite}`;
+    if (opts.sameSite) {
+        cookieStr += `; samesite=${opts.sameSite}`;
     }
 
     document.cookie = cookieStr;

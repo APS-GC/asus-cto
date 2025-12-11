@@ -6,6 +6,7 @@
 import { loadScript, decorateBlock, loadBlock } from '../../scripts/aem.js';
 import { fetchFilters } from '../../scripts/api-service.js';
 import { fetchPlaceholdersForLocale, getCurrencySymbol, getLang, getWebsiteCode } from '../../scripts/scripts.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Fallback filter configuration (used if API fails)
 const FALLBACK_FILTER_CONFIG = [];
@@ -262,6 +263,7 @@ function createFilterState(container, currencySymbol = '$', locale = 'en-US') {
     isMobile: window.innerWidth < 992,
     lastSyncedValues: { min: null, max: null },
     filterCount: 0,
+    budgetTrackingTimeout: null,
   };
 }
 
@@ -516,6 +518,18 @@ function handleSliderChange(state, isFinal = false) {
   if (isFinal) {
     state.lastSyncedValues = { min: minVal, max: maxVal };
     syncStateWithUrl(state);
+    
+    // Debounced budget tracking (wait 3 seconds after user stops sliding)
+    if (state.budgetTrackingTimeout) {
+      clearTimeout(state.budgetTrackingTimeout);
+    }
+    state.budgetTrackingTimeout = setTimeout(() => {
+      trackEvent({
+        eventName: 'budget_listing_cto_rog',
+        category: 'budget/listing/cto/rog',
+        label: `min: ${minVal}; max: ${maxVal}/budget/listing/cto/rog`
+      });
+    }, 3000);
   }
 }
 
@@ -652,6 +666,17 @@ function onCheckboxChange(state, checkbox, forceApply = false) {
 
   if (checkbox.checked) {
     addAppliedFilter(state, filterText, checkbox.id);
+    
+    // Track filter checkbox selection
+    const section = checkbox.closest('.cmp-accordion__item');
+    const filterCategory = section?.querySelector('.cmp-accordion__title')?.textContent?.trim() || 'Unknown';
+    const filterItem = checkbox.nextElementSibling?.textContent?.trim() || 'Unknown';
+    
+    trackEvent({
+      eventName: 'filter_listing_cto_rog',
+      category: 'filter/listing/cto/rog',
+      label: `${filterItem}/${filterCategory}/filter/listing/cto/rog`
+    });
   } else {
     removeAppliedFilter(state, checkbox.id);
   }

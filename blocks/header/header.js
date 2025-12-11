@@ -1,9 +1,10 @@
 import { createOptimizedPictureExternal, createOptimizedPicture, moveInstrumentation } from '../../scripts/scripts.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 import { getUserData, logout } from './sso.js';
 import { getConfigValue } from '../../scripts/configs.js';
 async function getAsusEndpoint(){
   const domain = await getConfigValue('sign-endpoint');
-  return `${domain}/hk/loginform.aspx?returnUrl=${encodeURIComponent(location.href)}&login_background=general_white`
+  return `${domain}/hk/loginform.aspx?returnUrl=${encodeURIComponent(location.href)}&login_background=general_white`;
 }
 
 // Header configuration - calculated once for the entire module
@@ -482,7 +483,7 @@ function buildNavigation(navigationItems, showProfile, showCart, profileMenuItem
   ).values());
 
   if(isLoggedIn){
-    uniqueMenuItems = uniqueMenuItems.filter(r=>r.linkText.toUpperCase() !== 'LOGIN')
+    uniqueMenuItems = uniqueMenuItems.filter(r => r.linkText.toUpperCase() !== 'LOGIN');
   }else{
     uniqueMenuItems = JSON.parse(JSON.stringify(profileMenuLoggedInItems));
   }
@@ -555,7 +556,7 @@ function buildMobileMenu(navigationItems, profileMenuItems, profileMenuLoggedInI
   ).values());
 
   if(isLoggedIn){
-    uniqueMenuItems = uniqueMenuItems.filter(r=>r.linkText.toUpperCase() !== 'LOGIN')
+    uniqueMenuItems = uniqueMenuItems.filter(r => r.linkText.toUpperCase() !== 'LOGIN');
   }else{
     uniqueMenuItems = JSON.parse(JSON.stringify(profileMenuLoggedInItems));
   }
@@ -860,6 +861,13 @@ function initializeHeader(block) {
   if (miniCartClose) {
     miniCartClose.addEventListener('click', (e) => {
       e.preventDefault();
+      // Track close button click
+      trackEvent({
+        eventName: 'close_mini_cart_header-L1_cto_rog',
+        category: 'mini_cart/header-L1/cto/rog',
+        label: 'close/mini_cart/header-L1/cto/rog'
+      });
+      
       miniCartToggle.setAttribute('aria-expanded', 'false');
       miniCartContainer.setAttribute('aria-hidden', 'true');
       miniCartContainer.classList.remove('show');
@@ -926,6 +934,69 @@ function initializeHeader(block) {
       }
     });
   }
+
+  // Add tracking for navigation links
+  const navLinks = block.querySelectorAll('.cmp-sitenavigation__item-link');
+  navLinks.forEach((link) => {
+    // Skip if it's a button (cart, profile, menu toggle)
+    if (link.tagName.toLowerCase() === 'button' || link.closest('.cmp-sitenavigation__item--cart, .cmp-sitenavigation__item--profile, .cmp-sitenavigation__item--menu-toggle')) {
+      return;
+    }
+    
+    link.addEventListener('click', () => {
+      const clickedText = link.textContent?.trim() || '';
+      // For now, using the same text for both Global-EN and local
+      // In a real implementation, you might fetch the EN version from a mapping
+      trackEvent({
+        eventName: 'header-L1_cto_rog',
+        category: 'header-L1/cto/rog',
+        label: `${clickedText}-${clickedText}/header-L1/cto/rog`
+      });
+    });
+  });
+
+  // Add tracking for profile menu links
+  const profileMenuLinks = block.querySelectorAll('.profile-menu__item');
+  profileMenuLinks.forEach((menuItem) => {
+    const link = menuItem.querySelector('a');
+    if (link) {
+      link.addEventListener('click', () => {
+        const clickedText = link.textContent?.trim() || '';
+        // For now, using the same text for both Global-EN and local
+        trackEvent({
+          eventName: 'submenu_header-L1_cto_rog',
+          category: 'submenu/header-L1/cto/rog',
+          label: `${clickedText}-${clickedText}/submenu/header-L1/cto/rog`
+        });
+      });
+    }
+  });
+
+  // Add tracking for mobile menu navigation links
+  const mobileNavLinks = block.querySelectorAll('.mobile-menu > li > a');
+  mobileNavLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const clickedText = link.textContent?.trim() || '';
+      trackEvent({
+        eventName: 'header-L1_cto_rog',
+        category: 'header-L1/cto/rog',
+        label: `${clickedText}-${clickedText}/header-L1/cto/rog`
+      });
+    });
+  });
+
+  // Add tracking for mobile profile menu links
+  const mobileProfileLinks = block.querySelectorAll('.submenu-items li a');
+  mobileProfileLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const clickedText = link.textContent?.trim() || '';
+      trackEvent({
+        eventName: 'submenu_header-L1_cto_rog',
+        category: 'submenu/header-L1/cto/rog',
+        label: `${clickedText}-${clickedText}/submenu/header-L1/cto/rog`
+      });
+    });
+  });
 }
 
 // Forward declaration for refreshHeader
@@ -1051,7 +1122,7 @@ refreshHeader = async (block) => {
 async function renderMiniCartContent(isLoggedIn) {
   if (!isLoggedIn) {
     return `
-      <p class="mini-cart__message"><a href="/">Sign in</a> to see if you have any saved items</p>
+      <p class="mini-cart__message"><a href="/" id="cart-signin-link">Sign in</a> to see if you have any saved items</p>
     `;
   }
 
@@ -1128,9 +1199,29 @@ async function updateMiniCartDisplay(block) {
   if (newCartSigninLink) {
     newCartSigninLink.addEventListener('click', (e) => {
       e.preventDefault();
+      
+      // Track sign-in link click
+      trackEvent({
+        eventName: 'sign_in_mini_cart_header-L1_cto_rog',
+        category: 'mini_cart/header-L1/cto/rog',
+        label: 'sign_in/mini_cart/header-L1/cto/rog'
+      });
+      
       // eslint-disable-next-line no-console
       console.log('Cart sign-in clicked');
       ssoLogin(block);
+    });
+  }
+
+  // Add tracking for checkout button
+  const checkoutButton = miniCartContainer.querySelector('.checkout-btn button');
+  if (checkoutButton) {
+    checkoutButton.addEventListener('click', () => {
+      trackEvent({
+        eventName: 'checkout_mini_cart_header-L1_cto_rog',
+        category: 'mini_cart/header-L1/cto/rog',
+        label: 'checkout/mini_cart/header-L1/cto/rog'
+      });
     });
   }
 }
