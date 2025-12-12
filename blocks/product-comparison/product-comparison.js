@@ -1,5 +1,6 @@
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 const PRODUCT_LISTING_PAGE_URL = 'product-listing';
 let AuthoredData = [];
@@ -26,6 +27,11 @@ function setupBackButton() {
   const backButton = document.querySelector('#comparison-page-back-button');
   if (backButton) {
     backButton.addEventListener('click', () => {
+      trackEvent({
+        eventName: 'back_comparison_cto_rog',
+        category: 'comparison/cto/rog',
+        label: 'back/comparison/cto/rog'
+      });
       window.location.href = PRODUCT_LISTING_PAGE_URL;
     });
   }
@@ -268,12 +274,12 @@ function renderProductCardButton(product) {
   } = product;
 
   if (isBuyable && isCustomizable) {
-    return `<a href='${customizeLink}#product-customization' class="btn btn-sm" aria-label="${AuthoredData[5] || 'Customize'} ${name}">${AuthoredData[5] || 'Customize'}</a>`;
+    return `<a href='${customizeLink}#product-customization' class="btn btn-sm cta-button" data-product-name="${name}" data-button-text="${AuthoredData[5] || 'Customize'}" aria-label="${AuthoredData[5] || 'Customize'} ${name}">${AuthoredData[5] || 'Customize'}</a>`;
   }
   if (isBuyable && !isCustomizable) {
-    return `<a href='${buyLink}' class="btn btn-sm" aria-label="Buy ${name} now">${AuthoredData[4] || 'Buy Now'}</a>`;
+    return `<a href='${buyLink}' class="btn btn-sm cta-button" data-product-name="${name}" data-button-text="${AuthoredData[4] || 'Buy Now'}" aria-label="Buy ${name} now">${AuthoredData[4] || 'Buy Now'}</a>`;
   }
-  return `<button class="btn btn-sm" aria-label="Notify me ${name}">Notify Me</button>`;
+  return `<button class="btn btn-sm cta-button" data-product-name="${name}" data-button-text="Notify Me" aria-label="Notify me ${name}">Notify Me</button>`;
 }
 
 /**
@@ -634,25 +640,71 @@ async function loadProducts(initial = false) {
       e.target.classList.contains('close-button-floating-card')
     ) {
       const id = e.target.dataset.id;
+      const product = products.find(p => p.id === id);
+      if (product) {
+        trackEvent({
+          eventName: 'remove_comparison_cto_rog',
+          category: 'comparison/cto/rog',
+          label: `${product.name}/remove/comparison/cto/rog`
+        });
+      }
       products = products.filter((p) => p.id !== id);
       loadProducts();
+    }
+    
+    // Track CTA button clicks
+    if (e.target.classList.contains('cta-button')) {
+      const productName = e.target.dataset.productName;
+      const buttonText = e.target.dataset.buttonText;
+      if (productName && buttonText) {
+        trackEvent({
+          eventName: 'cta_comparison_cto_rog',
+          category: 'comparison/cto/rog',
+          label: `${productName}/${buttonText}/cta/comparison/cto/rog`
+        });
+      }
     }
   });
 
   document.querySelectorAll('.close-button-floating-card').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       const id = e.target.dataset.id;
+      const product = products.find(p => p.id === id);
+      if (product) {
+        trackEvent({
+          eventName: 'remove_comparison_cto_rog',
+          category: 'comparison/cto/rog',
+          label: `${product.name}/remove/comparison/cto/rog`
+        });
+      }
       products = products.filter((p) => p.id !== id);
       loadProducts();
     });
   });
+  
   const clearAllButton = document.querySelector('.clear-all-button');
   if (clearAllButton) {
     clearAllButton.addEventListener('click', () => {
+      trackEvent({
+        eventName: 'clear_comparison_cto_rog',
+        category: 'comparison/cto/rog',
+        label: 'clear/comparison/cto/rog'
+      });
       products = [];
       loadProducts();
     });
   }
+  
+  // Track add to compare clicks on empty cards
+  document.querySelectorAll('.comparison-product-card__empty-container, .empty-floating-card-contents').forEach((emptyCard) => {
+    emptyCard.addEventListener('click', () => {
+      trackEvent({
+        eventName: 'add_comparison_cto_rog',
+        category: 'comparison/cto/rog',
+        label: 'add/comparison/cto/rog'
+      });
+    });
+  });
 
   checkDifferences();
 }
@@ -719,6 +771,16 @@ class Switch {
   toggleStatus() {
     const isChecked = this.switchNode.getAttribute('aria-checked') !== 'true';
     this.switchNode.setAttribute('aria-checked', isChecked);
+    
+    // Track show differences toggle
+    if (isChecked) {
+      trackEvent({
+        eventName: 'show_diff_comparison_cto_rog',
+        category: 'comparison/cto/rog',
+        label: 'show_diff/comparison/cto/rog'
+      });
+    }
+    
     (isChecked ? highlightDifferences : clearDifferences)();
   }
 }
