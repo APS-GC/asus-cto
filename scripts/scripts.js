@@ -443,15 +443,8 @@ async function loadEager(doc) {
     }
     
     decorateMain(main);
-    
-    // Only preload Swiper if page has carousel components (reduces TBT on other pages)
-    const hasCarousel = main.querySelector('.hero-banner, .hot-products, .product-preview, .help-me-choose, .our-advantages');
-    if (hasCarousel) {
-      loadSwiper().catch(err => console.error('Failed to preload Swiper:', err));
-    }
-    
     document.body.classList.add('appear');
-    await loadSection(main.querySelector('.section'), waitForFirstImage);
+    await loadSection(main.querySelector('.section'));
   }
 
   try {
@@ -483,7 +476,6 @@ async function loadLazy(doc) {
   await loadGTM();
   await sendPageLoadAttributes();
 
-  loadCSS(`${window.hlx.codeBasePath}/styles/clientlib-base.css`);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 

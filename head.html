@@ -1,8 +1,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
+<!-- Preload critical scripts -->
+<link rel="modulepreload" href="/scripts/aem.js">
+<link rel="modulepreload" href="/scripts/scripts.js">
+<link rel="modulepreload" href="/scripts/google-data-layer.js">
+<link rel="modulepreload" href="/scripts/utils.js">
+<link rel="modulepreload" href="/scripts/configs.js">
 
 <script src="/scripts/aem.js" type="module"></script>
 <script src="/scripts/scripts.js" type="module"></script>
+<script src="/scripts/google-data-layer.js" type="module"></script>
+<script src="/scripts/utils.js" type="module"></script>
+<script src="/scripts/configs.js" type="module"></script>
 <link rel="stylesheet" href="/styles/clientlib-base.css"/>
 <link rel="stylesheet" href="/styles/styles.css"/>
 
@@ -10,6 +19,10 @@
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+<!-- Early Swiper Load for LCP Optimization -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <!-- Dynamic SEO Meta Tags -->
 <script type="module">
