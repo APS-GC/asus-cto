@@ -108,15 +108,15 @@
           "valueType": "string",
           "options": [
             {
-              "name": "Start Top",
+              "name": " Left Top",
               "value": "start-top"
             },
             {
-              "name": "Start Center",
+              "name": "Left Center",
               "value": "start-center"
             },
             {
-              "name": "star bottom",
+              "name": "Left Bottom",
               "value": "start-bottom"
             },
             {
@@ -132,15 +132,15 @@
               "value": "center-bottom"
             },
             {
-              "name": "End Top",
+              "name": "Right Top",
               "value": "end-top"
             },
             {
-              "name": "End Center",
+              "name": "Right Center",
               "value": "end-center"
             },
             {
-              "name": "End Bottom:",
+              "name": "Right Bottom",
               "value": "end-bottom"
             }
           ],
