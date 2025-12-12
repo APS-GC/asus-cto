@@ -170,8 +170,8 @@ function buildProductCardHTML(product, config) {
 
       <div class="cmp-product-card__price-block" role="group">
         <span class="cmp-product-card__price" role="text" aria-label="Current price ${product.displayPrice || product.specialPrice || product.price}">${product.displayPrice || product.specialPrice || product.price}</span>
-        ${product.displayRegularPrice && product.specialPrice ? `<span class="cmp-product-card__original-price" role="text" aria-label="Original price ${product.displayRegularPrice}">${product.displayRegularPrice}</span>` : ''}
-        ${product.displaySavedPrice ? `<span class="cmp-product-card__discount" role="text" aria-label="Discount ${product.displaySavedPrice}">SAVE ${product.displaySavedPrice}</span>` : ''}
+        ${product.displayRegularPrice && product.specialPrice && parseFloat(product.savedPrice || 0) > 0 ? `<span class="cmp-product-card__original-price" role="text" aria-label="Original price ${product.displayRegularPrice}">${product.displayRegularPrice}</span>` : ''}
+        ${product.displaySavedPrice && parseFloat(product.savedPrice || 0) > 0 ? `<span class="cmp-product-card__discount" role="text" aria-label="Discount ${product.displaySavedPrice}">SAVE ${product.displaySavedPrice}</span>` : ''}
       </div>
     </div>
 
