@@ -141,7 +141,7 @@
   margin-right: 0.5rem;
 }
 
-@media only screen and (max-width: 47.9375rem) {
+@media only screen and (max-width: 45.625rem) {
   .dialog-container .dialog-content * {
     font-size: 0.875rem;
     line-height: 1.25rem;

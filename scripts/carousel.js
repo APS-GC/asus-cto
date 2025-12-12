@@ -12,6 +12,7 @@ const customEffectSettings = {
   loopedSlides: 3,
   grabCursor: true,
   watchSlidesProgress: true,
+  scrollOnFocus: true,
   initialSlide: 0,
   preventInteractionOnTransition: true,
   creativeEffect: {
@@ -20,7 +21,7 @@ const customEffectSettings = {
     next: { translate: [250, 0, 0], scale: 0.8 },
   },
   breakpoints: {
-    768: {
+    731: {
       creativeEffect: {
         limitProgress: 1,
         prev: { translate: [-400, 0, 0], scale: 0.51 },
@@ -343,6 +344,28 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
     },
     on: {
       afterInit(swiper) {
+        const updateNavButtonAria = () => {
+          const btns = [swiper.navigation.prevEl, swiper.navigation.nextEl];
+
+          btns.forEach((btn) => {
+            if (!btn) return;
+
+            const isDisabled = btn.classList.contains('cmp-carousel__action--disabled');
+
+            btn.setAttribute('aria-disabled', isDisabled ? 'true' : 'false');
+
+            if (isDisabled) {
+              btn.setAttribute('disabled', 'disabled');
+            } else {
+              btn.removeAttribute('disabled');
+            }
+          });
+        };
+
+        updateNavButtonAria();
+
+        swiper.on('slideChange', updateNavButtonAria);
+
         swiper.slides.forEach((slide) => {
           slide.setAttribute('tabindex', '-1');
 
@@ -358,6 +381,11 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
                 slide.dataset.swiperAutoplay = (slideVideo.duration + 1) * 1000;
               });
             }
+          }
+
+          if (swiper.isLocked) {
+            slide.removeAttribute('aria-label');
+            slide.removeAttribute('role');
           }
         });
 
@@ -436,6 +464,8 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
           progressEl.style.transition = 'none';
           progressEl.style.transform = 'scaleX(0)';
         });
+
+        window.dispatchEvent(new CustomEvent('swiper-slide-change', { detail: swiper }));
       },
       autoplayStart(swiper) {
         // Add autoplay class to swiper element

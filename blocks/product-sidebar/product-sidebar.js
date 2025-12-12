@@ -6,6 +6,7 @@
 import { loadScript, decorateBlock, loadBlock } from '../../scripts/aem.js';
 import { fetchFilters } from '../../scripts/api-service.js';
 import { fetchPlaceholdersForLocale, getCurrencySymbol, getLang, getWebsiteCode } from '../../scripts/scripts.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Fallback filter configuration (used if API fails)
 const FALLBACK_FILTER_CONFIG = [];
@@ -188,9 +189,6 @@ function buildSidebarHTML(config = {}) {
 
     <!-- Budget -->
     <div class="cmp-sidebar__budget" role="group" aria-label="${budgetText}">
-      <input type="hidden" name="minBudget" id="minBudget" value="${minBudget}" />
-      <input type="hidden" name="maxBudget" id="maxBudget" value="${maxBudget}" />
-
       <div class="budget-left">
         <h3 class="budget-left">${budgetText}:</h3>
       </div>
@@ -265,6 +263,7 @@ function createFilterState(container, currencySymbol = '$', locale = 'en-US') {
     isMobile: window.innerWidth < 992,
     lastSyncedValues: { min: null, max: null },
     filterCount: 0,
+    budgetTrackingTimeout: null,
   };
 }
 
@@ -519,6 +518,18 @@ function handleSliderChange(state, isFinal = false) {
   if (isFinal) {
     state.lastSyncedValues = { min: minVal, max: maxVal };
     syncStateWithUrl(state);
+    
+    // Debounced budget tracking (wait 3 seconds after user stops sliding)
+    if (state.budgetTrackingTimeout) {
+      clearTimeout(state.budgetTrackingTimeout);
+    }
+    state.budgetTrackingTimeout = setTimeout(() => {
+      trackEvent({
+        eventName: 'budget_listing_cto_rog',
+        category: 'budget/listing/cto/rog',
+        label: `min: ${minVal}; max: ${maxVal}/budget/listing/cto/rog`
+      });
+    }, 3000);
   }
 }
 
@@ -549,6 +560,11 @@ async function initBudgetSlider(state) {
       to: (v) => Math.round(v),
       from: (v) => Number(v),
     },
+    // ariaFormat is for screen readers
+    ariaFormat: {
+      to: (value) => `${state.currencySymbol}${Math.round(value).toLocaleString(state.locale)}`,
+      from: (value) => Number(value.replace(/[$,]/g, '')),
+    },
     handleAttributes: [
       { 'aria-label': 'Budget range minimum value', 'aria-controls': 'min-budget' },
       { 'aria-label': 'Budget range maximum value', 'aria-controls': 'max-budget' },
@@ -565,6 +581,7 @@ function handleBudgetInputChange(state, inputElement, isMin) {
   const raw = parseCurrency(inputElement.value);
   const validated = validateBudgetValue(state, raw, isMin);
 
+  // Set formatted display & inputs
   inputElement.value = formatCurrency(validated, state.currencySymbol, state.locale);
 
   if (isMin && state.minBudgetInput) {
@@ -574,15 +591,19 @@ function handleBudgetInputChange(state, inputElement, isMin) {
   }
 
   const currentValues = state.budgetSlider.noUiSlider.get();
-  const [currMin, currMax] = currentValues.map((v) => Math.round(Number(v)));
+  let [currMin, currMax] = currentValues.map((v) => Math.round(Number(v)));
+  const step = state.budgetSlider.noUiSlider.steps()[0][0];
 
   if (isMin) {
-    state.budgetSlider.noUiSlider.set([validated, currMax]);
+    currMin = validated === currMax ? currMax - step : validated;
+    state.budgetSlider.noUiSlider.setHandle(0, currMin, false, true);
   } else {
-    state.budgetSlider.noUiSlider.set([currMin, validated]);
+    currMax = validated === currMin ? currMin + step : validated;
+    state.budgetSlider.noUiSlider.setHandle(1, currMax, false, true);
   }
 
-  updateBudgetRangeFilter(state, state.minBudgetInput.value, state.maxBudgetInput.value);
+  // Update applied filters and sync with URL immediately on desktop
+  updateBudgetRangeFilter(state, currMin, currMax);
 
   if (!state.isMobile) {
     syncStateWithUrl(state);
@@ -645,6 +666,17 @@ function onCheckboxChange(state, checkbox, forceApply = false) {
 
   if (checkbox.checked) {
     addAppliedFilter(state, filterText, checkbox.id);
+    
+    // Track filter checkbox selection
+    const section = checkbox.closest('.cmp-accordion__item');
+    const filterCategory = section?.querySelector('.cmp-accordion__title')?.textContent?.trim() || 'Unknown';
+    const filterItem = checkbox.nextElementSibling?.textContent?.trim() || 'Unknown';
+    
+    trackEvent({
+      eventName: 'filter_listing_cto_rog',
+      category: 'filter/listing/cto/rog',
+      label: `${filterItem}/${filterCategory}/filter/listing/cto/rog`
+    });
   } else {
     removeAppliedFilter(state, checkbox.id);
   }
@@ -676,6 +708,19 @@ function applyPendingFilters(state) {
   if (closeButton) closeButton.click();
 }
 
+function cancelPendingFilters(state) {
+  state.pendingFilters.forEach((f) => {
+    const checkbox = document.getElementById(f.id);
+    if (checkbox) checkbox.checked = f.checked;
+  });
+  state.pendingFilters = [];
+}
+
+function closeMobileFilterDialog() {
+  const closeButton = document.querySelector('[data-a11y-dialog-hide="product-filter-dialog"]');
+  if (closeButton) closeButton.click();
+}
+
 function setupMobileButtons(state) {
   if (state.applyButton) {
     state.applyButton.addEventListener('click', () => applyPendingFilters(state));
@@ -689,6 +734,21 @@ function handleResize(state) {
   if (wasMobile && !state.isMobile && state.pendingFilters.length > 0) {
     applyPendingFilters(state);
   }
+}
+
+/**
+ * RAF-based throttle for resize handler
+ */
+function throttleRaf(fn) {
+  let scheduled = false;
+  return () => {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(() => {
+      scheduled = false;
+      fn();
+    });
+  };
 }
 
 /* ========================================================================
@@ -797,8 +857,10 @@ async function initializeFromUrl(state) {
   try {
     const { minBudget, maxBudget, filters } = getUrlParams(state);
 
+    // Init slider using setHandle for precise control
     if (state.budgetSlider?.noUiSlider) {
-      state.budgetSlider.noUiSlider.set([minBudget, maxBudget]);
+      state.budgetSlider.noUiSlider.setHandle(0, minBudget, false, true);
+      state.budgetSlider.noUiSlider.setHandle(1, maxBudget, false, true);
       if (
         minBudget !== state.DEFAULT_BUDGET_RANGE.min
         || maxBudget !== state.DEFAULT_BUDGET_RANGE.max
@@ -808,9 +870,11 @@ async function initializeFromUrl(state) {
     }
 
     if (filters.length > 0 && state.sidebar) {
+      // Expand accordions if needed (small delay for UI)
       await new Promise((r) => { setTimeout(r, 150); });
 
       filters.forEach((filterText) => {
+        // Apply filter - this will also add applied filter in UI
         applyFilterFromText(state, filterText);
       });
     }
@@ -852,7 +916,8 @@ async function initFilterManager(container, currencySymbol = '$', locale = 'en-U
   await initializeFromUrl(state);
   setupPopstateHandler(state);
 
-  window.addEventListener('resize', () => handleResize(state));
+  const throttledResize = throttleRaf(() => handleResize(state));
+  window.addEventListener('resize', throttledResize);
 }
 
 /* ========================================================================

@@ -23,6 +23,7 @@ const customEffectSettings = {
   loopedSlides: 3,
   grabCursor: true,
   watchSlidesProgress: true,
+  scrollOnFocus: true,
   initialSlide: 0,
   preventInteractionOnTransition: true,
   creativeEffect: {
@@ -31,7 +32,7 @@ const customEffectSettings = {
     next: { translate: [250, 0, 0], scale: 0.8 },
   },
   breakpoints: {
-    730: {
+    731: {
       creativeEffect: {
         limitProgress: 1,
         prev: { translate: [-400, 0, 0], scale: 0.51 },
@@ -351,13 +352,35 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
         slidesPerView: slidesPerViewTablet,
         spaceBetween: spaceBetweenTablet,
       },
-      1024: {
+      1280: {
         slidesPerView: slidesPerViewDesktop,
         spaceBetween: spaceBetweenDesktop,
       },
     },
     on: {
       afterInit(swiper) {
+        const updateNavButtonAria = () => {
+          const btns = [swiper.navigation.prevEl, swiper.navigation.nextEl];
+
+          btns.forEach((btn) => {
+            if (!btn) return;
+
+            const isDisabled = btn.classList.contains('cmp-carousel__action--disabled');
+
+            btn.setAttribute('aria-disabled', isDisabled ? 'true' : 'false');
+
+            if (isDisabled) {
+              btn.setAttribute('disabled', 'disabled');
+            } else {
+              btn.removeAttribute('disabled');
+            }
+          });
+        };
+
+        updateNavButtonAria();
+
+        swiper.on('slideChange', updateNavButtonAria);
+
         swiper.slides.forEach((slide) => {
           slide.setAttribute('tabindex', '-1');
 

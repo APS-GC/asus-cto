@@ -29,6 +29,7 @@ async function renderProductCompare(block) {
 
   // Build the HTML in a fragment / string, then insert once
   const html = `
+  <div id="sr-compare-announcement" class="sr-only-fixed" aria-live="polite" aria-atomic="true"></div>
   <div
    class="cmp-product-compare is-hidden is-collapsed"
    data-compare-container
@@ -73,7 +74,7 @@ async function renderProductCompare(block) {
                aria-roledescription="carousel"
                data-cmp-is="carousel"
                data-slides-per-view="2"
-               data-slides-per-view-tablet="2"
+               data-slides-per-view-tablet="4"
                data-slides-per-view-desktop="4"
                data-loop-slides="false"
                data-space-between="8"
@@ -210,6 +211,26 @@ class ProductCompare {
   }
 
   /**
+   * Announces a message to screen readers via an aria-live region.
+   * @param {string} message The message to announce.
+   */
+  announceChange(message) {
+    let region = document.getElementById('sr-compare-announcement');
+    if (!region) {
+      region = document.createElement('div');
+      region.id = 'sr-compare-announcement';
+      region.className = 'sr-only-fixed';
+      region.setAttribute('aria-live', 'polite');
+      region.setAttribute('aria-atomic', 'true');
+      document.body.appendChild(region);
+    }
+    region.textContent = '';
+    setTimeout(() => {
+      region.textContent = message;
+    }, 50);
+  }
+
+  /**
    * Stores the provided products in state and localStorage, then triggers a re-render.
    * @param {Array} products The array of products to store.
    */
@@ -281,9 +302,6 @@ class ProductCompare {
       id, name, sku, pdpUrl: pdp, image,
     };
 
-    // Focus on the container to ensure acessed by screen reader
-    this.container.focus();
-
     if (checkbox.checked) {
       if (this.state.products.length >= this.COMPARE_LIMIT) {
         this.showError('limit');
@@ -296,6 +314,9 @@ class ProductCompare {
     } else {
       this.removeProduct(id);
     }
+
+    // Focus on the container to ensure accessed by screen reader
+    this.container.focus();
   }
 
   /**
@@ -303,7 +324,13 @@ class ProductCompare {
    * @param {string} idToRemove The ID of the product to remove.
    */
   removeProduct(idToRemove) {
+    const removedProduct = this.state.products.find((p) => p.id === idToRemove);
     this.storeProducts(this.state.products.filter((p) => p.id !== idToRemove));
+    if (removedProduct) {
+      setTimeout(() => {
+        this.announceChange(`${removedProduct.name} removed from comparison.`);
+      }, 100);
+    }
   }
 
   /**
@@ -311,6 +338,7 @@ class ProductCompare {
    */
   clearAll() {
     this.storeProducts([]);
+    this.announceChange('All products removed from comparison.');
   }
 
   /**
@@ -480,6 +508,10 @@ class ProductCompare {
 
     if (this.dom.toggleBtn) {
       this.dom.toggleBtn.setAttribute('aria-expanded', String(!this.state.isCollapsed));
+      const div = document.querySelector('.cmp-product-compare');
+      setTimeout(() => {
+        div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 300);
     }
 
     this.dom.countSpan.textContent = productCount;
@@ -526,6 +558,35 @@ class ProductCompare {
 const initProductCompare = async (context) => {
   // Select all elements marked with the data attribute
   const container = context.querySelector('[data-compare-container]');
-  container.setAttribute('tabindex', '0');
+  container.setAttribute('tabindex', '-1');
   await new ProductCompare(container).init();
 };
+
+/**
+ * Handles sticky behavior for the compare window at the bottom of the page.
+ */
+function handleStickyForCompareWindow() {
+  if (document.querySelector('.cmp-product-compare__slot.is-filled')) {
+    const div = document.querySelector('.cmp-product-compare');
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    const atBottom = scrollTop + windowHeight >= documentHeight - 10;
+
+    if (atBottom) {
+      div.classList.add('relative');
+    } else {
+      div.classList.remove('relative');
+    }
+  }
+}
+
+// Scroll event listener with debounce for sticky behavior
+let stickyTimeout;
+window.addEventListener('scroll', () => {
+  clearTimeout(stickyTimeout);
+  stickyTimeout = setTimeout(handleStickyForCompareWindow, 50);
+});
+
+// Initial call for sticky behavior
+handleStickyForCompareWindow();

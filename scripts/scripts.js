@@ -15,6 +15,7 @@ import {
   getMetadata,
 } from './aem.js';
 import { getConfigValue } from './configs.js';
+import { loadGTM, sendPageLoadAttributes } from './google-data-layer.js';
 
 /**
  * Get the current locale from configuration
@@ -192,18 +193,32 @@ export async function loadSwiper() {
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
 export async function loadHeaderFragment() {
-  //TODO: change this to relative when we base url is changed.
   const locale = await getLocale();
-  const fragmentUrl = `/${locale}/fragments/head.plain.html`;
+  const fragmentUrlWithLocale = `/${locale}/fragments/head.plain.html`;
+  const fallbackFragmentUrl = '/fragments/head.plain.html';
+  
+  // Try with locale first
   try {
-    const response = await fetch(fragmentUrl);
+    const response = await fetch(fragmentUrlWithLocale);
     if (response.ok) {
       const html = await response.text();
       return processFragmentContent(html);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.log('Failed to load header fragment:', error);
+    console.log('Failed to load header fragment with locale:', error);
+  }
+
+  // Fallback: Try without locale
+  try {
+    const response = await fetch(fallbackFragmentUrl);
+    if (response.ok) {
+      const html = await response.text();
+      return processFragmentContent(html);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Failed to load header fragment fallback:', error);
   }
 
   return null;
@@ -214,18 +229,32 @@ export async function loadHeaderFragment() {
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
 export async function loadFooterFragment() {
-  //TODO: change this to relative when we base url is changed.
   const locale = await getLocale();
-  const fragmentUrl = `/${locale}/fragments/footer.plain.html`;
+  const fragmentUrlWithLocale = `/${locale}/fragments/footer.plain.html`;
+  const fallbackFragmentUrl = '/fragments/footer.plain.html';
+  
+  // Try with locale first
   try {
-    const response = await fetch(fragmentUrl);
+    const response = await fetch(fragmentUrlWithLocale);
     if (response.ok) {
       const html = await response.text();
       return processFooterFragmentContent(html);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.log('Failed to load footer fragment:', error);
+    console.log('Failed to load footer fragment with locale:', error);
+  }
+
+  // Fallback: Try without locale
+  try {
+    const response = await fetch(fallbackFragmentUrl);
+    if (response.ok) {
+      const html = await response.text();
+      return processFooterFragmentContent(html);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Failed to load footer fragment fallback:', error);
   }
 
   return null;
@@ -401,6 +430,11 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  
+  const noscript = document.createElement('noscript');
+  noscript.innerHTML = '<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8KDRJVJ" height="0" width="0" style="display:none;visibility:hidden"></iframe>';
+  document.body.insertBefore(noscript, document.body.firstChild);
+  
   const main = doc.querySelector('main');
   if (main) {
     const overlapHeader = getMetadata('overlapheader');
@@ -445,6 +479,9 @@ async function loadLazy(doc) {
 
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
+
+  await loadGTM();
+  await sendPageLoadAttributes();
 
   loadCSS(`${window.hlx.codeBasePath}/styles/clientlib-base.css`);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);

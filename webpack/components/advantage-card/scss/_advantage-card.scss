@@ -1,9 +1,7 @@
 @use "../../../site/scss/settings/typography" as typo;
 @use "../../../site/scss/settings/variables" as vars;
 @use "../../../site/scss/settings/mixins" as mix;
-.advantage-card__start {
-  background-color: #0f0f10;
-}
+
 .cmp-advantage-card {
   position: relative;
   max-width: 100%;
@@ -140,8 +138,4 @@
   &:has(.cmp-advantage-card) {
     overflow: visible;
   }
-}
-
-.advantage-card__end {
-  background-color: #0f0f10;
 }

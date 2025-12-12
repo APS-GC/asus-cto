@@ -2,7 +2,8 @@ import { decorateBlock, loadBlock } from '../../scripts/aem.js';
 import { fetchHotProducts } from '../../scripts/api-service.js';
 import { loadBazaarvoiceScript, loadSwiper } from '../../scripts/scripts.js';
 import { openModal } from '../modal/modal.js';
-import { getBlockConfigs } from '../../scripts/configs.js';
+import { getBlockConfigs, getConfigValue } from '../../scripts/configs.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Default configuration
 const DEFAULT_CONFIG = {
@@ -188,6 +189,43 @@ export default async function decorate(block) {
         const container = block.querySelector('.carousel');
         if (window.initializeSwiperOnAEMCarousel && container) {
           window.initializeSwiperOnAEMCarousel(container);
+        }
+        const basePath = await getConfigValue('base-path') || '';
+        const sectionType = 'hot_products';
+        
+        // Track navigation arrow clicks
+        const prevButton = block.querySelector('.cmp-carousel__action--previous');
+        const nextButton = block.querySelector('.cmp-carousel__action--next');
+        const viewAllButton = block.querySelector('.section-actions-btn');
+        
+        if (prevButton) {
+          prevButton.addEventListener('click', () => {
+            trackEvent({
+              eventName: `nvgt_l_${sectionType}_home_cto_rog`,
+              category: `${sectionType}${basePath}`,
+              label: `last_button/${sectionType}${basePath}`
+            });
+          });
+        }
+        
+        if (nextButton) {
+          nextButton.addEventListener('click', () => {
+            trackEvent({
+              eventName: `nvgt_n_${sectionType}_home_cto_rog`,
+              category: `${sectionType}${basePath}`,
+              label: `next_button/${sectionType}${basePath}`
+            });
+          });
+        }
+        
+        if (viewAllButton) {
+          viewAllButton.addEventListener('click', () => {
+            trackEvent({
+              eventName: `view_all_${sectionType}_home_cto_rog`,
+              category: `${sectionType}${basePath}`,
+              label: `view_all/${sectionType}${basePath}`
+            });
+          });
         }
 
         // Load Bazaarvoice ratings

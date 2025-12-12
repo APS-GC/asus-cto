@@ -22,27 +22,27 @@
         </div>
     </div>
 </div>
-<div class="scrollable-component container" role="region" aria-label="Product comparison details">
-    <div class="product-comparison-card__container product-comparison-grid" id="product-comparison-card__container">
-    </div>
-    <div class="product-comparison-table">
+<div class="scrollable-component" role="region" aria-label="Product comparison details">
+        <div class="product-comparison-card__container product-comparison-grid" id="product-comparison-card__container">
+        </div>
         <div class="switch-container no-differences flex" id="switch-container">
             <%- include('../toggle-switch/_toggle-switch.ejs') %>
-                <div class="info-tooltip-wrapper">
-                    <button data-tooltip-trigger aria-describedby="highlight-tooltip" data-tooltip-position="bottom"
-                        class="btn btn-link" aria-label="Highlight differences information">
-                        <span class="icon icon--info"></span>
-                    </button>
-                    <div id="highlight-tooltip"
-                        class="tooltip__content tooltip__content--theme-dark tooltip__content--size-small"
-                        role="tooltip">
-                        Highlight Differences is unavailable because all products have identical specifications.
-                    </div>
+            <div class="info-tooltip-wrapper">
+                <button data-tooltip-trigger aria-describedby="highlight-tooltip" data-tooltip-position="bottom"
+                    class="btn btn-link" aria-label="Highlight differences information">
+                    <span class="icon icon--info"></span>
+                </button>
+                <div id="highlight-tooltip"
+                    class="tooltip__content tooltip__content--theme-dark tooltip__content--size-small"
+                    role="tooltip">
+                    Highlight Differences is unavailable because all products have identical specifications.
                 </div>
+            </div>
+        </div>
+        <div class="product-comparison-table">
+
+            <div class="product-comparison-table-rows" id="product-comparison-table-rows"></div>
         </div>
 
-        <div class="product-comparison-table-rows"></div>
-    </div>
-
-    <div class="trailing-action-buttons-wrapper product-comparison-grid"></div>
+        <div class="trailing-action-buttons-wrapper product-comparison-grid" id="trailing-action-buttons-wrapper"></div>
 </div>

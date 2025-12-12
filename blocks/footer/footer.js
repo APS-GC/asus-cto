@@ -1,6 +1,7 @@
 import './uifrontend/_footer.js';
 import { moveInstrumentation, createOptimizedPictureExternal } from '../../scripts/scripts.js';
 import { createOptimizedPicture } from '../../scripts/aem.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 // Footer configuration - calculated once for the entire module
 const FooterConfig = {
@@ -538,6 +539,7 @@ function buildSocialIcons(socialLinks, socialLabel) {
     a.href = link.url;
     a.target = '_blank';
     a.setAttribute('aria-label', `Follow us on ${altText} (open a new window)`);
+    a.setAttribute('data-social-platform', altText); // Store platform name for tracking
     
     // Create picture element with img
     const picture = document.createElement('picture');
@@ -697,10 +699,10 @@ export default function decorate(block) {
           <form id="frm-footer-newsletter" class='newsletter' method="post" aria-label="Newsletter signup" novalidate>
             <label for="newsletter-email">${data.newsletterLabel}</label>
             <div class='newsletter__field-wrapper mt-4'>
-              <input type='email' id="newsletter-email" name="email" placeholder='${data.newsletterPlaceholder}' required />
+              <input type='email' id="newsletter-email" name="email" autocomplete="off" placeholder='${data.newsletterPlaceholder}' required />
               <button type="submit" class="btn">${data.newsletterButtonText}</button>
             </div>
-            <div class="newsletter__response"></div>
+            <div class="newsletter__response" aria-live="assertive"></div>
           </form>
 
           ${buildSocialIcons(data.socialLinks, data.socialLabel)}
@@ -720,7 +722,7 @@ export default function decorate(block) {
           ${buildLegalLinks(data.legalLinks)}
         </nav>
         <button class="back-to-top" id="backToTop" aria-label="Back to top">
-          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Back to top">
             <rect x="0.5" y="0.5" width="59" height="59" rx="29.5" fill="black" class="back-to-top__bg" />
             <rect x="0.5" y="0.5" width="59" height="59" rx="29.5" stroke="#CCCCCC"/>
             <path d="M41 34.5L30 25.5L19 34.5" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -759,22 +761,48 @@ export default function decorate(block) {
     moveInstrumentation(data.globalTextRow, globalText);
   }
 
+  // Add tracking to social media icons
+  const socialLinks = block.querySelectorAll('.social__icons li a, .social__icons a');
+  socialLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const socialName = link.getAttribute('data-social-platform') || link.getAttribute('aria-label')?.split(' ')[3] || 'Unknown';
+      trackEvent({
+        eventName: 'social_footer_cto_rog',
+        category: 'footer/cto/rog',
+        label: `${socialName}/social/footer/cto/rog`
+      });
+    });
+  });
+
+  // Add tracking to footer navigation links
+  const footerNavLinks = block.querySelectorAll('.footer-links a');
+  footerNavLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const clickedText = link.textContent?.trim() || '';
+      trackEvent({
+        eventName: 'internal-links_footer_cto_rog',
+        category: 'footer/cto/rog',
+        label: `${clickedText}/internal-links/footer/cto/rog`
+      });
+    });
+  });
+
   // Add newsletter form functionality with triggerSubscribeForm
   const form = block.querySelector('.newsletter');
   const responseElement = form?.querySelector('.newsletter__response');
+  const emailInput = form?.querySelector('input[type="email"]');
+
+  // Strict + user-friendly regex
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/;
   
-  if (form) {
+  if (form && emailInput) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      // Clear previous states
-      form.classList.remove('has--error', 'has--success');
-      if (responseElement) {
-        responseElement.textContent = '';
-      }
+      const email = emailInput.value.trim();
 
-      // Validate form
-      if (!form.checkValidity()) {
+      // Browser validation + regex validation
+      if (!emailInput.checkValidity() || !emailRegex.test(email)) {
         form.classList.add('has--error');
         if (responseElement) {
           responseElement.textContent = 'Please enter a valid email address';
@@ -782,9 +810,14 @@ export default function decorate(block) {
         return;
       }
 
-      const emailInput = form.querySelector('input[type="email"]');
-      if (emailInput && emailInput.value) {
-        const email = emailInput.value.trim();
+      // Reset UI
+      form.classList.remove('has--error');
+      if (responseElement) {
+        responseElement.textContent = '';
+      }
+
+      // Call external subscription handler
+      if (email) {
         
         // Check if triggerSubscribeForm is available
         if (typeof window.triggerSubscribeForm === 'function') {
@@ -806,29 +839,98 @@ export default function decorate(block) {
         }
       }
     });
+    
+    // Watch for newsletter signup success popup
+    const popupObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1 && node.classList?.contains('SF_subscribePopUp')) {
+            trackEvent({
+              eventName: 'sign_up_newsletter_footer_cto_rog',
+              category: 'footer/cto/rog',
+              label: 'sign_up/newsletter/footer/cto/rog'
+            });
+          }
+        });
+      });
+    });
+    
+    popupObserver.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
   }
 
   // Add back to top functionality
   const backToTopButton = block.querySelector('.back-to-top');
+  const scrollThreshold = 800; // Show button after scrolling 800px
+
+  // Throttle function to limit scroll event frequency
+  const throttle = (func, limit) => {
+    let inThrottle;
+    return function throttled(...args) {
+      if (!inThrottle) {
+        func.apply(this, args);
+        inThrottle = true;
+        setTimeout(() => { inThrottle = false; }, limit);
+      }
+    };
+  };
+
   if (backToTopButton) {
+    let isVisible = false;
+
     // Show/hide button based on scroll position
     const toggleBackToTop = () => {
-      if (window.pageYOffset > 300) {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const shouldShow = scrollTop > scrollThreshold;
+
+      if (shouldShow && !isVisible) {
         backToTopButton.classList.add('visible');
-      } else {
+        isVisible = true;
+      } else if (!shouldShow && isVisible) {
         backToTopButton.classList.remove('visible');
+        isVisible = false;
       }
     };
 
-    window.addEventListener('scroll', toggleBackToTop);
+    window.addEventListener('scroll', throttle(toggleBackToTop, 100));
+
+    // Initial check
+    toggleBackToTop();
     
     // Scroll to top when clicked
     backToTopButton.addEventListener('click', () => {
+      // Track back to top button click
+      trackEvent({
+        eventName: 'back_to_top_cto_rog',
+        category: 'back_to_top/cto/rog',
+        label: 'back_to_top/cto/rog'
+      });
+      
       window.scrollTo({
         top: 0,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     });
+
+    // Compare bar position logic
+    const compareBar = document.querySelector('.cmp-product-compare');
+    if (compareBar) {
+      const updateButtonPosition = () => {
+        const compareBarHeight = compareBar.classList.contains('is-hidden')
+          ? 0
+          : compareBar.offsetHeight;
+
+        backToTopButton.style.bottom = `${compareBarHeight + 30}px`;
+        backToTopButton.style.zIndex = '1100';
+      };
+
+      updateButtonPosition();
+
+      const observer = new MutationObserver(updateButtonPosition);
+      observer.observe(compareBar, { attributes: true, attributeFilter: ['class'] });
+    }
   }
 
   // Optimize footer images after HTML is set

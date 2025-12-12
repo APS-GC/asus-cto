@@ -5,7 +5,7 @@ class PerfectMatchProduct {
     this.perfectMatchProducts = [];
     this.container = null;
     this.swiperInstance = null;
-    this.mobileBreakpoint = 700; // Mobile breakpoint in pixels
+    this.mobileBreakpoint = 730; // Mobile breakpoint in pixels
     this.productType = 'perfect-match';
   }
 
@@ -228,9 +228,37 @@ class PerfectMatchProduct {
   }
 }
 
-// Initialize when DOM is ready
+// Initialize when DOM is ready (lazy-loaded when section enters viewport)
 document.addEventListener('DOMContentLoaded', () => {
-  const perfectMatchProduct = new PerfectMatchProduct();
-  perfectMatchProduct.init(document.querySelector('.perfect-match-products-container'));
-  window.perfectMatchProductInstance = perfectMatchProduct;
+  const container = document.querySelector('.perfect-match-products-container');
+  if (!container) {
+    return;
+  }
+
+  const initPerfectMatch = () => {
+    // Prevent multiple initializations
+    if (window.perfectMatchProductInstance) {
+      return;
+    }
+
+    const perfectMatchProduct = new PerfectMatchProduct();
+    perfectMatchProduct.init(container);
+    window.perfectMatchProductInstance = perfectMatchProduct;
+  };
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          initPerfectMatch();
+          obs.disconnect();
+        }
+      });
+    });
+
+    observer.observe(container);
+  } else {
+    // Fallback for older browsers
+    initPerfectMatch();
+  }
 });

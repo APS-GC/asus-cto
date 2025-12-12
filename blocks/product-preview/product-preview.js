@@ -235,8 +235,8 @@ function createImageGallery(product) {
           </div>
         </div>
         <div class="carousel__actions">
-          <button class="carousel__action carousel__action--previous" aria-label="Previous slide"><span class="icon icon--arrow-left"></span></button>
-          <button class="carousel__action carousel__action--next" aria-label="Next slide"><span class="icon icon--arrow-right"></span></button>
+          <button class="carousel__action carousel__action--previous" aria-label="Previous image"><span class="icon icon--arrow-left"></span></button>
+          <button class="carousel__action carousel__action--next" aria-label="Next image"><span class="icon icon--arrow-right"></span></button>
         </div>
       </div>
     </div>
@@ -384,11 +384,13 @@ async function initializeGallery(block) {
   });
 
   const mainSwiper = new window.Swiper(mainSwiperEl, {
+    noSwipingClass: 'swiper-no-swiping',
     initialSlide: 0,
     loop: true,
     navigation: {
       nextEl: nextButton,
       prevEl: prevButton,
+      disabledClass: 'cmp-carousel__action--disabled',
     },
     thumbs: {
       swiper: thumbSwiper,

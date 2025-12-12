@@ -100,7 +100,6 @@ class SelectGameForm {
         to: (value) => `$${Math.round(value).toLocaleString('en-US')}`,
         from: (value) => Number(value.replace(/[$,]/g, '')),
       },
-      // IMPROVEMENT: Use aria-controls to link the handles to the hidden inputs
       handleAttributes: [
         { 'aria-label': 'Budget range minimum value', 'aria-controls': 'min-budget' },
         { 'aria-label': 'Budget range maximum value', 'aria-controls': 'max-budget' },
@@ -155,6 +154,15 @@ class SelectGameForm {
     return Array.from(this.dom.games)
       .filter((input) => input.checked)
       .map((input) => input.value);
+  }
+
+  /**
+   * Parses a currency string into a number.
+   * @param {string} value - The currency string to parse.
+   * @returns {number} The parsed number.
+   */
+  _parseCurrency(value) {
+    return toNumber(value);
   }
 
   /**
@@ -289,26 +297,29 @@ class SelectGameForm {
     const sliderInstance = this.dom.slider?.noUiSlider;
     if (!inputElement || !sliderInstance) return;
 
-    // 1. Get raw number from the input value (stripping currency/commas)
-    const raw = toNumber(inputElement.value);
-    // 2. Validate and clamp the value
+    const raw = this._parseCurrency(inputElement.value);
     const validated = this._validateBudgetValue(raw, isMin);
 
-    // 3. Update the visible input with the formatted, validated value
+    // Set formatted display & inputs
     inputElement.value = this._formatCurrency(validated);
 
-    // 4. Update the slider position
-    const [currentMin, currentMax] = sliderInstance.get().map(toNumber);
-
-    if (isMin) {
-      // Set the minimum handle position
-      sliderInstance.set([validated, currentMax]);
-    } else {
-      // Set the maximum handle position
-      sliderInstance.set([currentMin, validated]);
+    if (isMin && this.dom.minBudgetInput) {
+      this.dom.minBudgetInput.value = validated;
+    } else if (!isMin && this.dom.maxBudgetInput) {
+      this.dom.maxBudgetInput.value = validated;
     }
 
-    // Trigger update of hidden inputs via slider 'update' event
+    const currentValues = sliderInstance.get();
+    let [currMin, currMax] = currentValues.map((v) => Math.round(Number(v)));
+    const step = sliderInstance.steps()[0][0];
+
+    if (isMin) {
+      currMin = validated === currMax ? currMax - step : validated;
+      sliderInstance.setHandle(0, currMin, false, true);
+    } else {
+      currMax = validated === currMin ? currMin + step : validated;
+      sliderInstance.setHandle(1, currMax, false, true);
+    }
   }
 }
 
@@ -349,12 +360,10 @@ document.addEventListener('DOMContentLoaded', () => {
           mobileWrapper.appendChild(desktopWrapper.firstChild);
         }
       }
-    } else {
+    } else if (mobileWrapper.children.length > 0) {
       // Move all children back to desktop wrapper
-      if (mobileWrapper.children.length > 0) {
-        while (mobileWrapper.firstChild) {
-          desktopWrapper.appendChild(mobileWrapper.firstChild);
-        }
+      while (mobileWrapper.firstChild) {
+        desktopWrapper.appendChild(mobileWrapper.firstChild);
       }
     }
   }

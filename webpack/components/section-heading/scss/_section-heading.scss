@@ -57,6 +57,9 @@
     display: flex;
     @include mix.spacer(gap, 4);
     flex-shrink: 0; // Prevent arrows from shrinking
+    .sr-only {
+      color: var(--color-primary-950);
+    }
   }
 
   @include mix.respond-to("xl", "max") {
@@ -84,7 +87,7 @@
 
 // Product matches page specific: left align heading on tablet
 .product-matches-page {
-  @include mix.respond-to("lg", "max") {
+  @include mix.respond-to("xl", "max") {
     .section-heading.content-center {
       justify-content: flex-start;
       text-align: left;
