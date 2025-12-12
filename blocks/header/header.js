@@ -411,9 +411,7 @@ function buildLogo(logos) {
     return `
       <div class="logo-item logo-item--${name}">
         <div class="logo-wrapper">
-          <a href="${logoUrl}" aria-label="${altText}" title="${altText}">
-            ${logoContent}
-          </a>
+          ${logoContent}
         </div>
       </div>
     `;
@@ -422,9 +420,9 @@ function buildLogo(logos) {
   return `
     <div class="navigation">
       <nav class="cmp-navigation" itemscope itemtype="http://schema.org/SiteNavigationElement" aria-label="Main Navigation">
-        <div class="cmp-navigation__item--logo">
+        <a class="cmp-navigation__item--logo" href="${logos[0]?.url || '#'}" aria-label="${logos[0]?.altText || 'Logo'}" title="${logos[0]?.altText || 'Logo'}">
           ${logoItems}
-        </div>
+        </a>
       </nav>
     </div>
   `;
