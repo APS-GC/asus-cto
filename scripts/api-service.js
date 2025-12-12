@@ -242,6 +242,7 @@ export async function fetchGameList(
   endpoint,
   mode = 'GET',
   params = {},
+  bodyType = 'JSON',
   timeoutMs = 5000
 ) {
 
@@ -257,19 +258,33 @@ export async function fetchGameList(
     // eslint-disable-next-line no-console
     console.log(`Attempting to fetch from: ${endpoint}`);
 
-    const response = await fetch(endpoint, {
+    const fetchOptions = {
       method: mode,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
       mode: 'cors',
       signal,
       credentials: endpoint.includes('author') ? 'include' : 'omit',
-      body: isNotEmptyObject(params) ? JSON.stringify(params) : null,
-    });
+    };
+
+    if (mode.toUpperCase() === 'POST' && isNotEmptyObject(params) && bodyType === 'formData') {
+      const formData = new FormData();
+      // eslint-disable-next-line no-restricted-syntax
+      for (const key in params) {
+        if (Object.prototype.hasOwnProperty.call(params, key)) {
+          formData.append(key, params[key]);
+        }
+      }
+      fetchOptions.body = formData;
+      fetchOptions.headers = { Accept: 'application/json' };
+    } else {
+      fetchOptions.headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      };
+      fetchOptions.body = isNotEmptyObject(params) ? JSON.stringify(params) : null;
+    }
 
     clearTimeout(timeoutId);
+    const response = await fetch(endpoint, fetchOptions);
 
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status}`);
@@ -294,7 +309,6 @@ export async function fetchGameList(
     return []; // fallback
   }
 }
-
 /**
  * Call SSO validation API
  * @param {string} type - Validation type, e.g. 'check' 'user' 'logout'
