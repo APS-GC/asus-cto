@@ -176,7 +176,7 @@ function buildProductCardHTML(product, config) {
     </div>
 
     <div class="cmp-product-card__footer">
-      <button class="cmp-button cmp-product-card__buy-button btn">${product.buyButtonStatus || mergedConfig.buyNowText}</button>
+      <button class="cmp-button cmp-product-card__buy-button btn" aria-label="${product.buyButtonStatus || mergedConfig.buyNowText} ${product.name}">${product.buyButtonStatus || mergedConfig.buyNowText}</button>
     </div>
   `;
 }
