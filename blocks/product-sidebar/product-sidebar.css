@@ -563,7 +563,7 @@
     gap: 1.25rem;
 }
 
-@media only screen and (max-width: 47.9375rem) {
+@media only screen and (max-width: 45.625rem) {
     .cmp-product-listing .cmp-product-grid {
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     }
@@ -626,7 +626,7 @@
     }
 }
 
-@media only screen and (max-width: 47.9375rem) {
+@media only screen and (max-width: 45.625rem) {
 
     .cmp-hero__title,
     .cmp-hero__subtitle {
