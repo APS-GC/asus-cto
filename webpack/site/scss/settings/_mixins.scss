@@ -6,7 +6,7 @@
 $breakpoints: (
   "xs": 20rem,
   "sm": 36rem,
-  "md": 48rem,
+  "md": 45.6875rem,
   "lg": 64rem,
   "xl": 80rem,
   "2xl": 96rem,
@@ -53,11 +53,11 @@ $breakpoints: (
   // Handle custom values directly
   @else if meta.type-of($breakpoint) == "number" {
     @if $orientation {
-      @media only screen and (#{$type}-width: $breakpoint) and (orientation: $orientation) {
+      @media only screen and (#{$type}-width: #{$breakpoint}px) and (orientation: $orientation) {
         @content;
       }
     } @else {
-      @media only screen and (#{$type}-width: $breakpoint) {
+      @media only screen and (#{$type}-width: #{$breakpoint}px) {
         @content;
       }
     }

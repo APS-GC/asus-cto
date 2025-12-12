@@ -9,24 +9,27 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  @include mix.p(6);
-  @include mix.spacer(gap, 4);
+  @include mix.p(8);
+  @include mix.spacer(gap, 5);
 
   &__header {
-    display: flex;
+    display: grid;
+    grid-template-columns: 3fr 2fr;
     align-items: flex-start;
     color: var(--color-primary-700);
     min-height: 40px;
     @include typo.text-small;
     @include mix.spacer("gap", 6);
-    @include mix.m(5, "b");
+    &:not(:has(.cmp-product-card__bundle-message)) {
+      grid-template-columns: 1fr;
+    }
   }
 
   &__body {
     display: flex;
     flex-direction: column;
     flex: 1;
-    @include mix.spacer(gap, 3);
+    @include mix.spacer(gap, 5);
   }
 
   &__info {
@@ -41,6 +44,7 @@
     flex: 1;
     @include typo.text-xsmall();
     @include mix.spacer("gap", 2);
+    flex-wrap: wrap;
 
     .cmp-product-card__status-item {
       position: relative;
@@ -109,9 +113,7 @@
 
   &__title {
     color: var(--color-primary-950);
-    @include typo.text-display4();
     @include mix.m(1, "b");
-
     a {
       color: inherit;
       text-decoration: none;
@@ -149,12 +151,15 @@
     cursor: pointer;
     align-items: center;
 
-    @include mix.spacer(gap, 2);
+    input[type="checkbox"] {
+      padding: 2px 0;
+    }
 
     .cmp-product-card__compare-label {
       color: var(--color-primary-950);
       cursor: pointer;
       @include typo.text-small();
+      @include mix.p(2, "l");
     }
   }
 
@@ -171,11 +176,21 @@
       color: var(--color-primary-950);
       border: 1px solid var(--color-primary-600);
       border-radius: vars.$border-radius;
+      @include typo.text-small();
       min-width: 64px;
       min-height: 24px;
       text-align: center;
-      @include mix.p(3, "x");
-      @include typo.text-small();
+      padding: 1px 12px;
+      line-height: 1.125rem;
+      outline-offset: 2px;
+
+      &:hover {
+        border: 1px solid var(--color-primary-950);
+      }
+      &:focus-visible {
+        outline: 2px solid var(--color-focus-ring);
+        outline-offset: 2px;
+      }
     }
   }
 
@@ -183,7 +198,7 @@
     @include mix.m(0);
     @include mix.p(3, "l");
     @include typo.text-small();
-
+    flex-grow: 1;
     &-item {
       list-style-type: square;
     }
@@ -224,10 +239,10 @@
     justify-content: space-between;
     margin-top: auto; // Push footer to bottom of card
     @include mix.spacer(gap, 3);
-    @include mix.m(2, "t");
 
     .btn {
       flex: 1;
+      display: flex;
     }
   }
 
@@ -235,15 +250,14 @@
     &-line {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
       position: relative;
 
       &::after {
         content: "";
         flex: 1;
         height: 1px;
-        background-color: var(--color-primary-300); // adjust as needed
-        margin-left: 0.5rem;
+        background-color: var(--color-primary-300);
+        @include mix.m(1, "l");
       }
     }
 
@@ -257,18 +271,7 @@
   &__bundle-message {
     color: var(--color-primary-950);
     @include typo.text-small();
-
-    &-break {
-      display: block;
-
-      @include mix.respond-to("sm") {
-        display: inline;
-      }
-
-      @include mix.respond-to("xl") {
-        display: block;
-      }
-    }
+    text-align: end;
   }
 
   &__estore-icon-label {
@@ -288,15 +291,19 @@
     background-color: transparent;
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="%23999999"/><rect x="7.25" y="7" width="1.5" height="5.5" rx="0.75" fill="%23999999"/><rect x="7" y="4" width="2" height="2" rx="1" fill="%23999999"/></svg>');
     background-repeat: no-repeat;
-    background-size: contain;
-    width: 16px;
-    height: 16px;
+    background-size: 16px;
+    background-position: center;
+    width: 24px;
+    height: 24px;
     border: none;
     border-radius: 100%;
     cursor: pointer;
-
+    margin: -2px 0; // To maintain the spacing and keep expected click area
+    &:active,
+    &:hover,
     &:focus-visible {
       outline: 2px solid var(--color-focus-ring);
+      outline-offset: -5px;
     }
   }
 
@@ -314,32 +321,46 @@
     border: 1px solid var(--color-primary-700);
     border-radius: vars.$border-radius;
     cursor: pointer;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
     z-index: 2;
-    visibility: hidden;
-    transition: opacity 0.2s ease;
     @include typo.text-small();
     @include mix.p(2, "y");
     @include mix.p(3, "x");
 
     &:focus-visible {
-      visibility: visible;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip: auto;
     }
   }
 
   &__image:hover {
     .cmp-product-card__preview-btn {
-      visibility: visible;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip: auto;
     }
   }
 
-  @include mix.respond-to("lg", "max") {
-    @include mix.p(4);
+  @include mix.respond-to("xl", "max") {
+    @include mix.p(5);
 
     &__preview-btn {
       display: none;
     }
     &__title {
-      @include typo.text-display5();
+      a {
+        @include typo.text-display5();
+      }
+    }
+    &__image {
+      max-width: 160px;
     }
   }
 }
@@ -395,8 +416,10 @@
   tbody tr {
     border-bottom: 1px solid var(--color-primary-700);
 
+    th,
     td {
       @include mix.p(3, "y");
+      font-weight: 400;
 
       &:not(:last-child) {
         @include mix.p(4, "r");
@@ -406,6 +429,7 @@
     &:last-child {
       border: 0;
 
+      th,
       td {
         @include mix.p(0, "b");
       }
@@ -431,7 +455,7 @@
   }
 }
 
-@include mix.respond-to("lg", "max") {
+@include mix.respond-to("xl", "max") {
   .mobile-margin-top {
     @include mix.m(5, "t");
   }

@@ -17,12 +17,8 @@
   }
 
   @include mix.respond-to("xl") {
-    max-width: calc(100% - 200px);
+    max-width: 1240px;
     @include mix.p(0);
-  }
-
-  @include mix.respond-to("2xl") {
-    max-width: vars.$container-xxl;
   }
 
   // Converts to full width on mobile

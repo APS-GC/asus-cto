@@ -14,6 +14,7 @@ const loadConfig = async () => {
     try {
       return JSON.parse(cachedConfig);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.warn('Failed to parse cached configuration:', error);
       // Continue to fetch if parsing fails
     }
@@ -26,12 +27,13 @@ const loadConfig = async () => {
       throw new Error(`Failed to load configuration: ${response.status}`);
     }
     const config = await response.json();
-    
+
     // Store in session storage for future page loads
     sessionStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config));
-    
+
     return config;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Error loading configuration:', error);
     return { data: [] };
   }
@@ -63,19 +65,21 @@ export const getBlockFieldOrder = async (blockName) => {
   try {
     const response = await fetch(`/blocks/${blockName}/_${blockName}.json`);
     if (!response.ok) {
+      // eslint-disable-next-line no-console
       console.warn(`Could not load block definition for ${blockName}`);
       return [];
     }
     const blockDef = await response.json();
-    
+
     // Extract field names from the first model's fields
     const model = blockDef.models?.[0];
     if (model && model.fields) {
-      return model.fields.map(field => field.name);
+      return model.fields.map((field) => field.name);
     }
-    
+
     return [];
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.warn(`Error loading block field order for ${blockName}:`, error);
     return [];
   }
@@ -98,7 +102,7 @@ export const getBlockConfigs = async (block, defaults = {}, blockName = '') => {
   const rows = [...block.children];
 
   // Try to parse as key-value pairs (2 cells per row)
-  const hasKeyValuePairs = rows.some(row => row.children.length >= 2);
+  const hasKeyValuePairs = rows.some((row) => row.children.length >= 2);
 
   if (hasKeyValuePairs) {
     // Standard key-value pair format
@@ -106,7 +110,15 @@ export const getBlockConfigs = async (block, defaults = {}, blockName = '') => {
       const cells = [...row.children];
       if (cells.length >= 2) {
         const key = cells[0].textContent.trim();
-        const value = cells[1].textContent.trim();
+        let value = cells[1].textContent.trim();
+
+        // If text content is empty, check for image/picture elements
+        if (value === '') {
+          const img = cells[1].querySelector('img');
+          if (img && img.src) {
+            value = img.src;
+          }
+        }
 
         if (key && value !== '') {
           // Convert key to camelCase format
@@ -116,7 +128,7 @@ export const getBlockConfigs = async (block, defaults = {}, blockName = '') => {
 
           // Try to parse as number if it looks like a number
           const numValue = Number(value);
-          if (!isNaN(numValue) && value !== '') {
+          if (!Number.isNaN(numValue) && value !== '') {
             config[camelKey] = numValue;
           } else {
             config[camelKey] = value;
@@ -127,22 +139,30 @@ export const getBlockConfigs = async (block, defaults = {}, blockName = '') => {
   } else if (blockName) {
     // Universal Editor format - load field order and map by position
     const fieldOrder = await getBlockFieldOrder(blockName);
-    
+
     // Fallback to defaults keys if JSON fetch failed (e.g., on author instance)
     const finalFieldOrder = fieldOrder.length > 0 ? fieldOrder : Object.keys(defaults);
-    
+
     if (finalFieldOrder.length > 0) {
       rows.forEach((row, index) => {
         if (index < finalFieldOrder.length) {
           const cell = row.children[0];
           if (cell) {
-            const value = cell.textContent.trim();
             const fieldName = finalFieldOrder[index];
+            let value = cell.textContent.trim();
+
+            // If text content is empty, check for image/picture elements
+            if (value === '') {
+              const img = cell.querySelector('img');
+              if (img && img.src) {
+                value = img.src;
+              }
+            }
 
             if (value !== '') {
               // Try to parse as number if it looks like a number
               const numValue = Number(value);
-              if (!isNaN(numValue) && value !== '') {
+              if (!Number.isNaN(numValue) && value !== '') {
                 config[fieldName] = numValue;
               } else {
                 config[fieldName] = value;
@@ -156,3 +176,19 @@ export const getBlockConfigs = async (block, defaults = {}, blockName = '') => {
 
   return config;
 };
+
+/**
+ * Replaces {locale} placeholder in URL with locale from configuration
+ * @param {string} url - The URL with {locale} placeholder
+ * @returns {Promise<string>} - URL with locale replaced
+ */
+export const replaceLocaleInUrl = async (url) => {
+  if (!url || !url.includes('{locale}')) {
+    return url;
+  }
+  
+  const locale = await getConfigValue('locale') || 'en';
+  
+  return url.replace('{locale}', locale);
+};
+

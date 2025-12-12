@@ -11,7 +11,7 @@
           {
             "name": "Gradient",
             "value": "gradient-animation"
-          }, 
+          },
           {
             "name": "Gradient Animation",
             "value": "gradient-animation-active"
@@ -228,6 +228,14 @@
             "value": "page-bg-primary"
           }
         ]
+      },
+      {
+        "component": "boolean",
+        "name": "overlapHeader",
+        "label": "Overlap Header",
+        "description": "Enable to allow Top Section to overlap with header",
+        "valueType": "boolean",
+        "value": false
       }
     ]
   },
@@ -348,7 +356,7 @@
           },
           {
             "name": "Section Spacing Top (Small)",
-            "value": "section-spacing-top__small"
+            "value": "section-spacing-top-small"
           },
           {
             "name": "Section Spacing Top",
@@ -524,89 +532,52 @@
       }
     ]
   },
-   {
+  {
     "id": "footer",
     "fields": [
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "titleSubscription",
-        "label": "Title For Subscription Section",
-        "description": "Title For Subscription Section"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "placeholder",
-        "label": "Placeholder for Form Field",
-        "description": "Placeholder to Give Email"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "buttonText",
-        "label": "Label For Subscription Button",
-        "description": "Label For Subscription Button"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "socialTitle",
-        "label": "Title for Social Icon Section",
-        "description": "Title for Social Icon Section"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "titleFirstColumn",
-        "label": "Title For First Column",
-        "description": "Title For First Column"
-      },
-      {
-        "component": "richtext",
-        "name": "config",
-        "value": "",
-        "label": "Footer First Column Config Menu",
-        "valueType": "string",
-        "required": true
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "titleSecondColumn",
-        "label": "Title For Second Column",
-        "description": "Title For Second Column"
-      },
-      {
-        "component": "richtext",
-        "name": "configSecondColumn",
-        "value": "",
-        "label": "Footer Second Column Config Menu",
-        "valueType": "string",
-        "required": true
-      },
        {
         "component": "text",
         "valueType": "string",
-        "name": "titleThirdColumn",
-        "label": "Title For Third Column",
-        "description": "Title For Third Column"
+        "name": "subscribeToNewsletter",
+        "label": "Title For Subscribe to Newsletter",
+        "description": "Subscribe to Newsletter",
+        "value": "Get the latest deals and more"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "subscribeToNewsletterPlaceholder",
+        "label": "Subscribe to newsletter placeholder",
+        "description": "Subscribe to newsletter placeholder"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "signUp",
+        "label": "Sign up",
+        "value": "Sign up"
       },
       {
         "component": "richtext",
-        "name": "configThirdColumn",
+        "valueType": "string",
+        "name": "navigationColumns",
+        "label": "Navigation columns",
+        "description": ""
+      },
+      {
+        "component": "richtext",
+        "name": "privacyTerms",
         "value": "",
-        "label": "Footer Third Column Config Menu",
+        "label": "Privacy & Terms",
         "valueType": "string",
         "required": true
       },
       {
-        "component": "richtext",
-        "name": "copyrightLinks",
-        "value": "",
-        "label": "Copyright Links for Footer",
+        "component": "text",
         "valueType": "string",
-        "required": true
+        "name": "followUs",
+        "label": "Follow us at text",
+        "value": "Follow us at"
       },
       {
         "component": "boolean",
@@ -617,23 +588,23 @@
     ]
   },
   {
-      "id": "footer-icon",
-      "fields": [
-        {
-          "component": "reference",
-          "valueType": "string",
-          "name": "iconImage",
-          "label": "Icon Image",
-          "multi": false
-        },
-        {
+    "id": "footer-icon",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "iconImage",
+        "label": "Icon Image",
+        "multi": false
+      },
+      {
         "component": "aem-content",
         "name": "iconURL",
         "label": "Footer Icon URL",
         "description": "URL the Footer Icon should link to"
-        }
-      ]
-    },
+      }
+    ]
+  },
   {
     "id": "article-card-item",
     "fields": [
@@ -766,7 +737,7 @@
     ]
   },
   {
-    "id": "carousel",
+    "id": "hero-banner",
     "fields": [
       {
         "component": "number",
@@ -780,7 +751,7 @@
       },
       {
         "component": "number",
-        "name": "videoAutoplayDuration", 
+        "name": "videoAutoplayDuration",
         "label": "Video Autoplay Duration (seconds)",
         "value": 8,
         "validation": {
@@ -791,7 +762,7 @@
     ]
   },
   {
-    "id": "carousel-slide",
+    "id": "hero-banner-slide",
     "fields": [
       {
         "component": "text",
@@ -803,7 +774,7 @@
         }
       },
       {
-        "component": "text", 
+        "component": "text",
         "name": "subtitle",
         "label": "Subtitle",
         "valueType": "string"
@@ -839,44 +810,44 @@
         "label": "CTA Button Location",
         "valueType": "string",
         "options": [
-            {
-              "name": "Start Top",
-              "value": "start-top"
-            },
-            {
-              "name": "Start Center",
-              "value": "start-center"
-            },
-            {
-              "name": "star bottom",
-              "value": "start-bottom"
-            },
-            {
-              "name": "Center Top",
-              "value": "center-top"
-            },
-            {
-              "name": "Center Center",
-              "value": "center-center"
-            },
-            {
-              "name": "Center Bottom",
-              "value": "center-bottom"
-            },
-            {
-              "name": "End Top",
-              "value": "end-top"
-            },
-            {
-              "name": "End Center",
-              "value": "end-center"
-            },
-            {
-              "name": "End Bottom:",
-              "value": "end-bottom"
-            }
-          ],
-          "value": "center-center"
+          {
+            "name": "Start Top",
+            "value": "start-top"
+          },
+          {
+            "name": "Start Center",
+            "value": "start-center"
+          },
+          {
+            "name": "star bottom",
+            "value": "start-bottom"
+          },
+          {
+            "name": "Center Top",
+            "value": "center-top"
+          },
+          {
+            "name": "Center Center",
+            "value": "center-center"
+          },
+          {
+            "name": "Center Bottom",
+            "value": "center-bottom"
+          },
+          {
+            "name": "End Top",
+            "value": "end-top"
+          },
+          {
+            "name": "End Center",
+            "value": "end-center"
+          },
+          {
+            "name": "End Bottom:",
+            "value": "end-bottom"
+          }
+        ],
+        "value": "center-center"
       },
       {
         "component": "aem-content",
@@ -894,110 +865,49 @@
     ]
   },
   {
-      "id": "top-picks-card",
-      "fields": [
-        {
-          "component": "reference",
-          "valueType": "string",
-          "name": "image",
-          "label": "Product Image",
-          "description": "Upload or select a product image",
-          "multi": false
-        },
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "label",
-          "label": "Product Label/Category",
-          "description": "Small label text (e.g., 'Top picks', 'Featured', etc.)",
-          "value": "Top picks"
-        },
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "title",
-          "label": "Product Title",
-          "description": "Main product title or name",
-          "value": "",
-          "validation": {
-            "required": true
-          }
-        },
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "ctaLinkName",
-          "label": "CTA Link Name",
-          "description": "Text for the call-to-action button (e.g., 'View configs', 'Learn more')",
-          "value": "View configs"
-        },
-        {
-          "component": "aem-content",
-          "name": "link",
-          "label": "Call-to-Action Link",
-          "description": "Link URL for the call-to-action",
-          "valueType": "string"
-        }
-      ]
-    },
-    {
-    "id": "product-card",
+    "id": "top-picks-card",
     "fields": [
       {
-        "component": "text",
+        "component": "reference",
         "valueType": "string",
-        "name": "sectionTitle",
-        "label": "Section Title",
-        "description": "Title displayed above the product cards",
-        "value": "Hot Products"
+        "name": "image",
+        "label": "Product Image",
+        "description": "Upload or select a product image",
+        "multi": false
       },
       {
         "component": "text",
-        "valueType": "number",
-        "name": "itemCount",
-        "label": "Number of Items",
-        "description": "Number of product cards to display in the carousel (default: 3)",
-        "value": "3",
+        "valueType": "string",
+        "name": "label",
+        "label": "Product Label/Category",
+        "description": "Small label text (e.g., 'Top picks', 'Featured', etc.)",
+        "value": "Top picks"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Product Title",
+        "description": "Main product title or name",
+        "value": "",
         "validation": {
-          "min": 1,
-          "max": 10
+          "required": true
         }
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaLinkName",
+        "label": "CTA Link Name",
+        "description": "Text for the call-to-action button (e.g., 'View configs', 'Learn more')",
+        "value": "View configs"
       },
       {
         "component": "aem-content",
-        "name": "viewAllLink",
-        "label": "View All Link",
-        "description": "URL for the 'View all' link",
-        "valueType": "string",
-        "value": "/products"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "viewAllText",
-        "label": "View All Text",
-        "description": "Text for the 'View all' link",
-        "value": "View all"
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "apiEndpoint",
-        "label": "API Endpoint",
-        "description": "GraphQL API endpoint for fetching product data",
-        "value": "/mock-api/products"
-      },
-      {
-        "component": "text",
-        "valueType": "number",
-        "name": "autoplayInterval",
-        "label": "Auto-play Interval",
-        "description": "Auto-play interval in milliseconds (0 to disable)",
-        "value": "5000",
-        "validation": {
-          "min": 0,
-          "max": 15000
-        }
+        "name": "link",
+        "label": "Call-to-Action Link",
+        "description": "Link URL for the call-to-action",
+        "valueType": "string"
       }
     ]
   },
@@ -1077,12 +987,20 @@
         "value": "#"
       },
       {
+        "component": "boolean",
+        "name": "openLinkInNewTab",
+        "label": "Open Link in New Tab",
+        "description": "Check to open the 'View all' link in a new tab",
+        "valueType": "boolean",
+        "value": false
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "productPreviewModalPath",
         "label": "Product Preview Modal Path",
-        "description": "Path to the product preview modal content page (default: /modals/product-preview)",
-        "value": "/modals/product-preview"
+        "description": "Path to the product preview modal content page (default: /en/modals/product-preview)",
+        "value": "/en/modals/product-preview"
       }
     ]
   },
@@ -1112,6 +1030,16 @@
         "label": "Data Source Tooltip",
         "description": "Tooltip text for the data source information icon (default: All FPS performance data presented are theoretical...)",
         "value": "All FPS performance data presented are theoretical and may vary in real-world usage. The FPS data is based on third-party testing conducted by UL and is provided for reference purposes only. Actual performance may differ."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "threeMarkLogo",
+        "label": "3DMark Logo",
+        "description": "Image path for the 3DMark logo displayed in the Time Spy Score section",
+        "validation": {
+          "required": true
+        }
       }
     ]
   },
@@ -1123,42 +1051,265 @@
         "valueType": "string",
         "name": "title",
         "label": "Title",
-        "value": ""  
+        "value": "Select The Game You Play"
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "description",
-        "label": "Description",
+        "name": "subtitle",
+        "label": "Subtitle",
+        "value": "We will recommend a plan that suits you most!"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "budgetText",
+        "label": "Budget Text",
+        "value": "Your Budget"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "helpmeChooseCTA",
+        "label": "Help Me Choose CTA",
+        "value": "Help me choose"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "resetCTAText",
+        "label": "Reset CTA Text",
+        "value": "Reset"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "confirmCTAText",
+        "label": "Confirm CTA Text",
+        "value": "Confirm"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "style",
+        "label": "Style",
+        "value": "1",
+        "options": [
+          {
+            "name": "Carousel with Form",
+            "value": "1"
+          },
+          {
+            "name": "Filter Bar",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "minimumBudget",
+        "label": "Minimum Budget",
+        "value": 500
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "maximumBudget",
+        "label": "Maximum Budget",
+        "value": 5000
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "helpMeChooseCTALinkTo",
+        "label": "Help me Choose CTA LinkTo",
+        "value": "./product-matches"
+      }
+    ]
+  },
+  {
+    "id": "product-compare",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "yourBudgetLabel",
-        "label": "Your Budget Label",
+        "name": "compareButtonLabel",
+        "label": "View Comparison Button Text",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "HelpMeChooseButtonLabel",
-        "label": "Help Me Choose Button Label",
+        "name": "clearAllButtonLabel",
+        "label": "Clear All Button Text",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "ResetButtonLabel",
-        "label": "Reset Button Label",
+        "name": "limitErrorMessage",
+        "label": "Maximum Error Message Text",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "ConfirmButtonLabel",
-        "label": "Confirm Button Label",
+        "name": "minimumErrorMessage",
+        "label": "Minimum Error Message Text",
         "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "addAnotherProductText",
+        "label": "Add Another Product Text",
+        "value": ""
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "viewComparisonButtonLinkTo",
+        "label": "View Comparison Button LinkTo",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "product-matches",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": "We have found your perfect matches!"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "exploreMoreTitle",
+        "label": "Explore More Title",
+        "value": "Explore more gaming desktops"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "noMatchTitle",
+        "label": "No Matches Title",
+        "value": "No Matches"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "noMatchDescription",
+        "label": "No Matches Description",
+        "value": "Try changing or removing some of your filters or adjusting your search area."  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "filterText",
+        "label": "Filter Text",
+        "value": "Filter"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "resultText",
+        "label": "Result Text",
+        "value": "Matching Products"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "sortByText",
+        "label": "Sort by Text",
+        "value": "Sort by"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "relevanceText",
+        "label": "Relevance Text",
+        "value": "Relevance"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "hotFocusedText",
+        "label": "Hot Focused Text",
+        "value": "Hot Focused"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "recommendedText",
+        "label": "Recommended Text",
+        "value": "Recommended"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "priceLowtoHighText",
+        "label": "Price: Low to High Text",
+        "value": "Price: Low to high"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "priceHightoLowText",
+        "label": "Price: High to Low Text",
+        "value": "Price: High to Low"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "viewAllDesktopsText",
+        "label": "View All Desktops Text",
+        "value": "View All Desktops"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "viewAllCTALinkTo",
+        "label": "View All CTA LinkTo",
+        "value": "View All CTA LinkTo"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "buyNowText",
+        "label": "Buy Now CTA Text",
+        "value": "Buy now"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "customizeCTAText",
+        "label": "Customize CTA Text",
+        "value": "Customize"  
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "compareCTAText",
+        "label": "Compare CTA Text",
+        "value": "Compare"  
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "openLinkInNewTabText",
+        "label": "Open link in new tab Text",
+        "value": "Open link in new tab"  
       }
     ]
   },
@@ -1252,88 +1403,235 @@
     ]
   },
   {
-      "id": "our-advantages",
-      "fields": [
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "title",
-          "label": "Title",
-          "value": "Our Advantages"
-        },
-        {
-          "component": "number",
-          "name": "itemCount",
-          "label": "Number of Items",
-          "value": 3,
-          "description": "Number of advantage cards to display in the carousel (max: 4)",
-          "validation": {
-            "min": 1,
-            "max": 4
-          }
-        },
-        {
-          "component": "number",
-          "name": "imageAutoplayDuration",
-          "label": "Image Autoplay Duration (seconds)",
-          "value": 5,
-          "validation": {
-            "min": 1,
-            "max": 30
-          }
+    "id": "our-advantages",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": "Our Advantages"
+      },
+      {
+        "component": "number",
+        "name": "imageAutoplayDuration",
+        "label": "Image Autoplay Duration (seconds)",
+        "value": 5,
+        "validation": {
+          "min": 1,
+          "max": 30
         }
-      ]
-    },
-    {
-      "id": "our-advantage",
-      "fields": [
-        {
-          "component": "text",
-          "name": "title",
-          "value": "",
-          "label": "Headline",
-          "valueType": "string",
-          "required": true
-        },
-        {
-          "component": "text",
-          "name": "details",
-          "value": "",
-          "label": "Details",
-          "valueType": "string"
-        },
-        {
-          "component": "reference",
-          "valueType": "string",
-          "name": "media",
-          "label": "Cover Image",
-          "multi": false
-        },
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "imageAlt",
-          "label": "Image Alt"
-        },
-        {
-          "component": "text",
-          "name": "navigation",
-          "value": "",
-          "label": "Navigation Button Text",
-          "valueType": "string"
-        },
-        {
-          "component": "aem-content",
-          "valueType": "string",
-          "name": "link",
-          "label": "Navigation Button LinkTo"
-        },
-        {
-          "component": "boolean",
-          "valueType": "boolean",
-          "name": "articleOpenInNewTab",
-          "label": "Select to open in new tab"
+      },
+      {
+        "component": "number",
+        "name": "videoAutoplayDuration",
+        "label": "Video Autoplay Duration (seconds)",
+        "value": 1,
+        "validation": {
+          "min": 1,
+          "max": 30
         }
-      ]
-    }
+      }
+    ]
+  },
+  {
+    "id": "our-advantage",
+    "fields": [
+      {
+        "component": "text",
+        "name": "title",
+        "value": "",
+        "label": "Headline",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "text",
+        "name": "details",
+        "value": "",
+        "label": "Details",
+        "valueType": "string"
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "video",
+        "label": "Video Media",
+        "multi": false
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "media",
+        "label": "Cover Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Image Alt"
+      },
+      {
+        "component": "text",
+        "name": "navigation",
+        "value": "",
+        "label": "Navigation Button Text",
+        "valueType": "string"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "label": "Navigation Button LinkTo"
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "articleOpenInNewTab",
+        "label": "Select to open in new tab"
+      }
+    ]
+  },
+  {
+    "id": "product-listing",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Page Title",
+        "description": "Main heading for the product listing page (e.g., 'Gaming Desktops')",
+        "value": "Gaming Desktops"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "subtitle",
+        "label": "Page Subtitle",
+        "description": "Subtitle text displayed below the title",
+        "value": "View all gaming desktops or filter for what you want."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "compareLabel",
+        "label": "Compare Label",
+        "description": "Text for the compare checkbox label on product cards",
+        "value": "Compare"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "buyNowText",
+        "label": "Buy Now Button Text",
+        "description": "Text for the buy now call-to-action button",
+        "value": "Buy now"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "quickViewText",
+        "label": "Quick View Button Text",
+        "description": "Text for the quick view button on product cards",
+        "value": "Quick view"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "estoreLabel",
+        "label": "Estore Price Label",
+        "description": "Label text for the estore price section",
+        "value": "ASUS estore price"
+      },
+      {
+        "component": "richtext",
+        "name": "estoreTooltip",
+        "label": "Estore Price Tooltip",
+        "description": "Tooltip content explaining the estore price",
+        "valueType": "string",
+        "value": "ASUS estore price is the price of a product provided by ASUS estore. Specifications listed here may not be available on estore and are for reference only."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "showMoreText",
+        "label": "Show More Button Text",
+        "description": "Text for the 'Show more' pagination button",
+        "value": "Show more"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "productsFoundText",
+        "label": "Products Found Text",
+        "description": "Text for product count display. Use {{COUNT}} as placeholder for the number (e.g., '{{COUNT}} Products Found')",
+        "value": "{{COUNT}} Products Found"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "filterInfoText",
+        "label": "Filter Info Text",
+        "description": "Informational text shown in the sidebar filter section",
+        "value": "Selecting filter(s) will refresh the results and may change the availability of other options."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "appliedFiltersTitle",
+        "label": "Applied Filters Title",
+        "description": "Title for the applied filters section",
+        "value": "Applied filters"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "clearAllText",
+        "label": "Clear All Text",
+        "description": "Text for the clear all filters button",
+        "value": "Clear all"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "noMatchesTitle",
+        "label": "No Matches Title",
+        "description": "Title shown when no products match the filters",
+        "value": "No matches"
+      },
+      {
+        "component": "richtext",
+        "name": "noMatchesDescription",
+        "label": "No Matches Description",
+        "description": "Description text shown when no products match the filters",
+        "valueType": "string",
+        "value": "Oops.. Seems like we did not find item that matches your search. Please use a different search term, relax your criteria, or check out our hottest products below."
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "minimumBudget",
+        "label": "Minimum Budget",
+        "description": "Minimum value for the budget range slider",
+        "value": 500
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "maximumBudget",
+        "label": "Maximum Budget",
+        "description": "Maximum value for the budget range slider",
+        "value": 5000
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "productsPerPage",
+        "label": "Products Per Page",
+        "description": "Number of products to show per page",
+        "value": 6
+      }
+    ]
+  }
 ]

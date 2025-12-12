@@ -2,43 +2,73 @@
 @use "../../../site/scss/settings/typography" as typo;
 @use "../../../site/scss/settings/variables" as vars;
 
+.product-comparison-row-title {
+  color: var(--color-primary-100);
+  position: sticky;
+  left: 0;
+  @include mix.p(8, "t");
+  @include mix.respond-to("xl", "max") {
+    @include typo.text-display3();
+    @include mix.p(4, "t");
+  }
+}
 .product-comparison-row {
   scroll-margin-top: 150px;
-  @include mix.p(8, "y");
+  @include mix.p(6, "t");
+  @include mix.p(8, "b");
   flex-direction: column;
   @include mix.spacer("gap", 6);
   border-bottom: 1px solid var(--color-primary-700);
+
+  &:first-child {
+    @include mix.m(4, "t");
+    @include mix.p(4, "t");
+  }
+  .product-row-advantage-data {
+    @include mix.p(0);
+  }
+
   .product-row-info {
+    @include mix.p(0);
     .table-cell {
       color: var(--color-primary-100);
       @include mix.spacer("gap", 2);
       align-items: center;
+
+      span {
+        @include typo.text-base();
+      }
+
       .color-block {
         width: 32px;
         height: 32px;
         border-radius: 50%;
         border: 1px solid var(--color-primary-600);
+        flex-shrink: 0;
       }
     }
   }
+
   .highlight {
     color: var(--color-info);
     font-weight: var(--medium);
   }
-  @include mix.respond-to("lg", "max") {
+
+  @include mix.respond-to("xl", "max") {
     width: max-content;
-    h3{
-      @include typo.text-display3();
-    }
     @include mix.p(4, "y");
-  }
-  @include mix.respond-to("md", "max") {
     @include mix.spacer("gap", 4);
-    h3{
-      @include typo.text-display3();
+  }
+
+  @include mix.respond-to("md", "max") {
+    width: min-content;
+    @include mix.spacer("gap", 4);
+    span {
+      @include typo.text-small();
     }
   }
 }
+
 .different-row {
   background-color: #e5f6fd;
 }

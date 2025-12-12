@@ -688,7 +688,7 @@ async function loadSections(element) {
 
 init();
 
-export { 
+export {
   buildBlock,
   createOptimizedPicture,
   decorateBlock,

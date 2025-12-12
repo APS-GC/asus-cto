@@ -8,16 +8,18 @@
         playsinline
         poster="<%= image %>"
         data-src="<%= video %>"
+        fetchpriority="high"
+        loading="lazy"
       ></video>
     </div>
   <% } else { %>
     <div class="hero-image-wrapper">
       <picture>
         <% if (typeof imageDesktop !== 'undefined' && imageDesktop) { %>
-          <source media="(min-width: 1024px)" srcset="<%= imageDesktop %>" />
+          <source media="(min-width: 1280px)" srcset="<%= imageDesktop %>" />
         <% } %>
         <% if (typeof imageTablet !== 'undefined' && imageTablet) { %>
-          <source media="(min-width: 768px)" srcset="<%= imageTablet %>" />
+          <source media="(min-width: 731px)" srcset="<%= imageTablet %>" />
         <% } %>
         <img src="<%= image %>" alt="<%= name %>" class="hero-image" loading="lazy" />
       </picture>

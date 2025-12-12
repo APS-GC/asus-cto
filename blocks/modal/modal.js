@@ -23,58 +23,86 @@ document.addEventListener('mousedown', () => {
   Other blocks can also use the createModal() and openModal() functions.
 */
 
-export async function createModal(contentNodes, persistent = false, modal = true) {
+export async function createModal(contentNodes, modal = true, dialogId = 'dialog', dialogClasses = [], contentWrapperClass = null) {
   await loadCSS(`${window.hlx.codeBasePath}/blocks/modal/modal.css`);
-  const dialog = document.createElement('dialog');
-  const dialogContent = document.createElement('div');
-  dialogContent.classList.add('modal-content');
-  dialogContent.append(...contentNodes);
-  dialog.append(dialogContent);
-  if (!persistent) {
-    const closeButton = document.createElement('button');
-    closeButton.classList.add('close-button');
-    closeButton.setAttribute('aria-label', 'Close');
-    closeButton.type = 'button';
-    closeButton.innerHTML = '<span class="icon icon-close"></span>';
-    closeButton.addEventListener('click', () => dialog.close());
-    // Add class to hide focus outline by default
-    closeButton.classList.add('no-focus-visible');
-    // Add focus event to check if keyboard navigation is being used
-    closeButton.addEventListener('focus', () => {
-      if (usingKeyboard) {
-        closeButton.classList.remove('no-focus-visible');
-      } else {
-        closeButton.classList.add('no-focus-visible');
-      }
-    });
-    // Add blur event to reset
-    closeButton.addEventListener('blur', () => {
-      closeButton.classList.add('no-focus-visible');
-    });
-    dialog.prepend(closeButton);
+  
+  // Create the dialog container with common structure
+  const dialogContainer = document.createElement('div');
+  dialogContainer.classList.add('dialog-container');
+  if (dialogClasses.length > 0) {
+    dialogContainer.classList.add(...dialogClasses);
   }
+  dialogContainer.setAttribute('data-a11y-dialog', dialogId);
+  dialogContainer.setAttribute('id', dialogId);
+  dialogContainer.setAttribute('aria-modal', 'true');
+  dialogContainer.setAttribute('tabindex', '-1');
+  dialogContainer.setAttribute('role', 'dialog');
+  dialogContainer.setAttribute('aria-hidden', 'true');
+
+  // Create the dialog overlay
+  const dialogOverlay = document.createElement('div');
+  dialogOverlay.classList.add('dialog-overlay');
+  dialogOverlay.setAttribute('data-a11y-dialog-hide', dialogId);
+
+  // Create the dialog content wrapper
+  const dialogContent = document.createElement('div');
+  dialogContent.classList.add('dialog-content');
+  dialogContent.setAttribute('role', 'dialog');
+  dialogContent.setAttribute('aria-modal', 'true');
+  
+  // Create the close button
+  const closeButton = document.createElement('button');
+  closeButton.classList.add('dialog-close');
+  closeButton.setAttribute('type', 'button');
+  closeButton.setAttribute('data-a11y-dialog-hide', dialogId);
+  closeButton.setAttribute('aria-label', 'Close dialog');
+  
+  dialogContent.appendChild(closeButton);
+  
+  // If a content wrapper class is specified, wrap the content
+  if (contentWrapperClass) {
+    const contentWrapper = document.createElement('div');
+    contentWrapper.classList.add(contentWrapperClass);
+    contentWrapper.append(...contentNodes);
+    dialogContent.appendChild(contentWrapper);
+  } else {
+    dialogContent.append(...contentNodes);
+  }
+
+  dialogContainer.appendChild(dialogOverlay);
+  dialogContainer.appendChild(dialogContent);
 
   const block = buildBlock('modal', '');
   document.querySelector('body > main').append(block);
   decorateBlock(block);
   await loadBlock(block);
 
-  // close on click outside the dialog
-  dialog.addEventListener('click', (e) => {
-    const isVideoClass = e.target.closest('.video');
-    if (!isVideoClass) {
-      const {
-        left, right, top, bottom,
-      } = dialog.getBoundingClientRect();
-      const { clientX, clientY } = e;
-      if (clientX < left || clientX > right || clientY < top || clientY > bottom) {
-        dialog.close();
+  // Handle close buttons from individual blocks
+  dialogContainer.addEventListener('click', (e) => {
+    // Check if clicked element is a close button
+    const closeButton = e.target.closest(`[data-a11y-dialog-hide="${dialogId}"], .dialog-close, .close-icon`);
+    if (closeButton) {
+      e.preventDefault();
+      closeDialog(dialogContainer);
+      return;
+    }
+
+    // Close on click outside the dialog content
+    if (e.target === dialogContainer) {
+      const isVideoClass = e.target.closest('.video');
+      if (!isVideoClass) {
+        closeDialog(dialogContainer);
       }
     }
   });
 
-  // Handle keyboard events for form submission
-  dialog.addEventListener('keydown', (e) => {
+  // Handle keyboard events
+  dialogContainer.addEventListener('keydown', (e) => {
+    // Close on Escape key
+    if (e.key === 'Escape') {
+      closeDialog(dialogContainer);
+    }
+    
     if (e.key === 'Enter') {
       const { target } = e;
       // Check if Enter is pressed within a form context
@@ -101,46 +129,53 @@ export async function createModal(contentNodes, persistent = false, modal = true
     }
   });
 
-  dialog.addEventListener('close', () => {
+  function closeDialog(container) {
+    container.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('modal-open');
-    block.remove();
-  });
+    // Remove after animation completes
+    setTimeout(() => {
+      block.remove();
+    }, 300);
+  }
 
   block.innerHTML = '';
-  block.append(dialog);
+  block.append(dialogContainer);
 
   return {
     block,
+    dialogContainer,
+    dialogContent,
     showModal: () => {
-      if (modal) {
-        dialog.showModal();
-      } else {
-        dialog.show();
-        const custombackdrop = document.createElement('div');
-        custombackdrop.className = 'custom-dialog-backdrop';
-        dialog.parentNode.insertBefore(custombackdrop, dialog);
-        custombackdrop.addEventListener('click', () => {
-          dialog.close();
-        });
-      }
+      dialogContainer.setAttribute('aria-hidden', 'false');
       // reset scroll position
-      setTimeout(() => { dialogContent.scrollTop = 0; }, 0);
+      setTimeout(() => { 
+        dialogContent.scrollTop = 0;
+        // Focus the dialog container so keyboard events (ESC) work
+        dialogContainer.focus();
+      }, 0);
       document.body.classList.add('modal-open');
     },
+    closeModal: () => closeDialog(dialogContainer),
   };
 }
 
 /**
  * Open modal with the given content fragment URL.
  * @param {String} fragmentUrl content fragment URL
- * @param {Boolean} persistent hides close button if true.
+ * @param {Boolean} modal determines if it's a modal or regular dialog.
+ * @param {String} dialogId unique identifier for the dialog.
+ * @param {Array} dialogClasses additional classes for the dialog container.
+ * @param {String} contentWrapperClass optional class name to wrap the content in a div.
  */
-export async function openModal(fragmentUrl, persistent = false, modal = true) {
+export async function openModal(fragmentUrl, modal = true, dialogId = 'dialog', dialogClasses = [], contentWrapperClass = null) {
+  // Load modal CSS first before loading fragment content
+  await loadCSS(`${window.hlx.codeBasePath}/blocks/modal/modal.css`);
+  
   const path = fragmentUrl.startsWith('http')
     ? new URL(fragmentUrl, window.location).pathname
     : fragmentUrl;
 
   const fragment = await loadFragment(path);
-  const { showModal } = await createModal(fragment.childNodes, persistent, modal);
+  const { showModal } = await createModal(fragment.childNodes, modal, dialogId, dialogClasses, contentWrapperClass);
   showModal();
 }

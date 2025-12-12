@@ -100,18 +100,35 @@ class SelectGameForm {
         to: (value) => `$${Math.round(value).toLocaleString('en-US')}`,
         from: (value) => Number(value.replace(/[$,]/g, '')),
       },
-      // IMPROVEMENT: Use aria-controls to link the handles to the hidden inputs
       handleAttributes: [
         { 'aria-label': 'Budget range minimum value', 'aria-controls': 'min-budget' },
         { 'aria-label': 'Budget range maximum value', 'aria-controls': 'max-budget' },
       ],
     });
+    const sliderEl = this.dom.slider;
+    const minHandle = sliderEl.querySelector('.noUi-handle-lower');
+    const maxHandle = sliderEl.querySelector('.noUi-handle-upper');
 
     this.dom.slider.noUiSlider.on('update', (values) => {
       const [minVal, maxVal] = values.map((v) => parseFloat(v));
       this._updateBudgetDisplay(minVal, maxVal);
-      // The slider is a valid input, so the button state check is deferred to change/reset
-      this._updateSubmitButtonState(this._getSelectedGames().length === 0);
+      this._updateSubmitButtonState(false);
+
+      if (minHandle) {
+        let text = `$${minVal}`;
+        if (minVal === min) {
+          text += ', minimum value reached';
+        }
+        minHandle.setAttribute('aria-valuetext', text);
+      }
+
+      if (maxHandle) {
+        let text = `$${maxVal}`;
+        if (maxVal === max) {
+          text += ', maximum value reached';
+        }
+        maxHandle.setAttribute('aria-valuetext', text);
+      }
     });
   }
 
@@ -137,6 +154,15 @@ class SelectGameForm {
     return Array.from(this.dom.games)
       .filter((input) => input.checked)
       .map((input) => input.value);
+  }
+
+  /**
+   * Parses a currency string into a number.
+   * @param {string} value - The currency string to parse.
+   * @returns {number} The parsed number.
+   */
+  _parseCurrency(value) {
+    return toNumber(value);
   }
 
   /**
@@ -169,12 +195,13 @@ class SelectGameForm {
     const [currentMin, currentMax] = sliderInstance.get().map(toNumber);
 
     // 2. Clamp against the other handle's position
-    if (isMin) {
-      // The minimum value can't exceed the current maximum value
-      if (v > currentMax) return currentMax;
-    } else {
-      // The maximum value can't be less than the current minimum value
-      if (v < currentMin) return currentMin;
+    // The minimum value can't exceed the current maximum value
+    if (isMin && v > currentMax) {
+      return currentMax;
+    }
+    // The maximum value can't be less than the current minimum value
+    if (!isMin && v < currentMin) {
+      return currentMin;
     }
 
     return v;
@@ -270,26 +297,29 @@ class SelectGameForm {
     const sliderInstance = this.dom.slider?.noUiSlider;
     if (!inputElement || !sliderInstance) return;
 
-    // 1. Get raw number from the input value (stripping currency/commas)
-    const raw = toNumber(inputElement.value);
-    // 2. Validate and clamp the value
+    const raw = this._parseCurrency(inputElement.value);
     const validated = this._validateBudgetValue(raw, isMin);
 
-    // 3. Update the visible input with the formatted, validated value
+    // Set formatted display & inputs
     inputElement.value = this._formatCurrency(validated);
 
-    // 4. Update the slider position
-    const [currentMin, currentMax] = sliderInstance.get().map(toNumber);
-
-    if (isMin) {
-      // Set the minimum handle position
-      sliderInstance.set([validated, currentMax]);
-    } else {
-      // Set the maximum handle position
-      sliderInstance.set([currentMin, validated]);
+    if (isMin && this.dom.minBudgetInput) {
+      this.dom.minBudgetInput.value = validated;
+    } else if (!isMin && this.dom.maxBudgetInput) {
+      this.dom.maxBudgetInput.value = validated;
     }
 
-    // Trigger update of hidden inputs via slider 'update' event
+    const currentValues = sliderInstance.get();
+    let [currMin, currMax] = currentValues.map((v) => Math.round(Number(v)));
+    const step = sliderInstance.steps()[0][0];
+
+    if (isMin) {
+      currMin = validated === currMax ? currMax - step : validated;
+      sliderInstance.setHandle(0, currMin, false, true);
+    } else {
+      currMax = validated === currMin ? currMin + step : validated;
+      sliderInstance.setHandle(1, currMax, false, true);
+    }
   }
 }
 
@@ -313,6 +343,42 @@ const initSelectGameForms = (context) => {
 
 // Initialize on initial page load
 document.addEventListener('DOMContentLoaded', () => {
+  const mobileWrapper = document.getElementById('maximum-budget-wrapper-mobile');
+  const desktopWrapper = document.getElementById('maximum-budget-wrapper-desktop');
+
+  // Create a placeholder to remember original position in DOM
+  const desktopPlaceholder = document.createComment('desktop-wrapper-placeholder');
+  desktopWrapper?.parentNode?.insertBefore(desktopPlaceholder, desktopWrapper?.nextSibling);
+
+  function moveBudgetContent() {
+    if (!mobileWrapper || !desktopWrapper) return;
+
+    if (window.innerWidth < 1280) {
+      // Move all children to mobile wrapper
+      if (desktopWrapper.children.length > 0) {
+        while (desktopWrapper.firstChild) {
+          mobileWrapper.appendChild(desktopWrapper.firstChild);
+        }
+      }
+    } else if (mobileWrapper.children.length > 0) {
+      // Move all children back to desktop wrapper
+      while (mobileWrapper.firstChild) {
+        desktopWrapper.appendChild(mobileWrapper.firstChild);
+      }
+    }
+  }
+
+  // Initial call
+  moveBudgetContent();
+
+  // Re-run on resize (with debounce)
+  let resizeTimer;
+
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(moveBudgetContent, 150);
+  });
+
   initSelectGameForms(document.body);
 
   // Start observing the entire document for changes

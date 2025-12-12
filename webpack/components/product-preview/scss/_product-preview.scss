@@ -6,18 +6,20 @@
   position: fixed;
   inset: 0;
   background: var(--color-primary-base);
-  z-index: 9999;
+  z-index: 9;
   overflow-y: auto;
   @include mix.p(0);
 
   &__topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     background-color: var(--color-primary-900);
     border-bottom: 1px solid var(--color-primary-800);
     @include mix.p(5, "y");
-    @include mix.p(10, "x");
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
     @media (max-width: 768px) {
       flex-direction: column;
@@ -128,7 +130,9 @@
       border: none;
     }
   }
-
+  .star-rating-wrapper {
+    display: inline-block;
+  }
   .product-preview-image-section {
     flex: 1;
     display: flex;

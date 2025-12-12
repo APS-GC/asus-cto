@@ -3,6 +3,7 @@ export class MiniCart {
   constructor() {
     this.toggleBtn = document.querySelector('#mini-cart-toggle');
     this.miniCartContainer = document.querySelector('#mini-cart-container');
+    this.profileMenuCloseBtn = document.querySelector('.profile-menu__close');
     this.title = document.querySelector('#mini-cart-title');
     this.scrollY = 0;
   }
@@ -17,12 +18,16 @@ export class MiniCart {
     //toggle on clicking cart icon
     this.toggleBtn.addEventListener('click', (e) => {
       e.preventDefault();
+      this.profileMenuCloseBtn.click();
       this.toggle();
     });
 
     //closing on clicking close icon
     this.miniCartContainer.addEventListener('click', (e) => {
-      if (e.target.classList.contains('mini-cart__close')) {
+      if (
+        e.target.classList.contains('mini-cart__close') ||
+        e.target.classList.contains('mini-cart__close-icon')
+      ) {
         e.preventDefault();
         this.close();
       }
@@ -45,7 +50,7 @@ export class MiniCart {
       this.toggleBtn.removeAttribute('total-items');
       this.title.innerHTML = 'Your cart is empty.';
       return `
-        <p class="mini-cart__message"><a href="/">Sign in</a>to see if you have any saved items</p>
+        <p class="mini-cart__message"><a href="/">Sign in</a> to see if you have any saved items</p>
       `;
     } else {
       const products = await this.fetchProducts();
@@ -59,6 +64,7 @@ export class MiniCart {
         const cartItemsHtml = products.map((product) => this.renderCartItems(product)).join('');
         const subtotal = products.reduce((sum, p) => sum + p.quantity * parseFloat(p.price), 0);
         this.toggleBtn.setAttribute('total-items', products.length);
+        this.toggleBtn.setAttribute('aria-label', `Cart items: ${products.length}`);
         this.title.innerHTML = `${products.length} items in cart`;
         return `
           <ul class="cart-items flex" role="list">${cartItemsHtml}</ul>
@@ -88,7 +94,7 @@ export class MiniCart {
         </div>
         <div class="product-info-container flex">
           <div class="product-info">
-            <h6>${name}</h6>
+            <div class="product-name">${name}</div>
             ${descriptionHTML}
           </div>
           <div class="price-info flex">
@@ -125,6 +131,7 @@ export class MiniCart {
       this.close();
     } else {
       this.open();
+      this.miniCartContainer.focus();
     }
   }
 

@@ -1,3 +1,4 @@
+@use "../../../site/scss/settings/mixins" as mix;
 /**
  * Budget Range Slider
  * This is a custom slider for the budget range. 
@@ -51,10 +52,23 @@
   }
 
   .noUi-handle-lower {
-    right: calc(var(--slider-handle-width) * -1);
+    right: calc(var(--slider-handle-width) / -2);
   }
 
   .noUi-handle-upper {
-    right: 0;
+    right: calc(var(--slider-handle-width) / -2);
+  }
+
+  @include mix.respond-to("lg", "max") {
+    --slider-handle-height: 24px;
+    --slider-handle-width: 6px;
+    margin: 10px 0;
+  }
+
+  @include mix.respond-to("xl", "max") {
+    .noUi-touch-area {
+      width: 24px;
+      margin-left: -9px;
+    }
   }
 }

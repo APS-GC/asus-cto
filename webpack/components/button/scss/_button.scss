@@ -120,6 +120,11 @@
       text-decoration: underline;
     }
 
+    &:focus-visible:not(:disabled) {
+      outline-color: var(--color-focus-ring);
+      box-shadow: none;
+    }
+
     // Size adjustment for link variant
     &.btn-sm {
       @include typo.text-style(base);

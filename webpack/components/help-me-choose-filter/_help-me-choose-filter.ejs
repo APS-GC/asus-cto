@@ -12,10 +12,14 @@
 
 <div class="filter-bar container-xl  <%= isOpen ? 'open' : '' %>"> 
     <div class="filters-container container">
+        <button class="filter-button btn btn-link" aria-label="Filter dropdown">
+            Filter 
+         <span class="icon icon--arrow-bottom" id="filter-icon"></span>
+        </button>
         <form class="filters">
             <div class="selected-games">
                 <p class="selected-games-text">Selected game:</p>
-                <div class="collapsed-view">
+                <div class="collapsed-view"> Test
                 </div>
                 <div class="expanded-view">
                     <% games.forEach(game => {
@@ -26,7 +30,7 @@
                 </div>
             </div>
             <div class="vertical-divider"></div>
-            <div class="budget">
+            <div class="budget" id="budget">
                 <div class="your-budget">Your budget: 
                     <div>
                         <span class="confirmed-budget-min-value">$<%= minBudget%></span>
@@ -34,15 +38,17 @@
                         <span class="confirmed-budget-max-value">$<%= maxBudget%></span>
                     </div>
                 </div>
-                <div class="budget-center">  
-                    <div class="budget-value" id="budget-min-value"></div>
-                    <div class="budget-separator">to</div>
-                    <div class="budget-value" id="budget-max-value"></div>
+                <div class="budget-center">
+                    <label for="budget-min-value" class="sr-only">Min Value</label>
+                    <input class="budget-value" id="budget-min-value"></input>
+                    <div class="budget-separator" aria-hidden="true">to</div>
+                    <label for="budget-max-value" class="sr-only">Max Value</label>
+                    <input class="budget-value" id="budget-max-value"></input>
                     <div class="budget-range-wrapper">
-                        <div id="budget-range" class="budget-range-slider" data-start="[<%= minBudget %>, <%= maxBudget %>]" data-min="500" data-max="5000" data-step="100" aria-valuemax="5000" aria-valuemin="500" aria-valuenow="500"></div>
-                        <div class="range-labels">
+                        <div id="budget-range" class="budget-range-slider" data-start="[<%= minBudget %>, <%= maxBudget %>]" data-min="500" data-max="5000" data-step="100"></div>
+                        <div class="range-labels" aria-hidden="true">
                             <span>$500</span>
-                            <span>$5000</span>
+                            <span>$5,000</span>
                         </div>
                     </div>
                 </div>
@@ -54,9 +60,5 @@
                 </div>
             </div>
         </form>
-        <div class="filter-button">
-            Filter 
-         <span class="icon icon--arrow-bottom" id="filter-icon"></span>
-        </div>
     </div>
 </div>

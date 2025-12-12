@@ -1,0 +1,140 @@
+/* stylelint-disable declaration-block-no-duplicate-custom-properties */
+
+/* ========================================================================== 
+ * AEM Footer Shadow DOM Styles - OPTIMIZED
+ * Minimal essential CSS for shadow DOM compatibility
+ * Inherits most variables from main document, only overrides essentials
+ * ========================================================================== */
+
+:host {
+  /* Essential Color System - Only colors actually used in footer */
+  --color-primary: #000;
+  --color-primary-100: #181818;
+  --color-primary-300: #4d4d4d;
+  --color-primary-600: #999;
+  --color-primary-700: #ccc;
+  --color-primary-950: #fff;
+
+  /* Status Colors - Required for newsletter form states */
+  --color-success: #6fc371;
+  --color-error: #e75b4b;
+
+  /* Interactive Colors - For form focus states */
+  --color-select-box-highlight: #248dff;
+
+  /* Button Colors - For newsletter submit button */
+  --btn-bg: #fff;
+  --btn-hover-bg: #ccc;
+  --btn-color: var(--color-primary);
+
+  /* Typography - Essential fonts only */
+  --font-text: 'Roboto', -apple-system, blinkmacsystemfont, 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'TTNormsProMedium', 'Roboto', -apple-system, blinkmacsystemfont, 'Segoe UI', system-ui, sans-serif;
+  --regular: 400;
+  --medium: 500;
+
+  /* Display properties for the host element */
+  display: block;
+  width: 100%;
+
+/* missing CSS properties from Syles CSS */
+    --spacing-4: 1rem;
+    --btn-color: var(--color-primary);
+}
+
+/* Essential Base Styles - Only what's needed for shadow DOM functionality */
+.btn {
+display: inline-flex;
+    align-items: center;
+    background-color: var(--btn-bg);
+    border: none;
+    border-radius: .5rem;
+    color: var(--btn-color);
+    cursor: pointer;
+    font-family: var(--font-text);
+    font-size: 1.125rem;
+    font-weight: 400;
+    font-weight: var(--regular);
+    gap: .75rem;
+    justify-content: center;
+    letter-spacing: 0;
+    line-height: 1.5rem;
+    padding: .5rem 1rem;
+    text-decoration: none;
+    transition: all .2s ease;
+    white-space: nowrap;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: var(--btn-hover-bg);
+}
+
+/* Container utility - Essential for layout */
+.container {
+  margin: 0 auto;
+  max-width: 100%;
+  padding: 0 20px;
+}
+
+@media only screen and (width >= 45.6875rem) {
+  .container {
+    padding: 0 40px;
+  }
+}
+
+@media only screen and (width >= 80rem) {
+  .container {
+    max-width: 1240px;
+    padding: 0;
+  }
+}
+
+/* Essential Input Styles - For newsletter form */
+input[type="email"] {
+  background-color: var(--color-primary-100);
+  border: 1px solid var(--color-primary-600);
+  border-radius: 0.5rem;
+  color: var(--color-primary-950);
+  font-family: var(--font-text);
+  font-size: 1.125rem;
+  font-weight: var(--regular);
+  line-height: 1.5rem;
+  outline: none;
+  padding: 7px 16px;
+}
+
+input[type="email"]:focus-visible {
+  border-color: var(--color-select-box-highlight);
+  outline: 1px solid var(--color-select-box-highlight);
+}
+
+input[type="email"]::placeholder {
+  color: var(--color-primary-600);
+}
+
+/* Essential Utility Classes */
+.flex {
+  display: flex;
+}
+
+.p-0 {
+  padding: 0;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+.pl-0 {
+    padding-left: 0;
+}
+
+.mt-4 {
+    margin-top: var(--spacing-4);
+}
+/* stylelint-enable declaration-block-no-duplicate-custom-properties */

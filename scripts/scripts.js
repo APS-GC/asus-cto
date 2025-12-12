@@ -8,10 +8,50 @@ import {
   loadSection,
   loadSections,
   loadCSS,
+  loadScript,
   buildBlock,
   decorateBlock,
   loadBlock,
+  getMetadata,
 } from './aem.js';
+import { getConfigValue } from './configs.js';
+import { loadGTM, sendPageLoadAttributes } from './google-data-layer.js';
+
+/**
+ * Get the current locale from configuration
+ * @returns {Promise<string>} The locale value, defaults to 'en' if not configured
+ */
+export async function getLocale() {
+  const locale = await getConfigValue('locale');
+  return locale || 'en';
+}
+
+/**
+ * Get the website code from configuration
+ * @returns {Promise<string>} The website code value, defaults to 'us' if not configured
+ */
+export async function getWebsiteCode() {
+  const websiteCode = await getConfigValue('website-code');
+  return websiteCode || 'us';
+}
+
+/**
+ * Get the currency symbol from configuration
+ * @returns {Promise<string>} The currency symbol, defaults to '$' if not configured
+ */
+export async function getCurrencySymbol() {
+  const currencySymbol = await getConfigValue('currency-symbol');
+  return currencySymbol || '$';
+}
+
+/**
+ * Get the language/locale from configuration
+ * @returns {Promise<string>} The language code (e.g., 'en-us'), defaults to 'en-US' if not configured
+ */
+export async function getLang() {
+  const lang = await getConfigValue('lang');
+  return lang || 'en-US';
+}
 
 
 /**
@@ -102,23 +142,56 @@ export function createOptimizedPicture(
 }
 
 /**
- * Detect if running in Universal Editor environment
- * @returns {boolean} True if running in Universal Editor
+ * Swiper Dynamic Loader
+ * Loads Swiper library on-demand to improve initial page load performance
  */
-export function isUniversalEditor() {
-   // TODO: returning false by default just for the demo because on published URLs, we are getting API CORS error
-  return false;
+let swiperPromise = null;
+let swiperCSSLoaded = false;
+
+/**
+ * Dynamically loads Swiper library from CDN
+ * @returns {Promise<Object>} Promise that resolves with Swiper constructor
+ */
+export async function loadSwiper() {
+  // Return immediately if Swiper is already loaded
+  if (window.Swiper) {
+    return window.Swiper;
+  }
   
-  return (
-    window.location.pathname.includes('/editor.html') ||
-    window.location.search.includes('editor') ||
-    window.location.search.includes('aue_') ||
-    document.body.hasAttribute('data-aue-behavior') ||
-    document.body.classList.contains('editor') ||
-    document.body.classList.contains('aem-authoring-enabled') ||
-    document.querySelector('[data-aue-resource]') !== null ||
-    window.hlx?.aemRoot !== undefined
-  );
+  // Return existing promise if load is in progress
+  if (!swiperPromise) {
+    console.log('Swiper: Starting dynamic load (JS + CSS) [Call ID: ' + Date.now() + ']');
+    
+    swiperPromise = (async () => {
+      try {
+        await Promise.all([
+          // Load CSS once
+          !swiperCSSLoaded ? loadCSS('https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css').then(() => {
+            swiperCSSLoaded = true;
+            console.log('Swiper CSS loaded');
+          }) : Promise.resolve(),
+          // Load JS
+          loadScript(
+            'https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js',
+            {
+              crossorigin: 'anonymous',
+              referrerpolicy: 'no-referrer'
+            }
+          )
+        ]);
+        console.log('Swiper loaded dynamically (CSS + JS)');
+        return window.Swiper;
+      } catch (error) {
+        console.error('Failed to load Swiper library:', error);
+        swiperPromise = null; // Reset on error so retry is possible
+        throw error;
+      }
+    })(); // IIFE (Immediately Invoked Function Expression) creates promise synchronously
+  } else {
+    console.log('Swiper: Reusing existing load promise');
+  }
+  
+  return swiperPromise;
 }
 
 /**
@@ -126,17 +199,32 @@ export function isUniversalEditor() {
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
 export async function loadHeaderFragment() {
-  //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = '/content/asus-cto/language-master/en/fragments/head.plain.html';
+  const locale = await getLocale();
+  const fragmentUrlWithLocale = `/${locale}/fragments/head.plain.html`;
+  const fallbackFragmentUrl = '/fragments/head.plain.html';
+  
+  // Try with locale first
   try {
-    const response = await fetch(fragmentUrl);
+    const response = await fetch(fragmentUrlWithLocale);
     if (response.ok) {
       const html = await response.text();
       return processFragmentContent(html);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.log('Failed to load header fragment:', error);
+    console.log('Failed to load header fragment with locale:', error);
+  }
+
+  // Fallback: Try without locale
+  try {
+    const response = await fetch(fallbackFragmentUrl);
+    if (response.ok) {
+      const html = await response.text();
+      return processFragmentContent(html);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Failed to load header fragment fallback:', error);
   }
 
   return null;
@@ -147,17 +235,32 @@ export async function loadHeaderFragment() {
  * @returns {Promise<string|null>} Fragment HTML content or null if not found
  */
 export async function loadFooterFragment() {
-  //TODO: change this to relative when we base url is changed.
-  const fragmentUrl = '/content/asus-cto/language-master/en/fragments/footer.plain.html';
+  const locale = await getLocale();
+  const fragmentUrlWithLocale = `/${locale}/fragments/footer.plain.html`;
+  const fallbackFragmentUrl = '/fragments/footer.plain.html';
+  
+  // Try with locale first
   try {
-    const response = await fetch(fragmentUrl);
+    const response = await fetch(fragmentUrlWithLocale);
     if (response.ok) {
       const html = await response.text();
       return processFooterFragmentContent(html);
     }
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.log('Failed to load footer fragment:', error);
+    console.log('Failed to load footer fragment with locale:', error);
+  }
+
+  // Fallback: Try without locale
+  try {
+    const response = await fetch(fallbackFragmentUrl);
+    if (response.ok) {
+      const html = await response.text();
+      return processFooterFragmentContent(html);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('Failed to load footer fragment fallback:', error);
   }
 
   return null;
@@ -333,9 +436,24 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  
+  const noscript = document.createElement('noscript');
+  noscript.innerHTML = '<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8KDRJVJ" height="0" width="0" style="display:none;visibility:hidden"></iframe>';
+  document.body.insertBefore(noscript, document.body.firstChild);
+  
   const main = doc.querySelector('main');
   if (main) {
+    const overlapHeader = getMetadata('overlapheader');
+    if (overlapHeader === 'true' && main.firstElementChild) {
+      main.firstElementChild.classList.add('overlap-header');
+    }
+    
     decorateMain(main);
+    const hasCarousel = main.querySelector('.hero-banner, .hot-products, .product-preview, .help-me-choose,.our-advantages');
+    if (hasCarousel) {
+      loadSwiper().catch(err => console.error('Failed to preload Swiper:', err));
+    }
+    
     document.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
   }
@@ -366,8 +484,23 @@ async function loadLazy(doc) {
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 
+  await loadGTM();
+  await sendPageLoadAttributes();
+
+  loadCSS(`${window.hlx.codeBasePath}/styles/clientlib-base.css`);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
+
+  // Initialize global tooltip manager for all tooltip functionality
+  import('./tooltip.js')
+    .then((module) => {
+      if (typeof window.tooltipManager === 'undefined') {
+        window.tooltipManager = new module.default();
+      }
+    })
+    .catch((error) => {
+      console.error('Failed to load tooltip manager:', error);
+    });
 }
 
 /**
@@ -487,6 +620,15 @@ async function loadFooter(footer) {
  * @param {string} [prefix] Location of placeholders
  * @returns {object} Window placeholders object
  */
+/**
+ * Gets placeholders for the current locale.
+ * @returns {object} Placeholders object for the current locale
+ */
+export async function fetchPlaceholdersForLocale() {
+  const locale = await getLocale();
+  return fetchPlaceholders(`/${locale}`);
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export async function fetchPlaceholders(prefix = 'default') {
   window.placeholders = window.placeholders || {};
@@ -531,7 +673,7 @@ function loadDelayed() {
 }
 
 async function loadPage() {
-  if (document.querySelector('aem-header')) {
+  if (document.querySelector('aem-header, aem-footer')) {
     console.log('Web component usage detected - skipping full page initialization');
     return;
   }

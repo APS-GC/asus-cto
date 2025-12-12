@@ -63,7 +63,9 @@ $scale: (
   // 44px / 52px
   "4xl": (2.75rem, 3.25rem),
   // 52px / 60px
-  "5xl": (3.25rem, 3.75rem)
+  "5xl": (3.25rem, 3.75rem),
+  //pdp-font 14px/18px
+  "pdp-font": (0.875rem, 1.125rem)
 );
 
 @mixin text-style($size) {
@@ -85,6 +87,11 @@ $scale: (
 
 @mixin text-font {
   font-family: var(--font-text);
+  font-weight: var(--regular);
+  letter-spacing: 0;
+}
+@mixin display-font-regular {
+  font-family: var(--font-display-regular);
   font-weight: var(--regular);
   letter-spacing: 0;
 }
@@ -184,4 +191,22 @@ $scale: (
   @include text-font;
   @include text-style("xxs");
   letter-spacing: 0.24px;
+}
+
+@mixin pdp-font {
+  @include text-font;
+  @include text-style("pdp-font");
+  letter-spacing: 0.16px;
+}
+
+@mixin text-tech-specs {
+  @include text-font;
+  @include text-style("2xl");
+  font-weight: var(--medium);
+}
+
+@mixin pdp-features-text {
+  @include display-font;
+  @include text-style("base");
+  font-weight: var(--medium);
 }

@@ -1,0 +1,128 @@
+[
+  {
+    "id": "article-1",
+    "image": "./clientlib-site/images/articles/article-1.webp",
+    "link": "./news-details.html",
+    "alt": "ROG Strix Ace XG248QSG 610Hz gaming monitor",
+    "date": "May 19, 2025",
+    "title": "The ROG Strix Ace XG248QSG gaming monitor puts the pedal to the metal with a 610Hz refresh rate",
+    "description": "An esports competitor's gaming monitor is often a very specialized piece of hardware. Conventional displays don’t make the cut."
+  },
+  {
+    "id": "article-2",
+    "image": "./clientlib-site/images/articles/article-2.webp",
+    "link": "./news-details.html",
+    "alt": "ROG Azoth X 75% wireless mechanical gaming keyboard",
+    "date": "May 02, 2025",
+    "title": "The ROG Azoth X 75% wireless keyboard is here, designed for hardcore gamers and modders",
+    "description": "At ROG, we pride ourselves on catering to hardcore PC gamers who like to mod their peripherals. That's why we've taken our ultimate premium mechanical keyboard, the ROG Azoth, and made it more enthusiast-friendly than ever before."
+  },
+  {
+    "id": "article-3",
+    "image": "./clientlib-site/images/articles/article-3.webp",
+    "link": "./news-details.html",
+    "alt": "Like a Dragon: Pirate Yakuza in Hawaii game scene",
+    "date": "Apr 26, 2025",
+    "title": "Like a Dragon: Pirate Yakuza in Hawaii is absurdist gaming at its finest",
+    "description": "I'm a part-time amnesiac yakuza and full-time pirate. But none of that matters when I happen across a pop idol's tour bus, hop on, and become a groupie just for kicks. Along the tour, I meet the idol's hopelessly naive fans."
+  },
+  {
+    "id": "article-4",
+    "image": "./clientlib-site/images/articles/article-4.webp",
+    "link": "./news-details.html",
+    "alt": "Sonic the Hedgehog franchise artwork",
+    "date": "Apr 10, 2025",
+    "title": "Why Sonic the Hedgehog is the wildest series in gaming",
+    "description": "If you've been gaming for a while, you probably know SEGA's Sonic the Hedgehog. But do you know why he commands his own gravitational orbit among a dedicated group of fans? Strap in. As a lifelong Sonic fanatic, I've become a bottomless knowledge receptacle for the series most bizarre trivia. Here's why this cartoon hedgehog is like no other franchise in gaming."
+  },
+  {
+    "id": "article-5",
+    "image": "./clientlib-site/images/articles/article-5.webp",
+    "link": "./news-details.html",
+    "alt": "ROG SLASH 4.0 bags made of polyester and PU leather",
+    "date": "Apr 04, 2025",
+    "title": "How to keep your ROG SLASH 4.0 bags in peak condition",
+    "description": "Our ROG SLASH 4.0 Bag series is here, giving you the latest and greatest in fashion built to transport your gaming gear. All three SLASH 4.0 series bags are made of polyester and durable, stylish PU leather, giving you strong, snazzy options for all your needs. But even though the latter material can hold up well all on its own, it's still a good idea to manually maintain your gear's PU leather for maximum luster and longevity. Here are a few tips to help keep your ROG SLASH 4.0 bags in top condition."
+  },
+  {
+    "id": "article-6",
+    "image": "./clientlib-site/images/articles/article-6.webp",
+    "link": "./news-details.html",
+    "alt": "ROG Strix, Extreme, Apex, and Hero gaming motherboard lineup",
+    "date": "Feb 10, 2025",
+    "title": "ROG Strix vs Extreme vs Apex vs Hero: What's the difference between ROG gaming motherboards?",
+    "description": "One of the best parts of being a PC enthusiast is the freedom to build your computer in your own way. You’re not limited to picking from a couple different preset options. When we launch a new generation of motherboards, we don’t just design one model and expect it to meet everyone’s needs. We give you a broad range of options from our ROG Maximus, Crosshair, and Strix lineups so that you can find the board with the right features and style for your next build."
+  },
+  {
+    "id": "article-7",
+    "image": "./clientlib-site/images/articles/article-7.webp",
+    "link": "./news-details.html",
+    "alt": "ASUS ROG Astral, Strix, TUF, and Prime graphics cards comparison",
+    "date": "Jan 15, 2025",
+    "title": "ROG Astral vs Strix vs TUF vs Prime: which ASUS graphics card is right for you?",
+    "description": "When you go to buy a new graphics card, you might have an idea of which GPU you want—like the GeForce RTX 5080 or the Radeon RX 9070 XT—but choosing a specific model of RTX 5080 can be a tough decision. Do you want a simple 2.5-slot solution that offers bang for your buck, or a decked-out quad fan system with all the bells and whistles? Are you looking for something with an unobtrusive and straightforward design, or do you want a showpiece that will draw every eye to your build? ASUS and ROG offer a number of variants to provide options that fit your build (and budget) best. Let's break them down."
+  },
+  {
+    "id": "article-8",
+    "image": "./clientlib-site/images/articles/article-8.webp",
+    "link": "./news-details.html",
+    "alt": "ROG G700 prebuilt gaming PC tower",
+    "date": "Jan 24, 2025",
+    "title": "Introducing the ROG G700 prebuilt gaming PC: your next-gen power tower",
+    "description": "ROG has a storied history of producing some of the best desktop gaming PC components on the market. We've taken that component-level expertise to craft a next-gen tower from the ground up and give you the ultimate ROG experience. If you want a rig that's fine-tuned, tested, and assembled by us, that uses our world-class components to the fullest for a truly exceptional out-of-the-box experience, our ROG G700 prebuilt gaming PC answers the call."
+  },
+  {
+    "id": "article-9",
+    "image": "./clientlib-site/images/articles/article-9.webp",
+    "link": "./news-details.html",
+    "alt": "ROG Rapture GT-BE19000AI AI-powered gaming router",
+    "date": "Jan 24, 2024",
+    "title": "Meet the first AI gaming router: the ROG Rapture GT-BE19000AI",
+    "description": "With the new ROG Rapture GT-BE19000AI, we're not just launching a product. We're unleashing an all-new category: the AI gaming router. This premium device takes advantage of the latest technologies to revolutionize your network. Using intelligent functions to make advanced networking features effortless, and kicking your network into high gear with WiFi 7 tech, the GT-BE1900AI boosts every aspect of your connected life."
+  },
+  {
+    "id": "article-10",
+    "image": "./clientlib-site/images/articles/article-10.webp",
+    "link": "./news-details.html",
+    "alt": "Elden Ring running on the ROG Ally handheld gaming PC",
+    "date": "Jun 25, 2024",
+    "title": "Elden Ring on the ROG Ally: performance guide & best settings for Shadow of the Erdtree",
+    "description": "Elden Ring's Lands Between are hauntingly beautiful and utterly terrifying at the same time - and they deserve graphical settings that let the world shine without cutting into your ever-important framerates. After lots of testing on the ROG Ally, we've found the best settings that strike a balance between the two."
+  },
+  {
+    "id": "article-11",
+    "image": "./clientlib-site/images/articles/article-11.webp",
+    "link": "./news-details.html",
+    "alt": "Helldivers 2 gameplay on the ROG Ally handheld",
+    "date": "Mar 08, 2024",
+    "title": "Helldivers 2 on the ROG Ally: performance guide & best settings",
+    "description": "We can't stop playing Helldivers 2, and if you haven't enlisted in the fight for Super Earth, it's high time you joined ranks. And if you get so addicted that you can't pull yourself away, bring it with you on the ROG Ally. Here are the ideal settings for the handheld system."
+  },
+  {
+    "id": "article-12",
+    "image": "./clientlib-site/images/articles/article-12.webp",
+    "link": "./news-details.html",
+    "alt": "ASUS OLED Premium Care protection for the ROG Swift OLED PG32UCDM monitor",
+    "date": "Feb 16, 2024",
+    "title": "ASUS OLED Premium Care protects the ROG Swift OLED PG32UCDM against burn-in",
+    "description": "Meet the first AI gaming router: the ROG Rapture GT-BE19000AI"
+  },
+  {
+    "id": "article-13",
+    "image": "./clientlib-site/images/articles/article-13.webp",
+    "link": "./news-details.html",
+    "alt": "Palworld gameplay optimized for the ROG Ally handheld",
+    "date": "Feb 09, 2024",
+    "title": "Palworld on the ROG Ally: performance guide & best settings",
+    "description": "Meet the first AI gaming router: the ROG Rapture GT-BE19000AI"
+  },
+  {
+    "id": "article-14",
+    "image": "./clientlib-site/images/articles/article-14.webp",
+    "link": "./news-details.html",
+    "alt": "ROG Strix LC III series all-in-one liquid CPU coolers",
+    "date": "Jan 09, 2024",
+    "title": "The new ROG Strix LC III series AIOs bring stylish CPU cooling to your PC",
+    "description": "Meet the first AI gaming router: the ROG Rapture GT-BE19000AI"
+  }
+]

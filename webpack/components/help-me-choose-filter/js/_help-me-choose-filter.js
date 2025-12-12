@@ -1,6 +1,25 @@
 import * as noUiSlider from 'nouislider';
 import { sanitizeText, validateRange } from '../../../site/scripts/_helpers';
 
+/**
+ * Clamps a value 'v' between a minimum 'a' and a maximum 'b'.
+ * @param {number} v - The value to clamp.
+ * @param {number} a - The minimum boundary.
+ * @param {number} b - The maximum boundary.
+ * @returns {number} The clamped value.
+ */
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/**
+ * Converts a string or number value to an integer, stripping non-numeric characters (except minus sign).
+ * @param {*} v - The value to convert.
+ * @returns {number} The integer value, or 0 if conversion fails.
+ */
+const toNumber = (v) => {
+  if (typeof v === 'number') return v;
+  // Strip non-numeric characters *except* the optional leading minus sign.
+  const n = parseInt(String(v).replace(/[^0-9-]/g, ''), 10);
+  return Number.isNaN(n) ? 0 : n;
+};
 class FilterComponent {
   constructor(container) {
     this.container = container;
@@ -34,6 +53,7 @@ class FilterComponent {
     this._initGames();
     this._initSlider();
     this._hydrateFromUrl();
+    this._setupBudgetInputHandlers();
     this._bindEvents();
   }
 
@@ -43,48 +63,83 @@ class FilterComponent {
       name: g.dataset.name,
       image: g.dataset.image,
     }));
-
-    console.log(this.allGames);
   }
 
   _initSlider() {
-    if (!this.dom.slider || this.dom.slider.noUiSlider) return;
+    if (!this.dom.slider || this.dom?.slider?.noUiSlider) {
+      return;
+    }
+
     const { dataset } = this.dom.slider;
     const min = parseInt(dataset.min || this.DEFAULT_BUDGET_RANGE.min, 10);
     const max = parseInt(dataset.max || this.DEFAULT_BUDGET_RANGE.max, 10);
-    const start = dataset.start ? JSON.parse(dataset.start) : [min, max];
-    const step = parseInt(dataset.step || 100, 10);
-
+    // Use the dataset start values, falling back to min and max if needed.
+    const start = dataset.start
+      ? JSON.parse(dataset.start)
+      : [this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max];
+    const step = dataset.step ? parseInt(dataset.step, 10) : 1;
     noUiSlider.create(this.dom.slider, {
       start,
       connect: true,
-      step,
+      step: step,
+      margin: step,
       range: { min, max },
+      // The 'format' is for internal use (reading/writing values)
       format: {
         to: (value) => Math.round(value),
         from: (value) => Number(value),
       },
+      // The 'ariaFormat' is for screen readers
+      ariaFormat: {
+        to: (value) => `$${Math.round(value).toLocaleString('en-US')}`,
+        from: (value) => Number(value.replace(/[$,]/g, '')),
+      },
+      handleAttributes: [
+        { 'aria-label': 'Budget range minimum value', 'aria-controls': 'min-budget' },
+        { 'aria-label': 'Budget range maximum value', 'aria-controls': 'max-budget' },
+      ],
     });
+    const sliderEl = this.dom.slider;
+    const minHandle = sliderEl.querySelector('.noUi-handle-lower');
+    const maxHandle = sliderEl.querySelector('.noUi-handle-upper');
 
     this.dom.slider.noUiSlider.on('update', (values) => {
       const [minVal, maxVal] = values.map((v) => parseFloat(v));
       this._updateBudgetDisplay(minVal, maxVal);
+      if (minHandle) {
+        let text = `$${minVal}`;
+        if (minVal === min) {
+          text += ', minimum value reached';
+        }
+        minHandle.setAttribute('aria-valuetext', text);
+      }
+
+      if (maxHandle) {
+        let text = `$${maxVal}`;
+        if (maxVal === max) {
+          text += ', maximum value reached';
+        }
+        maxHandle.setAttribute('aria-valuetext', text);
+      }
     });
   }
 
   _updateBudgetDisplay(min, max) {
-    if (this.dom.minValText) this.dom.minValText.textContent = `$${min}`;
-    if (this.dom.maxValText) this.dom.maxValText.textContent = `$${max}`;
+    if (this.dom.minValText) this.dom.minValText.value = `$${min}`;
+    if (this.dom.maxValText) this.dom.maxValText.value = `$${max}`;
     if (this.dom.minBudgetInput) this.dom.minBudgetInput.value = min;
     if (this.dom.maxBudgetInput) this.dom.maxBudgetInput.value = max;
   }
 
   _bindEvents() {
     // Toggle filter open/close
-    this.dom.filterButton?.addEventListener('click', () => {
+    this.dom.filterButton?.addEventListener('click', (e) => {
+      const filterBtn = e.target.tagName === 'SPAN' ? e.target.parentElement : e.target;
       if (this.container.classList.contains('open')) {
+        filterBtn.setAttribute('aria-expanded', 'false');
         this._toggleFilter(false);
       } else {
+        filterBtn.setAttribute('aria-expanded', 'true');
         this._toggleFilter(true);
       }
     });
@@ -100,13 +155,108 @@ class FilterComponent {
       setTimeout(() => this._handleReset(), 0);
     });
   }
+  _parseCurrency(value) {
+    return toNumber(value);
+  }
+  _formatCurrency(value) {
+    const n = Number(value) || 0;
+    return `$${n.toLocaleString('en-US')}`;
+  }
+  /**
+   * Sets up event handlers for the visible budget text inputs.
+   */
+  _setupBudgetInputHandlers() {
+    const inputs = [this.dom.minValText, this.dom.maxValText].filter(Boolean);
+    inputs.forEach((input, idx) => {
+      const isMin = idx === 0;
 
+      // Ensure full text is selected on interaction for easy editing
+      input.addEventListener('click', () => input.select());
+      input.addEventListener('focus', () => input.select());
+
+      // Filter input to allow only numbers, commas, and dollar signs (user experience)
+      input.addEventListener('input', (e) => {
+        const val = e.target.value || '';
+        // Allow user to type $ and commas but strip anything else (for immediate feedback)
+        const clean = val.replace(/[^0-9$,]/g, '');
+        if (val !== clean) e.target.value = clean;
+      });
+
+      // On blur (focus lost), validate the value and update the slider
+      input.addEventListener('blur', () => {
+        this._handleBudgetInputChange(input, isMin);
+      });
+
+      // Handle 'Enter' key press to blur the input and trigger validation
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          input.blur();
+        }
+      });
+    });
+  }
+  _validateBudgetValue(value, isMin = false) {
+    const min = this.DEFAULT_BUDGET_RANGE.min;
+    const max = this.DEFAULT_BUDGET_RANGE.max;
+    let v = toNumber(value);
+
+    // 1. Clamp against overall min/max range
+    v = clamp(v, min, max);
+
+    const sliderInstance = this.dom.slider?.noUiSlider;
+    if (!sliderInstance) return v;
+
+    const [currentMin, currentMax] = sliderInstance.get().map(toNumber);
+
+    // 2. Clamp against the other handle's position
+    // The minimum value can't exceed the current maximum value
+    if (isMin && v > currentMax) {
+      return currentMax;
+    }
+    // The maximum value can't be less than the current minimum value
+    if (!isMin && v < currentMin) {
+      return currentMin;
+    }
+
+    return v;
+  }
+  _handleBudgetInputChange(inputElement, isMin) {
+    const sliderInstance = this.dom.slider?.noUiSlider;
+    if (!inputElement || !sliderInstance) return;
+
+    const raw = this._parseCurrency(inputElement.value);
+    const validated = this._validateBudgetValue(raw, isMin);
+
+    // Set formatted display & inputs
+    inputElement.value = this._formatCurrency(validated);
+
+    if (isMin && this.dom.minBudgetInput) {
+      this.dom.minBudgetInput.value = validated;
+    } else if (!isMin && this.dom.maxBudgetInput) {
+      this.dom.maxBudgetInput.value = validated;
+    }
+
+    const currentValues = sliderInstance.get();
+    let [currMin, currMax] = currentValues.map((v) => Math.round(Number(v)));
+    const step = sliderInstance.steps()[0][0];
+
+    if (isMin) {
+      currMin = validated === currMax ? currMax - step : validated;
+      sliderInstance.setHandle(0, currMin, false, true);
+    } else {
+      currMax = validated === currMin ? currMin + step : validated;
+      sliderInstance.setHandle(1, currMax, false, true);
+    }
+  }
   _toggleFilter(open) {
     if (open) {
       this.container.classList.add('open');
+      document.querySelector('#budget').classList.add('expanded');
       this.dom.icon?.classList.replace('icon--arrow-bottom', 'icon--arrow-top');
     } else {
       this.container.classList.remove('open');
+      document.querySelector('#budget').classList.remove('expanded');
       this.dom.icon?.classList.replace('icon--arrow-top', 'icon--arrow-bottom');
     }
   }
@@ -119,7 +269,6 @@ class FilterComponent {
 
   _handleSubmit() {
     const checkedGames = [...this.dom.games].filter((cb) => cb.checked).map((cb) => cb.value);
-    if (checkedGames.length === 0) return;
 
     const minBudget = this.dom.minBudgetInput?.value;
     const maxBudget = this.dom.maxBudgetInput?.value;
@@ -188,7 +337,8 @@ class FilterComponent {
 
     // hydrate slider
     if (this.dom.slider?.noUiSlider) {
-      this.dom.slider.noUiSlider.set([minBudget, maxBudget]);
+      this.dom.slider.noUiSlider.setHandle(0, minBudget, false, true);
+      this.dom.slider.noUiSlider.setHandle(1, maxBudget, false, true);
     }
 
     // hydrate confirmed values

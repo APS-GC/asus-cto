@@ -1,10 +1,55 @@
 import './uifrontend/_footer.js';
-import { moveInstrumentation } from '../../scripts/scripts.js';
+import { moveInstrumentation, createOptimizedPictureExternal } from '../../scripts/scripts.js';
+import { createOptimizedPicture } from '../../scripts/aem.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
+
+// Footer configuration - calculated once for the entire module
+const FooterConfig = {
+  get baseUrl() {
+    return window.asusCto?.baseUrl;
+  },
+  get shouldUseExternal() {
+    return this.baseUrl && this.baseUrl !== window.location.origin;
+  }
+};
 
 function parseFragmentContent(block) {
   try {
-    // Get all div elements that contain the structured data
-    const contentDivs = block.querySelectorAll('div > div > div');
+    // Enhanced selector strategy to handle both wrapped and unwrapped content structures
+    let contentDivs = [];
+    
+    // First, try to find the root footer div
+    const footerDiv = block.querySelector('.footer') || block;
+    
+    // Get all direct children of the footer
+    const footerChildren = Array.from(footerDiv.children);
+    
+    // Extract content divs from each child, handling different wrapper structures
+    footerChildren.forEach((child, childIndex) => {
+      // Strategy 1: Check for div > div structure (most common)
+      const directDiv = child.querySelector(':scope > div');
+      if (directDiv) {
+        contentDivs.push(directDiv);
+        return;
+      }
+      
+      // Strategy 2: Check for wrapped structure: div > p > div
+      const pElement = child.querySelector('p');
+      if (pElement) {
+        const innerDiv = pElement.querySelector('div');
+        if (innerDiv) {
+          contentDivs.push(innerDiv);
+          // For social media icons, also store the parent for sibling lookup
+          innerDiv._parentWrapper = child;
+          return;
+        }
+      }
+      
+      // Strategy 3: Fallback - use the child itself if it has meaningful content
+      if (child.textContent?.trim()) {
+        contentDivs.push(child);
+      }
+    });
 
     const parsedData = {
       newsletterLabel: '',
@@ -34,124 +79,195 @@ function parseFragmentContent(block) {
     // 12th div: show Global
     // 13th+ divs: Social Media Icons with Images and Links
     
-    for (let index = 0; index < contentDivs.length; index++) {
-      const div = contentDivs[index];
-      const textContent = div.textContent?.trim();
-      
-      if (index === 0) {
-        // 1st div: Newsletter Label
-        if (textContent) {
-          parsedData.newsletterLabel = textContent;
+    contentDivs.forEach((div, index) => {
+      try {
+        const textContent = div.textContent?.trim();
+
+        switch (index) {
+          case 0: // Newsletter Label
+            parsedData.newsletterLabel = textContent;
+            break;
+          case 1: // Newsletter Placeholder
+            parsedData.newsletterPlaceholder = textContent;
+            break;
+          case 2: // Newsletter Button Text
+            parsedData.newsletterButtonText = textContent;
+            break;
+          case 3: { // Main content - Footer Columns
+            const linksLists = div.querySelectorAll('ul');
+            const listHeads = div.querySelectorAll('p');
+            
+            // Handle both cases: links with <a> tags or just text in <li>
+            linksLists.forEach((ul, i) => {
+              const column = { columnTitle: listHeads[i]?.textContent?.trim() || '', links: [] };
+              const listItems = ul.querySelectorAll('li');
+              
+              column.links = Array.from(listItems).map(li => {
+                const link = li.querySelector('a');
+                if (link) {
+                  return {
+                    linkText: link.textContent?.trim() || '',
+                    linkUrl: link.getAttribute('href') || '#'
+                  };
+                } else {
+                  // If no anchor tag, use the li text content
+                  return {
+                    linkText: li.textContent?.trim() || '',
+                    linkUrl: '#'
+                  };
+                }
+              });
+              
+              parsedData.footerColumns.push(column);
+            });
+            break;
+          }
+          case 4: { // Privacy policy & Legal Links
+            const links = div.querySelectorAll('a');
+            parsedData.legalLinks = Array.from(links).map(link => {
+              const href = link.getAttribute('href') || '#';
+              return {
+                linkText: link.textContent?.trim() || '',
+                linkUrl: FooterConfig.shouldUseExternal && href !== '#' && !href.startsWith('http') ? `${FooterConfig.baseUrl}${href}` : href
+              };
+            });
+            break;
+          }
+          case 5: // Follow us label
+            parsedData.socialLabel = textContent;
+            break;
+          case 6: // Show Global
+            parsedData.showGlobal = textContent.toLowerCase() === 'true' || textContent.toLowerCase() === 'yes';
+            break;
+          default:
+            // Social icons start from index 7
+            if (index >= 7) {
+              const socialPlatforms = ['facebook', 'instagram', 'tiktok', 'x', 'youtube', 'discord', 'twitch', 'thread'];
+              
+              // Check if this div has a picture (social icon)
+              const picture = div.querySelector('picture img');
+              
+              if (picture) {
+                let url = '#';
+                
+                // Check all possible locations for the URL
+                // 1. Link wrapping the picture
+                const pictureParentLink = picture.closest('a[href]');
+                
+                if (pictureParentLink) {
+                  url = pictureParentLink.getAttribute('href') || '#';
+                } else {
+                  // 2. Link in the same div as the image
+                  const linkInSameDiv = div.querySelector('a[href]');
+                  if (linkInSameDiv) {
+                    url = linkInSameDiv.getAttribute('href') || linkInSameDiv.textContent?.trim() || '#';
+                  } else {
+                    // 3. Check for sibling div with button-container class (new structure)
+                    // Structure: <p><div>picture</div><div class="button-container"><a>url</a></div></p>
+                    const parentP = div.parentElement;
+                    if (parentP && parentP.tagName === 'P') {
+                      const siblingDivs = Array.from(parentP.querySelectorAll(':scope > div'));
+                      const currentDivIndex = siblingDivs.indexOf(div);
+                      if (currentDivIndex !== -1 && currentDivIndex + 1 < siblingDivs.length) {
+                        const nextDiv = siblingDivs[currentDivIndex + 1];
+                        const urlLink = nextDiv.querySelector('a[href]');
+                        if (urlLink) {
+                          url = urlLink.getAttribute('href') || '#';
+                        }
+                      }
+                    }
+                    
+                    // 4. URL might be in the parent wrapper's next sibling (old structure)
+                    if (url === '#' && div._parentWrapper) {
+                      const nextSiblingWrapper = div._parentWrapper.nextElementSibling;
+                      if (nextSiblingWrapper) {
+                        const urlLink = nextSiblingWrapper.querySelector('a[href]');
+                        if (urlLink) {
+                          url = urlLink.getAttribute('href') || urlLink.textContent?.trim() || '#';
+                        }
+                      }
+                    }
+                    
+                    // 5. URL might be in the parent's next sibling div (original structure)
+                    if (url === '#') {
+                      const parentElement = div.parentElement;
+                      if (parentElement) {
+                        const nextSiblingDiv = parentElement.nextElementSibling;
+                        if (nextSiblingDiv) {
+                          const urlLink = nextSiblingDiv.querySelector('a[href]');
+                          if (urlLink) {
+                            url = urlLink.getAttribute('href') || urlLink.textContent?.trim() || '#';
+                          }
+                        }
+                      }
+                    }
+                    
+                    // 6. Fallback: URL might be in the next contentDiv
+                    if (url === '#') {
+                      const urlDiv = contentDivs[index + 1];
+                      if (urlDiv) {
+                        const urlLink = urlDiv.querySelector('a[href]');
+                        if (urlLink) {
+                          url = urlLink.getAttribute('href') || urlLink.textContent?.trim() || '#';
+                        } else {
+                          const urlText = urlDiv.textContent?.trim();
+                          if (urlText && urlText.startsWith('http')) {
+                            url = urlText;
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+                
+                if (url && url !== '#') {
+                  const platformIndex = parsedData.socialLinks.length;
+                  const platform = socialPlatforms[platformIndex] || `social${platformIndex + 1}`;
+                  
+                  parsedData.socialLinks.push({
+                    platform: platform,
+                    url: url,
+                    icon: picture.getAttribute('src') || '',
+                    altText: picture.getAttribute('alt') || platform.charAt(0).toUpperCase() + platform.slice(1),
+                    originalElement: picture,
+                    actualDiv: div
+                  });
+                }
+              }
+            }
+            break;
         }
-      } else if (index === 1) {
-        // 2nd div: Newsletter Placeholder
-        if (textContent) {
-          parsedData.newsletterPlaceholder = textContent;
-        }
-      } else if (index === 2) {
-        // 3rd div: Newsletter Button Text
-        if (textContent) {
-          parsedData.newsletterButtonText = textContent;
-        }
-      } else if (index === 3) {
-        // 4th div: Social Label
-        if (textContent) {
-          parsedData.socialLabel = textContent;
-        }
-      } else if (index === 4) {
-        // 5th div: Column 1 Title
-        if (textContent) {
-          parsedData.footerColumns[0] = { columnTitle: textContent, links: [] };
-        }
-      } else if (index === 5) {
-        // 6th div: Column 1 Links
-        const linksList = div.querySelector('ul');
-        if (linksList && parsedData.footerColumns[0]) {
-          const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[0].links = Array.from(links).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
-        }
-      } else if (index === 6) {
-        // 7th div: Column 2 Title
-        if (textContent) {
-          parsedData.footerColumns[1] = { columnTitle: textContent, links: [] };
-        }
-      } else if (index === 7) {
-        // 8th div: Column 2 Links
-        const linksList = div.querySelector('ul');
-        if (linksList && parsedData.footerColumns[1]) {
-          const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[1].links = Array.from(links).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
-        }
-      } else if (index === 8) {
-        // 9th div: Column 3 Title
-        if (textContent) {
-          parsedData.footerColumns[2] = { columnTitle: textContent, links: [] };
-        }
-      } else if (index === 9) {
-        // 10th div: Column 3 Links
-        const linksList = div.querySelector('ul');
-        if (linksList && parsedData.footerColumns[2]) {
-          const links = linksList.querySelectorAll('li a');
-          parsedData.footerColumns[2].links = Array.from(links).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
-        }
-      } else if (index === 10) {
-        // 11th div: Legal Links
-        const linksList = div.querySelector('ul');
-        if (linksList) {
-          const links = linksList.querySelectorAll('li a');
-          parsedData.legalLinks = Array.from(links).map(link => ({
-            linkText: link.textContent?.trim() || '',
-            linkUrl: link.getAttribute('href') || '#'
-          }));
-        }
-      } else if (index === 11) {
-        // 12th div: show Global
-        if (textContent) {
-          parsedData.showGlobal = textContent.toLowerCase() === 'true' || textContent.toLowerCase() === 'yes';
-        }
-      } else if (index >= 12) {
-        // 13th+ divs: Social Media Icons with Images and Links
-        // Structure: <div><p><div><picture><img></picture></div><div>URL</div></p></div>
-        const picture = div.querySelector('div > picture img');
-        const urlDiv = div.querySelectorAll('div')[1] || div.querySelector('a'); // Second div contains the URL
-        
-        if (picture && urlDiv) {
-          const socialPlatforms = ['facebook', 'x', 'instagram', 'tiktok', 'youtube', 'discord', 'twitch', 'thread']; // Map to known platforms
-          const platformIndex = index - 12;
-          const platform = socialPlatforms[platformIndex] || `social${platformIndex + 1}`;
-          const url = urlDiv.textContent?.trim() || '#';
-          
-          parsedData.socialLinks.push({
-            platform: platform,
-            url: url,
-            icon: picture.getAttribute('src') || '',
-            altText: picture.getAttribute('alt') || platform.charAt(0).toUpperCase() + platform.slice(1),
-            originalElement: picture, // Store reference to original image element for moveInstrumentation
-            actualDiv:div
-          });
-        }
+      } catch (error) {
+        console.error(`Error processing content div at index ${index}:`, error);
+        // Continue to the next iteration
       }
-    }
+    });
 
     // Filter out empty columns
     parsedData.footerColumns = parsedData.footerColumns.filter(col => col && col.columnTitle);
 
-    console.log('Parsed data from fragment:', parsedData);
     return parsedData;
     
   } catch (error) {
     console.error('Error parsing fragment content:', error);
     return null;
   }
+}
+
+/**
+ * Helper function to parse rich text links from UE model
+ */
+function parseRichTextLinks(richTextContent) {
+  if (!richTextContent) return [];
+  
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = richTextContent;
+  const links = tempDiv.querySelectorAll('a');
+  
+  return Array.from(links).map(link => ({
+    linkText: link.textContent?.trim() || '',
+    linkUrl: link.getAttribute('href') || '#'
+  }));
 }
 
 function parseFooterData(block) {
@@ -190,7 +306,6 @@ function parseFooterData(block) {
   if (block.dataset && (block.dataset.model || block.dataset.aueModel)) {
     const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {};
     
-    console.log('Universal Editor Model Data:', modelData);
     
     // Parse newsletter fields from UE model
     if (modelData.titleSubscription) data.newsletterLabel = modelData.titleSubscription;
@@ -250,8 +365,6 @@ function parseFooterData(block) {
     // This would need to be implemented based on the actual UE model structure for social icons
     // For now, we'll keep the existing social links from fragment parsing
   }
-
-  console.log('Final parsed data:', data);
 
   // Process block content for authoring data
   const rows = [...block.children];
@@ -412,17 +525,25 @@ function buildSocialIcons(socialLinks, socialLabel) {
   ul.className = 'social__icons p-0 m-0';
   
   // Process each social link
-  socialLinks.forEach(link => {
+  socialLinks.forEach((link, index) => {
     const li = document.createElement('li');
     const a = document.createElement('a');
-    const img = document.createElement('img');
-    moveInstrumentation(link.actualDiv,li);
+    
+    if (link.actualDiv) {
+      moveInstrumentation(link.actualDiv, li);
+    }
+    
     const altText = link.altText || link.platform.charAt(0).toUpperCase() + link.platform.slice(1);
     
     // Set link attributes
     a.href = link.url;
     a.target = '_blank';
     a.setAttribute('aria-label', `Follow us on ${altText} (open a new window)`);
+    a.setAttribute('data-social-platform', altText); // Store platform name for tracking
+    
+    // Create picture element with img
+    const picture = document.createElement('picture');
+    const img = document.createElement('img');
     
     // Set image attributes
     img.src = link.icon || '';
@@ -437,7 +558,8 @@ function buildSocialIcons(socialLinks, socialLabel) {
     }
     
     // Build structure
-    a.appendChild(img);
+    picture.appendChild(img);
+    a.appendChild(picture);
     li.appendChild(a);
     ul.appendChild(li);
   });
@@ -511,7 +633,60 @@ function buildLegalLinks(legalLinks) {
   return linksContainer.innerHTML;
 }
 
+// Function to optimize footer images using createOptimizedPicture
+// Similar to optimizeLogoImages() from header component
+function optimizeFooterImages(container) {
+  // Find all images in footer and optimize them, particularly social media icons
+  container.querySelectorAll('footer img, .footer img, .social img, .social__icons img').forEach((img) => {
+    // Skip if already optimized or if it's not in a picture element
+    if (img.closest('picture')?.hasAttribute('data-optimized')) {
+      return;
+    }
+    
+    let optimizedPic;
+    
+    // Use FooterConfig for baseUrl and shouldUseExternal
+    const { baseUrl, shouldUseExternal } = FooterConfig;
+    
+    if (shouldUseExternal) {
+      // Use createOptimizedPictureExternal with baseUrl when baseUrl is defined and different
+      optimizedPic = createOptimizedPictureExternal(
+        img.src, 
+        img.alt, 
+        true, // eager loading for footer images (above fold)
+        [{ width: '200' }, { width: '400' }], // responsive breakpoints
+        baseUrl
+      );
+    } else {
+      // Use createOptimizedPicture from aem.js when baseUrl is not defined or equals window.location.href
+      optimizedPic = createOptimizedPicture(
+        img.src, 
+        img.alt, 
+        true, // eager loading for footer images (above fold)
+        [{ width: '200' }, { width: '400' }] // responsive breakpoints
+      );
+    }
+    
+    // Move instrumentation from original to optimized image
+    moveInstrumentation(img, optimizedPic.querySelector('img'));
+    
+    // Mark as optimized to prevent re-processing
+    optimizedPic.setAttribute('data-optimized', 'true');
+    
+    // Replace the original picture with optimized version
+    const originalPicture = img.closest('picture');
+    if (originalPicture) {
+      originalPicture.replaceWith(optimizedPic);
+    } else {
+      // If no picture element, wrap the img and replace
+      img.replaceWith(optimizedPic);
+    }
+  });
+}
+
 export default function decorate(block) {
+  //if(block.querySelector('div.footer')?.className !== 'footer') return;
+
   const data = parseFooterData(block);
 
   // Create the footer structure using parsed data to match reference exactly
@@ -524,10 +699,10 @@ export default function decorate(block) {
           <form id="frm-footer-newsletter" class='newsletter' method="post" aria-label="Newsletter signup" novalidate>
             <label for="newsletter-email">${data.newsletterLabel}</label>
             <div class='newsletter__field-wrapper mt-4'>
-              <input type='email' id="newsletter-email" name="email" placeholder='${data.newsletterPlaceholder}' required />
+              <input type='email' id="newsletter-email" name="email" autocomplete="off" placeholder='${data.newsletterPlaceholder}' required />
               <button type="submit" class="btn">${data.newsletterButtonText}</button>
             </div>
-            <div class="newsletter__response"></div>
+            <div class="newsletter__response" aria-live="assertive"></div>
           </form>
 
           ${buildSocialIcons(data.socialLinks, data.socialLabel)}
@@ -547,7 +722,7 @@ export default function decorate(block) {
           ${buildLegalLinks(data.legalLinks)}
         </nav>
         <button class="back-to-top" id="backToTop" aria-label="Back to top">
-          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Back to top">
             <rect x="0.5" y="0.5" width="59" height="59" rx="29.5" fill="black" class="back-to-top__bg" />
             <rect x="0.5" y="0.5" width="59" height="59" rx="29.5" stroke="#CCCCCC"/>
             <path d="M41 34.5L30 25.5L19 34.5" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -586,22 +761,48 @@ export default function decorate(block) {
     moveInstrumentation(data.globalTextRow, globalText);
   }
 
+  // Add tracking to social media icons
+  const socialLinks = block.querySelectorAll('.social__icons li a, .social__icons a');
+  socialLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const socialName = link.getAttribute('data-social-platform') || link.getAttribute('aria-label')?.split(' ')[3] || 'Unknown';
+      trackEvent({
+        eventName: 'social_footer_cto_rog',
+        category: 'footer/cto/rog',
+        label: `${socialName}/social/footer/cto/rog`
+      });
+    });
+  });
+
+  // Add tracking to footer navigation links
+  const footerNavLinks = block.querySelectorAll('.footer-links a');
+  footerNavLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const clickedText = link.textContent?.trim() || '';
+      trackEvent({
+        eventName: 'internal-links_footer_cto_rog',
+        category: 'footer/cto/rog',
+        label: `${clickedText}/internal-links/footer/cto/rog`
+      });
+    });
+  });
+
   // Add newsletter form functionality with triggerSubscribeForm
   const form = block.querySelector('.newsletter');
   const responseElement = form?.querySelector('.newsletter__response');
+  const emailInput = form?.querySelector('input[type="email"]');
+
+  // Strict + user-friendly regex
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/;
   
-  if (form) {
+  if (form && emailInput) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      // Clear previous states
-      form.classList.remove('has--error', 'has--success');
-      if (responseElement) {
-        responseElement.textContent = '';
-      }
+      const email = emailInput.value.trim();
 
-      // Validate form
-      if (!form.checkValidity()) {
+      // Browser validation + regex validation
+      if (!emailInput.checkValidity() || !emailRegex.test(email)) {
         form.classList.add('has--error');
         if (responseElement) {
           responseElement.textContent = 'Please enter a valid email address';
@@ -609,9 +810,14 @@ export default function decorate(block) {
         return;
       }
 
-      const emailInput = form.querySelector('input[type="email"]');
-      if (emailInput && emailInput.value) {
-        const email = emailInput.value.trim();
+      // Reset UI
+      form.classList.remove('has--error');
+      if (responseElement) {
+        responseElement.textContent = '';
+      }
+
+      // Call external subscription handler
+      if (email) {
         
         // Check if triggerSubscribeForm is available
         if (typeof window.triggerSubscribeForm === 'function') {
@@ -633,31 +839,106 @@ export default function decorate(block) {
         }
       }
     });
+    
+    // Watch for newsletter signup success popup
+    const popupObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1 && node.classList?.contains('SF_subscribePopUp')) {
+            trackEvent({
+              eventName: 'sign_up_newsletter_footer_cto_rog',
+              category: 'footer/cto/rog',
+              label: 'sign_up/newsletter/footer/cto/rog'
+            });
+          }
+        });
+      });
+    });
+    
+    popupObserver.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
   }
 
   // Add back to top functionality
   const backToTopButton = block.querySelector('.back-to-top');
+  const scrollThreshold = 800; // Show button after scrolling 800px
+
+  // Throttle function to limit scroll event frequency
+  const throttle = (func, limit) => {
+    let inThrottle;
+    return function throttled(...args) {
+      if (!inThrottle) {
+        func.apply(this, args);
+        inThrottle = true;
+        setTimeout(() => { inThrottle = false; }, limit);
+      }
+    };
+  };
+
   if (backToTopButton) {
+    let isVisible = false;
+
     // Show/hide button based on scroll position
     const toggleBackToTop = () => {
-      if (window.pageYOffset > 300) {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const shouldShow = scrollTop > scrollThreshold;
+
+      if (shouldShow && !isVisible) {
         backToTopButton.classList.add('visible');
-      } else {
+        isVisible = true;
+      } else if (!shouldShow && isVisible) {
         backToTopButton.classList.remove('visible');
+        isVisible = false;
       }
     };
 
-    window.addEventListener('scroll', toggleBackToTop);
+    window.addEventListener('scroll', throttle(toggleBackToTop, 100));
+
+    // Initial check
+    toggleBackToTop();
     
     // Scroll to top when clicked
     backToTopButton.addEventListener('click', () => {
+      // Track back to top button click
+      trackEvent({
+        eventName: 'back_to_top_cto_rog',
+        category: 'back_to_top/cto/rog',
+        label: 'back_to_top/cto/rog'
+      });
+      
       window.scrollTo({
         top: 0,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     });
+
+    // Compare bar position logic
+    const compareBar = document.querySelector('.cmp-product-compare');
+    if (compareBar) {
+      const updateButtonPosition = () => {
+        const compareBarHeight = compareBar.classList.contains('is-hidden')
+          ? 0
+          : compareBar.offsetHeight;
+
+        backToTopButton.style.bottom = `${compareBarHeight + 30}px`;
+        backToTopButton.style.zIndex = '1100';
+      };
+
+      updateButtonPosition();
+
+      const observer = new MutationObserver(updateButtonPosition);
+      observer.observe(compareBar, { attributes: true, attributeFilter: ['class'] });
+    }
   }
+
+  // Optimize footer images after HTML is set
+  optimizeFooterImages(block);
 
   // Dispatch custom event to match reference
   document.dispatchEvent(new Event('asus-cto-DOMContentLoaded'));
 }
+
+// Export the optimizeFooterImages function for use by web component
+export { optimizeFooterImages };

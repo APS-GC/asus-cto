@@ -1,8 +1,23 @@
-import { loadScript } from '../../scripts/aem.js';
-import { moveInstrumentation } from '../../scripts/scripts.js';
+import { loadCSS, loadScript } from '../../scripts/aem.js';
+import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
-import { loadSwiper } from '../../scripts/swiper-loader.js';
+import { getBlockConfigs } from '../../scripts/configs.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
+
+// Default configuration
+const DEFAULT_CONFIG = {
+  title: 'Select The Game You Play',
+  subtitle: 'We will recommend a plan that suits you most!',
+  budgetText: 'Your Budget',
+  helpmeChooseCTA: 'Help me choose',
+  resetCTAText: 'Reset',
+  confirmCTAText: 'Confirm',
+  style: '1',
+  minimumBudget: 500,
+  maximumBudget: 5000,
+  helpMeChooseCTALinkTo: './product-matches',
+};
 
 /**
  * Decorates the help-me-choose block, initializing the carousel and form.
@@ -12,6 +27,7 @@ import { loadSwiper } from '../../scripts/swiper-loader.js';
 export default async function decorate(block) {
   // Load noUiSlider only once
   await loadNoUiSlider();
+  await loadSwiperCSS();
 
   // Once loaded, render the component
   await renderHelpMeChoose(block);
@@ -34,62 +50,60 @@ async function renderHelpMeChoose(block) {
   const helpMeChooseContainer = document.createElement('div');
   helpMeChooseContainer.className = 'help-me-choose-container container';
 
-  const authoredRows = [...block.children];
-  const AuthoredData = authoredRows.map(row => row.textContent.trim());
-  console.log('Authored Data:', AuthoredData);
+  const config = await getBlockConfigs(block, DEFAULT_CONFIG, 'help-me-choose');
 
   // Fetch products
-
   const endpoint = await getApiEndpoint(API_URIS.FETCH_GAME_LIST_EN);
   const gameList = await fetchGameList(endpoint);
 
-  if(!gameList?.results?.gameList || gameList?.results?.gameList.length == -1) return;
+  if(!gameList?.results?.gameList || gameList?.results?.gameList.length === -1) return;
 
   const lowestPrice = gameList?.results?.lowestPrice || 500;
   const highestPrice = gameList?.results?.highestPrice || 5000;
 
   const urlParams = new URLSearchParams(document.location.search);
-  const defaultMinBudget = urlParams.get('min-budget') || 500;
-  const defaultMaxBudget = urlParams.get('max-budget') || 5000;
+  const defaultMinBudget = parseInt(urlParams.get('min-budget'), 10) || lowestPrice;
+  const defaultMaxBudget = parseInt(urlParams.get('max-budget'), 10) || highestPrice;
   // Build the HTML in a fragment / string, then insert once
   const html = 
   
-  _isHomePage() ? `
+  config.style === 1 ? `
   <div class="game-recommendation">
       <div class="carousel panelcontainer">
           <div class="section-heading">
               <div class="section-heading__text-group">
-                  <h2 class="section-heading__title">${escapeHtml(AuthoredData[0] || '')}</h2>
-                  <p class="section-heading__description">${escapeHtml(AuthoredData[1] || '')}</p>
+                  <h2 class="section-heading__title">${escapeHtml(config.title)}</h2>
+                  <p class="section-heading__description">${escapeHtml(config.subtitle)}</p>
               </div>
-              <div class="cmp-carousel__actions1_hmc">
-                  <button class="cmp-carousel__action_hmc cmp-carousel__action_hmc--previous" type="button" aria-label="Previous">
-                      <span class="icon icon--arrow-left"></span>
+              <div class="section-heading__action-buttons cmp-carousel__actions">
+                  <button class="cmp-carousel__action cmp-carousel__action--previous" type="button" aria-label="Previous slide">
+                      <span class="sr-only">Previous Button</span>
                   </button>
-                  <button class="cmp-carousel__action_hmc cmp-carousel__action_hmc--next" type="button" aria-label="Next">
-                      <span class="icon icon--arrow-right"></span>
+                  <button class="cmp-carousel__action cmp-carousel__action--next" type="button" aria-label="Next slide">
+                      <span class="sr-only">Next Button</span>
                   </button>
               </div>
           </div>
 
-          <form id="game-selection-form" onsubmit="event.preventDefault();" action="./product-matches" class="game-form" aria-label="Game selection form" data-select-game-form>
-              <div class="game-carousel-wrapper">
+          <form id="game-selection-form" action="${escapeHtml(config.helpMeChooseCTALinkTo)}" class="game-form" aria-label="Game selection form" data-select-game-form>
+              <div id="carousel-4e80c7e13l" class="cmp-carousel" role="group" aria-live="off" aria-roledescription="carousel" data-slides-per-view="auto" data-slides-per-view-tablet="6" data-slides-per-view-desktop="6" data-loop-slides="false">
+                  <div class="cmp-carousel__content cmp-carousel__content--overflow" aria-atomic="false" aria-live="polite">
                   <div class="swiper">
-                      <div class="swiper-wrapper">${generateGameItemsHTML(gameList?.results?.gameList)}</div>
-                      <div class="swiper-pagination"></div>
+                      <div class="swiper-wrapper">${generateGameItemsHTML(gameList?.results?.gameList, true)}</div>
+                      </div>
                   </div>
               </div>
 
-              <div class="budget-bar">
+              <div class="budget-bar" role="group" aria-label="Your budget">
                   <div class="budget-left">
-                      <label for="budget-min-value">${escapeHtml(AuthoredData[2] || 'Your Budget')}:</label>
+                      <div id="budget-range-label">${escapeHtml(config.budgetText)}:</div>
                   </div>
                   <div class="budget-center">${generateBudgetCenterHTML(lowestPrice, highestPrice)}</div>
                   <input type="hidden" name="min-budget" id="min-budget" value="" />
                   <input type="hidden" name="max-budget" id="max-budget" value="" />
                   <div class="budget-actions">
-                      <button type="reset" class="reset-button btn btn-link">${escapeHtml(AuthoredData[4] || 'Reset')}</button>
-                      <button type="submit" class="btn" disabled>${escapeHtml(AuthoredData[3] || 'Help me choose')}</button>
+                      <button type="reset" class="reset-button btn btn-link">${escapeHtml(config.resetCTAText)}</button>
+                      <button type="submit" class="btn" disabled>${escapeHtml(config.helpmeChooseCTA)}</button>
                   </div>
               </div>
           </form>
@@ -98,35 +112,35 @@ async function renderHelpMeChoose(block) {
  
   <div class="filter-bar container-xl"> 
     <div class="filters-container container">
+        <button class="filter-button btn btn-link" aria-label="Filter dropdown">
+            Filter 
+            <span class="icon icon--arrow-bottom" id="filter-icon"></span>
+        </button>
         <form class="filters">
             <div class="selected-games">
                 <p class="selected-games-text">Selected game:</p>
                 <div class="collapsed-view">
                 </div>
-                <div class="expanded-view">${generateGameItemsHTML(gameList?.results?.gameList)}</div>
+                <div class="expanded-view">${generateGameItemsHTML(gameList?.results?.gameList, false)}</div>
             </div>
             <div class="vertical-divider"></div>
-            <div class="budget">
-                <div class="your-budget">${escapeHtml(AuthoredData[2] || 'Your Budget')}:
+            <div class="budget" id="budget">
+                <div class="your-budget">${escapeHtml(config.budgetText)}: 
                     <div>
-                        <span class="confirmed-budget-min-value" attr-value="${defaultMinBudget}">${_formatCurrency(lowestPrice)}</span>
+                        <span class="confirmed-budget-min-value">${_formatCurrency(defaultMinBudget)}</span>
                         <span>-</span>
-                        <span class="confirmed-budget-max-value" attr-value="${defaultMaxBudget}">${_formatCurrency(highestPrice)}</span>
+                        <span class="confirmed-budget-max-value">${_formatCurrency(defaultMaxBudget)}</span>
                     </div>
                 </div>
-                <div class="budget-center">${generateBudgetCenterHTML(lowestPrice, highestPrice)}</div>
-                <input type="hidden" name="min-budget" id="min-budget" value="" />
-                <input type="hidden" name="max-budget" id="max-budget" value="" />
+                <div class="budget-center">${generateFilterBudgetCenterHTML(lowestPrice, highestPrice)}</div>
+                <input type="hidden" name="min-budget" id="min-budget" value="${defaultMinBudget}" />
+                <input type="hidden" name="max-budget" id="max-budget" value="${defaultMaxBudget}" />
                 <div class="budget-actions">
-                    <button type="reset" class="reset-button btn btn-link">${escapeHtml(AuthoredData[4] || 'Reset')}</button>
-                    <button type="submit" class="btn btn-link">${escapeHtml(AuthoredData[5] || 'Confirm')}</button>
+                    <button type="reset" class="reset-button btn btn-link">${escapeHtml(config.resetCTAText)}</button>
+                    <button type="submit" class="btn btn-link">${escapeHtml(config.confirmCTAText)}</button>
                 </div>
             </div>
         </form>
-        <div class="filter-button">
-            Filter 
-         <span class="icon icon--arrow-bottom" id="filter-icon"></span>
-        </div>
     </div>
 </div>
 `;
@@ -156,23 +170,30 @@ function _isHomePage(){
  * @param {Array} games - The list of game objects.
  * @returns {string} The generated HTML string.
  */
-function generateGameItemsHTML(games) {
+function generateGameItemsHTML(games, isCarousel = true) {
   if (!games || !Array.isArray(games)) {
     return '';
   }
-  return games.map((game) => `
-    <div class="swiper-slide">
+  
+  const wrapperClass = isCarousel ? 'cmp-carousel__item swiper-slide' : '';
+  
+  return games.map((game) => {
+    const gameItemHTML = `
         <div class="game-item">
-            <input type="checkbox" id="game-you-play-${game.gameId}" name="games" value="${escapeHtml(game.gameId)}" data-name="${escapeHtml(game.gameTitle)}" data-image="${escapeHtml(game.imageUrl)}" aria-checked="false" />
+            <input type="checkbox" id="game-you-play-${game.gameId}" name="games" value="${escapeHtml(game.gameId)}" data-name="${escapeHtml(game.gameTitle)}" data-image="${escapeHtml(game.imageUrl)}" aria-label="Select ${escapeHtml(game.gameTitle)}" />
             <div class="game-details-wrapper">
-                <div class="image-wrapper" aria-hidden="true">
-                    <img src="${escapeHtml(game.imageUrl)}" alt="${escapeHtml(game.gameTitle)}" class="game-image" loading="lazy" />
-                    <div class="checkmark-overlay"></div>
+                <div class="image-outer">
+                    <div class="image-wrapper" aria-hidden="true">
+                        <img src="${escapeHtml(game.imageUrl)}" alt="${escapeHtml(game.gameTitle)}" class="game-image" loading="lazy" />
+                    </div>
+                    <div class="checkmark-overlay" aria-hidden="true"></div>
                 </div>
-                <label class="game-info" for="game-you-play-${game.gameId}">${escapeHtml(game.gameTitle)}</label>
+                <label class="game-info" for="game-you-play-${game.gameId}" aria-hidden="true">${escapeHtml(game.gameTitle)}</label>
             </div>
-        </div>
-    </div>`).join('');
+        </div>`;
+    
+    return isCarousel ? `<div class="${wrapperClass}">${gameItemHTML}</div>` : gameItemHTML;
+  }).join('');
 }
 
 // Helper to load noUiSlider only once
@@ -193,6 +214,21 @@ function loadNoUiSlider() {
 }
 
 /**
+ * Loads the Swiper CSS from a CDN, ensuring it is only fetched once.
+ */
+let swiperCSSLoaded = null;
+function loadSwiperCSS() {
+  if (!swiperCSSLoaded) {
+    swiperCSSLoaded = loadCSS(
+      'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css'
+    ).catch((err) => {
+      console.error('Failed to load Swiper CSS:', err);
+      throw err;
+    });
+  }
+  return swiperCSSLoaded;
+}
+/**
  * Generates the HTML for the budget center section, including the slider and inputs/displays.
  * @param {number} lowestPrice - The lowest possible budget price.
  * @param {number} highestPrice - The highest possible budget price.
@@ -201,13 +237,40 @@ function loadNoUiSlider() {
  */
 function generateBudgetCenterHTML(lowestPrice, highestPrice) {
   return `
-    <input class="budget-value" id="budget-min-value" aria-label="Minimum budget" />
-    <div class="budget-separator">to</div>
-    <input class="budget-value" id="budget-max-value" aria-label="Maximum budget" />
+    <label for="budget-min-value" class="sr-only-fixed">Minimum Budget Value</label>
+    <input type="text" class="budget-value" id="budget-min-value" value="${_formatCurrency(lowestPrice)}" />
+    <div class="budget-separator" aria-hidden="true">to</div>
+    <div id="maximum-budget-wrapper-mobile"></div>
     <div class="budget-range-wrapper">
-        <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="500" data-max="5000" role="slider" data-step="100" aria-label="Budget range slider" aria-valuemax="${highestPrice}" aria-valuemin="${lowestPrice}" aria-orientation="horizontal" aria-valuenow="${lowestPrice}"
-        aria-valuetext="Budget range between ${_formatCurrency(lowestPrice)} to ${_formatCurrency(highestPrice)}"></div>
-        <div class="range-labels">
+        <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="500" data-max="5000" data-step="100"></div>
+        <div class="range-labels" aria-hidden="true">
+            <span>$500</span>
+            <span>$5,000</span>
+        </div>
+    </div>
+    <div id="maximum-budget-wrapper-desktop">
+        <label for="budget-max-value" class="sr-only-fixed">Maximum Budget Value</label>
+        <input type="text" class="budget-value" id="budget-max-value" value="${_formatCurrency(highestPrice)}" />
+    </div>
+  `;
+}
+
+/**
+ * Generates the HTML for the filter-bar budget center section.
+ * @param {number} lowestPrice - The lowest possible budget price.
+ * @param {number} highestPrice - The highest possible budget price.
+ * @returns {string} The generated HTML string for the filter-bar budget center.
+ */
+function generateFilterBudgetCenterHTML(lowestPrice, highestPrice) {
+  return `
+    <label for="budget-min-value" class="sr-only">Min Value</label>
+    <input type="text" class="budget-value" id="budget-min-value" />
+    <div class="budget-separator" aria-hidden="true">to</div>
+    <label for="budget-max-value" class="sr-only">Max Value</label>
+    <input type="text" class="budget-value" id="budget-max-value" />
+    <div class="budget-range-wrapper">
+        <div id="budget-range" class="budget-range-slider" data-start="[${lowestPrice}, ${highestPrice}]" data-min="500" data-max="5000" data-step="100"></div>
+        <div class="range-labels" aria-hidden="true">
             <span>$500</span>
             <span>$5,000</span>
         </div>
@@ -301,11 +364,11 @@ async function initializeSwiperCarousel(block) {
   const swiper = new window.Swiper(swiperContainer, {
     // Basic options
     slidesPerView: 2,
-    spaceBetween: 16,
+    spaceBetween: 8,
 
     navigation: {
-      nextEl: block.querySelector('.cmp-carousel__action_hmc--next'),
-      prevEl: block.querySelector('.cmp-carousel__action_hmc--previous'),
+      nextEl: block.querySelector('.cmp-carousel__action--next'),
+      prevEl: block.querySelector('.cmp-carousel__action--previous'),
     },
     pagination: {
       el: block.querySelector('.swiper-pagination'),
@@ -345,6 +408,19 @@ async function initializeSwiperCarousel(block) {
         swiper.navigation.destroy();
         swiper.pagination.destroy();
       },
+      afterInit: function() {
+        const navContainer = this.navigation.nextEl?.parentNode;
+        if (navContainer && this.isBeginning && this.isEnd) {
+          navContainer.style.display = 'none';
+        }
+      },
+      resize: function() {
+        const navContainer = this.navigation.nextEl?.parentNode;
+        if (navContainer) {
+          // Show or hide based on whether both nav buttons are disabled
+          navContainer.style.display = (this.isBeginning && this.isEnd) ? 'none' : '';
+        }
+      },
     },
   });
 
@@ -383,10 +459,16 @@ class SelectGameForm {
       maxBudgetInput: this.form.querySelector('#max-budget'),
       minBudgetValue: this.form.querySelector('#budget-range').getAttribute('aria-valuenow'),
       maxBudgetValue: this.form.querySelector('#budget-range').getAttribute('aria-valuemax'),
+      mobileWrapper: this.form.querySelector('#maximum-budget-wrapper-mobile'),
+      desktopWrapper: this.form.querySelector('#maximum-budget-wrapper-desktop'),
     };
 
     this.DEFAULT_BUDGET_RANGE = { min: 500, max: 5000 };
     this.DEFAULT_START_BUDGET = { min: this.dom.minBudgetInput.value, max: this.dom.maxBudgetInput.value };
+    
+    // Store placeholder for desktop wrapper position
+    this.desktopPlaceholder = null;
+    this.resizeTimer = null;
   }
 
   /**
@@ -398,6 +480,7 @@ class SelectGameForm {
     this._initSlider();
     this._bindEvents();
     this._setupBudgetInputHandlers();
+    this._initResponsiveBudgetWrappers();
 
     this._updateSubmitButtonState(this._getSelectedGames().length === 0);
   }
@@ -434,15 +517,36 @@ class SelectGameForm {
         from: (v) => Number(v.replace(/[$,]/g, '')),
       },
       handleAttributes: [
-        { 'aria-label': 'Budget minimum', 'aria-controls': 'min-budget' },
-        { 'aria-label': 'Budget maximum', 'aria-controls': 'max-budget' },
+        { 'aria-label': 'Budget range minimum value', 'aria-controls': 'min-budget' },
+        { 'aria-label': 'Budget range maximum value', 'aria-controls': 'max-budget' },
       ],
     });
 
+    // Get handle elements for aria-valuetext updates
+    const minHandle = slider.querySelector('.noUi-handle-lower');
+    const maxHandle = slider.querySelector('.noUi-handle-upper');
+
     slider.noUiSlider.on('update', (values) => {
-      const [minVal, maxVal] = values.map(Number);
+      const [minVal, maxVal] = values.map((v) => parseFloat(v));
       this._updateBudgetDisplay(minVal, maxVal);
-      this._updateSubmitButtonState(this._getSelectedGames().length === 0);
+      this._updateSubmitButtonState(false);
+
+      // Update aria-valuetext with min/max reached messages
+      if (minHandle) {
+        let text = `$${minVal}`;
+        if (minVal === min) {
+          text += ', minimum value reached';
+        }
+        minHandle.setAttribute('aria-valuetext', text);
+      }
+
+      if (maxHandle) {
+        let text = `$${maxVal}`;
+        if (maxVal === max) {
+          text += ', maximum value reached';
+        }
+        maxHandle.setAttribute('aria-valuetext', text);
+      }
     });
   }
 
@@ -457,6 +561,36 @@ class SelectGameForm {
     });
 
     this.form.addEventListener('reset', () => this._handleFormReset());
+    
+    this.form.addEventListener('submit', (e) => this._handleFormSubmit(e));
+  }
+  
+  /**
+   * Handles form submission and tracks the event.
+   * @param {Event} e - The submit event.
+   */
+  _handleFormSubmit(e) {
+    const selectedGames = this._getSelectedGames();
+    if (selectedGames.length === 0) {
+      e.preventDefault();
+      return;
+    }
+    
+    // Get game names
+    const gameNames = [...this.dom.games]
+      .filter((g) => g.checked)
+      .map((g) => g.dataset.name);
+    
+    // Get budget values
+    const minBudget = this.dom.minBudgetInput?.value || 0;
+    const maxBudget = this.dom.maxBudgetInput?.value || 0;
+    
+    // Track the event
+    trackEvent({
+      eventName: 'help_me_choose_home_cto_rog',
+      category: 'help_me_choose/home/cto/rog',
+      label: `game: ${gameNames.join(', ')}; min: ${minBudget}; max: ${maxBudget}/help_me_choose/home/cto/rog`
+    });
   }
 
   /* ---------------------------------------------
@@ -557,16 +691,80 @@ class SelectGameForm {
    * @param {boolean} isMin - Whether the input is for the minimum budget value.
    */
   _handleBudgetInputChange(input, isMin) {
-    const slider = this.dom.slider?.noUiSlider;
-    if (!slider) return;
+    const sliderInstance = this.dom.slider?.noUiSlider;
+    if (!input || !sliderInstance) return;
 
     const validated = this._validateBudgetValue(toNumber(input.value), isMin);
 
+    // Set formatted display & inputs
     input.value = _formatCurrency(validated);
 
-    const [currMin, currMax] = slider.get().map(toNumber);
+    // Update hidden inputs
+    if (isMin && this.dom.minBudgetInput) {
+      this.dom.minBudgetInput.value = validated;
+    } else if (!isMin && this.dom.maxBudgetInput) {
+      this.dom.maxBudgetInput.value = validated;
+    }
 
-    slider.set(isMin ? [validated, currMax] : [currMin, validated]);
+    const currentValues = sliderInstance.get();
+    let [currMin, currMax] = currentValues.map((v) => Math.round(Number(v)));
+    const step = sliderInstance.steps()[0][0];
+
+    if (isMin) {
+      currMin = validated === currMax ? currMax - step : validated;
+      sliderInstance.setHandle(0, currMin, false, true);
+    } else {
+      currMax = validated === currMin ? currMin + step : validated;
+      sliderInstance.setHandle(1, currMax, false, true);
+    }
+  }
+
+  /**
+   * Initializes responsive budget wrapper behavior.
+   * Creates a placeholder and sets up resize listener to move content between mobile and desktop wrappers.
+   */
+  _initResponsiveBudgetWrappers() {
+    const { mobileWrapper, desktopWrapper } = this.dom;
+    
+    if (!mobileWrapper || !desktopWrapper) return;
+
+    // Create a placeholder comment to remember original position in DOM
+    this.desktopPlaceholder = document.createComment('desktop-wrapper-placeholder');
+    desktopWrapper.parentNode?.insertBefore(this.desktopPlaceholder, desktopWrapper.nextSibling);
+
+    // Initial call to position content correctly
+    this._moveBudgetContent();
+
+    // Add resize listener with debounce
+    window.addEventListener('resize', () => {
+      clearTimeout(this.resizeTimer);
+      this.resizeTimer = setTimeout(() => this._moveBudgetContent(), 150);
+    });
+  }
+
+  /**
+   * Moves budget max value content between mobile and desktop wrappers based on screen size.
+   */
+  _moveBudgetContent() {
+    const { mobileWrapper, desktopWrapper } = this.dom;
+    
+    if (!mobileWrapper || !desktopWrapper) return;
+
+    if (window.innerWidth < 1280) {
+      // Move all children to mobile wrapper
+      if (desktopWrapper.children.length > 0) {
+        while (desktopWrapper.firstChild) {
+          mobileWrapper.appendChild(desktopWrapper.firstChild);
+        }
+      }
+    } else {
+      // Move all children back to desktop wrapper
+      if (mobileWrapper.children.length > 0) {
+        while (mobileWrapper.firstChild) {
+          desktopWrapper.appendChild(mobileWrapper.firstChild);
+        }
+      }
+    }
   }
 }
 
@@ -613,7 +811,15 @@ class FilterComponent {
     };
 
      this.DEFAULT_BUDGET_RANGE = { min: 500, max: 5000 };
-    this.DEFAULT_START_BUDGET = { min: this.dom.confirmedMin.getAttribute('attr-value'), max: this.dom.confirmedMax.getAttribute('attr-value') };
+    // Parse the budget values from the text content (format: "$1,100")
+    const parseBudgetValue = (text) => {
+      const num = parseInt(text.replace(/[$,]/g, ''), 10);
+      return isNaN(num) ? 0 : num;
+    };
+    this.DEFAULT_START_BUDGET = { 
+      min: parseBudgetValue(this.dom.confirmedMin?.textContent || '500'), 
+      max: parseBudgetValue(this.dom.confirmedMax?.textContent || '5000') 
+    };
 
     this.allGames = [];
   }
@@ -687,10 +893,13 @@ class FilterComponent {
 
   _bindFilterEvents() {
     // Toggle filter open/close
-    this.dom.filterButton?.addEventListener('click', () => {
+    this.dom.filterButton?.addEventListener('click', (e) => {
+      const filterBtn = e.target.tagName === 'SPAN' ? e.target.parentElement : e.target;
       if (this.container.classList.contains('open')) {
+        filterBtn.setAttribute('aria-expanded', 'false');
         this._toggleFilter(false);
       } else {
+        filterBtn.setAttribute('aria-expanded', 'true');
         this._toggleFilter(true);
       }
     });
@@ -708,20 +917,30 @@ class FilterComponent {
   }
 
   _toggleFilter(open) {
+    const budgetElement = document.querySelector('#budget');
     if (open) {
       this.container.classList.add('open');
+      budgetElement?.classList.add('expanded');
       this.dom.icon?.classList.replace('icon--arrow-bottom', 'icon--arrow-top');
     } else {
       this.container.classList.remove('open');
+      budgetElement?.classList.remove('expanded');
       this.dom.icon?.classList.replace('icon--arrow-top', 'icon--arrow-bottom');
     }
   }
 
-  _handleReset() {//this.dom.confirmedMin.textContent
+  _handleReset() { //this.dom.confirmedMin.textContent
     this.dom.slider?.noUiSlider.set([this.DEFAULT_START_BUDGET.min,this.DEFAULT_START_BUDGET.max]);
     this.dom.games.forEach((cb) => (cb.checked = false));
     this._updateBudgetDisplay(this.DEFAULT_START_BUDGET.min, this.DEFAULT_START_BUDGET.max);
   }
+
+  formatGameFilter(value) {
+    return {
+      'value': String(value).replace(/[<>"]/g, ''), // Basic sanitization
+      '_apply': 'AT_LEAST_ONCE'
+    };
+  };
 
   _handleSubmit() {
     const checkedGames = [...this.dom.games].filter((cb) => cb.checked).map((cb) => cb.value);
@@ -739,10 +958,25 @@ class FilterComponent {
     //update confirmed state
     this._hydrateFromUrl();
     if (window.perfectMatchProductInstance) {
+
+      const params = new URLSearchParams(window.location.search);
+      const selectedGames = params.getAll('games').map(this.formatGameFilter);
+      const minBudget = params.get('min-budget') || 500;
+      const maxBudget = params.get('max-budget') || 5000;
+      const path = window.location.href.includes('/us/') ? '/content/dam/asuscto/us' : '/content/dam/asuscto/en';
+
       window.perfectMatchProductInstance.loadPerfectMatchProducts({
-        games: checkedGames,
-        minBudget,
-        maxBudget,
+        'query': '',
+        'variables': {
+          'path': path,
+          'gameIdsFilter': {
+            '_logOp': 'AND',
+            '_expressions': selectedGames || [],
+          },
+          'lowerPrice': minBudget,
+          'highPrice': maxBudget,
+          'sort': 'price DESC'
+        }
       });
     }
 
@@ -783,16 +1017,32 @@ class FilterComponent {
    * @param {boolean} isMin - Whether the input is for the minimum budget value.
    */
   _handleBudgetInputChange(input, isMin) {
-    const slider = this.dom.slider?.noUiSlider;
-    if (!slider) return;
+    const sliderInstance = this.dom.slider?.noUiSlider;
+    if (!input || !sliderInstance) return;
 
     const validated = this._validateBudgetValue(toNumber(input.value), isMin);
 
+    // Set formatted display
     input.value = _formatCurrency(validated);
 
-    const [currMin, currMax] = slider.get().map(toNumber);
+    // Update hidden inputs
+    if (isMin && this.dom.minBudgetInput) {
+      this.dom.minBudgetInput.value = validated;
+    } else if (!isMin && this.dom.maxBudgetInput) {
+      this.dom.maxBudgetInput.value = validated;
+    }
 
-    slider.set(isMin ? [validated, currMax] : [currMin, validated]);
+    const currentValues = sliderInstance.get();
+    let [currMin, currMax] = currentValues.map((v) => Math.round(Number(v)));
+    const step = sliderInstance.steps()[0][0];
+
+    if (isMin) {
+      currMin = validated === currMax ? currMax - step : validated;
+      sliderInstance.setHandle(0, currMin, false, true);
+    } else {
+      currMax = validated === currMin ? currMin + step : validated;
+      sliderInstance.setHandle(1, currMax, false, true);
+    }
   }
 
   /**

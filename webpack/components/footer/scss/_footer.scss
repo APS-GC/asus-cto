@@ -5,8 +5,8 @@
 footer {
   background-color: var(--color-primary-100);
   color: var(--color-primary-950);
-  @include mix.p(8, "y");
-  @include mix.m(15, "t");
+  @include mix.p(10, "t");
+  @include mix.p(7, "b");
 
   .w-500 {
     font-weight: 500;
@@ -18,7 +18,6 @@ footer {
     grid-template-columns: repeat(2, 1fr);
     align-items: flex-start;
     @include mix.spacer(gap, 12);
-    @include mix.m(6, "t");
     @include mix.m(10, "b");
     @include typo.text-bolder;
     @include mix.respond-to("md", "max") {
@@ -39,7 +38,7 @@ footer {
       @include mix.m(2, "b");
     }
 
-    &__form {
+    &__field-wrapper {
       display: flex;
       width: 100%;
       max-width: 80%;
@@ -47,25 +46,39 @@ footer {
 
       input {
         flex: 1;
-        border-radius: vars.$border-radius; // 0.5rem = 8px
-        border: 1px solid var(--color-primary-200); // light gray
-        background-color: var(--color-primary-100); // dark gray
-        color: var(--color-primary-950);
-        outline: none;
-        @include mix.p(2, "y");
-        @include mix.p(4, "x");
-
-        &::placeholder {
-          color: var(--color-primary-600);
-        }
-
-        &:focus {
-          border-color: var(--color-primary-600);
-        }
       }
 
       button {
         @include typo.text-cta();
+      }
+    }
+
+    &__response {
+      display: flex;
+      align-items: center;
+
+      @include typo.text-small();
+      @include mix.spacer("gap", 2);
+      @include mix.m(2, "t");
+    }
+
+    &.has--error {
+      .newsletter__field-wrapper input:not(:focus) {
+        border-color: var(--color-error);
+      }
+
+      .newsletter__response {
+        color: var(--color-error);
+
+        &::before {
+          content: "";
+          width: 16px;
+          height: 16px;
+          background: url('data:image/svg+xml,<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7.875" cy="7.875" r="7.875" fill="%23B42D18"/><rect x="8.71875" y="9" width="1.6875" height="6.1875" rx="0.84375" transform="rotate(-180 8.71875 9)" fill="white"/><rect x="9" y="12.375" width="2.25" height="2.25" rx="1.125" transform="rotate(-180 9 12.375)" fill="white"/></svg>');
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+        }
       }
     }
   }
@@ -88,8 +101,8 @@ footer {
     }
 
     .text-social {
-      font-size: 0.75rem;
-      line-height: 1.125rem;
+      color: var(--color-primary-700);
+      @include typo.text-tiny();
     }
 
     &__icons {
@@ -104,10 +117,19 @@ footer {
 
         a {
           display: inline-flex;
+          border-radius: 50%;
 
-          img {
-            background: var(--color-primary-300);
-            border-radius: vars.$border-radius-xxl; // 0.5rem = 8px
+          &:hover,
+          &:focus,
+          &:active,
+          &:focus-visible {
+            .social_icons-circle {
+              fill: var(--color-primary-500);
+            }
+          }
+
+          &:focus-visible {
+            outline-offset: 2px;
           }
         }
       }
@@ -121,21 +143,27 @@ footer {
 
     &__column {
       flex: 1 1 30%;
-      @include mix.m(4, "b");
       list-style: none;
       margin-block-start: 0px;
+      @include mix.m(0, "b");
+
+      li:not(:last-child) {
+        a,
+        p {
+          @include mix.m(4, "b");
+        }
+      }
+
       p.w-500 {
         color: var(--color-primary-950);
         @include typo.text-bold;
-        @include mix.m(4, "b");
       }
 
       a {
         color: var(--color-primary-600);
-        display: block;
+        display: inline-block;
         text-decoration: none;
         @include typo.text-small();
-        @include mix.m(4, "b");
 
         &:hover {
           color: var(--color-primary-950);
@@ -152,7 +180,6 @@ footer {
     flex-wrap: wrap;
     border-top: 1px solid var(--color-primary-300);
     @include mix.p(4, "t");
-    @include mix.p(3, "b");
 
     span {
       display: flex;
@@ -162,19 +189,29 @@ footer {
       color: var(--color-primary-600);
       @include mix.spacer(gap, 2);
     }
-
+    .global-link {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      line-height: 18px;
+      color: var(--color-primary-600);
+      @include mix.spacer(gap, 1);
+      border: none;
+      cursor: pointer;
+    }
     &__links {
       display: flex;
       align-items: center;
-      font-size: 12px;
-      line-height: 100%;
       color: var(--color-primary-600);
+      @include typo.text-tiny();
+      @include mix.spacer(gap, 10);
 
       a {
+        color: var(--color-primary-600);
         position: relative;
-        padding: 0 12px;
         text-decoration: none;
-        color: inherit;
+        white-space: nowrap;
+        @include typo.text-tiny();
 
         &:hover {
           color: var(--color-primary-950);
@@ -185,61 +222,54 @@ footer {
           content: "";
           position: absolute;
           top: 50%;
-          right: 0;
+          right: -20px;
           transform: translateY(-50%);
           width: 1px;
-          height: 16px;
+          height: 11px;
           background-color: var(--color-primary-300);
         }
       }
     }
   }
 
-  @include mix.respond-to("xs", "max") {
-    padding: 1rem 0rem 1rem 0rem;
-
-    .footer-bottom {
-      &__links {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap !important;
-        align-items: center;
-        @include mix.spacer(gap, 2);
-      }
-    }
-  }
-
-  @include mix.respond-to("lg", "max") {
-    @include mix.p(4, "y");
-    @include mix.p(0, "x");
-    @include mix.m(8, "t");
-
+  @include mix.respond-to("xl", "max") {
     .footer-grid {
       grid-template-columns: 1fr;
       text-align: left;
       @include mix.spacer(gap, 8);
-      @include mix.m(4, "t");
-      @include mix.m(4, "b");
+      @include mix.m(8, "b");
+
+      .footer-links {
+        &__column {
+          &:not(:last-child) {
+            @include mix.m(8, "b");
+          }
+
+          li:not(:last-child) {
+            a,
+            p {
+              @include mix.m(3, "b");
+            }
+          }
+        }
+      }
     }
+    .newsletter__field-wrapper {
+      flex-direction: row;
+      justify-content: flex-start;
+      width: 100%;
+      max-width: 100%;
+      @include mix.spacer(gap, 2);
 
-    .newsletter {
-      &__form {
-        flex-direction: row;
-        justify-content: flex-start;
-        width: 100%;
-        max-width: 100%;
-        @include mix.spacer(gap, 2);
+      input {
+        width: 65%;
+        @include mix.m(0, "b");
+      }
 
-        input {
-          width: 65%;
-          @include mix.m(0, "b");
-        }
-
-        button {
-          width: auto;
-          white-space: nowrap;
-          @include mix.m(0, "l");
-        }
+      button {
+        width: auto;
+        white-space: nowrap;
+        @include mix.m(0, "l");
       }
     }
 
@@ -251,6 +281,10 @@ footer {
 
       &__icons {
         justify-content: flex-start;
+
+        .social_icons-circle {
+          stroke: transparent;
+        }
       }
     }
 
@@ -261,16 +295,9 @@ footer {
       &__column {
         text-align: left;
         width: 100%;
-        @include mix.m(4, "b");
 
         p {
           @include typo.text-bold;
-          @include mix.m(2, "b");
-        }
-
-        a {
-          font-size: 0.85rem;
-          @include mix.m(3, "b");
         }
       }
     }
@@ -279,7 +306,8 @@ footer {
       flex-direction: column;
       align-items: flex-start;
       text-align: left;
-      gap: 1rem;
+      gap: 2rem;
+      @include mix.p(8, "t");
 
       span {
         justify-content: flex-start;
@@ -288,29 +316,79 @@ footer {
       &__links {
         display: flex;
         flex-direction: row;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         align-items: center;
-        @include mix.spacer(gap, 2);
+        @include mix.spacer(gap, 6);
 
         a {
-          font-size: 0.75rem;
           color: var(--color-primary-600);
           position: relative;
           text-decoration: none;
           white-space: nowrap;
-          @include mix.p(1, "x");
 
           &:hover {
             color: var(--color-primary-950);
           }
 
           &:not(:last-child)::after {
-            content: "|";
-            position: absolute;
-            right: -6px;
-            color: var(--color-primary-300);
+            right: -13px;
           }
         }
+      }
+
+      .global-link {
+        color: var(--color-primary-950);
+      }
+    }
+  }
+
+  // Back to top button styles
+  .back-to-top {
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    padding: 0;
+    border: 0;
+
+    svg {
+      width: 60px;
+      height: 60px;
+    }
+
+    &.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    &:focus,
+    &:hover {
+      .back-to-top__bg {
+        fill: var(--color-primary-200);
+      }
+    }
+
+    &:focus-visible {
+      outline-offset: 2px;
+    }
+
+    @include mix.respond-to("xl", "max") {
+      right: 8px;
+      bottom: 8px;
+
+      svg {
+        width: 44px;
+        height: 44px;
       }
     }
   }

@@ -1,4 +1,11 @@
 import { createOptimizedPictureExternal, createOptimizedPicture, moveInstrumentation } from '../../scripts/scripts.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
+import { getUserData, logout } from './sso.js';
+import { getConfigValue } from '../../scripts/configs.js';
+async function getAsusEndpoint(){
+  const domain = await getConfigValue('sign-endpoint');
+  return `${domain}/hk/loginform.aspx?returnUrl=${encodeURIComponent(location.href)}&login_background=general_white`;
+}
 
 // Header configuration - calculated once for the entire module
 const HeaderConfig = {
@@ -7,8 +14,214 @@ const HeaderConfig = {
   },
   get shouldUseExternal() {
     return this.baseUrl && this.baseUrl !== window.location.origin;
-  }
+  },
 };
+
+function parseNavLinks(navLinksText) {
+  if (!navLinksText || typeof navLinksText !== 'string') {
+    return [];
+  }
+
+  // Use HeaderConfig for baseUrl and shouldUseExternal
+  const { baseUrl, shouldUseExternal } = HeaderConfig;
+
+  return navLinksText.split('\n')
+    .filter((line) => line.trim())
+    .map((line) => {
+      const [linkText, linkUrl] = line.split('|');
+      const href = linkUrl?.trim() || '#';
+      return {
+        linkText: linkText?.trim() || '',
+        linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href,
+      };
+    })
+    .filter((item) => item.linkText); // Remove empty entries
+}
+
+/**
+ * Parses the header data from the block's HTML content.
+ * @param {HTMLElement} block The header block element.
+ */
+function parseHTMLContent(block) {
+  try {
+    // Get all div elements that contain the structured data
+    const contentDivs = block.querySelectorAll('div > div > div');
+
+    // Use HeaderConfig for baseUrl and shouldUseExternal
+    const { baseUrl, shouldUseExternal } = HeaderConfig;
+
+    const parsedData = {
+      logos: [],
+      navigationItems: [],
+      showSearch: true,
+      showProfile: true,
+      showCart: true,
+      searchIcon: null,
+      cartIcon: null,
+      profileIcon: null,
+      hamburgerIcon: null,
+      closeIcon: null,
+      arrowLeftIcon: null,
+      arrowRightIcon: null,
+      profileMenuItems: [],
+      profileMenuLoggedInItems: [],
+    };
+
+    const logoNames = ['asus', 'rog', 'gaming'];
+
+    // Initialize logos array
+    logoNames.forEach((name, index) => {
+      parsedData.logos[index] = {
+        name,
+        icon: '',
+        altText: `${name.toUpperCase()} Logo`,
+        url: '#',
+        width: '104', // Default width
+        height: '22', // Default height
+      };
+      if (index === 0) {
+        parsedData.logos[index].width = '87';
+        parsedData.logos[index].height = '20';
+      } else if (index === 1) {
+        parsedData.logos[index].width = '135';
+        parsedData.logos[index].height = '26';
+      }
+    });
+
+    // Process divs according to the new mapping:
+    // 1st div > href link for logos
+    // 2nd div > ASUS Logo Alt Text
+    // 3rd div > ASUS Logo Image
+    // 4th div > ROG Logo Alt Text
+    // 5th div > ROG Logo Image
+    // 6th div > Gaming PC Logo Alt Text
+    // 7th div > Gaming PC Logo Image
+    // 8th div > Navigation Links
+    // 9th div > profileMenuItems (always visible)
+    // 10th div > profileMenuLoggedInItems (only visible when user logs in)
+
+    for (let index = 0; index < contentDivs.length && index < 10; index += 1) {
+      const div = contentDivs[index];
+      const textContent = div.textContent?.trim();
+
+      if (index === 0) {
+        // 1st div: href link for logos
+        const buttonContainer = div.querySelector('a');
+        if (buttonContainer) {
+          const href = buttonContainer.getAttribute('href');
+          if (href) {
+            // Apply the same URL to all logos with baseUrl transformation
+            parsedData.logos.forEach((logo) => {
+              logo.url = shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href;
+            });
+          }
+        }
+      } else if (index === 1) {
+        // 2nd div: ASUS Logo Alt Text
+        if (textContent) {
+          parsedData.logos[0].altText = textContent;
+        }
+      } else if (index === 2) {
+        // 3rd div: ASUS Logo Image
+        const picture = div.querySelector('picture img');
+        if (picture) {
+          const src = picture.getAttribute('src');
+          const width = picture.getAttribute('width');
+          const height = picture.getAttribute('height');
+
+          if (src) {
+            parsedData.logos[0].icon = src;
+            if (width) parsedData.logos[0].width = width;
+            if (height) parsedData.logos[0].height = height;
+          }
+        }
+      } else if (index === 3) {
+        // 4th div: ROG Logo Alt Text
+        if (textContent) {
+          parsedData.logos[1].altText = textContent;
+        }
+      } else if (index === 4) {
+        // 5th div: ROG Logo Image
+        const picture = div.querySelector('picture img');
+        if (picture) {
+          const src = picture.getAttribute('src');
+          const width = picture.getAttribute('width');
+          const height = picture.getAttribute('height');
+
+          if (src) {
+            parsedData.logos[1].icon = src;
+            if (width) parsedData.logos[1].width = width;
+            if (height) parsedData.logos[1].height = height;
+          }
+        }
+      } else if (index === 5) {
+        // 6th div: Gaming PC Logo Alt Text
+        if (textContent) {
+          parsedData.logos[2].altText = textContent;
+        }
+      } else if (index === 6) {
+        // 7th div: Gaming PC Logo Image
+        const picture = div.querySelector('picture img');
+        if (picture) {
+          const src = picture.getAttribute('src');
+          const width = picture.getAttribute('width');
+          const height = picture.getAttribute('height');
+
+          if (src) {
+            parsedData.logos[2].icon = src;
+            if (width) parsedData.logos[2].width = width;
+            if (height) parsedData.logos[2].height = height;
+          }
+        }
+      } else if (index === 7) {
+        // 8th div: Navigation Links
+        const navList = div.querySelector('ul');
+        if (navList) {
+          const navItems = navList.querySelectorAll('li a');
+          parsedData.navigationItems = Array.from(navItems).map((link) => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href,
+            };
+          });
+        }
+      } else if (index === 8) {
+        // 9th div: profileMenuItems (always visible)
+        const profileList = div.querySelector('ul');
+        if (profileList) {
+          const profileItems = profileList.querySelectorAll('li a');
+          parsedData.profileMenuItems = Array.from(profileItems).map((link) => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href,
+            };
+          });
+        }
+      } else if (index === 9) {
+        // 10th div: profileMenuLoggedInItems (only visible when user logs in)
+        const loggedInList = div.querySelector('ul');
+        if (loggedInList) {
+          const loggedInItems = loggedInList.querySelectorAll('li a');
+          parsedData.profileMenuLoggedInItems = Array.from(loggedInItems).map((link) => {
+            const href = link.getAttribute('href') || '#';
+            return {
+              linkText: link.textContent?.trim() || '',
+              linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href,
+            };
+          });
+        }
+      }
+    }
+
+    return parsedData;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error parsing HTML content:', error);
+    return null;
+  }
+}
 
 function parseHeaderData(block) {
   // Initialize empty data structure - values will only come from actual authoring
@@ -27,11 +240,11 @@ function parseHeaderData(block) {
     hamburgerIcon: '',
     closeIcon: '',
     arrowLeftIcon: '',
-    arrowRightIcon: ''
+    arrowRightIcon: '',
   };
 
   // First try to parse from HTML content structure
-  const parsedFromHTML = parseHTMLContent(block);
+  const parsedFromHTML = parseHTMLContent(block); // eslint-disable-line no-use-before-define
   if (parsedFromHTML) {
     // Use parsed HTML data - only populate if actual content exists
     if (parsedFromHTML.logos && parsedFromHTML.logos.length > 0) {
@@ -59,60 +272,93 @@ function parseHeaderData(block) {
   }
 
   // Override with Universal Editor model data if available
-  if (block.dataset && (block.dataset.model || block.dataset.aueModel)) {
-    const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {};
-    
+  if (block.dataset && (block.dataset.model || block.dataset.aueModel)) { // eslint-disable-line no-undef
+    const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {}; // eslint-disable-line no-undef
+
     // Parse individual logo fields - only use UE authoring values
     // Initialize logos array if needed
     if (data.logos.length === 0) {
       data.logos = [
-        { name: 'asus', icon: '', altText: 'ASUS Logo', url: '#', width: '87', height: '20' },
-        { name: 'rog', icon: '', altText: 'ROG Logo', url: '#', width: '135', height: '26' },
-        { name: 'gaming', icon: '', altText: 'Gaming PC Custom Builder Logo', url: '#', width: '104', height: '22' }
+        {
+          name: 'asus', icon: '', altText: 'ASUS Logo', url: '#', width: '87', height: '20',
+        },
+        {
+          name: 'rog', icon: '', altText: 'ROG Logo', url: '#', width: '135', height: '26',
+        },
+        {
+          name: 'gaming', icon: '', altText: 'Gaming PC Custom Builder Logo', url: '#', width: '104', height: '22',
+        },
       ];
     }
-    
+
     if (modelData.asusLogoImage || modelData.asusLogoAltText || modelData.asusLogoUrl) {
-      if (!data.logos[0]) data.logos[0] = { name: 'asus', icon: '', altText: 'ASUS Logo', url: '#', width: '87', height: '20' };
+      if (!data.logos[0]) {
+        data.logos[0] = {
+          name: 'asus',
+          icon: '',
+          altText: 'ASUS Logo',
+          url: '#',
+          width: '87',
+          height: '20',
+        };
+      }
       data.logos[0] = {
         name: 'asus',
         icon: modelData.asusLogoImage || data.logos[0].icon,
         altText: modelData.asusLogoAltText || data.logos[0].altText,
         url: modelData.asusLogoUrl || data.logos[0].url,
         width: data.logos[0].width,
-        height: data.logos[0].height
+        height: data.logos[0].height,
       };
     }
-    
+
     if (modelData.rogLogoImage || modelData.rogLogoAltText || modelData.rogLogoUrl) {
-      if (!data.logos[1]) data.logos[1] = { name: 'rog', icon: '', altText: 'ROG Logo', url: '#', width: '135', height: '26' };
+      if (!data.logos[1]) {
+        data.logos[1] = {
+          name: 'rog',
+          icon: '',
+          altText: 'ROG Logo',
+          url: '#',
+          width: '135',
+          height: '26',
+        };
+      }
       data.logos[1] = {
         name: 'rog',
         icon: modelData.rogLogoImage || data.logos[1].icon,
         altText: modelData.rogLogoAltText || data.logos[1].altText,
         url: modelData.rogLogoUrl || data.logos[1].url,
         width: data.logos[1].width,
-        height: data.logos[1].height
+        height: data.logos[1].height,
       };
     }
-    
+
     if (modelData.gamingPcLogoImage || modelData.gamingPcLogoAltText || modelData.gamingPcLogoUrl) {
-      if (!data.logos[2]) data.logos[2] = { name: 'gaming', icon: '', altText: 'Gaming PC Custom Builder Logo', url: '#', width: '104', height: '22' };
+      if (!data.logos[2]) {
+        data.logos[2] = {
+          name: 'gaming',
+          icon: '',
+          altText: 'Gaming PC Custom Builder Logo',
+          url: '#',
+          width: '104',
+          height: '22',
+        };
+      }
       data.logos[2] = {
         name: 'gaming',
         icon: modelData.gamingPcLogoImage || data.logos[2].icon,
         altText: modelData.gamingPcLogoAltText || data.logos[2].altText,
         url: modelData.gamingPcLogoUrl || data.logos[2].url,
         width: data.logos[2].width,
-        height: data.logos[2].height
-      };
+        height: data.logos[2].height,
+      }; // eslint-disable-line comma-dangle
     }
-    
+
     // Parse navigation links from textarea
     if (modelData.navLinks) {
       data.navigationItems = parseNavLinks(modelData.navLinks);
     }
-    
+
     // Parse other fields
     if (modelData.searchPlaceholder) data.searchPlaceholder = modelData.searchPlaceholder;
     if (typeof modelData.showSearch === 'boolean') data.showSearch = modelData.showSearch;
@@ -133,220 +379,37 @@ function parseHeaderData(block) {
   return data;
 }
 
-function parseHTMLContent(block) {
-  try {
-    // Get all div elements that contain the structured data
-    const contentDivs = block.querySelectorAll('div > div > div');
+function buildLogo(logos) {
+  const logoItems = logos.map((logo) => {
+    const {
+      icon: iconSrc, altText, url: logoUrl, name,
+    } = logo;
+    let { width, height } = logo;
 
-    // Use HeaderConfig for baseUrl and shouldUseExternal
-    const { baseUrl, shouldUseExternal } = HeaderConfig;
-
-    const parsedData = {
-      logos: [],
-      navigationItems: [],
-      showSearch: true,
-      showProfile: true,
-      showCart: true,
-      searchIcon: null,
-      cartIcon: null,
-      profileIcon: null,
-      hamburgerIcon: null,
-      closeIcon: null,
-      arrowLeftIcon: null,
-      arrowRightIcon: null,
-      profileMenuItems: [],
-      profileMenuLoggedInItems: []
-    };
-
-    const logoNames = ['asus', 'rog', 'gaming'];
-    
-    // Initialize logos array
-    logoNames.forEach((name, index) => {
-      parsedData.logos[index] = {
-        name: name,
-        icon: '',
-        altText: `${name.toUpperCase()} Logo`,
-        url: '#',
-        width: index === 0 ? '87' : index === 1 ? '135' : '104',
-        height: index === 0 ? '20' : index === 1 ? '26' : '22'
-      };
-    });
-    
-    // Process divs according to the new mapping:
-    // 1st div > href link for logos
-    // 2nd div > ASUS Logo Alt Text
-    // 3rd div > ASUS Logo Image
-    // 4th div > ROG Logo Alt Text
-    // 5th div > ROG Logo Image
-    // 6th div > Gaming PC Logo Alt Text
-    // 7th div > Gaming PC Logo Image
-    // 8th div > Navigation Links
-    // 9th div > profileMenuItems (always visible)
-    // 10th div > profileMenuLoggedInItems (only visible when user logs in)
-    
-    for (let index = 0; index < contentDivs.length && index < 10; index++) {
-      const div = contentDivs[index];
-      const textContent = div.textContent?.trim();
-      
-      if (index === 0) {
-        // 1st div: href link for logos
-        const buttonContainer = div.querySelector('a');
-        if (buttonContainer) {
-          const href = buttonContainer.getAttribute('href');
-          if (href) {
-            // Apply the same URL to all logos with baseUrl transformation
-            parsedData.logos.forEach(logo => {
-              logo.url = shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href;
-            });
-          }
-        }
-      } else if (index === 1) {
-        // 2nd div: ASUS Logo Alt Text
-        if (textContent) {
-          parsedData.logos[0].altText = textContent;
-        }
-      } else if (index === 2) {
-        // 3rd div: ASUS Logo Image
-        const picture = div.querySelector('picture img');
-        if (picture) {
-          const src = picture.getAttribute('src');
-          const width = picture.getAttribute('width');
-          const height = picture.getAttribute('height');
-          
-          if (src) {
-            parsedData.logos[0].icon = src;
-            if (width) parsedData.logos[0].width = width;
-            if (height) parsedData.logos[0].height = height;
-          }
-        }
-      } else if (index === 3) {
-        // 4th div: ROG Logo Alt Text
-        if (textContent) {
-          parsedData.logos[1].altText = textContent;
-        }
-      } else if (index === 4) {
-        // 5th div: ROG Logo Image
-        const picture = div.querySelector('picture img');
-        if (picture) {
-          const src = picture.getAttribute('src');
-          const width = picture.getAttribute('width');
-          const height = picture.getAttribute('height');
-          
-          if (src) {
-            parsedData.logos[1].icon = src;
-            if (width) parsedData.logos[1].width = width;
-            if (height) parsedData.logos[1].height = height;
-          }
-        }
-      } else if (index === 5) {
-        // 6th div: Gaming PC Logo Alt Text
-        if (textContent) {
-          parsedData.logos[2].altText = textContent;
-        }
-      } else if (index === 6) {
-        // 7th div: Gaming PC Logo Image
-        const picture = div.querySelector('picture img');
-        if (picture) {
-          const src = picture.getAttribute('src');
-          const width = picture.getAttribute('width');
-          const height = picture.getAttribute('height');
-          
-          if (src) {
-            parsedData.logos[2].icon = src;
-            if (width) parsedData.logos[2].width = width;
-            if (height) parsedData.logos[2].height = height;
-          }
-        }
-      } else if (index === 7) {
-        // 8th div: Navigation Links
-        const navList = div.querySelector('ul');
-        if (navList) {
-          const navItems = navList.querySelectorAll('li a');
-          parsedData.navigationItems = Array.from(navItems).map(link => {
-            const href = link.getAttribute('href') || '#';
-            return {
-              linkText: link.textContent?.trim() || '',
-              linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href
-            };
-          });
-        }
-      } else if (index === 8) {
-        // 9th div: profileMenuItems (always visible)
-        const profileList = div.querySelector('ul');
-        if (profileList) {
-          const profileItems = profileList.querySelectorAll('li a');
-          parsedData.profileMenuItems = Array.from(profileItems).map(link => {
-            const href = link.getAttribute('href') || '#';
-            return {
-              linkText: link.textContent?.trim() || '',
-              linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href
-            };
-          });
-        }
-      } else if (index === 9) {
-        // 10th div: profileMenuLoggedInItems (only visible when user logs in)
-        const loggedInList = div.querySelector('ul');
-        if (loggedInList) {
-          const loggedInItems = loggedInList.querySelectorAll('li a');
-          parsedData.profileMenuLoggedInItems = Array.from(loggedInItems).map(link => {
-            const href = link.getAttribute('href') || '#';
-            return {
-              linkText: link.textContent?.trim() || '',
-              linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href
-            };
-          });
-        }
+    // Ensure explicit dimensions to prevent CLS - use defaults if not provided
+    if (!width || !height) {
+      if (name === 'asus') {
+        width = '87';
+        height = '20';
+      } else if (name === 'rog') {
+        width = '135';
+        height = '26';
+      } else { // gaming
+        width = '104';
+        height = '22';
       }
     }
 
-    return parsedData;
-    
-  } catch (error) {
-    console.error('Error parsing HTML content:', error);
-    return null;
-  }
-}
-
-function parseNavLinks(navLinksText) {
-  if (!navLinksText || typeof navLinksText !== 'string') {
-    return [];
-  }
-  
-  // Use HeaderConfig for baseUrl and shouldUseExternal
-  const { baseUrl, shouldUseExternal } = HeaderConfig;
-  
-  return navLinksText.split('\n')
-    .filter(line => line.trim())
-    .map(line => {
-      const [linkText, linkUrl] = line.split('|');
-      const href = linkUrl?.trim() || '#';
-      return {
-        linkText: linkText?.trim() || '',
-        linkUrl: shouldUseExternal && href !== '#' ? `${baseUrl}${href}` : href
-      };
-    })
-    .filter(item => item.linkText); // Remove empty entries
-}
-
-function buildLogo(logos) {
-  const logoItems = logos.map(logo => {
-    const iconSrc = logo.icon || '';
-    const altText = logo.altText || `${logo.name} Logo`;
-    // Ensure explicit dimensions to prevent CLS - use defaults if not provided
-    const width = logo.width || (logo.name === 'asus' ? '87' : logo.name === 'rog' ? '135' : '104');
-    const height = logo.height || (logo.name === 'asus' ? '20' : logo.name === 'rog' ? '26' : '22');
-    const logoUrl = logo.url || '#';
-    
     // Render logo structure even if icon source is missing
     // This ensures consistent display between published site and UE authoring
-    const logoContent = iconSrc ? 
-      `<picture>
+    const logoContent = iconSrc
+      ? `<picture>
         <img src="${iconSrc}" alt="${altText}" class="logo-default" width="${width}" height="${height}" loading="eager" />
-      </picture>` :
-      `<span class="logo-placeholder" aria-label="${altText}" title="${altText}">${logo.name.toUpperCase()}</span>`;
-    
+      </picture>`
+      : `<span class="logo-placeholder" aria-label="${altText}" title="${altText}">${logo.name.toUpperCase()}</span>`;
+
     return `
-      <div class="logo-item logo-item--${logo.name}">
+      <div class="logo-item logo-item--${name}">
         <div class="logo-wrapper">
           <a href="${logoUrl}" aria-label="${altText}" title="${altText}">
             ${logoContent}
@@ -367,12 +430,12 @@ function buildLogo(logos) {
   `;
 }
 
-function buildNavigation(navigationItems, showProfile, showCart, profileMenuItems, profileMenuLoggedInItems, icons) {
+function buildNavigation(navigationItems, showProfile, showCart, profileMenuItems, profileMenuLoggedInItems) {
   // Check if user is logged in (same logic as in webpack implementation)
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   const userName = localStorage.getItem('userName') || 'User Name';
-  
-  const navItems = navigationItems.map(item => `
+
+  const navItems = navigationItems.map((item) => `
     <li class="cmp-sitenavigation__item">
       <a class="cmp-sitenavigation__item-link" href="${item.linkUrl}">${item.linkText}</a>
     </li>
@@ -381,7 +444,7 @@ function buildNavigation(navigationItems, showProfile, showCart, profileMenuItem
   const cartIcon = showCart ? `
     <li class="cmp-sitenavigation__item cmp-sitenavigation__item--cart">
       <div class="mini-cart">
-        <button 
+        <button
           class="cmp-sitenavigation__item-link mini-cart-toggle"
           id="mini-cart-toggle"
           aria-label="Shopping cart"
@@ -391,10 +454,10 @@ function buildNavigation(navigationItems, showProfile, showCart, profileMenuItem
         >
           <span class="icon icon--cart"></span>
         </button>
-        <div 
+        <div
           id="mini-cart-container"
           class="mini-cart-container"
-          role="dialog" 
+          role="dialog"
           aria-modal="true" 
           aria-labelledby="mini-cart-title" 
           aria-hidden="true"
@@ -410,11 +473,22 @@ function buildNavigation(navigationItems, showProfile, showCart, profileMenuItem
   ` : '';
 
   // Combine profile menu items: existing + logged-in items when logged in
-  const currentProfileMenuItems = isLoggedIn 
+  const currentProfileMenuItems = isLoggedIn
     ? [...profileMenuItems, ...(profileMenuLoggedInItems || [])]
     : profileMenuItems;
 
-  const profileMenuHTML = currentProfileMenuItems.map((item, index) => `
+  //unique menu
+  let uniqueMenuItems = Array.from(new Map(
+    currentProfileMenuItems.map(item => [item.linkText, item])
+  ).values());
+
+  if(isLoggedIn){
+    uniqueMenuItems = uniqueMenuItems.filter(r => r.linkText.toUpperCase() !== 'LOGIN');
+  }else{
+    uniqueMenuItems = JSON.parse(JSON.stringify(profileMenuLoggedInItems));
+  }
+
+  const profileMenuHTML = uniqueMenuItems.map((item, index) => `
     <li class="profile-menu__item" data-menu-index="${index}"><a href="${item.linkUrl}">${item.linkText}</a></li>
   `).join('');
 
@@ -463,20 +537,31 @@ function buildNavigation(navigationItems, showProfile, showCart, profileMenuItem
   `;
 }
 
-function buildMobileMenu(navigationItems, profileMenuItems, profileMenuLoggedInItems, icons) {
+function buildMobileMenu(navigationItems, profileMenuItems, profileMenuLoggedInItems) {
   // Check if user is logged in (same logic as in webpack implementation)
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  
-  const mobileNavItems = navigationItems.map(item => `
+
+  const mobileNavItems = navigationItems.map((item) => `
     <li><a href="${item.linkUrl}" class="px-6">${item.linkText}</a></li>
   `).join('');
 
   // Combine profile menu items: existing + logged-in items when logged in (same as desktop)
-  const currentMobileProfileMenuItems = isLoggedIn 
+  const currentMobileProfileMenuItems = isLoggedIn
     ? [...profileMenuItems, ...(profileMenuLoggedInItems || [])]
     : profileMenuItems;
 
-  const mobileProfileItems = currentMobileProfileMenuItems.map((item, index) => `
+  //unique menu
+  let uniqueMenuItems = Array.from(new Map(
+    currentMobileProfileMenuItems.map(item => [item.linkText, item])
+  ).values());
+
+  if(isLoggedIn){
+    uniqueMenuItems = uniqueMenuItems.filter(r => r.linkText.toUpperCase() !== 'LOGIN');
+  }else{
+    uniqueMenuItems = JSON.parse(JSON.stringify(profileMenuLoggedInItems));
+  }
+
+  const mobileProfileItems = uniqueMenuItems.map((item, index) => `
     <li data-mobile-menu-index="${index}"><a href="${item.linkUrl}">${item.linkText}</a></li>
   `).join('');
 
@@ -511,18 +596,18 @@ function buildMobileMenu(navigationItems, profileMenuItems, profileMenuLoggedInI
 }
 
 // Mock login function
-function mockLogin() {
-  localStorage.setItem('isLoggedIn', 'true');
-  localStorage.setItem('userName', 'John Doe');
+async function ssoLogin(block) {
+  await getUserData();
   // Automatically add items to cart for logged-in user
   localStorage.setItem('hasCartItems', 'true');
+  refreshHeader(block);// eslint-disable-line no-use-before-define
 }
 
-// Mock logout function
-function mockLogout() {
-  localStorage.removeItem('isLoggedIn');
-  localStorage.removeItem('userName');
+async function ssoLogout(block){
+  await logout();
+  refreshHeader(block);// eslint-disable-line no-use-before-define
 }
+
 
 // Mock cart data for testing
 function getMockCartData() {
@@ -532,15 +617,15 @@ function getMockCartData() {
       image: '/blocks/images/cpuImage.png',
       price: '1299.99',
       quantity: 1,
-      description: 'Gaming Laptop - AMD Ryzen 7'
+      description: 'Gaming Laptop - AMD Ryzen 7',
     },
     {
       name: 'ASUS TUF Gaming Monitor',
       image: '/blocks/images/cpu2.png',
       price: '299.99',
       quantity: 2,
-      description: '27" 144Hz Display'
-    }
+      description: '27" 144Hz Display',
+    },
   ];
 }
 
@@ -548,17 +633,17 @@ function getMockCartData() {
 async function fetchCartProducts() {
   try {
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise(((resolve) => setTimeout(resolve, 100)));
     // Check if user has items in cart (mock logic)
     const hasCartItems = localStorage.getItem('hasCartItems') === 'true';
-    
+
     if (hasCartItems) {
       return getMockCartData();
     }
-    
+
     return [];
-  } catch (err) {
+  } catch (err) { // eslint-disable-next-line no-console
     console.error('Error loading cart products:', err);
     return [];
   }
@@ -566,12 +651,14 @@ async function fetchCartProducts() {
 
 // Render individual cart items
 function renderCartItem(product) {
-  const { name, image, price, quantity, description } = product;
+  const {
+    name, image, price, quantity, description,
+  } = product;
   let descriptionHTML = '';
   if (description) {
     descriptionHTML = `<small>${description}</small>`;
   }
-  
+
   return `
     <li class="cart-item flex" role="listitem" tabindex="0" aria-label="${name}">
       <div class="img-wrapper">
@@ -591,16 +678,456 @@ function renderCartItem(product) {
   `;
 }
 
+// Scroll locking functions for mobile menu
+let savedScrollY = 0;
+
+function disableScroll() {
+  savedScrollY = window.scrollY;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${savedScrollY}px`;
+  document.body.style.width = '100%';
+}
+
+function enableScroll() {
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.width = '';
+  window.scrollTo(0, savedScrollY);
+}
+
+function initializeHeader(block) {
+  // Set header height CSS variable for spacing
+  const headerWrapper = block.querySelector('.header-wrapper');
+  if (headerWrapper) {
+    document.documentElement.style.setProperty(
+      '--header-height',
+      `${headerWrapper.offsetHeight}px`,
+    );
+  }
+
+  // Get current login state and profile menu data
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+  // Use stored original data instead of re-parsing from modified DOM
+  const data = block._originalHeaderData || {};
+  const profileMenuItems = data.profileMenuItems || [];
+  const profileMenuLoggedInItems = data.profileMenuLoggedInItems || [];
+
+  // Calculate combined menu items for logged-in state
+  const combinedMenuItems = isLoggedIn
+    ? [...profileMenuItems, ...profileMenuLoggedInItems]
+    : profileMenuItems;
+
+  // Mobile menu toggle
+  const hamburgerToggle = block.querySelector('#header-hamburger-menu-toggle');
+  const mobileMenuOverlay = block.querySelector('#mobile-menu-dialog');
+
+  if (hamburgerToggle && mobileMenuOverlay) {
+    hamburgerToggle.addEventListener('click', () => {
+      const isExpanded = hamburgerToggle.getAttribute('aria-expanded') === 'true';
+      hamburgerToggle.setAttribute('aria-expanded', !isExpanded);
+      mobileMenuOverlay.setAttribute('aria-hidden', isExpanded);
+      block.classList.toggle('mm-open', !isExpanded);
+
+      // Handle scroll locking
+      if (!isExpanded) {
+        disableScroll();
+      } else {
+        enableScroll();
+      }
+    });
+  }
+
+  // Profile dropdown
+  const profileToggle = block.querySelector('.profile-toggle');
+  const profileMenu = block.querySelector('.profile-menu');
+
+  if (profileToggle && profileMenu) {
+    profileToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+
+      // Close mini cart if it's open when profile is clicked
+      const miniCartToggle = block.querySelector('#mini-cart-toggle');
+      const miniCartContainer = block.querySelector('#mini-cart-container');
+
+      if (miniCartToggle && miniCartContainer) {
+        const isMiniCartExpanded = miniCartToggle.getAttribute('aria-expanded') === 'true';
+        if (isMiniCartExpanded) {
+          miniCartToggle.setAttribute('aria-expanded', 'false');
+          miniCartContainer.setAttribute('aria-hidden', 'true');
+          miniCartContainer.classList.remove('show');
+        }
+      }
+
+      const isExpanded = profileToggle.getAttribute('aria-expanded') === 'true';
+      profileToggle.setAttribute('aria-expanded', !isExpanded);
+      profileMenu.classList.toggle('show', !isExpanded);
+    });
+
+    // Close profile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!profileToggle.contains(e.target) && !profileMenu.contains(e.target)) {
+        profileToggle.setAttribute('aria-expanded', 'false');
+        profileMenu.classList.remove('show');
+      }
+    });
+  }
+
+  // Profile menu close button
+  const profileClose = block.querySelector('.profile-menu__close');
+  if (profileClose) {
+    profileClose.addEventListener('click', () => {
+      profileToggle.setAttribute('aria-expanded', 'false');
+      profileMenu.classList.remove('show');
+    });
+  }
+
+  // Mock Login/Logout functionality for desktop profile menu
+  const profileMenuItemElements = block.querySelectorAll('.profile-menu__item[data-menu-index]');
+
+  profileMenuItemElements.forEach((item) => {
+    const link = item.querySelector('a');
+    if (link) {
+      link.addEventListener('click', async (e) => {
+        if (link.textContent.toUpperCase() === 'SIGN OUT') {
+          if (isLoggedIn) {
+            // trigger ssoLogout
+            ssoLogout(block);
+            e.preventDefault();
+          }
+        } else{
+            if(!isLoggedIn){
+              e.preventDefault();
+              const loginUrl = await getAsusEndpoint();
+              location.href = loginUrl;
+            }
+        }
+        // eslint-disable-next-line no-empty
+        // For other items, you can add actual navigation logic here
+      });
+    }
+  });
+
+  // Mock Login/Logout functionality for mobile profile menu
+  const mobileProfileMenuItems = block.querySelectorAll('.submenu-items li[data-mobile-menu-index]');
+  mobileProfileMenuItems.forEach((item, index) => {
+    const link = item.querySelector('a');
+    if (link) {
+      link.addEventListener('click', async (e) => {
+        // eslint-disable-next-line no-console
+        console.log('Mobile menu clicked:', {
+          index, isLoggedIn, combinedMenuLength: combinedMenuItems.length, linkText: link.textContent,
+        });
+
+          if (link.textContent.toUpperCase() === 'SIGN OUT') {
+            if (isLoggedIn) {
+              // trigger ssoLogout
+              ssoLogout(block);
+              e.preventDefault();
+            } 
+          }else{
+            if(!isLoggedIn){
+              e.preventDefault();
+              const loginUrl = await getAsusEndpoint();
+              location.href = loginUrl;
+            }
+          }
+        // For other items, you can add actual navigation logic here
+      });
+    }
+  });
+
+  // Mini cart toggle
+  const miniCartToggle = block.querySelector('#mini-cart-toggle');
+  const miniCartContainer = block.querySelector('#mini-cart-container');
+
+  if (miniCartToggle && miniCartContainer) {
+    miniCartToggle.addEventListener('click', async () => {
+      const isExpanded = miniCartToggle.getAttribute('aria-expanded') === 'true';
+
+      if (!isExpanded) {
+        // Update cart content before showing
+        await updateMiniCartDisplay(block);// eslint-disable-line no-use-before-define
+      }
+
+      miniCartToggle.setAttribute('aria-expanded', !isExpanded);
+      miniCartContainer.setAttribute('aria-hidden', isExpanded);
+      miniCartContainer.classList.toggle('show', !isExpanded);
+    });
+  }
+
+  // Mini cart close button
+  const miniCartClose = block.querySelector('.mini-cart__close');
+  if (miniCartClose) {
+    miniCartClose.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Track close button click
+      trackEvent({
+        eventName: 'close_mini_cart_header-L1_cto_rog',
+        category: 'mini_cart/header-L1/cto/rog',
+        label: 'close/mini_cart/header-L1/cto/rog'
+      });
+      
+      miniCartToggle.setAttribute('aria-expanded', 'false');
+      miniCartContainer.setAttribute('aria-hidden', 'true');
+      miniCartContainer.classList.remove('show');
+      // Focus back to toggle button for accessibility
+      miniCartToggle.focus();
+    });
+  }
+
+  // Initialize mini cart display
+  updateMiniCartDisplay(block);// eslint-disable-line no-use-before-define
+
+  // Cart sign-in link functionality
+  const cartSigninLink = block.querySelector('#cart-signin-link');
+  if (cartSigninLink) {
+    cartSigninLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      // eslint-disable-next-line no-console
+      console.log('Cart sign-in clicked');
+      ssoLogin(block);
+    });
+  }
+
+  // Mobile account toggle
+  const mobileAccountToggle = block.querySelector('.mobile-account-toggle');
+  const mobileAccountSubmenu = block.querySelector('.mobile-account-submenu');
+  const backButton = block.querySelector('.back-button');
+  const mobileOverlay = block.querySelector('.mobile-menu-overlay');
+
+  if (mobileAccountToggle && mobileAccountSubmenu) {
+    mobileAccountToggle.addEventListener('click', () => {
+      const isExpanded = mobileAccountToggle.getAttribute('aria-expanded') === 'true';
+      mobileAccountToggle.setAttribute('aria-expanded', !isExpanded);
+      mobileAccountSubmenu.classList.toggle('active', !isExpanded);
+      mobileOverlay.classList.toggle('submenu-active', !isExpanded);
+    });
+  }
+
+  if (backButton) {
+    backButton.addEventListener('click', () => {
+      mobileAccountToggle.setAttribute('aria-expanded', 'false');
+      mobileAccountSubmenu.classList.remove('active');
+      mobileOverlay.classList.remove('submenu-active');
+    });
+  }
+
+  // Close mobile menu when clicking overlay
+  if (mobileMenuOverlay) {
+    mobileMenuOverlay.addEventListener('click', (e) => {
+      if (e.target === mobileMenuOverlay) {
+        hamburgerToggle.setAttribute('aria-expanded', 'false');
+        mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+        block.classList.remove('mm-open');
+        enableScroll();
+      }
+    });
+
+    // Close menu when clicking on menu links
+    mobileMenuOverlay.addEventListener('click', (e) => {
+      if (e.target.closest('a')) {
+        hamburgerToggle.setAttribute('aria-expanded', 'false');
+        mobileMenuOverlay.setAttribute('aria-hidden', 'true');
+        block.classList.remove('mm-open');
+        enableScroll();
+      }
+    });
+  }
+
+  // Add tracking for navigation links
+  const navLinks = block.querySelectorAll('.cmp-sitenavigation__item-link');
+  navLinks.forEach((link) => {
+    // Skip if it's a button (cart, profile, menu toggle)
+    if (link.tagName.toLowerCase() === 'button' || link.closest('.cmp-sitenavigation__item--cart, .cmp-sitenavigation__item--profile, .cmp-sitenavigation__item--menu-toggle')) {
+      return;
+    }
+    
+    link.addEventListener('click', () => {
+      const clickedText = link.textContent?.trim() || '';
+      // For now, using the same text for both Global-EN and local
+      // In a real implementation, you might fetch the EN version from a mapping
+      trackEvent({
+        eventName: 'header-L1_cto_rog',
+        category: 'header-L1/cto/rog',
+        label: `${clickedText}-${clickedText}/header-L1/cto/rog`
+      });
+    });
+  });
+
+  // Add tracking for profile menu links
+  const profileMenuLinks = block.querySelectorAll('.profile-menu__item');
+  profileMenuLinks.forEach((menuItem) => {
+    const link = menuItem.querySelector('a');
+    if (link) {
+      link.addEventListener('click', () => {
+        const clickedText = link.textContent?.trim() || '';
+        // For now, using the same text for both Global-EN and local
+        trackEvent({
+          eventName: 'submenu_header-L1_cto_rog',
+          category: 'submenu/header-L1/cto/rog',
+          label: `${clickedText}-${clickedText}/submenu/header-L1/cto/rog`
+        });
+      });
+    }
+  });
+
+  // Add tracking for mobile menu navigation links
+  const mobileNavLinks = block.querySelectorAll('.mobile-menu > li > a');
+  mobileNavLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const clickedText = link.textContent?.trim() || '';
+      trackEvent({
+        eventName: 'header-L1_cto_rog',
+        category: 'header-L1/cto/rog',
+        label: `${clickedText}-${clickedText}/header-L1/cto/rog`
+      });
+    });
+  });
+
+  // Add tracking for mobile profile menu links
+  const mobileProfileLinks = block.querySelectorAll('.submenu-items li a');
+  mobileProfileLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const clickedText = link.textContent?.trim() || '';
+      trackEvent({
+        eventName: 'submenu_header-L1_cto_rog',
+        category: 'submenu/header-L1/cto/rog',
+        label: `${clickedText}-${clickedText}/submenu/header-L1/cto/rog`
+      });
+    });
+  });
+}
+
+// Forward declaration for refreshHeader
+let refreshHeader;
+
+// Refresh header function to re-render with current login state
+refreshHeader = async (block) => {
+  // Use stored original data instead of re-parsing from modified DOM
+  let data;
+  if (block._originalHeaderData) {
+    // Use stored original data as base
+    data = { ...block._originalHeaderData };
+
+    // Still check for Universal Editor model updates
+    if (block.dataset && (block.dataset.model || block.dataset.aueModel)) { // eslint-disable-line no-use-before-define
+      const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {};
+
+      // Apply any UE model updates to the stored data
+      if (modelData.asusLogoImage || modelData.asusLogoAltText || modelData.asusLogoUrl) {
+        if (!data.logos[0]) {
+          data.logos[0] = {
+            name: 'asus', icon: '', altText: 'ASUS Logo', url: '#', width: '87', height: '20',
+          };
+        }
+        data.logos[0] = {
+          name: 'asus',
+          icon: modelData.asusLogoImage || data.logos[0].icon,
+          altText: modelData.asusLogoAltText || data.logos[0].altText,
+          url: modelData.asusLogoUrl || data.logos[0].url,
+          width: data.logos[0].width,
+          height: data.logos[0].height,
+        };
+      }
+
+      if (modelData.rogLogoImage || modelData.rogLogoAltText || modelData.rogLogoUrl) {
+        if (!data.logos[1]) {
+          data.logos[1] = {
+            name: 'rog', icon: '', altText: 'ROG Logo', url: '#', width: '135', height: '26',
+          };
+        }
+        data.logos[1] = {
+          name: 'rog',
+          icon: modelData.rogLogoImage || data.logos[1].icon,
+          altText: modelData.rogLogoAltText || data.logos[1].altText,
+          url: modelData.rogLogoUrl || data.logos[1].url,
+          width: data.logos[1].width,
+          height: data.logos[1].height,
+        };
+      }
+
+      if (modelData.gamingPcLogoImage || modelData.gamingPcLogoAltText || modelData.gamingPcLogoUrl) {
+        if (!data.logos[2]) {
+          data.logos[2] = {
+            name: 'gaming', icon: '', altText: 'Gaming PC Custom Builder Logo', url: '#', width: '104', height: '22',
+          };
+        }
+        data.logos[2] = {
+          name: 'gaming',
+          icon: modelData.gamingPcLogoImage || data.logos[2].icon,
+          altText: modelData.gamingPcLogoAltText || data.logos[2].altText,
+          url: modelData.gamingPcLogoUrl || data.logos[2].url,
+          width: data.logos[2].width,
+          height: data.logos[2].height,
+        };
+      }
+
+      if (modelData.navLinks) {
+        data.navigationItems = parseNavLinks(modelData.navLinks);
+      }
+
+      if (modelData.searchPlaceholder) data.searchPlaceholder = modelData.searchPlaceholder;
+      if (typeof modelData.showSearch === 'boolean') data.showSearch = modelData.showSearch;
+      if (typeof modelData.showProfile === 'boolean') data.showProfile = modelData.showProfile;
+      if (typeof modelData.showCart === 'boolean') data.showCart = modelData.showCart;
+      if (modelData.searchIcon) data.searchIcon = modelData.searchIcon;
+      if (modelData.cartIcon) data.cartIcon = modelData.cartIcon;
+      if (modelData.profileIcon) data.profileIcon = modelData.profileIcon;
+      if (modelData.hamburgerIcon) data.hamburgerIcon = modelData.hamburgerIcon;
+      if (modelData.closeIcon) data.closeIcon = modelData.closeIcon;
+      if (modelData.arrowLeftIcon) data.arrowLeftIcon = modelData.arrowLeftIcon;
+      if (modelData.arrowRightIcon) data.arrowRightIcon = modelData.arrowRightIcon;
+      if (modelData.profileMenuItems && Array.isArray(modelData.profileMenuItems)) {
+        data.profileMenuItems = modelData.profileMenuItems;
+      }
+    }
+  } else {
+    // Fallback to parsing if no stored data (shouldn't happen in normal flow)
+    data = parseHeaderData(block); // eslint-disable-line no-use-before-define
+  }
+
+  // Create icons object for passing to build functions
+  const icons = {
+    searchIcon: data.searchIcon,
+    cartIcon: data.cartIcon,
+    profileIcon: data.profileIcon,
+    hamburgerIcon: data.hamburgerIcon,
+    closeIcon: data.closeIcon,
+    arrowLeftIcon: data.arrowLeftIcon,
+    arrowRightIcon: data.arrowRightIcon,
+  };
+
+  // Create the header structure using parsed data
+  const headerHTML = `
+    <div class="header-wrapper">
+      <header class="experiencefragment">
+          <div class="cmp-container cmp-header container">
+            ${buildLogo(data.logos)}
+            ${buildNavigation(data.navigationItems, data.showProfile, data.showCart, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
+          </div>
+      </header>
+      ${buildMobileMenu(data.navigationItems, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
+    </div>
+  `;
+
+  // Clear existing content and add the header structure
+  block.innerHTML = headerHTML;
+
+  // Re-initialize header functionality
+  initializeHeader(block);
+};
+
 // Render mini cart content based on login status and cart items
 async function renderMiniCartContent(isLoggedIn) {
   if (!isLoggedIn) {
     return `
-      <p class="mini-cart__message"><a href="/">Sign in</a> to see if you have any saved items</p>
+      <p class="mini-cart__message"><a href="/" id="cart-signin-link">Sign in</a> to see if you have any saved items</p>
     `;
   }
-  
+
   const products = await fetchCartProducts();
-  
+
   if (!products.length) {
     return `
       <div class="cart-empty-message">
@@ -608,10 +1135,10 @@ async function renderMiniCartContent(isLoggedIn) {
       </div>
     `;
   }
-  
-  const cartItemsHtml = products.map(product => renderCartItem(product)).join('');
-  const subtotal = products.reduce((sum, p) => sum + p.quantity * parseFloat(p.price), 0);
-  
+
+  const cartItemsHtml = products.map((product) => renderCartItem(product)).join('');
+  const subtotal = products.reduce((sum, p) => sum + (p.quantity * parseFloat(p.price)), 0);
+
   return `
     <ul class="cart-items flex" role="list">
       ${cartItemsHtml}
@@ -629,19 +1156,18 @@ async function renderMiniCartContent(isLoggedIn) {
 // Update mini cart display
 async function updateMiniCartDisplay(block) {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  const hasCartItems = localStorage.getItem('hasCartItems') === 'true';
   const miniCartContainer = block.querySelector('#mini-cart-container');
   const cartTitle = block.querySelector('#mini-cart-title');
   const miniCartToggle = block.querySelector('#mini-cart-toggle');
-  
+
   if (!miniCartContainer || !cartTitle) {
     return;
   }
-  
+
   // Clear existing cart content after title
   const existingElements = miniCartContainer.querySelectorAll('.mini-cart__message, .cart-empty-message, .cart-items, .subtotal, .checkout-btn');
-  existingElements.forEach(el => el.remove());
-  
+  existingElements.forEach((el) => el.remove());
+
   // Update cart title and content
   if (!isLoggedIn) {
     cartTitle.textContent = 'Your cart is empty.';
@@ -663,19 +1189,39 @@ async function updateMiniCartDisplay(block) {
       }
     }
   }
-  
+
   // Add new content after title
   const newContent = await renderMiniCartContent(isLoggedIn);
   miniCartContainer.insertAdjacentHTML('beforeend', newContent);
-  
+
   // Re-attach cart sign-in event listener if needed
   const newCartSigninLink = miniCartContainer.querySelector('#cart-signin-link');
   if (newCartSigninLink) {
     newCartSigninLink.addEventListener('click', (e) => {
       e.preventDefault();
+      
+      // Track sign-in link click
+      trackEvent({
+        eventName: 'sign_in_mini_cart_header-L1_cto_rog',
+        category: 'mini_cart/header-L1/cto/rog',
+        label: 'sign_in/mini_cart/header-L1/cto/rog'
+      });
+      
+      // eslint-disable-next-line no-console
       console.log('Cart sign-in clicked');
-      mockLogin();
-      refreshHeader(block);
+      ssoLogin(block);
+    });
+  }
+
+  // Add tracking for checkout button
+  const checkoutButton = miniCartContainer.querySelector('.checkout-btn button');
+  if (checkoutButton) {
+    checkoutButton.addEventListener('click', () => {
+      trackEvent({
+        eventName: 'checkout_mini_cart_header-L1_cto_rog',
+        category: 'mini_cart/header-L1/cto/rog',
+        label: 'checkout/mini_cart/header-L1/cto/rog'
+      });
     });
   }
 }
@@ -694,123 +1240,55 @@ function mockClearCart() {
 if (typeof window !== 'undefined') {
   window.mockAddToCart = mockAddToCart;
   window.mockClearCart = mockClearCart;
-  window.mockLogin = mockLogin;
-  window.mockLogout = mockLogout;
-  
+  window.ssoLogin = ssoLogin;
+  window.ssoLogout = ssoLogout;
+
   // Add function to refresh mini cart for testing
   window.refreshMiniCart = () => {
     const headerBlock = document.querySelector('.header');
     if (headerBlock) {
-      updateMiniCartDisplay(headerBlock);
+      updateMiniCartDisplay(headerBlock);// eslint-disable-line no-use-before-define
     }
   };
 }
 
-// Refresh header function to re-render with current login state
-function refreshHeader(block) {
-  // Use stored original data instead of re-parsing from modified DOM
-  let data;
-  if (block._originalHeaderData) {
-    // Use stored original data as base
-    data = { ...block._originalHeaderData };
-    
-    // Still check for Universal Editor model updates
-    if (block.dataset && (block.dataset.model || block.dataset.aueModel)) {
-      const modelData = block.dataset.aueModel ? JSON.parse(block.dataset.aueModel) : {};
-      
-      // Apply any UE model updates to the stored data
-      if (modelData.asusLogoImage || modelData.asusLogoAltText || modelData.asusLogoUrl) {
-        if (!data.logos[0]) data.logos[0] = { name: 'asus', icon: '', altText: 'ASUS Logo', url: '#', width: '87', height: '20' };
-        data.logos[0] = {
-          name: 'asus',
-          icon: modelData.asusLogoImage || data.logos[0].icon,
-          altText: modelData.asusLogoAltText || data.logos[0].altText,
-          url: modelData.asusLogoUrl || data.logos[0].url,
-          width: data.logos[0].width,
-          height: data.logos[0].height
-        };
-      }
-      
-      if (modelData.rogLogoImage || modelData.rogLogoAltText || modelData.rogLogoUrl) {
-        if (!data.logos[1]) data.logos[1] = { name: 'rog', icon: '', altText: 'ROG Logo', url: '#', width: '135', height: '26' };
-        data.logos[1] = {
-          name: 'rog',
-          icon: modelData.rogLogoImage || data.logos[1].icon,
-          altText: modelData.rogLogoAltText || data.logos[1].altText,
-          url: modelData.rogLogoUrl || data.logos[1].url,
-          width: data.logos[1].width,
-          height: data.logos[1].height
-        };
-      }
-      
-      if (modelData.gamingPcLogoImage || modelData.gamingPcLogoAltText || modelData.gamingPcLogoUrl) {
-        if (!data.logos[2]) data.logos[2] = { name: 'gaming', icon: '', altText: 'Gaming PC Custom Builder Logo', url: '#', width: '104', height: '22' };
-        data.logos[2] = {
-          name: 'gaming',
-          icon: modelData.gamingPcLogoImage || data.logos[2].icon,
-          altText: modelData.gamingPcLogoAltText || data.logos[2].altText,
-          url: modelData.gamingPcLogoUrl || data.logos[2].url,
-          width: data.logos[2].width,
-          height: data.logos[2].height
-        };
-      }
-      
-      if (modelData.navLinks) {
-        data.navigationItems = parseNavLinks(modelData.navLinks);
-      }
-      
-      if (modelData.searchPlaceholder) data.searchPlaceholder = modelData.searchPlaceholder;
-      if (typeof modelData.showSearch === 'boolean') data.showSearch = modelData.showSearch;
-      if (typeof modelData.showProfile === 'boolean') data.showProfile = modelData.showProfile;
-      if (typeof modelData.showCart === 'boolean') data.showCart = modelData.showCart;
-      if (modelData.searchIcon) data.searchIcon = modelData.searchIcon;
-      if (modelData.cartIcon) data.cartIcon = modelData.cartIcon;
-      if (modelData.profileIcon) data.profileIcon = modelData.profileIcon;
-      if (modelData.hamburgerIcon) data.hamburgerIcon = modelData.hamburgerIcon;
-      if (modelData.closeIcon) data.closeIcon = modelData.closeIcon;
-      if (modelData.arrowLeftIcon) data.arrowLeftIcon = modelData.arrowLeftIcon;
-      if (modelData.arrowRightIcon) data.arrowRightIcon = modelData.arrowRightIcon;
-      if (modelData.profileMenuItems && Array.isArray(modelData.profileMenuItems)) {
-        data.profileMenuItems = modelData.profileMenuItems;
-      }
+// Function to optimize logo images using createOptimizedPicture
+function optimizeLogoImages(block) {
+  // Find all logo images and optimize them
+  block.querySelectorAll('.logo-wrapper picture > img').forEach((img) => {
+    let optimizedPic;
+
+    // Use HeaderConfig for baseUrl and shouldUseExternal
+    const { baseUrl, shouldUseExternal } = HeaderConfig;
+
+    if (shouldUseExternal) {
+      // Use createOptimizedPictureExternal with baseUrl when baseUrl is defined and different
+      optimizedPic = createOptimizedPictureExternal(
+        img.src,
+        img.alt,
+        true, // eager loading for logos (above fold)
+        [{ width: '200' }, { width: '400' }],
+        baseUrl,
+      );
+    } else {
+      // Use createOptimizedPicture from aem.js when baseUrl is not defined or equals window.location.href
+      optimizedPic = createOptimizedPicture(
+        img.src,
+        img.alt,
+        true, // eager loading for logos (above fold)
+        [{ width: '200' }, { width: '400' }],
+      );
     }
-  } else {
-    // Fallback to parsing if no stored data (shouldn't happen in normal flow)
-    data = parseHeaderData(block);
-  }
-  
-  // Create icons object for passing to build functions
-  const icons = {
-    searchIcon: data.searchIcon,
-    cartIcon: data.cartIcon,
-    profileIcon: data.profileIcon,
-    hamburgerIcon: data.hamburgerIcon,
-    closeIcon: data.closeIcon,
-    arrowLeftIcon: data.arrowLeftIcon,
-    arrowRightIcon: data.arrowRightIcon
-  };
 
-  // Create the header structure using parsed data
-  const headerHTML = `
-    <div class="header-wrapper">
-      <header class="experiencefragment">
-          <div class="cmp-container cmp-header container">
-            ${buildLogo(data.logos)}
-            ${buildNavigation(data.navigationItems, data.showProfile, data.showCart, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
-          </div>
-      </header>
-      ${buildMobileMenu(data.navigationItems, data.profileMenuItems, data.profileMenuLoggedInItems, icons)}
-    </div>
-  `;
-
-  // Clear existing content and add the header structure
-  block.innerHTML = headerHTML;
-  
-  // Re-initialize header functionality
-  initializeHeader(block);
+    // Move instrumentation from original to optimized image
+    moveInstrumentation(img, optimizedPic.querySelector('img'));
+    // Replace the original picture with optimized version
+    img.closest('picture').replaceWith(optimizedPic);
+  });
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
+  
   const data = parseHeaderData(block);
 
   // Store original parsed data for use in refreshHeader function
@@ -825,8 +1303,8 @@ export default function decorate(block) {
     hamburgerIcon: data.hamburgerIcon,
     closeIcon: data.closeIcon,
     arrowLeftIcon: data.arrowLeftIcon,
-    arrowRightIcon: data.arrowRightIcon
-  };
+    arrowRightIcon: data.arrowRightIcon,
+  }; // eslint-disable-line comma-dangle
 
   // Create the header structure using parsed data
   const headerHTML = `
@@ -851,243 +1329,7 @@ export default function decorate(block) {
   optimizeLogoImages(block);
 
   // Add header functionality
-  initializeHeader(block);
-}
+  //initializeHeader(block); // eslint-disable-line no-use-before-define
 
-// Function to optimize logo images using createOptimizedPicture
-function optimizeLogoImages(block) {
-  // Find all logo images and optimize them
-  
-  block.querySelectorAll('.logo-wrapper picture > img').forEach((img) => {
-    let optimizedPic;
-    
-    // Use HeaderConfig for baseUrl and shouldUseExternal
-    const { baseUrl, shouldUseExternal } = HeaderConfig;
-    
-    if (shouldUseExternal) {
-      // Use createOptimizedPictureExternal with baseUrl when baseUrl is defined and different
-      optimizedPic = createOptimizedPictureExternal(
-        img.src, 
-        img.alt, 
-        true, // eager loading for logos (above fold)
-        [{ width: '200' }, { width: '400' }], // responsive breakpoints
-        baseUrl
-      );
-    } else {
-      // Use createOptimizedPicture from aem.js when baseUrl is not defined or equals window.location.href
-      optimizedPic = createOptimizedPicture(
-        img.src, 
-        img.alt, 
-        true, // eager loading for logos (above fold)
-        [{ width: '200' }, { width: '400' }] // responsive breakpoints
-      );
-    }
-    
-    // Move instrumentation from original to optimized image
-    moveInstrumentation(img, optimizedPic.querySelector('img'));
-    // Replace the original picture with optimized version
-    img.closest('picture').replaceWith(optimizedPic);
-  });
-}
-
-function initializeHeader(block) {
-  // Get current login state and profile menu data
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  
-  // Use stored original data instead of re-parsing from modified DOM
-  const data = block._originalHeaderData || {};
-  const profileMenuItems = data.profileMenuItems || [];
-  const profileMenuLoggedInItems = data.profileMenuLoggedInItems || [];
-  
-  // Calculate combined menu items for logged-in state
-  const combinedMenuItems = isLoggedIn 
-    ? [...profileMenuItems, ...profileMenuLoggedInItems]
-    : profileMenuItems;
-
-  // Mobile menu toggle
-  const hamburgerToggle = block.querySelector('#header-hamburger-menu-toggle');
-  const mobileMenuOverlay = block.querySelector('#mobile-menu-dialog');
-  
-  if (hamburgerToggle && mobileMenuOverlay) {
-    hamburgerToggle.addEventListener('click', () => {
-      const isExpanded = hamburgerToggle.getAttribute('aria-expanded') === 'true';
-      hamburgerToggle.setAttribute('aria-expanded', !isExpanded);
-      mobileMenuOverlay.setAttribute('aria-hidden', isExpanded);
-      block.classList.toggle('mm-open', !isExpanded);
-    });
-  }
-
-  // Profile dropdown
-  const profileToggle = block.querySelector('.profile-toggle');
-  const profileMenu = block.querySelector('.profile-menu');
-  
-  if (profileToggle && profileMenu) {
-    profileToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      
-      // Close mini cart if it's open when profile is clicked
-      const miniCartToggle = block.querySelector('#mini-cart-toggle');
-      const miniCartContainer = block.querySelector('#mini-cart-container');
-      
-      if (miniCartToggle && miniCartContainer) {
-        const isMiniCartExpanded = miniCartToggle.getAttribute('aria-expanded') === 'true';
-        if (isMiniCartExpanded) {
-          miniCartToggle.setAttribute('aria-expanded', 'false');
-          miniCartContainer.setAttribute('aria-hidden', 'true');
-          miniCartContainer.classList.remove('show');
-        }
-      }
-      
-      const isExpanded = profileToggle.getAttribute('aria-expanded') === 'true';
-      profileToggle.setAttribute('aria-expanded', !isExpanded);
-      profileMenu.classList.toggle('show', !isExpanded);
-    });
-
-    //Close profile menu when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!profileToggle.contains(e.target) && !profileMenu.contains(e.target)) {
-        profileToggle.setAttribute('aria-expanded', 'false');
-        profileMenu.classList.remove('show');
-      }
-    });
-  }
-
-  // Profile menu close button
-  const profileClose = block.querySelector('.profile-menu__close');
-  if (profileClose) {
-    profileClose.addEventListener('click', () => {
-      profileToggle.setAttribute('aria-expanded', 'false');
-      profileMenu.classList.remove('show');
-    });
-  }
-
-  // Mock Login/Logout functionality for desktop profile menu
-  const profileMenuItemElements = block.querySelectorAll('.profile-menu__item[data-menu-index]');
-  
-  
-  profileMenuItemElements.forEach((item, index) => {
-    const link = item.querySelector('a');
-    if (link) {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        if (index === 0) {
-          if (!isLoggedIn) {
-            // First item when not logged in - trigger login
-            mockLogin();
-            refreshHeader(block);
-          } else {
-            // First item when logged in - trigger logout
-            mockLogout();
-            refreshHeader(block);
-          }
-        }
-        // For other items, you can add actual navigation logic here
-      });
-    }
-  });
-
-  // Mock Login/Logout functionality for mobile profile menu
-  const mobileProfileMenuItems = block.querySelectorAll('.submenu-items li[data-mobile-menu-index]');
-  mobileProfileMenuItems.forEach((item, index) => {
-    const link = item.querySelector('a');
-    if (link) {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        console.log('Mobile menu clicked:', { index, isLoggedIn, combinedMenuLength: combinedMenuItems.length, linkText: link.textContent });
-        
-        if (index === 0) {
-          if (!isLoggedIn) {
-            // First item when not logged in - trigger login
-            console.log('Triggering mobile login');
-            mockLogin();
-            refreshHeader(block);
-          } else {
-            // First item when logged in - trigger logout
-            console.log('Triggering mobile logout (first item when logged in)');
-            mockLogout();
-            refreshHeader(block);
-          }
-        } else {
-          console.log('No action for this mobile menu item');
-        }
-        // For other items, you can add actual navigation logic here
-      });
-    }
-  });
-
-  // Mini cart toggle
-  const miniCartToggle = block.querySelector('#mini-cart-toggle');
-  const miniCartContainer = block.querySelector('#mini-cart-container');
-  
-  if (miniCartToggle && miniCartContainer) {
-    miniCartToggle.addEventListener('click', async () => {
-      const isExpanded = miniCartToggle.getAttribute('aria-expanded') === 'true';
-      
-      if (!isExpanded) {
-        // Update cart content before showing
-        await updateMiniCartDisplay(block);
-      }
-      
-      miniCartToggle.setAttribute('aria-expanded', !isExpanded);
-      miniCartContainer.setAttribute('aria-hidden', isExpanded);
-      miniCartContainer.classList.toggle('show', !isExpanded);
-    });
-  }
-
-  // Mini cart close button
-  const miniCartClose = block.querySelector('.mini-cart__close');
-  if (miniCartClose) {
-    miniCartClose.addEventListener('click', () => {
-      miniCartToggle.setAttribute('aria-expanded', 'false');
-      miniCartContainer.setAttribute('aria-hidden', 'true');
-      miniCartContainer.classList.remove('show');
-    });
-  }
-
-  // Initialize mini cart display
-  updateMiniCartDisplay(block);
-
-  // Cart sign-in link functionality
-  const cartSigninLink = block.querySelector('#cart-signin-link');
-  if (cartSigninLink) {
-    cartSigninLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      console.log('Cart sign-in clicked');
-      mockLogin();
-      refreshHeader(block);
-    });
-  }
-
-  // Mobile account toggle
-  const mobileAccountToggle = block.querySelector('.mobile-account-toggle');
-  const mobileAccountSubmenu = block.querySelector('.mobile-account-submenu');
-  const backButton = block.querySelector('.back-button');
-  
-  if (mobileAccountToggle && mobileAccountSubmenu) {
-    mobileAccountToggle.addEventListener('click', () => {
-      const isExpanded = mobileAccountToggle.getAttribute('aria-expanded') === 'true';
-      mobileAccountToggle.setAttribute('aria-expanded', !isExpanded);
-      mobileAccountSubmenu.classList.toggle('show', !isExpanded);
-    });
-  }
-
-  if (backButton) {
-    backButton.addEventListener('click', () => {
-      mobileAccountToggle.setAttribute('aria-expanded', 'false');
-      mobileAccountSubmenu.classList.remove('show');
-    });
-  }
-
-  // Close mobile menu when clicking overlay
-  if (mobileMenuOverlay) {
-    mobileMenuOverlay.addEventListener('click', (e) => {
-      if (e.target === mobileMenuOverlay) {
-        hamburgerToggle.setAttribute('aria-expanded', 'false');
-        mobileMenuOverlay.setAttribute('aria-hidden', 'true');
-        block.classList.remove('mm-open');
-      }
-    });
-  }
+  ssoLogin(block);
 }

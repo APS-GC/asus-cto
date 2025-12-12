@@ -66,7 +66,11 @@ export default function decorate(block) {
     
     // Process each cell in the row
     const cells = [...row.children];
-    let imageCell, dateCell, titleCell, descriptionCell, linkCell;
+    let imageCell;
+    let dateCell;
+    let titleCell;
+    let descriptionCell;
+    let linkCell;
     
     // Map cells based on expected order: image, date, title, description, link
     if (cells.length >= 5) {

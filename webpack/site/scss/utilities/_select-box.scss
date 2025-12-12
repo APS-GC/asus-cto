@@ -8,38 +8,53 @@
   flex: 1;
   min-width: 0;
   margin-bottom: 0 !important;
-  padding: 2px;
+  padding: 0;
+
   .choices__inner {
-    background: var(--color-primary-base);
-    border: 1px solid var(--color-primary-600);
+    background: transparent;
+    border: 0;
     border-radius: vars.$border-radius;
     color: var(--color-primary-950);
     width: 100%;
     position: relative;
-    @include typo.text-base();
-    @include mix.p(4, "x");
     min-height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: inset 0 0 0 1px var(--color-primary-600);
+    @include mix.p(4, "x");
+    @include mix.p(1, "y");
+    @include mix.spacer("gap", 2);
+    @include typo.text-base();
+
     &::after {
       content: "";
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
       width: 12px;
-      height: 8px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      height: 12px;
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1.125 3.75L6 7.875L10.875 3.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
       background-repeat: no-repeat;
       background-position: center;
       pointer-events: none;
       z-index: 10;
     }
+
+    .choices__item {
+      min-width: 136px;
+    }
+  }
+
+  &[data-type*="select-one"] .choices__inner {
+    @include mix.p(4, "x");
+    @include mix.p(1, "y");
   }
 
   .choices__list--single {
     @include mix.p(0);
   }
+
   .choices__list--single .choices__item {
-    color: var(--color-primary-950);
+    color: var(--color-primary-700);
+    min-width: none;
   }
 
   // Hide default Choices.js arrow and button
@@ -47,6 +62,7 @@
   &::after {
     display: none !important;
   }
+
   .choices__button {
     display: none !important;
   }
@@ -57,56 +73,101 @@
     border-radius: vars.$border-radius;
     z-index: 2000;
     position: absolute;
-    width: 100% !important;
     min-width: 100%;
     box-sizing: border-box;
     left: 0;
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
     @include typo.text-base();
     @include mix.m(1, "t");
     @include mix.p(2, "y");
 
     .choices__item {
-      color: var(--color-primary-950);
+      color: var(--color-primary-700);
       @include mix.p(1, "y");
       @include mix.p(4, "x");
       @include typo.text-base();
 
-      &.is-highlighted {
-        background: var(--color-select-box-highlight);
+      &:hover {
+        background: var(--color-primary-base);
         color: var(--color-primary-950);
+      }
+
+      &.is-selected {
+        background: #006CE1;
+        color: var(--color-primary-950);
+
+        &.is-highlighted {
+          background: #006CE1;
+          outline: 2px solid var(--color-primary-950);
+          outline-offset: -2px;
+        }
+      }
+
+      &:not(.is-selected).is-highlighted {
+        background: var(--color-primary-base);
+        color: var(--color-primary-950);
+        outline: 2px solid #006CE1;
+        outline-offset: -2px;
       }
     }
   }
 
   &.is-open {
+    outline: none;
+    border-radius: 0;
+
     .choices__inner {
-      border-color: var(--color-primary-950);
+      box-shadow: inset 0 0 0 1px var(--color-primary-950);
+    }
+
+    .choices__list--dropdown {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+  }
+
+  &:has(.choices__inner:focus-visible) {
+    overflow: visible;
+  }
+
+  .choices__inner:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+  }
+
+  &.is-flipped {
+    &.is-open .choices__inner {
+      border-radius: vars.$border-radius;
+    }
+
+    .choices__list--dropdown {
+      background: var(--color-primary-base);
+      border: 1px solid var(--color-primary-600);
+      border-radius: vars.$border-radius;
+      z-index: 2000;
+      position: absolute;
+      min-width: 100%;
+      box-sizing: border-box;
+      left: 0;
+      @include typo.text-base();
+      @include mix.m(1, "b");
+      @include mix.p(2, "y");
+
+      .choices__item {
+        color: var(--color-primary-950);
+        @include mix.p(1, "y");
+        @include mix.p(4, "x");
+        @include typo.text-base();
+      }
     }
   }
 }
 
 @include mix.respond-to("lg", "min") {
   .choices {
-    min-width: 220px;
-
-    .choices__inner {
-      position: relative;
-
-      &::after {
-        content: "";
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 12px;
-        height: 8px;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: center;
-        pointer-events: none;
-        z-index: 10;
-      }
-    }
 
     // Hide default Choices.js elements
     &::before,
@@ -121,10 +182,11 @@
 }
 
 @include mix.respond-to("lg", "max") {
-  .choices__inner {
-    min-height: 40px;
-  }
-  .choices[data-type*="select-one"] .choices__inner {
-    @include mix.p(0, "b");
+
+  .choices,
+  .choices[data-type*="select-one"] {
+    .choices__inner {
+      @include mix.p(2, "y");
+    }
   }
 }

@@ -1,6 +1,6 @@
 // Constants
 const CUSTOM_EFFECT_NAME = 'creative';
-const CAROUSEL_SELECTOR = '.carousel:has(.cmp-carousel:not([data-init="false"]))';
+// const CAROUSEL_SELECTOR = '.carousel:has(.cmp-carousel:not([data-init="false"]))';
 
 // Custom effect settings
 const customEffectSettings = {
@@ -12,6 +12,7 @@ const customEffectSettings = {
   loopedSlides: 3,
   grabCursor: true,
   watchSlidesProgress: true,
+  scrollOnFocus: true,
   initialSlide: 0,
   preventInteractionOnTransition: true,
   creativeEffect: {
@@ -20,7 +21,7 @@ const customEffectSettings = {
     next: { translate: [250, 0, 0], scale: 0.8 },
   },
   breakpoints: {
-    768: {
+    731: {
       creativeEffect: {
         limitProgress: 1,
         prev: { translate: [-400, 0, 0], scale: 0.51 },
@@ -58,12 +59,13 @@ const manageVideoPlayback = (video, action) => {
       promise = video.pause();
     }
   } else {
+    // eslint-disable-next-line no-console
     console.error('Invalid video action:', action);
     return;
   }
 
   if (promise !== undefined) {
-    promise.catch((e) => console.error(`Video ${action} failed:`, e));
+    promise.catch((e) => console.error(`Video ${action} failed:`, e)); // eslint-disable-line no-console
   }
 };
 
@@ -72,21 +74,19 @@ const manageVideoPlayback = (video, action) => {
  * Falls back to a timeout of 5 seconds if no interaction is detected.
  * @returns {Promise<void>}
  */
-const waitForFirstUserInteraction = () => {
-  return new Promise((resolve) => {
-    const timeout = setTimeout(() => {
-      resolve();
-    }, 5000);
+const waitForFirstUserInteraction = () => new Promise((resolve) => {
+  const timeout = setTimeout(() => {
+    resolve();
+  }, 5000);
 
-    const startEvents = ['click', 'keydown', 'touchstart', 'mousemove'];
-    const handler = () => {
-      startEvents.forEach((event) => window.removeEventListener(event, handler));
-      clearTimeout(timeout);
-      resolve();
-    };
-    startEvents.forEach((event) => window.addEventListener(event, handler, { once: true }));
-  });
-};
+  const startEvents = ['click', 'keydown', 'touchstart', 'mousemove'];
+  const handler = () => {
+    startEvents.forEach((event) => window.removeEventListener(event, handler));
+    clearTimeout(timeout);
+    resolve();
+  };
+  startEvents.forEach((event) => window.addEventListener(event, handler, { once: true }));
+});
 
 /**
  * Updates the focusability of interactive elements within a slide.
@@ -141,19 +141,19 @@ const handleVideoPlayback = (swiper) => {
 
 const toggleSliderVideo = (videoPlayPauseBtn) => {
   const activeSlide = document.querySelector('.swiper-slide-active');
-  let activeSlideProdName = document.querySelector('.swiper-slide-active .product-name')?.innerHTML;
+  const activeSlideProdName = document.querySelector('.swiper-slide-active .product-name')?.innerHTML;
 
   const activeVideo = activeSlide?.querySelector('video');
   const mediaControls = document.querySelector('.cmp-carousel__media-controls');
   if (activeSlide && activeVideo) {
     if (activeVideo.paused) {
       manageVideoPlayback(activeVideo, 'play');
-      videoPlayPauseBtn?.setAttribute('aria-label', 'Pause ' + activeSlideProdName);
-      videoPlayPauseBtn?.setAttribute('title', 'Pause ' + activeSlideProdName);
+      videoPlayPauseBtn?.setAttribute('aria-label', `Pause ${activeSlideProdName}`);
+      videoPlayPauseBtn?.setAttribute('title', `Pause ${activeSlideProdName}`);
     } else {
       manageVideoPlayback(activeVideo, 'pause');
-      videoPlayPauseBtn?.setAttribute('aria-label', 'Play ' + activeSlideProdName);
-      videoPlayPauseBtn?.setAttribute('title', 'Play ' + activeSlideProdName);
+      videoPlayPauseBtn?.setAttribute('aria-label', `Play ${activeSlideProdName}`);
+      videoPlayPauseBtn?.setAttribute('title', `Play ${activeSlideProdName}`);
     }
     mediaControls?.classList.toggle('paused');
   }
@@ -322,37 +322,57 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
       bulletClass: 'cmp-carousel__indicator',
       bulletActiveClass: 'cmp-carousel__indicator--active',
 
-      renderBullet: (index, className) => {
-        return `<li class="${className}" aria-label="Go to slide ${index + 1}" role="tab"></li>`;
-      },
+      renderBullet: (index, className) => `<li class="${className}" aria-label="Go to slide ${index + 1}" role="tab"></li>`,
     },
     a11y: {
       enabled: true,
       slideLabelMessage: 'Slide {{index}} of {{slidesLength}}',
       paginationBulletMessage: 'Go to slide {{index}}',
-      prevSlideMessage: prevSlideMessage,
-      nextSlideMessage: nextSlideMessage,
+      prevSlideMessage,
+      nextSlideMessage,
     },
     autoplay: false,
     breakpoints: {
-      768: {
+      731: {
         slidesPerView: slidesPerViewTablet,
         spaceBetween: spaceBetweenTablet,
       },
-      1024: {
+      1280: {
         slidesPerView: slidesPerViewDesktop,
         spaceBetween: spaceBetweenDesktop,
       },
     },
     on: {
       afterInit(swiper) {
+        const updateNavButtonAria = () => {
+          const btns = [swiper.navigation.prevEl, swiper.navigation.nextEl];
+
+          btns.forEach((btn) => {
+            if (!btn) return;
+
+            const isDisabled = btn.classList.contains('cmp-carousel__action--disabled');
+
+            btn.setAttribute('aria-disabled', isDisabled ? 'true' : 'false');
+
+            if (isDisabled) {
+              btn.setAttribute('disabled', 'disabled');
+            } else {
+              btn.removeAttribute('disabled');
+            }
+          });
+        };
+
+        updateNavButtonAria();
+
+        swiper.on('slideChange', updateNavButtonAria);
+
         swiper.slides.forEach((slide) => {
           slide.setAttribute('tabindex', '-1');
 
           // Set autoplay delay for each slide based on video duration
           const slideVideo = slide?.querySelector('.hero-video');
           if (slideVideo) {
-            if (slideVideo.readyState >= 1 && !isNaN(slideVideo.duration)) {
+            if (slideVideo.readyState >= 1 && !Number.isNaN(slideVideo.duration)) {
               // Metadata is already loaded
               slide.dataset.swiperAutoplay = (slideVideo.duration + 1) * 1000;
             } else {
@@ -361,6 +381,11 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
                 slide.dataset.swiperAutoplay = (slideVideo.duration + 1) * 1000;
               });
             }
+          }
+
+          if (swiper.isLocked) {
+            slide.removeAttribute('aria-label');
+            slide.removeAttribute('role');
           }
         });
 
@@ -373,7 +398,7 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
 
         // A11Y: Add event listener for pagination bullets
         // Watch for keyboard activation on bullets
-        indicators?.addEventListener('keydown', function (e) {
+        indicators?.addEventListener('keydown', (e) => {
           const isBullet = e?.target?.classList.contains('swiper-pagination-bullet');
           const isActivationKey = e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar';
 
@@ -386,14 +411,14 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
         // Create autoplay toggle button if pagination is enabled
         if (hasPagination) {
           // Create autoplay toggle button
-          let activeSlideProdName = document.querySelector(
+          const activeSlideProdName = document.querySelector(
             '.swiper-slide-active .product-name',
           )?.innerHTML;
 
           playPauseBtn = document.createElement('button');
           playPauseBtn.className = 'carousel-autoplay-toggle';
           playPauseBtn.setAttribute('aria-label', 'Play carousel auto-play');
-          videoPlayPauseBtn?.setAttribute('aria-label', 'Play ' + activeSlideProdName);
+          videoPlayPauseBtn?.setAttribute('aria-label', `Play ${activeSlideProdName}`);
 
           // Check if button already exists
           const existingBtn = indicatorsGroup.querySelector('.carousel-autoplay-toggle');
@@ -417,17 +442,17 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
           bullet.style.setProperty('--slide-progress', idx === swiper.realIndex ? 1 - progress : 0);
         });
       },
-      slideNextTransitionStart(swiper) {
-        let activeSlideProdName = document.querySelector(
+      slideNextTransitionStart() {
+        const activeSlideProdName = document.querySelector(
           '.swiper-slide-active .product-name',
         )?.innerHTML;
-        videoPlayPauseBtn?.setAttribute('aria-label', 'Play ' + activeSlideProdName);
+        videoPlayPauseBtn?.setAttribute('aria-label', `Play ${activeSlideProdName}`);
       },
       slideChange(swiper) {
-        let activeSlideProdName = document.querySelector(
+        const activeSlideProdName = document.querySelector(
           '.swiper-slide-active .product-name',
         )?.innerHTML;
-        videoPlayPauseBtn?.setAttribute('aria-label', 'Play ' + activeSlideProdName);
+        videoPlayPauseBtn?.setAttribute('aria-label', `Play ${activeSlideProdName}`);
         mediaControls?.classList.remove('paused');
         // Reset bullet progress bars without animation
         swiper.pagination.bullets.forEach((bullet) => {
@@ -439,6 +464,8 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
           progressEl.style.transition = 'none';
           progressEl.style.transform = 'scaleX(0)';
         });
+
+        window.dispatchEvent(new CustomEvent('swiper-slide-change', { detail: swiper }));
       },
       autoplayStart(swiper) {
         // Add autoplay class to swiper element
@@ -449,11 +476,11 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
         swiper.el.classList.remove('is-autoplay-enabled', 'is-autoplay-paused');
       },
       autoplayPause(swiper) {
-        let activeSlideProdName = document.querySelector(
+        const activeSlideProdName = document.querySelector(
           '.swiper-slide-active .product-name',
         )?.innerHTML;
         playPauseBtn.setAttribute('aria-label', 'Play');
-        videoPlayPauseBtn?.setAttribute('aria-label', 'Play ' + activeSlideProdName);
+        videoPlayPauseBtn?.setAttribute('aria-label', `Play ${activeSlideProdName}`);
 
         swiper.el.classList.add('is-autoplay-paused');
 
@@ -462,11 +489,11 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
         manageVideoPlayback(activeVideo, 'pause');
       },
       autoplayResume(swiper) {
-        let activeSlideProdName = document.querySelector(
+        const activeSlideProdName = document.querySelector(
           '.swiper-slide-active .product-name',
         )?.innerHTML;
         playPauseBtn.setAttribute('aria-label', 'Pause carousel auto-play');
-        videoPlayPauseBtn?.setAttribute('aria-label', 'Pause ' + activeSlideProdName);
+        videoPlayPauseBtn?.setAttribute('aria-label', `Pause ${activeSlideProdName}`);
 
         swiper.el.classList.remove('is-autoplay-paused', 'is-manual-autoplay');
 

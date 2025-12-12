@@ -1,5 +1,51 @@
-<section>
-  <div class="container">
-    <%- include('../components/section-heading/_section-heading.ejs', { name: 'News & Articles' }) %>
+<section class="cmp-article-listing-page section-with-top-spacing section-with-bottom-spacing gradient-animation">
+  <div id="sr-expand-announcement" class="sr-only-fixed" aria-live="polite" aria-atomic="true"></div>
+  <div class="cmp-article-listing-page__wrapper container">
+    <%- include('../components/section-heading/_section-heading.ejs', { name: 'News & Articles' , subTitle: 'All you need to know about ASUS Custom-to-Order.'}) %>
+    <div class="cmp-articles-toolbar">
+      <!-- articles count -->
+      <div class="cmp-articles-count">
+        <span id="article-count">16 News & Articles</span>
+      </div>
+
+      <!-- Sort wrapper -->
+      <div class="cmp-articles-toolbar__sort-wrapper">
+        <div class="cmp-articles-sort-label">
+          <label for="articles-sort-by">Sort by:</label>
+        </div>
+        <div class="cmp-articles-sort">
+          <select 
+            id="articles-sort-by" 
+            name="sort-by" 
+            class="cmp-articles-sort__select"
+            aria-label="Sort articles by"
+            aria-hidden="true"
+          >
+            <option value="newest" selected>Newest</option>
+            <option value="oldest">Oldest</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="articles-flex">
+      <div class="cmp-articles-list layout-grid layout-grid--cols-12" id="cmp-articles-list">
+        <!-- News listings will be dynamically loaded here -->
+      </div>
+      <div class="cmp-articles-list layout-grid layout-grid--cols-12" id="cmp-articles-list-hidden" aria-hidden="true" role="region" aria-labelledby="show-more-button">
+        <!-- Hidden News listings will be dynamically loaded here -->
+      </div>
+    </div>
+    <div class="cmp-articles-list__actions">
+      <button
+       id="show-more-button"
+       class="cmp-show-more-articles-button btn btn-link"
+       type="button"
+       aria-controls="cmp-articles-list-hidden"
+      >
+       <span class="button-text">See More</span>
+       <span class="icon icon--arrow-bottom" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
   </div>
 </section>
