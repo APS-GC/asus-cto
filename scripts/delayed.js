@@ -1,6 +1,5 @@
 // Load Google Tag Manager and analytics in delayed phase for better TBT
 import { loadGTM, sendPageLoadAttributes } from './google-data-layer.js';
-import { initializeLazyCarousels } from './lazy-carousel-loader.js';
 
 // Dispatch custom event to notify blocks that delayed loading is complete
 window.dispatchEvent(new Event('delayed-loaded'));
@@ -10,10 +9,20 @@ window.dispatchEvent(new Event('delayed-loaded'));
   await sendPageLoadAttributes();
   
   // Initialize carousels lazily after GTM loads
-  // This prevents carousel initialization from blocking main thread
-  requestIdleCallback(() => {
-    initializeLazyCarousels();
-  }, { timeout: 1000 });
+  // Import and initialize lazy carousels AFTER everything else
+  // This prevents carousel initialization from blocking main thread  
+  const { initializeLazyCarousels } = await import('./lazy-carousel-loader.js');
+  
+  // Use requestIdleCallback to ensure this doesn't block
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      initializeLazyCarousels();
+    }, { timeout: 2000 });
+  } else {
+    setTimeout(() => {
+      initializeLazyCarousels();
+    }, 100);
+  }
 })();
 
 // // Constants

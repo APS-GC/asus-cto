@@ -151,6 +151,9 @@ let swiperCSSLoaded = false;
  * @returns {Promise<Object>} Promise that resolves with Swiper constructor
  */
 export async function loadSwiper() {
+  // Performance mark
+  performance.mark('swiper-load-start');
+  
   // Return immediately if Swiper is already loaded
   if (window.Swiper) {
     return window.Swiper;
@@ -158,35 +161,33 @@ export async function loadSwiper() {
   
   // Return existing promise if load is in progress
   if (!swiperPromise) {
-    console.log('Swiper: Starting dynamic load (JS + CSS) [Call ID: ' + Date.now() + ']');
-    
     swiperPromise = (async () => {
       try {
-        await Promise.all([
-          // Load CSS once
-          !swiperCSSLoaded ? loadCSS('https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css').then(() => {
-            swiperCSSLoaded = true;
-            console.log('Swiper CSS loaded');
-          }) : Promise.resolve(),
-          // Load JS
-          loadScript(
-            'https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js',
-            {
-              crossorigin: 'anonymous',
-              referrerpolicy: 'no-referrer'
-            }
-          )
-        ]);
-        console.log('Swiper loaded dynamically (CSS + JS)');
+        // Load CSS first (non-blocking)
+        if (!swiperCSSLoaded) {
+          await loadCSS('https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css');
+          swiperCSSLoaded = true;
+        }
+        
+        // Then load JS (this is the heavy part)
+        await loadScript(
+          'https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js',
+          {
+            crossorigin: 'anonymous',
+            referrerpolicy: 'no-referrer'
+          }
+        );
+        
+        performance.mark('swiper-load-end');
+        performance.measure('swiper-load-duration', 'swiper-load-start', 'swiper-load-end');
+        
         return window.Swiper;
       } catch (error) {
         console.error('Failed to load Swiper library:', error);
         swiperPromise = null; // Reset on error so retry is possible
         throw error;
       }
-    })(); // IIFE (Immediately Invoked Function Expression) creates promise synchronously
-  } else {
-    console.log('Swiper: Reusing existing load promise');
+    })();
   }
   
   return swiperPromise;
@@ -432,12 +433,18 @@ export function decorateMain(main) {
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
+  // Performance mark: Start of eager loading
+  performance.mark('asus-eager-start');
+  
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
   
-  const noscript = document.createElement('noscript');
-  noscript.innerHTML = '<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8KDRJVJ" height="0" width="0" style="display:none;visibility:hidden"></iframe>';
-  document.body.insertBefore(noscript, document.body.firstChild);
+  // Defer GTM noscript to avoid blocking main thread
+  requestIdleCallback(() => {
+    const noscript = document.createElement('noscript');
+    noscript.innerHTML = '<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N8KDRJVJ" height="0" width="0" style="display:none;visibility:hidden"></iframe>';
+    document.body.insertBefore(noscript, document.body.firstChild);
+  }, { timeout: 2000 });
   
   const main = doc.querySelector('main');
   if (main) {
@@ -461,6 +468,10 @@ async function loadEager(doc) {
   } catch (e) {
     // do nothing
   }
+  
+  // Performance mark: End of eager loading
+  performance.mark('asus-eager-end');
+  performance.measure('asus-eager-duration', 'asus-eager-start', 'asus-eager-end');
 }
 
 /**
@@ -658,9 +669,25 @@ export async function fetchPlaceholders(prefix = 'default') {
  * without impacting the user experience.
  */
 function loadDelayed() {
+  // Initialize lazy carousels IMMEDIATELY but in idle time (not after 3s delay)
+  // This ensures carousels are ready quickly but don't block TBT
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(async () => {
+      const { initializeLazyCarousels } = await import('./lazy-carousel-loader.js');
+      initializeLazyCarousels();
+    }, { timeout: 1500 });
+  } else {
+    setTimeout(async () => {
+      const { initializeLazyCarousels } = await import('./lazy-carousel-loader.js');
+      initializeLazyCarousels();
+    }, 500);
+  }
+  
+  // Load GTM and analytics after a delay to avoid blocking
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
-  // load anything that can be postponed to the latest here
+  
+  // Dispatch event for any blocks that need it
   document.dispatchEvent(new Event('eds-lazy-event'));
 }
 

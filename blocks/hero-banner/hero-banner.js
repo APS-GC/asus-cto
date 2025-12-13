@@ -654,48 +654,16 @@ export default async function decorate(block) {
   block.textContent = '';
   block.appendChild(heroBannerWrapper);
   
-  // Handle video autoplay for first slide
+  // Handle video autoplay for first slide (deferred)
   const video = heroBannerWrapper.querySelector('video');
-  if (video) {
-    manageVideoPlayback(video, 'play');
-  }
-
+  
   // Determine block position (how many hero-banner blocks appear before this one)
   const allHeroBanners = document.querySelectorAll('.hero-banner.block');
   const blockPosition = Array.from(allHeroBanners).indexOf(block) + 1;
-
-  // Initialize Swiper hero banner with blockPosition
-  initializeSwiper(heroBannerWrapper, config, blockPosition);
   const basePath = await getConfigValue('base-path') || '';
   const bannerPosition = `hero_banner_${blockPosition}`;
-  
-  // Track promotionView for all visible slides
-  setTimeout(() => {
-    const promotions = config.slides.map((slide, index) => ({
-      id: slide.media || `hero_banner_slide_${index + 1}`,
-      name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
-      position: bannerPosition,
-      order: `${index + 1}`
-    }));
-    trackPromotionView(promotions);
-  }, 500);
 
-  // Track indicator clicks (wait for Swiper to initialize)
-  setTimeout(() => {
-    const indicators = block.querySelectorAll('.cmp-hero-banner__indicator');
-    
-    indicators.forEach((indicator, index) => {
-      indicator.addEventListener('click', () => {
-        trackEvent({
-          eventName: 'indicator_banner_home_cto_rog',
-          category: `indicator/${bannerPosition}${basePath}`,
-          label: `${index + 1}/indicator/${bannerPosition}${basePath}`
-        });
-      });
-    });
-  }, 600);
-
-  // Track promotionClick when CTA is clicked
+  // Track promotionClick when CTA is clicked (setup immediately, works without Swiper)
   block.querySelectorAll('.cta-button').forEach((ctaButton, index) => {
     ctaButton.addEventListener('click', (e) => {
       const slide = config.slides[index];
@@ -732,10 +700,51 @@ export default async function decorate(block) {
       }
     });
   });
-  // Initialize Swiper hero banner only if there are multiple slides
-  if (hasMultipleSlides) {
-    requestAnimationFrame(() => {
+
+  // CRITICAL: Defer ALL Swiper initialization to avoid blocking TBT
+  // This runs after the first paint and LCP
+  const deferredInit = () => {
+    // Start video playback
+    if (video) {
+      manageVideoPlayback(video, 'play');
+    }
+    
+    // Initialize Swiper if multiple slides
+    if (hasMultipleSlides) {
       upgradeToCarousel(heroBannerWrapper, config, heroBannerId);
-    });
+      initializeSwiper(heroBannerWrapper, config, blockPosition);
+      
+      // Track indicator clicks (wait for Swiper to initialize)
+      setTimeout(() => {
+        const indicators = block.querySelectorAll('.cmp-hero-banner__indicator');
+        
+        indicators.forEach((indicator, index) => {
+          indicator.addEventListener('click', () => {
+            trackEvent({
+              eventName: 'indicator_banner_home_cto_rog',
+              category: `indicator/${bannerPosition}${basePath}`,
+              label: `${index + 1}/indicator/${bannerPosition}${basePath}`
+            });
+          });
+        });
+      }, 100);
+    }
+    
+    // Track promotionView for all visible slides
+    const promotions = config.slides.map((slide, index) => ({
+      id: slide.media || `hero_banner_slide_${index + 1}`,
+      name: slide.title || slide.subtitle || `Hero Banner ${index + 1}`,
+      position: bannerPosition,
+      order: `${index + 1}`
+    }));
+    trackPromotionView(promotions);
+  };
+
+  // Defer initialization using requestIdleCallback (after LCP)
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(deferredInit, { timeout: 1000 });
+  } else {
+    // Fallback: use setTimeout with a small delay
+    setTimeout(deferredInit, 100);
   }
 }
