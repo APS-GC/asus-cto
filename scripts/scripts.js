@@ -448,11 +448,6 @@ async function loadEager(doc) {
     }
     
     decorateMain(main);
-    const hasCarousel = main.querySelector('.hero-banner, .hot-products, .product-preview, .help-me-choose,.our-advantages');
-    if (hasCarousel) {
-      loadSwiper().catch(err => console.error('Failed to preload Swiper:', err));
-    }
-    
     document.body.classList.add('appear');
     const section = main.querySelector('.section');
     waitForFirstImage(section);
