@@ -3,7 +3,7 @@
  * Supports authorable hero banner slides with video/image media, CTA buttons, and autoplay settings
  */
 
-import { moveInstrumentation, createOptimizedPicture, loadSwiper } from '../../scripts/scripts.js';
+import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
 import { getBlockConfigs, getConfigValue } from '../../scripts/configs.js';
 import { isUniversalEditor } from '../../scripts/utils.js';
 import { trackPromotionView, trackPromotionClick, trackEvent } from '../../scripts/google-data-layer.js';
@@ -151,25 +151,34 @@ function generateHeroBannerHTML(slide, config, index = 0) {
     const imageWrapper = document.createElement('div');
     imageWrapper.className = 'hero-image-wrapper';
 
-    // Use createOptimizedPicture for responsive images + WebP optimization
-    const optimizedPicture = createOptimizedPicture(
-      slide.media,
-      slide.mediaAlt || 'Hero Banner',
-      isFirstSlide, // eager=true for first slide (LCP optimization!)
-      [
-        { media: '(min-width: 1280px)', width: '1440' },
-        { media: '(min-width: 731px)', width: '1024' },
-        { width: '640' },
-      ], // eslint-disable-line comma-dangle
-      isFirstSlide ? 'high' : null, // fetchpriority='high' for first slide (LCP boost!)
-    );
-
-    const img = optimizedPicture.querySelector('img');
-    if (img) {
+    // Reuse the original image/picture element from the authored row
+    const mediaCell = slide.originalRow?.children[2];
+    const originalMedia = mediaCell?.querySelector('picture') || mediaCell?.querySelector('img');
+    
+    if (originalMedia) {
+      // Enhance the existing element
+      const img = originalMedia.tagName === 'IMG' ? originalMedia : originalMedia.querySelector('img');
+      if (img) {
+        img.className = 'hero-image';
+        img.setAttribute('loading', isFirstSlide ? 'eager' : 'lazy');
+        if (isFirstSlide) {
+          img.setAttribute('fetchpriority', 'high');
+        }
+      }
+      imageWrapper.appendChild(originalMedia);
+    } else {
+      // Fallback: create new img if no original element found
+      const img = document.createElement('img');
       img.className = 'hero-image';
+      img.src = slide.media;
+      img.alt = slide.mediaAlt || 'Hero Banner';
+      img.setAttribute('loading', isFirstSlide ? 'eager' : 'lazy');
+      if (isFirstSlide) {
+        img.setAttribute('fetchpriority', 'high');
+      }
+      imageWrapper.appendChild(img);
     }
-
-    imageWrapper.appendChild(optimizedPicture);
+    
     heroBanner.appendChild(imageWrapper);
   }
 
