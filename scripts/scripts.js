@@ -454,7 +454,9 @@ async function loadEager(doc) {
     }
     
     document.body.classList.add('appear');
-    await loadSection(main.querySelector('.section'), waitForFirstImage);
+    const section = main.querySelector('.section');
+    waitForFirstImage(section);
+    await loadSection(section);
   }
 
   try {
