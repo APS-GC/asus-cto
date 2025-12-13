@@ -12,7 +12,7 @@ import {
 
 import { decorateRichtext } from './editor-support-rte.js';
 import { decorateMain } from './scripts.js';
-import { initializePublish } from './editor-support-publish.js'
+import initializePublish from './editor-support-publish.js';
 
 let editorRules = null;
 

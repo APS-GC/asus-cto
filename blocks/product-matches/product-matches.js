@@ -2,6 +2,7 @@ import { loadCSS, loadScript } from '../../scripts/aem.js';
 import { loadSwiper } from '../../scripts/scripts.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
+import { trackEvent } from '../../scripts/google-data-layer.js';
 
 let AuthoredData = [];
 /**
@@ -352,10 +353,24 @@ class SimilarProductsManager {
     document.addEventListener('product-sort-applied', (event) => {
       this.allProducts = [];
       this.currentSort = event.detail.sort;
+      
+      const sortOption = this.sort[this.currentSort] || this.currentSort;
+      trackEvent({
+        eventName: 'sort_result_help_me_choose_cto_rog',
+        category: 'result/help_me_choose/cto/rog',
+        label: `${sortOption}/sort/result/help_me_choose/cto/rog`
+      });
+      
       this.fetchProducts();
     });
     if (this.viewAllButton) {
       this.viewAllButton.addEventListener('click', () => {
+        trackEvent({
+          eventName: 'view_all_result_help_me_choose_cto_rog',
+          category: 'result/help_me_choose/cto/rog',
+          label: 'view_all/result/help_me_choose/cto/rog'
+        });
+        
         const url = AuthoredData[13];
         if (url) {
           window.open(url, '_blank');

@@ -3,6 +3,8 @@
  * Creates a product card component that can be loaded via loadBlock
  */
 
+import { trackEvent } from '../../scripts/google-data-layer.js';
+
 /**
  * Default configuration for product cards
  */
@@ -188,16 +190,90 @@ function buildProductCardHTML(product, config) {
  */
 function setupEventListeners(block, product) {
   const productUrl = product.urlKey || './pdp.html';
+  const productName = product.name || 'Unknown Product';
 
   // Buy button click handler
   const buyBtn = block.querySelector('.cmp-product-card__buy-button');
   if (buyBtn) {
     buyBtn.addEventListener('click', () => {
+      // Track buy button click
+      const buttonText = buyBtn.textContent?.trim() || 'Buy now';
+      let buttonName = buttonText.toLowerCase().replace(/\s+/g, '');
+      
+      // Normalize "buynow" to "buy" for consistency
+      if (buttonName === 'buynow') {
+        buttonName = 'buy';
+      }
+      
+      buttonName += 'Button';
+      
+      trackEvent({
+        eventName: 'cta_btn_product_card',
+        category: 'product_card',
+        label: `${productName}/${buttonName}-${buttonText}/product_card`
+      });
+      
       window.location.href = productUrl;
     });
   }
 
-  // Quick view button - event handled by parent block that sets up the modal
+  // Track clicks on product image
+  const productImage = block.querySelector('.cmp-product-card__image img');
+  if (productImage) {
+    productImage.addEventListener('click', () => {
+      trackEvent({
+        eventName: 'images_product_card',
+        category: 'product_card',
+        label: `${productName}/images/product_card`
+      });
+    });
+  }
+
+  // Track clicks on quick view button (if exists)
+  const quickViewBtn = block.querySelector('.cmp-product-card__preview-btn');
+  if (quickViewBtn) {
+    quickViewBtn.addEventListener('click', () => {
+      trackEvent({
+        eventName: 'images_product_card',
+        category: 'product_card',
+        label: `${productName}/images/product_card`
+      });
+    });
+  }
+
+  // Track clicks on product title link
+  const titleLink = block.querySelector('.cmp-product-card__title a');
+  if (titleLink) {
+    titleLink.addEventListener('click', () => {
+      trackEvent({
+        eventName: 'titles_product_card',
+        category: 'product_card',
+        label: `${productName}/titles/product_card`
+      });
+    });
+  }
+
+  // Track clicks on compare checkbox
+  const compareCheckbox = block.querySelector('.cmp-product-card__compare-checkbox');
+  if (compareCheckbox) {
+    compareCheckbox.addEventListener('change', () => {
+      if (compareCheckbox.checked) {
+        // Checkbox is checked
+        trackEvent({
+          eventName: 'compare_product_card',
+          category: 'product_card',
+          label: `${productName}/compare/product_card`
+        });
+      } else {
+        // Checkbox is unchecked
+        trackEvent({
+          eventName: 'compare_product_card',
+          category: 'product_card',
+          label: `${productName}/compare_cancel/product_card`
+        });
+      }
+    });
+  }
 }
 
 /**
