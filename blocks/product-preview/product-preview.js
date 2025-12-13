@@ -2,6 +2,7 @@
  * Product Preview Block
  */
 
+import Swiper from '../../node_modules/swiper/swiper-bundle.min.mjs';
 import { openModal, createModal } from '../modal/modal.js';
 import { getLocale } from '../../scripts/scripts.js';
 import { buildBlock, decorateBlock, loadBlock } from '../../scripts/aem.js';
@@ -369,7 +370,7 @@ async function initializeGallery(block) {
   const prevButton = block.querySelector('.carousel__action--previous');
   const nextButton = block.querySelector('.carousel__action--next');
 
-  const thumbSwiper = new window.Swiper(thumbSwiperEl, {
+  const thumbSwiper = new Swiper(thumbSwiperEl, {
     spaceBetween: 10,
     slidesPerView: 'auto',
     freeMode: true,
@@ -380,7 +381,7 @@ async function initializeGallery(block) {
     initialSlide: 0,
   });
 
-  const mainSwiper = new window.Swiper(mainSwiperEl, {
+  const mainSwiper = new Swiper(mainSwiperEl, {
     noSwipingClass: 'swiper-no-swiping',
     initialSlide: 0,
     loop: true,

@@ -1,3 +1,6 @@
+// Import Swiper locally for better performance
+import Swiper from '../node_modules/swiper/swiper-bundle.min.mjs';
+
 // Constants
 const CUSTOM_EFFECT_NAME = 'creative';
 // const CAROUSEL_SELECTOR = '.carousel:has(.cmp-carousel:not([data-init="false"]))';
@@ -527,8 +530,8 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
   // Merge custom effect settings
   const finalConfig = isCustomEffect ? { ...baseConfig, ...customEffectSettings } : baseConfig;
 
-  // Initialize Swiper
-  const swiperInstance = new window.Swiper(swiperContainer, finalConfig);
+  // Initialize Swiper (using local import)
+  const swiperInstance = new Swiper(swiperContainer, finalConfig);
 
   // Store reference for the observer to use
   swiperContainer.swiperInstance = swiperInstance;

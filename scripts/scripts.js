@@ -140,56 +140,19 @@ export function createOptimizedPicture(
 }
 
 /**
- * Swiper Dynamic Loader
- * Loads Swiper library on-demand to improve initial page load performance
- */
-let swiperPromise = null;
-let swiperCSSLoaded = false;
-
-/**
- * Dynamically loads Swiper library from CDN
+ * Swiper is now imported locally in carousel.js for better performance
+ * This function is deprecated and kept for backward compatibility
+ * @deprecated Use local Swiper import in carousel.js instead
  * @returns {Promise<Object>} Promise that resolves with Swiper constructor
  */
 export async function loadSwiper() {
-  // Return immediately if Swiper is already loaded
+  console.warn('loadSwiper() is deprecated. Swiper is now imported locally in carousel.js');
+  // Return Swiper from window if available (for backward compatibility)
   if (window.Swiper) {
     return window.Swiper;
   }
-  
-  // Return existing promise if load is in progress
-  if (!swiperPromise) {
-    console.log('Swiper: Starting dynamic load (JS + CSS) [Call ID: ' + Date.now() + ']');
-    
-    swiperPromise = (async () => {
-      try {
-        await Promise.all([
-          // Load CSS once
-          !swiperCSSLoaded ? loadCSS('https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css').then(() => {
-            swiperCSSLoaded = true;
-            console.log('Swiper CSS loaded');
-          }) : Promise.resolve(),
-          // Load JS
-          loadScript(
-            'https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js',
-            {
-              crossorigin: 'anonymous',
-              referrerpolicy: 'no-referrer'
-            }
-          )
-        ]);
-        console.log('Swiper loaded dynamically (CSS + JS)');
-        return window.Swiper;
-      } catch (error) {
-        console.error('Failed to load Swiper library:', error);
-        swiperPromise = null; // Reset on error so retry is possible
-        throw error;
-      }
-    })(); // IIFE (Immediately Invoked Function Expression) creates promise synchronously
-  } else {
-    console.log('Swiper: Reusing existing load promise');
-  }
-  
-  return swiperPromise;
+  // If not available, return null and let the local import handle it
+  return null;
 }
 
 /**
@@ -479,7 +442,7 @@ async function loadLazy(doc) {
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 
-  loadCSS('https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css');
+  // Swiper CSS is now included in styles.css
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 

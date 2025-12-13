@@ -3,6 +3,7 @@
  * Supports authorable hero banner slides with video/image media, CTA buttons, and autoplay settings
  */
 
+import Swiper from '../../node_modules/swiper/swiper-bundle.min.mjs';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 import { getBlockConfigs, getConfigValue } from '../../scripts/configs.js';
 import { isUniversalEditor } from '../../scripts/utils.js';
@@ -379,7 +380,7 @@ async function initializeSwiper(heroBannerElement, config, blockPosition) {
         },
       };
 
-      const swiper = new window.Swiper(heroBannerElement.querySelector('.swiper'), swiperConfig);
+      const swiper = new Swiper(heroBannerElement.querySelector('.swiper'), swiperConfig);
 
       // Add media control functionality (only if not in UE)
       const playPauseBtn = heroBannerElement.querySelector('.cmp-hero-banner__media-control--play-pause');

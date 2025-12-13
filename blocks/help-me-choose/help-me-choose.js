@@ -1,3 +1,4 @@
+import Swiper from '../../node_modules/swiper/swiper-bundle.min.mjs';
 import { loadScript } from '../../scripts/aem.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
@@ -351,7 +352,7 @@ async function initializeSwiperCarousel(block) {
   if (!swiperContainer) return;
 
   // Use modules explicitly (if using swiper modular build)
-  const swiper = new window.Swiper(swiperContainer, {
+  const swiper = new Swiper(swiperContainer, {
     // Basic options
     slidesPerView: 2,
     spaceBetween: 8,

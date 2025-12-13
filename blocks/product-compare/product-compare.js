@@ -1,3 +1,4 @@
+import Swiper from '../../node_modules/swiper/swiper-bundle.min.mjs';
 
 /**
  * Helper to escape user / config data to prevent XSS
@@ -421,7 +422,7 @@ class ProductCompare {
     if (!swiperContainer) return;
 
     // Use modules explicitly (if using swiper modular build)
-    const swiper = new window.Swiper(swiperContainer, {
+    const swiper = new Swiper(swiperContainer, {
       // Basic options
       slidesPerView: 2,
       spaceBetween: 16,
