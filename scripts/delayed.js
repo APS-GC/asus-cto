@@ -1,5 +1,14 @@
+// Load Google Tag Manager and analytics in delayed phase for better TBT
+import { loadGTM, sendPageLoadAttributes } from './google-data-layer.js';
+
 // Dispatch custom event to notify blocks that delayed loading is complete
 window.dispatchEvent(new Event('delayed-loaded'));
+
+(async () => {
+  await loadGTM();
+  await sendPageLoadAttributes();
+})();
+
 // // Constants
 // const CUSTOM_EFFECT_NAME = 'creative';
 // const CAROUSEL_SELECTOR = '.carousel:has(.cmp-carousel:not([data-init="false"]))';

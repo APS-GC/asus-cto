@@ -15,7 +15,6 @@ import {
   getMetadata,
 } from './aem.js';
 import { getConfigValue } from './configs.js';
-import { loadGTM, sendPageLoadAttributes } from './google-data-layer.js';
 
 /**
  * Get the current locale from configuration
@@ -479,9 +478,6 @@ async function loadLazy(doc) {
 
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
-
-  await loadGTM();
-  await sendPageLoadAttributes();
 
   loadCSS(`${window.hlx.codeBasePath}/styles/clientlib-base.css`);
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
