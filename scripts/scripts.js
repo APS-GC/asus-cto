@@ -479,7 +479,7 @@ async function loadLazy(doc) {
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 
-  loadCSS('https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css');
+  // Swiper CSS will be loaded on-demand by loadSwiper() function
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 

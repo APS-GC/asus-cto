@@ -182,40 +182,40 @@ export default async function decorate(block) {
 
         await Promise.all(loadPromises);
 
-        await import('../../scripts/carousel.js');
-
-        const container = block.querySelector('.carousel');
-        if (window.initializeSwiperOnAEMCarousel && container) {
-          window.initializeSwiperOnAEMCarousel(container);
-        }
+        // Carousel will be initialized lazily by the lazy-carousel-loader
         const basePath = await getConfigValue('base-path') || '';
         const sectionType = 'hot_products';
         
-        // Track navigation arrow clicks
-        const prevButton = block.querySelector('.cmp-carousel__action--previous');
-        const nextButton = block.querySelector('.cmp-carousel__action--next');
+        // Add navigation tracking after carousel initializes
+        const addNavigationTracking = () => {
+          const prevButton = block.querySelector('.cmp-carousel__action--previous');
+          const nextButton = block.querySelector('.cmp-carousel__action--next');
+          
+          if (prevButton && !prevButton.hasAttribute('data-tracked')) {
+            prevButton.setAttribute('data-tracked', 'true');
+            prevButton.addEventListener('click', () => {
+              trackEvent({
+                eventName: `nvgt_l_${sectionType}_home_cto_rog`,
+                category: `${sectionType}${basePath}`,
+                label: `last_button/${sectionType}${basePath}`
+              });
+            });
+          }
+          
+          if (nextButton && !nextButton.hasAttribute('data-tracked')) {
+            nextButton.setAttribute('data-tracked', 'true');
+            nextButton.addEventListener('click', () => {
+              trackEvent({
+                eventName: `nvgt_n_${sectionType}_home_cto_rog`,
+                category: `${sectionType}${basePath}`,
+                label: `next_button/${sectionType}${basePath}`
+              });
+            });
+          }
+        };
+        
+        // Track view all button
         const viewAllButton = block.querySelector('.section-actions-btn');
-        
-        if (prevButton) {
-          prevButton.addEventListener('click', () => {
-            trackEvent({
-              eventName: `nvgt_l_${sectionType}_home_cto_rog`,
-              category: `${sectionType}${basePath}`,
-              label: `last_button/${sectionType}${basePath}`
-            });
-          });
-        }
-        
-        if (nextButton) {
-          nextButton.addEventListener('click', () => {
-            trackEvent({
-              eventName: `nvgt_n_${sectionType}_home_cto_rog`,
-              category: `${sectionType}${basePath}`,
-              label: `next_button/${sectionType}${basePath}`
-            });
-          });
-        }
-        
         if (viewAllButton) {
           viewAllButton.addEventListener('click', () => {
             trackEvent({
@@ -224,6 +224,27 @@ export default async function decorate(block) {
               label: `view_all/${sectionType}${basePath}`
             });
           });
+        }
+        
+        // Wait for carousel initialization
+        const container = block.querySelector('.carousel');
+        if (container) {
+          const initObserver = new MutationObserver(() => {
+            if (container.hasAttribute('data-carousel-initialized')) {
+              addNavigationTracking();
+              initObserver.disconnect();
+            }
+          });
+          
+          initObserver.observe(container, {
+            attributes: true,
+            attributeFilter: ['data-carousel-initialized']
+          });
+          
+          // Fallback: if already initialized
+          if (container.hasAttribute('data-carousel-initialized')) {
+            addNavigationTracking();
+          }
         }
 
         // Load Bazaarvoice ratings

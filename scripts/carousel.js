@@ -217,8 +217,16 @@ const swiperAutoplayObserver = new IntersectionObserver(
 );
 
 // Initialize Swiper on AEM Carousel
+// Optimized version with reduced initialization overhead
 window.initializeSwiperOnAEMCarousel = (carousel) => {
+  // Skip if already initialized
+  if (carousel.hasAttribute('data-carousel-initialized')) {
+    return;
+  }
+  
   const carouselElement = carousel.querySelector('.cmp-carousel');
+  if (!carouselElement) return;
+  
   const {
     slidesPerView = 1,
     spaceBetween = 8,
@@ -309,21 +317,20 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
     waitForTransition: true,
   };
 
-  // Base Swiper configuration
+  // Base Swiper configuration - optimized to reduce initialization cost
   const baseConfig = {
     slidesPerView,
     spaceBetween,
-    watchSlidesProgress: true,
+    watchSlidesProgress: false, // Disabled to reduce overhead, enable if needed
     loop: loopSlides !== 'false' && Boolean(loopSlides),
     navigation: { prevEl, nextEl, disabledClass: 'cmp-carousel__action--disabled' },
-    pagination: {
+    pagination: hasPagination ? {
       el: indicators,
       clickable: true,
       bulletClass: 'cmp-carousel__indicator',
       bulletActiveClass: 'cmp-carousel__indicator--active',
-
       renderBullet: (index, className) => `<li class="${className}" aria-label="Go to slide ${index + 1}" role="tab"></li>`,
-    },
+    } : false,
     a11y: {
       enabled: true,
       slideLabelMessage: 'Slide {{index}} of {{slidesLength}}',
@@ -332,6 +339,8 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
       nextSlideMessage,
     },
     autoplay: false,
+    observer: false, // Disabled to reduce overhead
+    observeParents: false, // Disabled to reduce overhead
     breakpoints: {
       731: {
         slidesPerView: slidesPerViewTablet,
@@ -532,17 +541,22 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
 
   // Store reference for the observer to use
   swiperContainer.swiperInstance = swiperInstance;
+  
+  // Mark carousel as initialized
+  carousel.setAttribute('data-carousel-initialized', 'true');
 
   // Wait for first user interaction before starting autoplay & video
-  waitForFirstUserInteraction().then(() => {
-    // Handle autoplay observer
-    // Start autoplay if enabled
-    if (isAutoplayEnabled) {
-      swiperInstance.params.autoplay = autoplayConfig;
-
-      swiperAutoplayObserver.observe(swiperContainer);
-    }
-  });
+  // Defer this to avoid blocking main thread
+  requestIdleCallback(() => {
+    waitForFirstUserInteraction().then(() => {
+      // Handle autoplay observer
+      // Start autoplay if enabled
+      if (isAutoplayEnabled) {
+        swiperInstance.params.autoplay = autoplayConfig;
+        swiperAutoplayObserver.observe(swiperContainer);
+      }
+    });
+  }, { timeout: 3000 });
 
   return swiperInstance;
 };

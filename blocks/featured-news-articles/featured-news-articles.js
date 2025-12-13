@@ -164,11 +164,8 @@ export default async function decorate(block) {
   block.innerHTML = '';
   block.append(mockupContainer);
 
-  await import('../../scripts/carousel.js');
-
-  if (window.initializeSwiperOnAEMCarousel) {
-    window.initializeSwiperOnAEMCarousel(block.querySelector('.cmp-container'));
-  }
+  // Carousel will be initialized lazily by the lazy-carousel-loader
+  // Just set up tracking
   const basePath = await getConfigValue('base-path') || '';
   const sectionType = 'news_card';
   

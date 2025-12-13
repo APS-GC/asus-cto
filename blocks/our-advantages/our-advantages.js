@@ -117,9 +117,8 @@ export default async function decorate(block) {
   block.innerHTML = '';
   block.append(mockupContainer);
 
-  // trigger block
-  await import('../../scripts/carousel.js');
-  await import('./uifrontend_advantage-card.js');
+  // Preload carousel module and uifrontend script (but don't initialize yet)
+  import('./uifrontend_advantage-card.js');
  
   // Add tracking for Watch Now button using event delegation
   const advantageWrapper = block.closest('.our-advantages-wrapper');
@@ -137,50 +136,63 @@ export default async function decorate(block) {
     });
   }
  
-  // Add tracking for navigation arrows
-  const prevButton = block.querySelector('.cmp-carousel__action--previous');
-  const nextButton = block.querySelector('.cmp-carousel__action--next');
-  
-  if (prevButton) {
-    prevButton.addEventListener('click', () => {
-      trackEvent({
-        eventName: 'nvgt_l_advantages_home_cto_rog',
-        category: 'nvgt/advantages/home/cto/rog',
-        label: 'last_button/nvgt/advantages/home/cto/rog'
-      });
-    });
-  }
-  
-  if (nextButton) {
-    nextButton.addEventListener('click', () => {
-      trackEvent({
-        eventName: 'nvgt_n_advantages_home_cto_rog',
-        category: 'nvgt/advantages/home/cto/rog',
-        label: 'next_button/nvgt/advantages/home/cto/rog'
-      });
-    });
-  }
-
-  document.addEventListener(
-    'eds-lazy-event',
-    () => {
-      const container = block.querySelector('.container');
-      if (window.initializeSwiperOnAEMCarousel && container) {
-        window.initializeSwiperOnAEMCarousel(container);
-        
-        // Add tracking for indicators after Swiper is initialized
-        const indicators = container.querySelectorAll('.cmp-carousel__indicator');
-        indicators.forEach((indicator, index) => {
-          indicator.addEventListener('click', () => {
-            trackEvent({
-              eventName: 'indicator_advantages_home_cto_rog',
-              category: 'indicator/advantages/home/cto/rog',
-              label: `${index + 1}/indicator/advantages/home/cto/rog`
-            });
-          });
+  // Add tracking for navigation arrows (will be available after carousel initializes)
+  const addNavigationTracking = () => {
+    const prevButton = block.querySelector('.cmp-carousel__action--previous');
+    const nextButton = block.querySelector('.cmp-carousel__action--next');
+    
+    if (prevButton) {
+      prevButton.addEventListener('click', () => {
+        trackEvent({
+          eventName: 'nvgt_l_advantages_home_cto_rog',
+          category: 'nvgt/advantages/home/cto/rog',
+          label: 'last_button/nvgt/advantages/home/cto/rog'
         });
+      });
+    }
+    
+    if (nextButton) {
+      nextButton.addEventListener('click', () => {
+        trackEvent({
+          eventName: 'nvgt_n_advantages_home_cto_rog',
+          category: 'nvgt/advantages/home/cto/rog',
+          label: 'next_button/nvgt/advantages/home/cto/rog'
+        });
+      });
+    }
+    
+    // Add tracking for indicators after Swiper is initialized
+    const indicators = block.querySelectorAll('.cmp-carousel__indicator');
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        trackEvent({
+          eventName: 'indicator_advantages_home_cto_rog',
+          category: 'indicator/advantages/home/cto/rog',
+          label: `${index + 1}/indicator/advantages/home/cto/rog`
+        });
+      });
+    });
+  };
+
+  // Wait for carousel initialization (lazy loader will handle this)
+  const container = block.querySelector('.container');
+  if (container) {
+    // Observer to detect when carousel is initialized
+    const initObserver = new MutationObserver(() => {
+      if (container.hasAttribute('data-carousel-initialized')) {
+        addNavigationTracking();
+        initObserver.disconnect();
       }
-    },
-    { once: true }
-  );
+    });
+    
+    initObserver.observe(container, {
+      attributes: true,
+      attributeFilter: ['data-carousel-initialized']
+    });
+    
+    // Fallback: if carousel is already initialized
+    if (container.hasAttribute('data-carousel-initialized')) {
+      addNavigationTracking();
+    }
+  }
 }

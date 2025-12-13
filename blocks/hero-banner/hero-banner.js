@@ -293,14 +293,17 @@ const toggleSliderVideo = async (videoPlayPauseBtn, swiperInstance) => {
 };
 
 /**
- * Initialize Swiper hero banner
+ * Initialize Swiper hero banner (optimized for LCP)
  */
 async function initializeSwiper(heroBannerElement, config, blockPosition) {
   const isUE = isUniversalEditor();
 
-  // Load Swiper dynamically
+  // Load Swiper dynamically (optimized to avoid blocking LCP)
   const setupSwiper = async () => {
     try {
+      // Import loadSwiper to ensure it's loaded
+      const { loadSwiper } = await import('../../scripts/scripts.js');
+      await loadSwiper();
 
       const swiperConfig = {
         loop: true, // Disable loop in UE authoring,
@@ -432,12 +435,22 @@ async function initializeSwiper(heroBannerElement, config, blockPosition) {
     }
   };
 
-  // Delay initialization to ensure DOM is ready
+  // Delay initialization to ensure DOM is ready and avoid blocking LCP
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => setupSwiper());
+    document.addEventListener('DOMContentLoaded', () => {
+      // Use requestAnimationFrame to defer after rendering
+      requestAnimationFrame(() => setupSwiper());
+    });
   } else {
-    // Additional delay for UE environments
-    setTimeout(() => setupSwiper(), isUE ? 500 : 100);
+    // Use requestAnimationFrame for immediate initialization to avoid blocking
+    requestAnimationFrame(() => {
+      // Additional delay for UE environments
+      if (isUE) {
+        setTimeout(() => setupSwiper(), 500);
+      } else {
+        setupSwiper();
+      }
+    });
   }
 }
 
