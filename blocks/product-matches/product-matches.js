@@ -1,5 +1,4 @@
-import { loadCSS, loadScript } from '../../scripts/aem.js';
-import { loadSwiper } from '../../scripts/scripts.js';
+import { loadScript } from '../../scripts/aem.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
 
@@ -13,8 +12,6 @@ export default async function decorate(block) {
   // Load all dependencies in parallel for faster initialization
   await Promise.all([
     loadNoUiSlider(),
-    loadSwiperCSS(),
-    loadSwiper(),
     import('../../scripts/carousel.js'),
     loadChoisesJs(),
   ]);
@@ -214,22 +211,6 @@ function loadNoUiSlider() {
     });
   }
   return noUiSliderPromise;
-}
-
-/**
- * Loads the Swiper CSS from a CDN, ensuring it is only fetched once.
- */
-let swiperCSSLoaded = null;
-function loadSwiperCSS() {
-  if (!swiperCSSLoaded) {
-    swiperCSSLoaded = loadCSS(
-      'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css'
-    ).catch((err) => {
-      console.error('Failed to load Swiper CSS:', err);
-      throw err;
-    });
-  }
-  return swiperCSSLoaded;
 }
 
 /**

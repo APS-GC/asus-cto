@@ -3,7 +3,7 @@
  */
 
 import { openModal, createModal } from '../modal/modal.js';
-import { loadSwiper, getLocale } from '../../scripts/scripts.js';
+import { getLocale } from '../../scripts/scripts.js';
 import { buildBlock, decorateBlock, loadBlock } from '../../scripts/aem.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
 import { isUniversalEditor } from '../../scripts/utils.js';
@@ -365,9 +365,6 @@ async function initializeGallery(block) {
   const slidesCount = mainSwiperEl.querySelectorAll('.swiper-slide').length;
 
   if (slidesCount === 0) return;
-
-  // Dynamically load Swiper library
-  await loadSwiper();
 
   const prevButton = block.querySelector('.carousel__action--previous');
   const nextButton = block.querySelector('.carousel__action--next');

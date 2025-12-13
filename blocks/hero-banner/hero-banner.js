@@ -3,7 +3,7 @@
  * Supports authorable hero banner slides with video/image media, CTA buttons, and autoplay settings
  */
 
-import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
+import { moveInstrumentation } from '../../scripts/scripts.js';
 import { getBlockConfigs, getConfigValue } from '../../scripts/configs.js';
 import { isUniversalEditor } from '../../scripts/utils.js';
 import { trackPromotionView, trackPromotionClick, trackEvent } from '../../scripts/google-data-layer.js';
@@ -301,8 +301,6 @@ async function initializeSwiper(heroBannerElement, config, blockPosition) {
   // Load Swiper dynamically
   const setupSwiper = async () => {
     try {
-      // Dynamically load Swiper library
-      await loadSwiper();
 
       const swiperConfig = {
         loop: true, // Disable loop in UE authoring,

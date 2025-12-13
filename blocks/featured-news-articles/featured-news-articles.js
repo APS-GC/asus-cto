@@ -2,7 +2,6 @@ import {
   transferInstrumentation,
   isAuthorEnvironment,
 } from '../../scripts/utils.js';
-import { loadSwiper } from '../../scripts/scripts.js';
 import { getBlockConfigs, getConfigValue } from '../../scripts/configs.js';
 import { trackEvent } from '../../scripts/google-data-layer.js';
 
@@ -165,7 +164,6 @@ export default async function decorate(block) {
   block.innerHTML = '';
   block.append(mockupContainer);
 
-  await loadSwiper();
   await import('../../scripts/carousel.js');
 
   if (window.initializeSwiperOnAEMCarousel) {

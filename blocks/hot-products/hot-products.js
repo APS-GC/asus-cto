@@ -1,6 +1,6 @@
 import { decorateBlock, loadBlock } from '../../scripts/aem.js';
 import { fetchHotProducts } from '../../scripts/api-service.js';
-import { loadBazaarvoiceScript, loadSwiper } from '../../scripts/scripts.js';
+import { loadBazaarvoiceScript } from '../../scripts/scripts.js';
 import { openModal } from '../modal/modal.js';
 import { getBlockConfigs, getConfigValue } from '../../scripts/configs.js';
 import { trackEvent } from '../../scripts/google-data-layer.js';
@@ -182,8 +182,6 @@ export default async function decorate(block) {
 
         await Promise.all(loadPromises);
 
-        // Initialize Swiper through carousel.js
-        await loadSwiper();
         await import('../../scripts/carousel.js');
 
         const container = block.querySelector('.carousel');

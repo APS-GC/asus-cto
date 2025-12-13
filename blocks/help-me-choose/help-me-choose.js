@@ -1,5 +1,4 @@
-import { loadCSS, loadScript } from '../../scripts/aem.js';
-import { moveInstrumentation, loadSwiper } from '../../scripts/scripts.js';
+import { loadScript } from '../../scripts/aem.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
 import { getBlockConfigs } from '../../scripts/configs.js';
@@ -27,7 +26,6 @@ const DEFAULT_CONFIG = {
 export default async function decorate(block) {
   // Load noUiSlider only once
   await loadNoUiSlider();
-  await loadSwiperCSS();
 
   // Once loaded, render the component
   await renderHelpMeChoose(block);
@@ -221,21 +219,6 @@ function loadNoUiSlider() {
 }
 
 /**
- * Loads the Swiper CSS from a CDN, ensuring it is only fetched once.
- */
-let swiperCSSLoaded = null;
-function loadSwiperCSS() {
-  if (!swiperCSSLoaded) {
-    swiperCSSLoaded = loadCSS(
-      'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css'
-    ).catch((err) => {
-      console.error('Failed to load Swiper CSS:', err);
-      throw err;
-    });
-  }
-  return swiperCSSLoaded;
-}
-/**
  * Generates the HTML for the budget center section, including the slider and inputs/displays.
  * @param {number} lowestPrice - The lowest possible budget price.
  * @param {number} highestPrice - The highest possible budget price.
@@ -366,8 +349,6 @@ const toNumber = (v) => {
 async function initializeSwiperCarousel(block) {
   const swiperContainer = block.querySelector('.swiper');
   if (!swiperContainer) return;
-
-  await loadSwiper();
 
   // Use modules explicitly (if using swiper modular build)
   const swiper = new window.Swiper(swiperContainer, {

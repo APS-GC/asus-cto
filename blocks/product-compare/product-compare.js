@@ -1,5 +1,3 @@
-import { loadCSS } from '../../scripts/aem.js';
-import { loadSwiper } from '../../scripts/scripts.js';
 
 /**
  * Helper to escape user / config data to prevent XSS
@@ -113,29 +111,11 @@ async function renderProductCompare(block) {
 }
 
 /**
- * Loads the Swiper CSS from a CDN, ensuring it is only fetched once.
- */
-let swiperCSSLoaded = null;
-function loadSwiperCSS() {
-  if (!swiperCSSLoaded) {
-    swiperCSSLoaded = loadCSS(
-      'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
-    ).catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error('Failed to load Swiper CSS:', err);
-      throw err;
-    });
-  }
-  return swiperCSSLoaded;
-}
-
-/**
  * Main entry point for the product-compare block.
  * @param {HTMLElement} block The block element to decorate.
  */
 export default async function decorate(block) {
   await renderProductCompare(block);
-  await loadSwiperCSS();
   initProductCompare(block); // eslint-disable-line no-use-before-define
 }
 
@@ -439,8 +419,6 @@ class ProductCompare {
   async initializeSwiperCarousel(block) {
     const swiperContainer = block.querySelector('.swiper');
     if (!swiperContainer) return;
-
-    await loadSwiper();
 
     // Use modules explicitly (if using swiper modular build)
     const swiper = new window.Swiper(swiperContainer, {
