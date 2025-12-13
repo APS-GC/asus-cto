@@ -1,4 +1,3 @@
-import Swiper from '../../node_modules/swiper/swiper-bundle.min.mjs';
 import { loadScript } from '../../scripts/aem.js';
 import { fetchGameList, getApiEndpoint } from '../../scripts/api-service.js';
 import { API_URIS } from '../../constants/api-constants.js';
@@ -350,6 +349,9 @@ const toNumber = (v) => {
 async function initializeSwiperCarousel(block) {
   const swiperContainer = block.querySelector('.swiper');
   if (!swiperContainer) return;
+
+  // Dynamically import Swiper (non-blocking)
+  const { default: Swiper } = await import('../../node_modules/swiper/swiper-bundle.min.mjs');
 
   // Use modules explicitly (if using swiper modular build)
   const swiper = new Swiper(swiperContainer, {

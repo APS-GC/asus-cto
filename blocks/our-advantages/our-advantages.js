@@ -163,10 +163,10 @@ export default async function decorate(block) {
 
   document.addEventListener(
     'eds-lazy-event',
-    () => {
+    async () => {
       const container = block.querySelector('.container');
       if (window.initializeSwiperOnAEMCarousel && container) {
-        window.initializeSwiperOnAEMCarousel(container);
+        await window.initializeSwiperOnAEMCarousel(container);
         
         // Add tracking for indicators after Swiper is initialized
         const indicators = container.querySelectorAll('.cmp-carousel__indicator');

@@ -504,13 +504,13 @@ class SimilarProductsManager {
     this.initializeCarousel();
   }
 
-  initializeCarousel() {
+  async initializeCarousel() {
     // Find the carousel container
     const carouselContainer = this.productGrid.closest('.carousel');
 
     if (carouselContainer && window.initializeSwiperOnAEMCarousel) {
       // Initialize Swiper carousel using the global function
-      this.swiperInstance = window.initializeSwiperOnAEMCarousel(carouselContainer);
+      this.swiperInstance = await window.initializeSwiperOnAEMCarousel(carouselContainer);
     } else {
       console.warn('Carousel initialization failed: container or function not found');
     }
@@ -781,7 +781,7 @@ async function loadProducts(carouselElement) {
     });
 
     if (window.initializeSwiperOnAEMCarousel) {
-      window.initializeSwiperOnAEMCarousel(carouselElement.closest('.carousel'));
+      await window.initializeSwiperOnAEMCarousel(carouselElement.closest('.carousel'));
     }
   } catch (error) {
     console.error(`Failed to load ${productType} products:`, error);

@@ -2,7 +2,6 @@
  * Product Preview Block
  */
 
-import Swiper from '../../node_modules/swiper/swiper-bundle.min.mjs';
 import { openModal, createModal } from '../modal/modal.js';
 import { getLocale } from '../../scripts/scripts.js';
 import { buildBlock, decorateBlock, loadBlock } from '../../scripts/aem.js';
@@ -366,6 +365,9 @@ async function initializeGallery(block) {
   const slidesCount = mainSwiperEl.querySelectorAll('.swiper-slide').length;
 
   if (slidesCount === 0) return;
+
+  // Dynamically import Swiper (non-blocking)
+  const { default: Swiper } = await import('../../node_modules/swiper/swiper-bundle.min.mjs');
 
   const prevButton = block.querySelector('.carousel__action--previous');
   const nextButton = block.querySelector('.carousel__action--next');

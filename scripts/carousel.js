@@ -1,9 +1,9 @@
-// Import Swiper locally for better performance
-import Swiper from '../node_modules/swiper/swiper-bundle.min.mjs';
-
 // Constants
 const CUSTOM_EFFECT_NAME = 'creative';
 // const CAROUSEL_SELECTOR = '.carousel:has(.cmp-carousel:not([data-init="false"]))';
+
+// Swiper instance cache
+let SwiperClass = null;
 
 // Custom effect settings
 const customEffectSettings = {
@@ -220,7 +220,13 @@ const swiperAutoplayObserver = new IntersectionObserver(
 );
 
 // Initialize Swiper on AEM Carousel
-window.initializeSwiperOnAEMCarousel = (carousel) => {
+window.initializeSwiperOnAEMCarousel = async (carousel) => {
+  // Dynamically load Swiper if not already loaded (non-blocking)
+  if (!SwiperClass) {
+    const module = await import('../node_modules/swiper/swiper-bundle.min.mjs');
+    SwiperClass = module.default;
+  }
+  
   const carouselElement = carousel.querySelector('.cmp-carousel');
   const {
     slidesPerView = 1,
@@ -530,8 +536,8 @@ window.initializeSwiperOnAEMCarousel = (carousel) => {
   // Merge custom effect settings
   const finalConfig = isCustomEffect ? { ...baseConfig, ...customEffectSettings } : baseConfig;
 
-  // Initialize Swiper (using local import)
-  const swiperInstance = new Swiper(swiperContainer, finalConfig);
+  // Initialize Swiper (using dynamically loaded class)
+  const swiperInstance = new SwiperClass(swiperContainer, finalConfig);
 
   // Store reference for the observer to use
   swiperContainer.swiperInstance = swiperInstance;

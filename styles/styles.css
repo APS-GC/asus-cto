@@ -7341,7 +7341,7 @@ img {
 
 /* Prevent CLS for images with width/height attributes */
 img[width][height] {
-  height: auto;
+  height: 100%;
 }
 
 .section.section-spacing-top-small {

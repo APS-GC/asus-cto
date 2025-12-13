@@ -167,7 +167,7 @@ export default async function decorate(block) {
   await import('../../scripts/carousel.js');
 
   if (window.initializeSwiperOnAEMCarousel) {
-    window.initializeSwiperOnAEMCarousel(block.querySelector('.cmp-container'));
+    await window.initializeSwiperOnAEMCarousel(block.querySelector('.cmp-container'));
   }
   const basePath = await getConfigValue('base-path') || '';
   const sectionType = 'news_card';

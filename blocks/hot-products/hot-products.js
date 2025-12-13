@@ -186,7 +186,7 @@ export default async function decorate(block) {
 
         const container = block.querySelector('.carousel');
         if (window.initializeSwiperOnAEMCarousel && container) {
-          window.initializeSwiperOnAEMCarousel(container);
+          await window.initializeSwiperOnAEMCarousel(container);
         }
         const basePath = await getConfigValue('base-path') || '';
         const sectionType = 'hot_products';

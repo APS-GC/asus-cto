@@ -1,5 +1,3 @@
-import Swiper from '../../node_modules/swiper/swiper-bundle.min.mjs';
-
 /**
  * Helper to escape user / config data to prevent XSS
  * @param {string} str - The string to escape.
@@ -420,6 +418,9 @@ class ProductCompare {
   async initializeSwiperCarousel(block) {
     const swiperContainer = block.querySelector('.swiper');
     if (!swiperContainer) return;
+
+    // Dynamically import Swiper (non-blocking)
+    const { default: Swiper } = await import('../../node_modules/swiper/swiper-bundle.min.mjs');
 
     // Use modules explicitly (if using swiper modular build)
     const swiper = new Swiper(swiperContainer, {

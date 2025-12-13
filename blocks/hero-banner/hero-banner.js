@@ -3,7 +3,6 @@
  * Supports authorable hero banner slides with video/image media, CTA buttons, and autoplay settings
  */
 
-import Swiper from '../../node_modules/swiper/swiper-bundle.min.mjs';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 import { getBlockConfigs, getConfigValue } from '../../scripts/configs.js';
 import { isUniversalEditor } from '../../scripts/utils.js';
@@ -299,9 +298,11 @@ const toggleSliderVideo = async (videoPlayPauseBtn, swiperInstance) => {
 async function initializeSwiper(heroBannerElement, config, blockPosition) {
   const isUE = isUniversalEditor();
 
-  // Load Swiper dynamically
+  // Load Swiper dynamically (non-blocking for LCP)
   const setupSwiper = async () => {
     try {
+      // Dynamically import Swiper to avoid blocking LCP
+      const { default: Swiper } = await import('../../node_modules/swiper/swiper-bundle.min.mjs');
 
       const swiperConfig = {
         loop: true, // Disable loop in UE authoring,
